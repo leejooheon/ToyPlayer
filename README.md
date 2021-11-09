@@ -9,7 +9,7 @@
 - Reactive Extension(Rx)
 - MVVM 패턴 학습
 - CleanArchitecture 학습
-
+- Compose 학습
 
 ## 샘플 프로젝트 목표
 - TextView에 표시할 데이터를 API를 통해 가져온다.
