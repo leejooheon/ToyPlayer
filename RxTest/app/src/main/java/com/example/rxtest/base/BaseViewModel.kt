@@ -15,8 +15,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
 open class BaseViewModel : ViewModel(){
-    private val TAG = "BaseViewModel"
-    private val compositeDisposable = CompositeDisposable()
+    private val TAG = BaseViewModel::class.simpleName
+    protected val compositeDisposable = CompositeDisposable()
 
     val _errorMessageLiveData = MutableLiveData<String>()
     val _isSuccess = MutableLiveData<Boolean>()
