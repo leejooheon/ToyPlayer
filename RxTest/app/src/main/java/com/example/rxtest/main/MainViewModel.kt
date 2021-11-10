@@ -18,7 +18,7 @@ class MainViewModel : BaseViewModel(){
         // do something..
     }
 
-    fun onClickRepository(owner: String) {
+    fun callRepositoryApi(owner: String) {
         GithubClient.getClient().getRepos(owner)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
