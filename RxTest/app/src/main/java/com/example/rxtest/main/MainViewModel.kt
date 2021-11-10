@@ -15,7 +15,7 @@ class MainViewModel : BaseViewModel(){
     var repositoryLiveData = MutableLiveData<String>()
 
     init {
-        // do something
+        // do something..
     }
 
     fun onClickRepository(owner: String) {
