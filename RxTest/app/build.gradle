@@ -56,6 +56,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.17" // RxJava 본체
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0" // Kotlin과 Java를 이어줌
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1" // Android thread, scheduler에 맞게 포팅해줌
+    implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0' // xml componenet의 property들을 observable로 바꿔주는 라이브러리
 
     // koin
     implementation "org.koin:koin-androidx-scope:1.0.2"
