@@ -24,9 +24,9 @@ class RepositoryViewModel: BaseViewModel() {
                     repositoryLiveData.value = it.toString() // MainThread에서 실행해야 한다. (이 rx는 consumer가 mainThread이기때문에 이렇게 해도 됨)
                 },
                 onError =  {
-                    it.message?.let {
-                        repositoryLiveData.value = it
-                    } ?: run {
+                    if(!it.message.isNullOrEmpty()) {
+                        repositoryLiveData.value = it.message
+                    } else {
                         repositoryLiveData.value = "error @@@@"
                     }
                 }
