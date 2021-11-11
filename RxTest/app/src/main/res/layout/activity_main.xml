@@ -10,28 +10,37 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/ll_buttons">
         </androidx.fragment.app.FragmentContainerView>
 
-
-        <Button
-            android:id="@+id/bt_repository"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll_buttons"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/bt_compose"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Repository"/>
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <Button
-            android:id="@+id/bt_compose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/bt_repository"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:text="compose"/>
+            <Button
+                android:id="@+id/bt_repository"
+                android:layout_marginEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Repository"/>
+
+            <Button
+                android:id="@+id/bt_compose"
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="compose"/>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

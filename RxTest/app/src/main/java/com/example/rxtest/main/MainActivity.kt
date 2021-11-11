@@ -34,7 +34,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     override fun initAfterBinding() {
-
+        viewModel.replaceComposeFragment(supportFragmentManager)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
