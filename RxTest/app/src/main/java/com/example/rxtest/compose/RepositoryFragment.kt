@@ -36,7 +36,9 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding, RepositoryView
         etRepositoryObservable.debounce(1000, TimeUnit.MILLISECONDS)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                viewModel.callRepositoryApi(it.toString())
+                if(!it.isNullOrEmpty()) {
+                    viewModel.callRepositoryApi(it.toString())
+                }
             })
     }
 
