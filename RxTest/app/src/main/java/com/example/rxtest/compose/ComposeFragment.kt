@@ -1,5 +1,6 @@
 package com.example.rxtest.compose
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rxtest.main.MainActivity
+import com.example.rxtest.ui.compose.ComposeActivity
 
 class ComposeFragment: Fragment(){
     private val TAG = ComposeFragment::class.simpleName
@@ -67,7 +69,8 @@ class ComposeFragment: Fragment(){
                     },
                     actions = {
                         IconButton(onClick = {
-                            Log.d(TAG, "first IconButton")
+                            val intent = Intent(context, ComposeActivity::class.java)
+                            startActivity(intent)
                         }) {
                             Icon(Icons.Filled.Favorite,
                                 contentDescription = "first IconButton description")
