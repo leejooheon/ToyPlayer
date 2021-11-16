@@ -8,9 +8,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -18,10 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,14 +23,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rxtest.ui.theme.ApplicationTheme
 import com.example.rxtest.R
 import com.example.rxtest.ui.compose.model.CardModel
 
+@ExperimentalFoundationApi
 class ComposeActivity: ComponentActivity() {
     private val TAG = ComposeActivity::class::simpleName
 
-    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -120,36 +115,23 @@ class ComposeActivity: ComponentActivity() {
         }
     }
 
-    @ExperimentalFoundationApi
     @Composable
     fun DrawCards() {
-        val cards: MutableList<CardModel> = mutableListOf()
-        cards.add(CardModel(R.drawable.test_1, false))
-        cards.add(CardModel(R.drawable.test_2, true))
-        cards.add(CardModel(R.drawable.test_3, false))
-        cards.add(CardModel(R.drawable.test_4, true))
-
-        cards.add(CardModel(R.drawable.test_1, false))
-        cards.add(CardModel(R.drawable.test_2, true))
-        cards.add(CardModel(R.drawable.test_3, false))
-        cards.add(CardModel(R.drawable.test_4, true))
+        val viewModel = viewModel<ComposeViewModel>()
 
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize(),
             cells = GridCells.Fixed(2)
         ) {
-            items(cards) { item ->
-                var isFavorite by rememberSaveable {
-                    mutableStateOf(item.isFavorite)
-                }
+            itemsIndexed(viewModel.cards) { index, item ->
+
                 val modifier = Modifier
                     .fillMaxWidth(0.5f) // half width
                     .padding(16.dp)
                 ImageCard(
                     modifier,
-                    resId = item.resId,
-                    isFavorite = isFavorite, { favorite ->
-                        isFavorite = favorite
+                    item, { favorite ->
+                        viewModel.setCard(index, item, favorite)
                     }
                 )
             }
@@ -159,8 +141,7 @@ class ComposeActivity: ComponentActivity() {
     @Composable
     fun ImageCard(
         modifier: Modifier,
-        resId: Int,
-        isFavorite: Boolean,
+        card: CardModel,
         onTabFavorite: (Boolean) -> Unit
     ) {
         Card(
@@ -174,17 +155,17 @@ class ComposeActivity: ComponentActivity() {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = resId),
+                    painter = painterResource(id = card.resId),
                     contentDescription = null,
                     contentScale = ContentScale.Crop)
                 Box(modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.TopEnd) {
                     IconButton(onClick = {
-                        onTabFavorite.invoke(!isFavorite)
+                        onTabFavorite.invoke(!card.isFavorite)
                         Log.d("asd", "favorite IconButton")
                     }) {
                        Icon(
-                           imageVector = if(isFavorite) {
+                           imageVector = if(card.isFavorite) {
                                Icons.Default.Favorite
                            } else {
                                Icons.Default.FavoriteBorder
@@ -197,7 +178,6 @@ class ComposeActivity: ComponentActivity() {
         }
     }
 
-    @ExperimentalFoundationApi
     @Preview(showBackground = true)
     @Composable
     fun DefaultPreview() {
