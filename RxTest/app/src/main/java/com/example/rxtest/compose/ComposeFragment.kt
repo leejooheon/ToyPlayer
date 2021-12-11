@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rxtest.main.MainActivity
 import com.example.rxtest.ui.compose.ComposeActivity
 
+@ExperimentalFoundationApi
 class ComposeFragment: Fragment(){
     private val TAG = ComposeFragment::class.simpleName
     override fun onCreateView(
@@ -33,7 +35,7 @@ class ComposeFragment: Fragment(){
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                bottomBar()
+                BottomBar()
             }
         }
     }
@@ -50,9 +52,10 @@ class ComposeFragment: Fragment(){
             )
         }
     }
+
     @Preview
     @Composable
-    fun bottomBar() {
+    fun BottomBar() {
         Scaffold(
             isFloatingActionButtonDocked = false,
             topBar = {
@@ -90,7 +93,7 @@ class ComposeFragment: Fragment(){
                 )
             },
             drawerContent = {
-                drawerContent()
+                DrawerContent()
             }
         ) {
             // screen conetnt
@@ -99,7 +102,7 @@ class ComposeFragment: Fragment(){
     }
 
     @Composable
-    fun drawerContent() {
+    fun DrawerContent() {
         Text("Drawer title@@#@#", modifier = Modifier.padding(16.dp))
         Text("Drawer content 1", modifier = Modifier.padding(16.dp))
         Text("Drawer content 2", modifier = Modifier.padding(16.dp))
