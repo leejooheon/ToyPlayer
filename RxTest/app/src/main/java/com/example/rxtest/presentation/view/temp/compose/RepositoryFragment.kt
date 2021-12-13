@@ -1,4 +1,4 @@
-package com.example.rxtest.compose
+package com.example.rxtest.presentation.view.temp.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 
 import com.example.rxtest.R
-import com.example.rxtest.base.BaseFragment
+import com.example.rxtest.presentation.base.BaseFragment
 import com.example.rxtest.databinding.FragmentRepositoryBinding
 import com.jakewharton.rxbinding4.widget.textChanges
 import io.reactivex.rxjava3.schedulers.Schedulers

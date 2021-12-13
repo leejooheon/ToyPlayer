@@ -1,4 +1,4 @@
-package com.example.rxtest.ui.compose
+package com.example.rxtest.presentation.view.projects.compose
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.example.rxtest.R
-import com.example.rxtest.ui.compose.model.CardModel
+import com.example.rxtest.presentation.view.projects.compose.model.CardModel
 
 class ComposeViewModel: ViewModel() {
     private val _cards =  mutableStateListOf<CardModel>() // viewModel에서 값에 대한 변경권을 갖고 (private),

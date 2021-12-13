@@ -1,9 +1,9 @@
-package com.example.rxtest.compose
+package com.example.rxtest.presentation.view.temp.compose
 
 import androidx.lifecycle.MutableLiveData
-import com.example.rxtest.api.github.GithubClient
-import com.example.rxtest.base.BaseViewModel
-import com.example.rxtest.main.MainViewModel
+import com.example.rxtest.presentation.view.temp.api.github.GithubClient
+import com.example.rxtest.presentation.base.BaseViewModel
+import com.example.rxtest.presentation.view.main.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -30,6 +30,6 @@ class RepositoryViewModel: BaseViewModel() {
                         repositoryLiveData.value = "error @@@@"
                     }
                 }
-            ).addTo(compositeDisposable)
+            ).addTo(mDisposable)
     }
 }

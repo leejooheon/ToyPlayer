@@ -1,4 +1,4 @@
-package com.example.rxtest.compose
+package com.example.rxtest.presentation.view.temp.compose
 
 import android.content.Intent
 import android.os.Bundle
@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.rxtest.main.MainActivity
-import com.example.rxtest.ui.compose.ComposeActivity
+import com.example.rxtest.presentation.view.main.MainActivity
+import com.example.rxtest.presentation.view.projects.compose.ComposeActivity
 
 @ExperimentalFoundationApi
 class ComposeFragment: Fragment(){

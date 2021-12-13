@@ -1,12 +1,13 @@
-package com.example.rxtest.main
+package com.example.rxtest.presentation.view.main
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.rxtest.R
-import com.example.rxtest.base.BaseViewModel
-import com.example.rxtest.compose.ComposeFragment
-import com.example.rxtest.compose.RepositoryFragment
+import com.example.rxtest.presentation.base.BaseViewModel
+import com.example.rxtest.presentation.view.temp.compose.ComposeFragment
+import com.example.rxtest.presentation.view.temp.compose.RepositoryFragment
 
 class MainViewModel : BaseViewModel(){
     private val TAG = MainViewModel::class.simpleName
@@ -15,6 +16,7 @@ class MainViewModel : BaseViewModel(){
         // do something..
     }
 
+    @ExperimentalFoundationApi
     fun replaceComposeFragment(supportFragmentManager: FragmentManager) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)

@@ -1,4 +1,4 @@
-package com.example.rxtest.ui.compose
+package com.example.rxtest.presentation.view.projects.compose
 
 import android.os.Bundle
 import android.util.Log
@@ -24,9 +24,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.rxtest.ui.theme.ApplicationTheme
-import com.example.rxtest.R
-import com.example.rxtest.ui.compose.model.CardModel
+import com.example.rxtest.presentation.theme.ApplicationTheme
+import com.example.rxtest.presentation.view.projects.compose.model.CardModel
 
 @ExperimentalFoundationApi
 class ComposeActivity: ComponentActivity() {

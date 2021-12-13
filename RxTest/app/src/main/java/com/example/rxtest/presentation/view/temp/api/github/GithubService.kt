@@ -1,6 +1,6 @@
-package com.example.rxtest.api.github
+package com.example.rxtest.presentation.view.temp.api.github
 
-import com.example.rxtest.api.github.model.GithubRepository
+import com.example.rxtest.presentation.view.temp.api.github.model.GithubRepository
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path

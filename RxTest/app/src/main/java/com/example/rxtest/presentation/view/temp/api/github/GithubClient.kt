@@ -1,4 +1,4 @@
-package com.example.rxtest.api.github
+package com.example.rxtest.presentation.view.temp.api.github
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

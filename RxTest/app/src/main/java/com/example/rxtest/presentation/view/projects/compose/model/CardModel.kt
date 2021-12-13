@@ -1,4 +1,4 @@
-package com.example.rxtest.ui.compose.model
+package com.example.rxtest.presentation.view.projects.compose.model
 
 data class CardModel(
     val resId: Int,

@@ -1,4 +1,4 @@
-package com.example.rxtest.api.github.model
+package com.example.rxtest.presentation.view.temp.api.github.model
 
 import com.google.gson.annotations.SerializedName
 

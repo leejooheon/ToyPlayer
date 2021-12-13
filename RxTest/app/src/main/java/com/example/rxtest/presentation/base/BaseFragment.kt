@@ -1,4 +1,4 @@
-package com.example.rxtest.base
+package com.example.rxtest.presentation.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -1,8 +1,9 @@
-package com.example.rxtest.main
+package com.example.rxtest.presentation.view.main
 
 import android.os.Bundle
+import androidx.compose.foundation.ExperimentalFoundationApi
 import com.example.rxtest.R
-import com.example.rxtest.base.BaseActivity
+import com.example.rxtest.presentation.base.BaseActivity
 import com.example.rxtest.databinding.ActivityMainBinding
 import com.jakewharton.rxbinding4.view.clicks
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,6 +19,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     }
 
+    @ExperimentalFoundationApi
     override fun initDataBinding() {
         // 버튼 클릭 리스너 observable
         viewDataBinding.btRepository.clicks()
@@ -33,6 +35,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             }
     }
 
+    @ExperimentalFoundationApi
     override fun initAfterBinding() {
         viewModel.replaceComposeFragment(supportFragmentManager)
     }
