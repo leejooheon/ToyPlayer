@@ -74,6 +74,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.4.0"
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.4.0'
+    implementation 'androidx.navigation:navigation-runtime-ktx:2.3.5'
 
     // compose start
     implementation 'androidx.activity:activity-compose:1.4.0' // Integration with activities
@@ -85,14 +86,20 @@ dependencies {
     // compose end
 
     // dagger start
-    implementation "com.google.dagger:hilt-android:2.38.1"
-
-    implementation "com.google.dagger:dagger:2.38.1"
-    implementation "com.google.dagger:dagger-android:2.35.1"
-    implementation "com.google.dagger:dagger-android-support:2.16"
-    annotationProcessor "com.google.dagger:dagger-android-processor:2.16"
-    annotationProcessor "com.google.dagger:dagger-compiler:2.16"
+    final dagger2_version = '2.16'
+    implementation "com.google.dagger:dagger:$dagger2_version"
+    implementation "com.google.dagger:dagger-android:$dagger2_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger2_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
+//    annotationProcessor "com.google.dagger:dagger-compiler:2.16"
+//    annotationProcessor "com.google.dagger:dagger-android-processor:2.16"
     // dagger end
+
+    // koin start
+//    implementation "org.koin:koin-core:3.1.4"
+//    implementation "org.koin:koin-core-ext:3.1.4"
+    // koin end
 
     // rxjava
     implementation "io.reactivex.rxjava2:rxjava:2.2.17" // RxJava 본체

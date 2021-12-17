@@ -30,6 +30,6 @@ class RepositoryViewModel: BaseViewModel() {
                         repositoryLiveData.value = "error @@@@"
                     }
                 }
-            ).addTo(mDisposable)
+            ).track()
     }
 }
