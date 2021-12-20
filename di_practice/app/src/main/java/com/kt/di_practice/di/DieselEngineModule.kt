@@ -4,11 +4,20 @@ import com.kt.di_practice.car.parts.engine.DieselEngine
 import com.kt.di_practice.car.parts.engine.Engine
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
+import javax.inject.Named
 
 @Module
-abstract class DieselEngineModule {
+class DieselEngineModule constructor(private val horsePower: Int) {
 
-    // 매개변수로 Engine을 implement하는 DieselEngine 변수 하나만 들어있고 abstract 메소드로 선언되어 있다.
-    @Binds
-    abstract fun bindEngine(engine: DieselEngine): Engine
+    @Provides
+    @Named("horse_power")
+    fun provideHorsePower(): Int { // 방법2: 여기에서 provide를 통해 값을 넘겨준다.
+        return horsePower
+    }
+
+    @Provides
+    fun provideEngine(engine: DieselEngine): Engine {
+        return engine
+    }
 }
