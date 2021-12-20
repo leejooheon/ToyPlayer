@@ -7,7 +7,7 @@ import javax.inject.Named
 
 class DieselEngine @Inject constructor(
     @Named("horse_power")
-    private val horsePower: Int): Engine {
+    private val horsePower: Int): Engine { // // Component에 선언된 값이 주입된다.
 
     @Inject
     override fun start() {
