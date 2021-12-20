@@ -4,11 +4,8 @@ import android.util.Log
 import javax.inject.Inject
 
 class Remote @Inject constructor() {
-    companion object{
-        private val TAG = Remote::class.java.simpleName
-    }
 
     fun setRemote() {
-        Log.d(TAG, "Remote Connected")
+        Log.d(Common.TAG, "Remote Connected")
     }
 }

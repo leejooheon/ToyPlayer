@@ -5,7 +5,7 @@ import com.kt.di_practice.car.Car
 import dagger.Component
 
 
-@Component
+@Component(modules = [WheelsModule::class])
 interface CarComponent {
     fun inject(activity:MainActivity)
 }

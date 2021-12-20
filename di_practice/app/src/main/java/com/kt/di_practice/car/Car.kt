@@ -1,6 +1,7 @@
 package com.kt.di_practice.car
 
 import android.util.Log
+import com.kt.di_practice.car.parts.Common
 import com.kt.di_practice.car.parts.Engine
 import com.kt.di_practice.car.parts.Remote
 import com.kt.di_practice.car.parts.Wheels
@@ -10,11 +11,8 @@ class Car @Inject constructor(
     private val engine: Engine,
     private val wheels: Wheels) {
 
-    companion object{
-        private val TAG = Car::class.java.simpleName
-    }
     init {
-        Log.d(TAG, "init")
+        Log.d(Common.TAG, "Car init")
     }
 
     @Inject
@@ -24,6 +22,6 @@ class Car @Inject constructor(
     }
 
     fun drive() {
-        Log.d(TAG, "driving...")
+        Log.d(Common.TAG, "driving...")
     }
 }
