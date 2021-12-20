@@ -7,13 +7,14 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class WheelsModule {
+class WheelsModule constructor(private val airPressure: Int) {
+
     @Provides
     fun provideRims(): Rims = Rims()
 
     @Provides
-    fun provideTires(): Tires {
-        val tires = Tires()
+    fun provideTires(): Tires { // 방법1: 여기에서 생성자에 값을 넘겨준다.
+        val tires = Tires(airPressure)
         tires.fillAir()
         return tires
     }
