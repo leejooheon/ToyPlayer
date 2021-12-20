@@ -6,6 +6,5 @@ import dagger.Component
 
 @Component
 interface CarComponent {
-//    val Car = getCar()
     val car: Car
 }
