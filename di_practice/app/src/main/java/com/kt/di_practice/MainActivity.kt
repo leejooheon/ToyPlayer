@@ -12,7 +12,9 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var car: Car
+    lateinit var car_1: Car
+    @Inject
+    lateinit var car_2: Car
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         bt_start.setOnClickListener { v ->
-            car.drive()
+            car_1.drive()
+            car_2.drive()
         }
     }
 }
