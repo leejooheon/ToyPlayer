@@ -1,12 +1,12 @@
-package com.kt.di_practice
+package com.kt.di_practice.view
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.kt.di_practice.MyApplication
+import com.kt.di_practice.R
 import com.kt.di_practice.car.Car
-import com.kt.di_practice.di.CarComponent
-import com.kt.di_practice.di.DaggerCarComponent
-import com.kt.di_practice.di.DieselEngineModule
-import com.kt.di_practice.di.WheelsModule
+import com.kt.di_practice.di.component.DaggerActivityComponent
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -20,9 +20,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val carComponent = (application as MyApplication).getComponent()
+        val component = DaggerActivityComponent.builder()
+            .appComponent((application as MyApplication).getComponent())
+            .airPressure(99)
+            .horsePower(230)
+            .build()
 
-        carComponent.inject(this)
+        component.inject(this)
     }
 
     override fun onResume() {
@@ -30,6 +34,9 @@ class MainActivity : AppCompatActivity() {
         bt_start.setOnClickListener { v ->
             car_1.drive()
             car_2.drive()
+        }
+        bt_second.setOnClickListener{ v->
+            startActivity(Intent(this, SecondActivity::class.java))
         }
     }
 }

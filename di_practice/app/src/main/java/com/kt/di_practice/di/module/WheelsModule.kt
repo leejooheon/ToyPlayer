@@ -1,4 +1,4 @@
-package com.kt.di_practice.di
+package com.kt.di_practice.di.module
 
 import com.kt.di_practice.car.parts.Rims
 import com.kt.di_practice.car.parts.Tires

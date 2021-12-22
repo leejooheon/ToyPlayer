@@ -1,22 +1,20 @@
 package com.kt.di_practice
 
 import android.app.Application
-import com.kt.di_practice.di.CarComponent
-import com.kt.di_practice.di.DaggerCarComponent
+import com.kt.di_practice.di.component.ActivityComponent
+import com.kt.di_practice.di.component.AppComponent
+import com.kt.di_practice.di.component.DaggerAppComponent
 
 class MyApplication: Application() {
-    private lateinit var mComponent: CarComponent
+    private lateinit var mComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
 
-        mComponent = DaggerCarComponent.builder()
-            .airPressure(99)
-            .horsePower(230)
-            .build()
+        mComponent = DaggerAppComponent.create()
     }
 
-    fun getComponent(): CarComponent {
+    fun getComponent(): AppComponent {
         return mComponent
     }
 }
