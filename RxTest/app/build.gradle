@@ -2,11 +2,16 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
+
+    kapt {
+        correctErrorTypes true
+    }
 
     defaultConfig {
         applicationId "com.example.rxtest"
@@ -85,21 +90,18 @@ dependencies {
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.5' // UI Tests
     // compose end
 
-    // dagger start
-    final dagger2_version = '2.16'
-    implementation "com.google.dagger:dagger:$dagger2_version"
-    implementation "com.google.dagger:dagger-android:$dagger2_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger2_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
-//    annotationProcessor "com.google.dagger:dagger-compiler:2.16"
-//    annotationProcessor "com.google.dagger:dagger-android-processor:2.16"
-    // dagger end
+    // hilt start: https://dagger.dev/hilt/gradle-setup.html
+    final hiltVersion = "2.40.5"
+    implementation "com.google.dagger:hilt-android:${hiltVersion}"
+    kapt "com.google.dagger:hilt-android-compiler:${hiltVersion}"
+        // For instrumentation tests
+    androidTestImplementation "com.google.dagger:hilt-android-testing:${hiltVersion}"
+    androidTestAnnotationProcessor "com.google.dagger:hilt-compiler:${hiltVersion}"
 
-    // koin start
-//    implementation "org.koin:koin-core:3.1.4"
-//    implementation "org.koin:koin-core-ext:3.1.4"
-    // koin end
+        // For local unit tests
+    testImplementation "com.google.dagger:hilt-android-testing:${hiltVersion}"
+    testAnnotationProcessor "com.google.dagger:hilt-compiler:${hiltVersion}"
+    // hilt end
 
     // rxjava
     implementation "io.reactivex.rxjava2:rxjava:2.2.17" // RxJava 본체
@@ -107,9 +109,9 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1" // Android thread, scheduler에 맞게 포팅해줌
     implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0' // xml componenet의 property들을 observable로 바꿔주는 라이브러리
 
-    // koin
-    implementation "org.koin:koin-androidx-scope:1.0.2"
-    implementation "org.koin:koin-androidx-viewmodel:1.0.2"
+//    // koin
+//    implementation "org.koin:koin-androidx-scope:1.0.2"
+//    implementation "org.koin:koin-androidx-viewmodel:1.0.2"
 
     // picasso
     implementation "com.squareup.picasso:picasso:2.71828"
