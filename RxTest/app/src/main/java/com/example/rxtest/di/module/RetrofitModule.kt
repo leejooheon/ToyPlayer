@@ -1,9 +1,11 @@
-package com.example.rxtest.di.module.app
+package com.example.rxtest.di.module
 
 import com.example.rxtest.BuildConfig
 import com.example.rxtest.data.api.GithubApi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -13,8 +15,9 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
-class NetworkModule {
-    private val TAG = NetworkModule::class.simpleName
+@InstallIn(SingletonComponent::class)
+object RetrofitModule {
+    private val TAG = RetrofitModule::class.simpleName
 
     @Provides
     @Singleton
@@ -45,6 +48,7 @@ class NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun providesGithubApi(retrofit: Retrofit): GithubApi = retrofit.create(GithubApi::class.java)
 
 //    private fun createAuthenticator(): Authenticator {

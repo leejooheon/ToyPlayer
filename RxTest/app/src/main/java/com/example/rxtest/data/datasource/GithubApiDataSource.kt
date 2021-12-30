@@ -5,8 +5,9 @@ import com.example.rxtest.data.common.extension.applyIoScheduler
 import com.example.rxtest.data.mapper.map
 import com.example.rxtest.domain.entity.Entity
 import io.reactivex.Single
+import javax.inject.Inject
 
-class GithubApiDataSource(private val api: GithubApi) : BaseDataSource {
+class GithubApiDataSource @Inject constructor(private val api: GithubApi) : BaseDataSource {
     fun getRepository(owner: String): Single<List<Entity.Repository>> =
         api.getRepository(owner)
             .applyIoScheduler()

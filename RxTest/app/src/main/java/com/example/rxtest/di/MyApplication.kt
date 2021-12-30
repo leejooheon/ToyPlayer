@@ -1,20 +1,15 @@
 package com.example.rxtest.di
 
+import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
-import com.example.rxtest.di.component.DaggerApplicationComponent
-import dagger.android.AndroidInjector
-import dagger.android.support.DaggerApplication
+import dagger.hilt.android.HiltAndroidApp
 
 
-class MyApplication : DaggerApplication() {
-
+@HiltAndroidApp
+class MyApplication : Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         MultiDex.install(this)
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerApplicationComponent.builder().create(this)
     }
 }

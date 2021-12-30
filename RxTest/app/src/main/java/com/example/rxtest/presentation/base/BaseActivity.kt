@@ -6,12 +6,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import dagger.android.support.DaggerAppCompatActivity
 
-abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : DaggerBaseActivity() {
+abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     lateinit var viewDataBinding: T
-    abstract val viewModel: R
     abstract val layoutResourceId: Int
 
     abstract fun initStartView() // 레이아웃을 띄운 직후 호출. 뷰나 액티비티의 속성 등을 초기화. ex) 리사이클러뷰, 툴바, 드로어뷰..
