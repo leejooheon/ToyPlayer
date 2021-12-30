@@ -1,4 +1,4 @@
-package ir.hosseinabbasi.mvvm.di.qualifier
+package com.example.rxtest.di.qualifier
 
 import javax.inject.Qualifier
 

@@ -1,6 +1,5 @@
-package com.example.rxtest.di.home
+package com.example.rxtest.di.module.activity
 
-import androidx.lifecycle.ViewModel
 import com.example.rxtest.data.api.GithubApi
 import com.example.rxtest.data.datasource.GithubApiDataSource
 import com.example.rxtest.data.repository.GithubRepositoryImpl
@@ -9,14 +8,11 @@ import com.example.rxtest.domain.usecase.github.GithubUseCase
 import com.example.rxtest.domain.usecase.github.GithubUseCaseImpl
 import dagger.Module
 import dagger.Provides
-import dagger.android.ContributesAndroidInjector
-import ir.hosseinabbasi.presentation.common.transformer.AsyncFTransformer
 import ir.hosseinabbasi.presentation.common.transformer.AsyncSTransformer
-import retrofit2.Retrofit
 import java.util.*
 
 @Module
-class MainModule {
+class MainActivityModule {
 
     @Provides
     fun provideDatabaseSource(): Objects?{

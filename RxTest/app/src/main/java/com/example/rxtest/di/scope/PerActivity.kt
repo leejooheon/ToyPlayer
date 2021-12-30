@@ -1,4 +1,4 @@
-package ir.hosseinabbasi.mvvm.di.qualifier
+package com.example.rxtest.di.scope
 
 import javax.inject.Scope
 
@@ -7,4 +7,4 @@ import javax.inject.Scope
  */
 @Scope
 @Retention(AnnotationRetention.RUNTIME)
-annotation class PerFragment
+annotation class PerActivity

@@ -1,4 +1,4 @@
-package com.example.rxtest.di
+package com.example.rxtest.di.module.app
 
 import com.example.rxtest.BuildConfig
 import com.example.rxtest.data.api.GithubApi

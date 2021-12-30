@@ -1,15 +1,19 @@
-package com.example.rxtest.di
+package com.example.rxtest.di.module.app
 
 import android.content.Context
 import android.content.res.Resources
-import dagger.Binds
+import com.example.rxtest.di.MyApplication
 
+import com.example.rxtest.di.qualifier.ApplicationContext
+
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import ir.hosseinabbasi.mvvm.di.qualifier.ApplicationContext
+
 import javax.inject.Singleton
 
-@Module(includes = [NetworkModule::class])
+
+@Module
 abstract class AppModule {
 
     @ApplicationContext

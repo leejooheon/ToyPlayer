@@ -8,7 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import dagger.android.support.DaggerAppCompatActivity
 
-abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : DaggerAppCompatActivity() {
+abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : DaggerBaseActivity() {
 
     lateinit var viewDataBinding: T
     abstract val viewModel: R

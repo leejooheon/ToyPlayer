@@ -1,4 +1,4 @@
-package com.example.rxtest.di
+package com.example.rxtest.di.module.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

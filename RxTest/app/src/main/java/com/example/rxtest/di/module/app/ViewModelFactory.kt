@@ -1,10 +1,11 @@
-package com.example.rxtest.di
+package com.example.rxtest.di.module.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 import javax.inject.Provider
 
+// 코드 설명 자료: https://stackoverflow.com/questions/57148913/how-to-use-one-viewmodelfactory-to-provide-viewmodels-with-dagger
 class ViewModelFactory @Inject constructor(
     private val creators: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
