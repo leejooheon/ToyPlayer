@@ -1,8 +1,8 @@
 package com.example.rxtest.di.module
 
-import com.example.rxtest.data.datasource.GithubRemoteDataSource
-import com.example.rxtest.data.datasource.TempDataSource
-import com.example.rxtest.data.repository.GithubRepositoryImpl
+import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
+import com.jooheon.clean_architecture.data.datasource.TempDataSource
+import com.jooheon.clean_architecture.data.repository.GithubRepositoryImpl
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import dagger.Module
 import dagger.Provides

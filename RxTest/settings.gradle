@@ -1,3 +1,4 @@
 rootProject.name = "RxTest"
 include ':app'
 include ':domain'
+include ':data'

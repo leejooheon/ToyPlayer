@@ -1,8 +1,8 @@
-package com.example.rxtest.data.repository
+package com.jooheon.clean_architecture.data.repository
 
 import android.util.Log
-import com.example.rxtest.data.datasource.GithubRemoteDataSource
-import com.example.rxtest.data.datasource.TempDataSource
+import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
+import com.jooheon.clean_architecture.data.datasource.TempDataSource
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.ResultState
 import com.jooheon.clean_architecture.domain.entity.Entity

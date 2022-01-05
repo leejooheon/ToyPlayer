@@ -1,4 +1,4 @@
-package com.example.rxtest.data.datasource
+package com.jooheon.clean_architecture.data.datasource
 
 
 import com.jooheon.clean_architecture.domain.common.BaseResponse

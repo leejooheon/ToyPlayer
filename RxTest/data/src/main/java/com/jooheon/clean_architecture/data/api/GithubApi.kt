@@ -1,4 +1,4 @@
-package com.example.rxtest.data.api
+package com.jooheon.clean_architecture.data.api
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 import io.reactivex.Single

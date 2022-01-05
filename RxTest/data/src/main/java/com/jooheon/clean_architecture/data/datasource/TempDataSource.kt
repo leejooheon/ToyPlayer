@@ -1,7 +1,6 @@
-package com.example.rxtest.data.datasource
+package com.jooheon.clean_architecture.data.datasource
 
 
-import java.util.*
 import javax.inject.Inject
 
 class TempDataSource @Inject constructor()

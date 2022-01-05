@@ -1,7 +1,7 @@
 package com.example.rxtest.di.module
 
 import com.example.rxtest.BuildConfig
-import com.example.rxtest.data.api.GithubApi
+import com.jooheon.clean_architecture.data.api.GithubApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -11,7 +11,6 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton

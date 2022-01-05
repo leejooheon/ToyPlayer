@@ -1,7 +1,7 @@
-package com.example.rxtest.data.datasource
+package com.jooheon.clean_architecture.data.datasource
 
 import android.util.Log
-import com.example.rxtest.data.api.GithubApi
+import com.jooheon.clean_architecture.data.api.GithubApi
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import io.reactivex.Single
