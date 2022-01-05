@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.common
+package com.jooheon.clean_architecture.domain.common
 
 enum class FailureStatus {
     EMPTY,

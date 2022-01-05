@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.entity
+package com.jooheon.clean_architecture.domain.entity
 
 sealed class Entity {
 

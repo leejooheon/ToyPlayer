@@ -1,10 +1,10 @@
 package com.example.rxtest.data.datasource
 
 
-import com.jooheon.clean_architecture.common.BaseResponse
-import com.jooheon.clean_architecture.common.ErrorResponse
-import com.jooheon.clean_architecture.common.FailureStatus
-import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.domain.common.BaseResponse
+import com.jooheon.clean_architecture.domain.common.ErrorResponse
+import com.jooheon.clean_architecture.domain.common.FailureStatus
+import com.jooheon.clean_architecture.domain.common.Resource
 
 import org.json.JSONObject
 import retrofit2.HttpException

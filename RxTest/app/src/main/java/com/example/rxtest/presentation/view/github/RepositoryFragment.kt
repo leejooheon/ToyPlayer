@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.example.rxtest.R
 import com.example.rxtest.presentation.base.BaseFragment
 import com.example.rxtest.databinding.FragmentRepositoryBinding
-import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.example.rxtest.presentation.base.extensions.hideKeyboard
 import com.example.rxtest.presentation.base.extensions.textChanges
 

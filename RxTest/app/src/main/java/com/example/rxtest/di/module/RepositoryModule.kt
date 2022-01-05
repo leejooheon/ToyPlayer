@@ -3,7 +3,7 @@ package com.example.rxtest.di.module
 import com.example.rxtest.data.datasource.GithubRemoteDataSource
 import com.example.rxtest.data.datasource.TempDataSource
 import com.example.rxtest.data.repository.GithubRepositoryImpl
-import com.jooheon.clean_architecture.repository.GithubRepository
+import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

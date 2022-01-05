@@ -1,9 +1,9 @@
-package com.jooheon.clean_architecture.usecase.github
+package com.jooheon.clean_architecture.domain.usecase.github
 
-import com.jooheon.clean_architecture.common.Resource
-import com.jooheon.clean_architecture.common.ResultState
-import com.jooheon.clean_architecture.entity.Entity
-import com.jooheon.clean_architecture.repository.GithubRepository
+import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.common.ResultState
+import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow

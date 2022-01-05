@@ -1,6 +1,6 @@
 package com.example.rxtest.data.api
 
-import com.jooheon.clean_architecture.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.Entity
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.POST

@@ -3,10 +3,10 @@ package com.example.rxtest.data.repository
 import android.util.Log
 import com.example.rxtest.data.datasource.GithubRemoteDataSource
 import com.example.rxtest.data.datasource.TempDataSource
-import com.jooheon.clean_architecture.common.Resource
-import com.jooheon.clean_architecture.common.ResultState
-import com.jooheon.clean_architecture.entity.Entity
-import com.jooheon.clean_architecture.repository.GithubRepository
+import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.common.ResultState
+import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import io.reactivex.Single
 
 // Repository패턴은... 사용하는애가 db에서 가져오는지, api로 가져오는지 신경안써도

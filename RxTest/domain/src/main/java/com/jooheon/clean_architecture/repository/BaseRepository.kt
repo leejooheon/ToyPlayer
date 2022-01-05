@@ -1,3 +1,0 @@
-package com.jooheon.clean_architecture.repository
-
-interface BaseRepository
