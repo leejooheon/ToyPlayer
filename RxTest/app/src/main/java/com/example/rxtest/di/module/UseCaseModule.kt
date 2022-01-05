@@ -1,8 +1,8 @@
 package com.example.rxtest.di.module
 
-import com.example.rxtest.domain.repository.GithubRepository
-import com.example.rxtest.domain.usecase.github.GithubUseCase
-import com.example.rxtest.domain.usecase.github.GithubUseCaseImpl
+import com.jooheon.clean_architecture.repository.GithubRepository
+import com.jooheon.clean_architecture.usecase.github.GithubUseCase
+import com.jooheon.clean_architecture.usecase.github.GithubUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,10 +1,6 @@
 package com.example.rxtest.presentation.view.github
 
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.fragment.app.viewModels
@@ -12,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.example.rxtest.R
 import com.example.rxtest.presentation.base.BaseFragment
 import com.example.rxtest.databinding.FragmentRepositoryBinding
-import com.example.rxtest.domain.common.Resource
+import com.jooheon.clean_architecture.common.Resource
 import com.example.rxtest.presentation.base.extensions.hideKeyboard
 import com.example.rxtest.presentation.base.extensions.textChanges
 

@@ -1,9 +1,8 @@
-package com.example.rxtest.domain.usecase.github
+package com.jooheon.clean_architecture.usecase.github
 
-import com.example.rxtest.domain.common.BaseResponse
-import com.example.rxtest.domain.common.Resource
-import com.example.rxtest.domain.common.ResultState
-import com.example.rxtest.domain.entity.Entity
+import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.common.ResultState
+import com.jooheon.clean_architecture.entity.Entity
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 

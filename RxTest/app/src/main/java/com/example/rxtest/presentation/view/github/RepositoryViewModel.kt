@@ -3,9 +3,9 @@ package com.example.rxtest.presentation.view.github
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.rxtest.domain.common.Resource
-import com.example.rxtest.domain.entity.Entity
-import com.example.rxtest.domain.usecase.github.GithubUseCase
+import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.entity.Entity
+import com.jooheon.clean_architecture.usecase.github.GithubUseCase
 import com.example.rxtest.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

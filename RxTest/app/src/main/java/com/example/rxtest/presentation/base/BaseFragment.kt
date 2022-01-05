@@ -2,6 +2,7 @@ package com.example.rxtest.presentation.base
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,7 @@ abstract class BaseFragment<VB : ViewDataBinding>: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated")
 
         if (!hasInitializedRootView) {
             getFragmentArguments()
@@ -75,10 +77,13 @@ abstract class BaseFragment<VB : ViewDataBinding>: Fragment() {
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-
     fun showLoading() {
         hideLoading()
         mProgressDialog = showLoadingDialog(requireActivity())
     }
     fun hideLoading() = hideLoadingDialog(mProgressDialog, requireActivity())
+
+    companion object {
+        val TAG = "BaseFragment"
+    }
 }

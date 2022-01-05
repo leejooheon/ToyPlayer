@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.rxtest.R
-import com.example.rxtest.domain.usecase.github.GithubUseCase
+import com.jooheon.clean_architecture.usecase.github.GithubUseCase
 import com.example.rxtest.presentation.base.BaseViewModel
 import com.example.rxtest.presentation.view.github.RepositoryFragment
 import dagger.hilt.android.lifecycle.HiltViewModel

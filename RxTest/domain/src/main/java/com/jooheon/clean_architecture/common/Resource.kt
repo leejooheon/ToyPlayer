@@ -1,4 +1,4 @@
-package com.example.rxtest.domain.common
+package com.jooheon.clean_architecture.common
 
 sealed class Resource<out T> {
 

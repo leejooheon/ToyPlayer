@@ -2,8 +2,8 @@ package com.example.rxtest.data.datasource
 
 import android.util.Log
 import com.example.rxtest.data.api.GithubApi
-import com.example.rxtest.domain.common.Resource
-import com.example.rxtest.domain.entity.Entity
+import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.entity.Entity
 import io.reactivex.Single
 import javax.inject.Inject
 

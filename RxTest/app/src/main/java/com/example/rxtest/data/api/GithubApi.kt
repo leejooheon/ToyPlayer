@@ -1,8 +1,6 @@
 package com.example.rxtest.data.api
 
-import com.example.rxtest.domain.common.BaseResponse
-import com.example.rxtest.domain.entity.Entity
-import com.google.gson.annotations.SerializedName
+import com.jooheon.clean_architecture.entity.Entity
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.POST

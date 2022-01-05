@@ -1,13 +1,9 @@
-package com.example.rxtest.domain.usecase.github
+package com.jooheon.clean_architecture.usecase.github
 
-import android.annotation.SuppressLint
-import android.util.Log
-import com.example.rxtest.data.repository.GithubRepositoryImpl
-import com.example.rxtest.domain.common.BaseResponse
-import com.example.rxtest.domain.common.Resource
-import com.example.rxtest.domain.common.ResultState
-import com.example.rxtest.domain.entity.Entity
-import com.example.rxtest.domain.repository.GithubRepository
+import com.jooheon.clean_architecture.common.Resource
+import com.jooheon.clean_architecture.common.ResultState
+import com.jooheon.clean_architecture.entity.Entity
+import com.jooheon.clean_architecture.repository.GithubRepository
 import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -17,29 +13,29 @@ import kotlinx.coroutines.flow.Flow
 class GithubUseCaseImpl(
     private val repository: GithubRepository
 ): GithubUseCase {
-    @SuppressLint("CheckResult")
+
     override fun getRepository(owner: String): Flow<Resource<List<Entity.Repository>>> {
         return flow {
-            Log.d(TAG, "usecase start")
+//            Log.d(TAG, "usecase start")
             emit(Resource.Loading)
             val result = repository.getRepository(owner)
 
             when(result) {
                 is Resource.Success -> {
                     // do something ...
-                    Log.d(TAG, result.value.toString())
+//                    Log.d(TAG, result.value.toString())
                 }
 
                 is Resource.Failure -> {
                     // do something ...
-                    Log.d(TAG, "code: ${result.code}, msg: ${result.message}, status: {$result.failureStatus}")
+//                    Log.d(TAG, "code: ${result.code}, msg: ${result.message}, status: {$result.failureStatus}")
                 }
 
                 is Resource.Default -> {
                     // do something ...
                 }
             }
-            Log.d(TAG, "usecase end")
+//            Log.d(TAG, "usecase end")
             emit(result)
         }.flowOn(Dispatchers.IO)
     }

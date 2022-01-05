@@ -1,11 +1,10 @@
 package com.example.rxtest.data.datasource
 
 
-import android.util.Log
-import com.example.rxtest.domain.common.BaseResponse
-import com.example.rxtest.domain.common.ErrorResponse
-import com.example.rxtest.domain.common.FailureStatus
-import com.example.rxtest.domain.common.Resource
+import com.jooheon.clean_architecture.common.BaseResponse
+import com.jooheon.clean_architecture.common.ErrorResponse
+import com.jooheon.clean_architecture.common.FailureStatus
+import com.jooheon.clean_architecture.common.Resource
 
 import org.json.JSONObject
 import retrofit2.HttpException

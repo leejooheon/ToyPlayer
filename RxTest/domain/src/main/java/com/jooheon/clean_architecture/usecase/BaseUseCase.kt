@@ -1,0 +1,3 @@
+package com.jooheon.clean_architecture.usecase
+
+interface BaseUseCase

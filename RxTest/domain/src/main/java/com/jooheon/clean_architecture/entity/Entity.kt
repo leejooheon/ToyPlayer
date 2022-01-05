@@ -1,6 +1,4 @@
-package com.example.rxtest.domain.entity
-
-import com.google.gson.annotations.SerializedName
+package com.jooheon.clean_architecture.entity
 
 sealed class Entity {
 
