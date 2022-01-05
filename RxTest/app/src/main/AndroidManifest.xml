@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity
-            android:name="com.example.rxtest.presentation.view.main.MainActivity"
+            android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true">
             <intent-filter>
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.example.rxtest.presentation.view.projects.compose.ComposeActivity"
+        <activity android:name="com.jooheon.clean_architecture.presentation.view.projects.compose.ComposeActivity"
             android:exported="true">
         </activity>
     </application>
