@@ -11,7 +11,7 @@ import org.reactivestreams.Publisher
 
 open class BaseViewModel : ViewModel() {
 
-    private val mDisposables = CompositeDisposable()
+    protected val mDisposables = CompositeDisposable()
 
     protected fun Disposable.track() {
         mDisposables.add(this)

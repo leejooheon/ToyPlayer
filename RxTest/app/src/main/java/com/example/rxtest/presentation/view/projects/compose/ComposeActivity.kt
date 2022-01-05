@@ -105,7 +105,7 @@ class ComposeActivity: ComponentActivity() {
                     Text("Lazy Header")
                 }
                 items(list) { content ->
-                    Text(content);
+                    Text(content)
                 }
                 item {
                     Text("Lazy Footer")

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RxTest</string>
+    <string name="some_error">Some error occurred, try again later</string>
 </resources>

@@ -7,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ir.hosseinabbasi.presentation.common.transformer.AsyncSTransformer
 import javax.inject.Singleton
 
 @Module
@@ -17,9 +16,5 @@ class UseCaseModule {
     @Provides
     @Singleton
     fun provideGithubApi(repository: GithubRepository): GithubUseCase =
-        GithubUseCaseImpl(
-            AsyncSTransformer(),
-            AsyncSTransformer(),
-            repository
-        )
+        GithubUseCaseImpl(repository)
 }

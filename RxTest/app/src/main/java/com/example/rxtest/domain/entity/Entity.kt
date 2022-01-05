@@ -7,8 +7,8 @@ sealed class Entity {
     data class Repository(
         val name: String,
         val id: String,
-        val date: String,
-        val url: String
+        val created_at: String,
+        val html_url: String
     ) : Entity()
 
     data class Projects(

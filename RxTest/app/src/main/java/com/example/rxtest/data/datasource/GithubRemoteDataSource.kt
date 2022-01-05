@@ -1,22 +1,24 @@
 package com.example.rxtest.data.datasource
 
+import android.util.Log
 import com.example.rxtest.data.api.GithubApi
-import com.example.rxtest.data.common.extension.applyIoScheduler
-import com.example.rxtest.data.mapper.map
+import com.example.rxtest.domain.common.Resource
 import com.example.rxtest.domain.entity.Entity
 import io.reactivex.Single
 import javax.inject.Inject
 
-class GithubApiDataSource @Inject constructor(private val api: GithubApi) : BaseDataSource {
-    fun getRepository(owner: String): Single<List<Entity.Repository>> =
-        api.getRepository(owner)
-            .applyIoScheduler()
-            .map { item -> item.map { it.map() } }
+class GithubRemoteDataSource @Inject constructor(private val api: GithubApi) : BaseRemoteDataSource() {
+    suspend fun getRepository(owner: String): Resource<List<Entity.Repository>> {
+        Log.d(TAG, "execute datasource")
+        return safeApiCall { api.getRepository(owner) }
+    }
 
-    fun getProjects(owner: String): Single<List<Entity.Projects>> =
-        api.getProjects(owner)
-            .applyIoScheduler()
-            .map { item -> item.map { it.map() } }
+    fun getProjects(owner: String): Single<List<Entity.Projects>> {
+        return api.getProjects(owner)
+    }
+    companion object {
+        val TAG = GithubRemoteDataSource::class.simpleName
+    }
 }
 
 //@SuppressLint("CheckResult") // TODO: 이 annotatiton이 뭐지>??

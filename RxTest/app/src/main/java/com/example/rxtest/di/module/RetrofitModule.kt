@@ -2,6 +2,8 @@ package com.example.rxtest.di.module
 
 import com.example.rxtest.BuildConfig
 import com.example.rxtest.data.api.GithubApi
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,11 +23,10 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun providesRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
     }
@@ -45,6 +46,15 @@ object RetrofitModule {
 //            .addInterceptor(createInterceptor())
 //            .authenticator(createAuthenticator())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .setLenient()
+            .serializeNulls() // To allow sending null values
+            .create()
     }
 
     @Provides
