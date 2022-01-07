@@ -39,7 +39,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initAfterBinding() {
-
+        viewModel.replaceHomeFragment(supportFragmentManager)
     }
 
     override fun getNavControllerId(): Int = 0

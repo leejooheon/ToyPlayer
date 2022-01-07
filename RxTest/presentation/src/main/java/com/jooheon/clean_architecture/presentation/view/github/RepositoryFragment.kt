@@ -32,6 +32,8 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding>() {
 
     }
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     override fun initDataBinding() {
         // viewModel의 LiveData 참조
         viewModel.repositoryLiveData.observe(this, Observer {

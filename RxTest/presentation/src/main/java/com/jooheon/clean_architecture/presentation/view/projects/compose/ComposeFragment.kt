@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.temp.compose
+package com.jooheon.clean_architecture.presentation.view.projects.compose
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.presentation.view.main.MainActivity
-import com.jooheon.clean_architecture.presentation.view.projects.compose.ComposeActivity
 
 @ExperimentalFoundationApi
 class ComposeFragment: Fragment(){
@@ -60,7 +59,7 @@ class ComposeFragment: Fragment(){
             isFloatingActionButtonDocked = false,
             topBar = {
                 TopAppBar(
-                    title = {Text(text = "this is topAppBar")},
+                    title = { Text(text = "this is topAppBar") },
                     backgroundColor = Color.White,
                     navigationIcon = {
                         IconButton(onClick = {
