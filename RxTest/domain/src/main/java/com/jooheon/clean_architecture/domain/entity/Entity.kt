@@ -19,4 +19,9 @@ sealed class Entity {
             val url: String
         )
     }
+
+    data class Commit(
+        val sha: String,
+        val node_id: String
+    )
 }

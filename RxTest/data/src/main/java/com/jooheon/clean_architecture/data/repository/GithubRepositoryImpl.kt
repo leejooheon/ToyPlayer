@@ -25,6 +25,13 @@ class GithubRepositoryImpl(
         return githubRemoteDataSource.getBranch(owner, repository)
     }
 
+    override suspend fun getCommit(
+        owner: String,
+        repository: String
+    ): Resource<List<Entity.Commit>> {
+        return githubRemoteDataSource.getCommit(owner, repository)
+    }
+
     companion object {
         val TAG = GithubRepositoryImpl::class.simpleName
     }

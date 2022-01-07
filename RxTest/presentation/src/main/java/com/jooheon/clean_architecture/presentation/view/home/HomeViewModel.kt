@@ -35,6 +35,7 @@ class HomeViewModel @Inject constructor(
 
     fun onFavoriteClicked() {
         Log.d(TAG, "onFavoriteClicked")
+        callCommitApi("", "")
     }
 
     fun onSearchClicked() {
@@ -60,6 +61,14 @@ class HomeViewModel @Inject constructor(
                     if(!it.value.isEmpty()) {
                         Log.d(TAG, "result - commit: ${it.value.first().commit.sha}, ${it.value.first().commit.url}")
                     }
+                }
+            }.launchIn(viewModelScope)
+    }
+    fun callCommitApi(owner: String, repository: String) {
+        githubUseCase.getCommit("leejooheon", "embSW_2016")
+            .onEach {
+                if(it is Resource.Success) {
+                    Log.d(TAG, "result: ${it.value.size}")
                 }
             }.launchIn(viewModelScope)
     }

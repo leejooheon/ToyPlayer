@@ -46,6 +46,14 @@ class GithubUseCaseImpl(
         }.flowOn(Dispatchers.IO)
     }
 
+    override fun getCommit(owner: String, repository: String): Flow<Resource<List<Entity.Commit>>> {
+        return flow {
+            emit(Resource.Loading)
+            val result = githubRepository.getCommit(owner, repository)
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+    }
+
     companion object {
         val TAG = GithubUseCaseImpl::class.simpleName
     }

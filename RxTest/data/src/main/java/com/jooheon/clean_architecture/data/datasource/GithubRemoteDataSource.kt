@@ -14,7 +14,12 @@ class GithubRemoteDataSource @Inject constructor(private val api: GithubApi) : B
 
     suspend fun getBranch(owner: String, repository: String): Resource<List<Entity.Branch>> {
         Log.d(TAG, "execute getBranch")
-        return safeApiCall { api.getBranches(owner, repository) }
+        return safeApiCall { api.getBranch(owner, repository) }
+    }
+
+    suspend fun getCommit(owner: String, repository: String): Resource<List<Entity.Commit>> {
+        Log.d(TAG, "execute getCommit")
+        return safeApiCall { api.getCommit(owner, repository) }
     }
 
     companion object {

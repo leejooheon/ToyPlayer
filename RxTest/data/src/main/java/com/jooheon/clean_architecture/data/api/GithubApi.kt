@@ -10,5 +10,8 @@ interface GithubApi {
     suspend fun getRepository(@Path("owner") owner: String) : List<Entity.Repository>
 
     @GET("repos/{owner}/{repository}/branches")
-    suspend fun getBranches(@Path("owner") owner: String, @Path("repository") repository: String): List<Entity.Branch>
+    suspend fun getBranch(@Path("owner") owner: String, @Path("repository") repository: String): List<Entity.Branch>
+
+    @GET("repos/{owner}/{repository}/commits")
+    suspend fun getCommit(@Path("owner") owner: String, @Path("repository") repository: String): List<Entity.Commit>
 }
