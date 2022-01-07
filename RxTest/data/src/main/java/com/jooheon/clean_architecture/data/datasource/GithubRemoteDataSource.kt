@@ -8,8 +8,13 @@ import javax.inject.Inject
 
 class GithubRemoteDataSource @Inject constructor(private val api: GithubApi) : BaseRemoteDataSource() {
     suspend fun getRepository(owner: String): Resource<List<Entity.Repository>> {
-        Log.d(TAG, "execute datasource")
+        Log.d(TAG, "execute getRepository")
         return safeApiCall { api.getRepository(owner) }
+    }
+
+    suspend fun getBranch(owner: String, repository: String): Resource<List<Entity.Branch>> {
+        Log.d(TAG, "execute getBranch")
+        return safeApiCall { api.getBranches(owner, repository) }
     }
 
     companion object {

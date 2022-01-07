@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.Flow
 
 class GithubUseCaseImpl(
-    private val repository: GithubRepository
+    private val githubRepository: GithubRepository
 ): GithubUseCase {
 
     override fun getRepository(owner: String): Flow<Resource<List<Entity.Repository>>> {
         return flow {
 //            Log.d(TAG, "usecase start")
             emit(Resource.Loading)
-            val result = repository.getRepository(owner)
+            val result = githubRepository.getRepository(owner)
 
             when(result) {
                 is Resource.Success -> {
@@ -34,6 +34,14 @@ class GithubUseCaseImpl(
                 }
             }
 //            Log.d(TAG, "usecase end")
+            emit(result)
+        }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getBranch(owner: String, repository: String): Flow<Resource<List<Entity.Branch>>> {
+        return flow {
+            emit(Resource.Loading)
+            val result = githubRepository.getBranch(owner, repository)
             emit(result)
         }.flowOn(Dispatchers.IO)
     }

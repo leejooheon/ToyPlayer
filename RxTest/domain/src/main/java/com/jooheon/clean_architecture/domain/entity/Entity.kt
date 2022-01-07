@@ -8,4 +8,15 @@ sealed class Entity {
         val created_at: String,
         val html_url: String
     ) : Entity()
+
+    data class Branch(
+        val name: String,
+        val commit: Commit,
+        val protected: Boolean
+    ) : Entity() {
+        data class Commit(
+            val sha: String,
+            val url: String
+        )
+    }
 }

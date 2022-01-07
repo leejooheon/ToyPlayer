@@ -52,4 +52,15 @@ class HomeViewModel @Inject constructor(
                 onUpdate.value = !onUpdate.value
             }.launchIn(viewModelScope)
     }
+    fun callBranchApi(owner: String, repository: String) {
+        githubUseCase.getBranch(owner, repository)
+            .onEach {
+                if(it is Resource.Success) {
+                    Log.d(TAG, "result: ${it.value}")
+                    if(!it.value.isEmpty()) {
+                        Log.d(TAG, "result - commit: ${it.value.first().commit.sha}, ${it.value.first().commit.url}")
+                    }
+                }
+            }.launchIn(viewModelScope)
+    }
 }

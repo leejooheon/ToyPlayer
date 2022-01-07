@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface GithubUseCase {
     fun getRepository(owner: String): Flow<Resource<List<Entity.Repository>>>
+    fun getBranch(owner: String, repository: String): Flow<Resource<List<Entity.Branch>>>
 }

@@ -18,6 +18,13 @@ class GithubRepositoryImpl(
         return githubRemoteDataSource.getRepository(owner)
     }
 
+    override suspend fun getBranch(
+        owner: String,
+        repository: String
+    ): Resource<List<Entity.Branch>> {
+        return githubRemoteDataSource.getBranch(owner, repository)
+    }
+
     companion object {
         val TAG = GithubRepositoryImpl::class.simpleName
     }
