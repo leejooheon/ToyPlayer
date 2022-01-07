@@ -8,12 +8,4 @@ sealed class Entity {
         val created_at: String,
         val html_url: String
     ) : Entity()
-
-    data class Projects(
-        val accept: String,
-        val org: String,
-        val state: String,
-        val perPage: String,
-        val page: String
-    ) : Entity()
 }

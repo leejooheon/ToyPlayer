@@ -24,11 +24,8 @@ class HomeViewModel @Inject constructor(
 ): BaseViewModel() {
     private val TAG = HomeViewModel::class.java.simpleName
 
-    private val _repositoryResponse = MutableStateFlow<Resource<List<Entity.Repository>>>(Resource.Default)
-    val repositoryResponse = _repositoryResponse
-
-    private val _repositoryList =  mutableStateListOf<Entity.Repository>() // viewModel에서 값에 대한 변경권을 갖고 (private),
-    val repositoryList: SnapshotStateList<Entity.Repository> = _repositoryList // view에서는 State를 활용해 참조만 가능하게 한다.
+    private val _repositoryResponse = MutableStateFlow<Resource<List<Entity.Repository>>>(Resource.Default)  // viewModel에서 값에 대한 변경권을 갖고 (private),
+    val repositoryResponse = _repositoryResponse // view에서는 State를 활용해 참조만 가능하게 한다.
 
     var onUpdate = mutableStateOf(false)
 

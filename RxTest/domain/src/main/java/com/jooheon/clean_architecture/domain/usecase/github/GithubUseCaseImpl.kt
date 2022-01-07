@@ -1,10 +1,8 @@
 package com.jooheon.clean_architecture.domain.usecase.github
 
 import com.jooheon.clean_architecture.domain.common.Resource
-import com.jooheon.clean_architecture.domain.common.ResultState
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
-import io.reactivex.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -39,12 +37,6 @@ class GithubUseCaseImpl(
             emit(result)
         }.flowOn(Dispatchers.IO)
     }
-
-
-
-    override fun getProjects(owner: String): Single<ResultState<List<Entity.Projects>>> =
-        repository.getProjects(owner)
-
 
     companion object {
         val TAG = GithubUseCaseImpl::class.simpleName

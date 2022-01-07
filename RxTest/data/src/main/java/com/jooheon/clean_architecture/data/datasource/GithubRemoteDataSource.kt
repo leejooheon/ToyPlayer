@@ -4,7 +4,6 @@ import android.util.Log
 import com.jooheon.clean_architecture.data.api.GithubApi
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
-import io.reactivex.Single
 import javax.inject.Inject
 
 class GithubRemoteDataSource @Inject constructor(private val api: GithubApi) : BaseRemoteDataSource() {
@@ -13,9 +12,6 @@ class GithubRemoteDataSource @Inject constructor(private val api: GithubApi) : B
         return safeApiCall { api.getRepository(owner) }
     }
 
-    fun getProjects(owner: String): Single<List<Entity.Projects>> {
-        return api.getProjects(owner)
-    }
     companion object {
         val TAG = GithubRemoteDataSource::class.simpleName
     }
