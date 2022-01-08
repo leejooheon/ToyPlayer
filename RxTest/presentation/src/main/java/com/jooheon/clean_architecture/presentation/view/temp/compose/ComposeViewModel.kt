@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.projects.compose
+package com.jooheon.clean_architecture.presentation.view.temp.compose
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -7,7 +7,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.jooheon.clean_architecture.presentation.R
 
-import com.jooheon.clean_architecture.presentation.view.projects.compose.model.CardModel
+import com.jooheon.clean_architecture.presentation.view.temp.compose.model.CardModel
 
 class ComposeViewModel: ViewModel() {
     private val _cards =  mutableStateListOf<CardModel>() // viewModel에서 값에 대한 변경권을 갖고 (private),

@@ -12,7 +12,7 @@ import com.jooheon.clean_architecture.presentation.view.github.RepositoryFragmen
 import com.jooheon.clean_architecture.presentation.view.home.HomeFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-import com.jooheon.clean_architecture.presentation.view.projects.compose.ComposeFragment
+import com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeFragment
 import javax.inject.Inject
 
 @HiltViewModel
