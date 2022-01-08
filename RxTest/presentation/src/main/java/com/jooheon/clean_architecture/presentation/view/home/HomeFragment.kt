@@ -26,14 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.BaseComposeFragment
-import com.jooheon.clean_architecture.presentation.theme.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
-import com.jooheon.clean_architecture.presentation.view.projects.compose.ComposeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 

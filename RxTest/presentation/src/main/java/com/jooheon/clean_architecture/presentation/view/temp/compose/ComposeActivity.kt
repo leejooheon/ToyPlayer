@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.projects.compose
+package com.jooheon.clean_architecture.presentation.view.temp.compose
 
 import android.os.Bundle
 import android.util.Log
@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jooheon.clean_architecture.presentation.theme.ApplicationTheme
-import com.jooheon.clean_architecture.presentation.view.projects.compose.model.CardModel
+import com.jooheon.clean_architecture.presentation.view.temp.compose.model.CardModel
 
 @ExperimentalFoundationApi
 class ComposeActivity: ComponentActivity() {

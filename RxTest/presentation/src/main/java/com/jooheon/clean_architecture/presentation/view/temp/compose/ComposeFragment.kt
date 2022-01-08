@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.projects.compose
+package com.jooheon.clean_architecture.presentation.view.temp.compose
 
 import android.content.Intent
 import android.os.Bundle
