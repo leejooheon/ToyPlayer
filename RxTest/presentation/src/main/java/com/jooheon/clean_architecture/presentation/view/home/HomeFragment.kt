@@ -178,46 +178,4 @@ class HomeFragment : BaseComposeFragment() {
             Text(text = text)
         }
     }
-
-    override fun observeAPICall() {
-        super.observeAPICall()
-
-        lifecycleScope.launchWhenResumed {
-            viewModel.repositoryResponse.collect {
-                if (it == Resource.Loading) {
-                    showLoading()
-                } else {
-                    hideLoading()
-                }
-
-                when(it) {
-                    is Resource.Success -> {
-                        Log.d(TAG, "Success ${it.value}")
-                    }
-                    is Resource.Failure -> {
-                        Log.d(TAG, "Failure ${it.message}, ${it.failureStatus}, ${it.code}")
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launchWhenResumed {
-            viewModel.commitResponse.collect {
-                if(it == Resource.Loading) {
-                    showLoading()
-                } else {
-                    hideLoading()
-                }
-
-                when(it) {
-                    is Resource.Success -> {
-                        Log.d(TAG, "Success ${it.value}")
-                    }
-                    is Resource.Failure -> {
-                        Log.d(TAG, "Failure ${it.message}, ${it.failureStatus}, ${it.code}")
-                    }
-                }
-            }
-        }
-    }
 }
