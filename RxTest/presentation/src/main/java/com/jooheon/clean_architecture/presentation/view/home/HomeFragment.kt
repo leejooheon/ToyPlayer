@@ -29,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.BaseComposeFragment
+import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
 import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -130,12 +131,18 @@ class HomeFragment : BaseComposeFragment() {
     fun HelloText() {
         val response = viewModel.repositoryResponse.value
 
+        if(response is Resource.Loading) {
+            showLoading()
+        } else {
+            hideLoading()
+        }
+
         when(response) {
             is Resource.Success -> {
                 DrawRepositories(response.value)
             }
             is Resource.Failure -> {
-                InfoText(text = "Resource.Failure")
+                handleApiFailure(response = response)
             }
             is Resource.Default -> {
                 InfoText(text = "Resource.Default")
