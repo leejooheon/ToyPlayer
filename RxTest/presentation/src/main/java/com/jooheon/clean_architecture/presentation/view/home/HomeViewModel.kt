@@ -27,7 +27,12 @@ class HomeViewModel @Inject constructor(
     private val _repositoryResponse = MutableStateFlow<Resource<List<Entity.Repository>>>(Resource.Default)  // viewModel에서 값에 대한 변경권을 갖고 (private),
     val repositoryResponse = _repositoryResponse // view에서는 State를 활용해 참조만 가능하게 한다.
 
+    private val _commitResponse = MutableStateFlow<Resource<List<Entity.Commit>>>(Resource.Default)
+    val commitResponse = _commitResponse
+
     var onUpdate = mutableStateOf(false)
+
+    private var lastSearchedOwner: String? = null
 
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
@@ -35,7 +40,6 @@ class HomeViewModel @Inject constructor(
 
     fun onFavoriteClicked() {
         Log.d(TAG, "onFavoriteClicked")
-        callCommitApi("", "")
     }
 
     fun onSearchClicked() {
@@ -46,6 +50,7 @@ class HomeViewModel @Inject constructor(
         Log.d(TAG, "onSettingClicked")
     }
     fun callRepositoryApi(owner: String) {
+        lastSearchedOwner = owner
         githubUseCase.getRepository(owner)
             .onEach {
                 Log.d(TAG, "result: ${it}")
@@ -64,12 +69,15 @@ class HomeViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
     }
-    fun callCommitApi(owner: String, repository: String) {
-        githubUseCase.getCommit("leejooheon", "embSW_2016")
-            .onEach {
-                if(it is Resource.Success) {
-                    Log.d(TAG, "result: ${it.value.size}")
-                }
-            }.launchIn(viewModelScope)
+    fun callCommitApi(repository: String) {
+        lastSearchedOwner?.let { owner ->
+            githubUseCase.getCommit(owner, repository)
+                .onEach {
+                    _commitResponse.value = it
+                    onUpdate.value = !onUpdate.value
+                }.launchIn(viewModelScope)
+        }?.run {
+            // TODO: notify to view
+        }
     }
 }
