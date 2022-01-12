@@ -8,9 +8,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,13 +17,17 @@ class HomeViewModel @Inject constructor(
 ): BaseViewModel() {
     private val TAG = HomeViewModel::class.java.simpleName
 
-    private val _repositoryResponse = MutableStateFlow<Resource<List<Entity.Repository>>>(Resource.Default)  // viewModel에서 값에 대한 변경권을 갖고 (private),
+    private val _repositoryResponse = mutableStateOf<Resource<List<Entity.Repository>>>(Resource.Default)  // viewModel에서 값에 대한 변경권을 갖고 (private),
     val repositoryResponse = _repositoryResponse // view에서는 State를 활용해 참조만 가능하게 한다.
 
-    private val _commitResponse = MutableStateFlow<Resource<List<Entity.Commit>>>(Resource.Default)
+    private val _commitResponse = mutableStateOf<Resource<List<Entity.Commit>>>(Resource.Default)
     val commitResponse = _commitResponse
 
-    var onUpdate = mutableStateOf(false)
+    private val _branchResponse = mutableStateOf<Resource<List<Entity.Branch>>>(Resource.Default)
+    val branchResponse = _branchResponse
+
+    private val _loadingResponse = mutableStateOf(false)
+    val loadingResponse = _loadingResponse
 
     private var lastSearchedOwner: String? = null
 
@@ -44,35 +46,68 @@ class HomeViewModel @Inject constructor(
     fun onSettingClicked() {
         Log.d(TAG, "onSettingClicked")
     }
+
     fun callRepositoryApi(owner: String) {
         lastSearchedOwner = owner
         githubUseCase.getRepository(owner)
             .onEach {
                 Log.d(TAG, "result: ${it}")
+
+                _loadingResponse.value = it is Resource.Loading
                 _repositoryResponse.value = it
-                onUpdate.value = !onUpdate.value
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
-    fun callBranchApi(owner: String, repository: String) {
-        githubUseCase.getBranch(owner, repository)
-            .onEach {
-                if(it is Resource.Success) {
-                    Log.d(TAG, "result: ${it.value}")
-                    if(!it.value.isEmpty()) {
-                        Log.d(TAG, "result - commit: ${it.value.first().commit.sha}, ${it.value.first().commit.url}")
-                    }
-                }
-            }.launchIn(viewModelScope)
+
+    fun callBranchApi(repository: String) {
+        lastSearchedOwner?.let { owner ->
+            githubUseCase.getBranch(owner, repository)
+                .onEach {
+                    Log.d(TAG, "result: ${it}")
+
+                    _loadingResponse.value = it is Resource.Loading
+                    _branchResponse.value = it
+                }.launchIn(viewModelScope)
+        }
     }
+
     fun callCommitApi(repository: String) {
         lastSearchedOwner?.let { owner ->
             githubUseCase.getCommit(owner, repository)
+                .map { it }
                 .onEach {
+                    _loadingResponse.value = it is Resource.Loading
                     _commitResponse.value = it
-                    onUpdate.value = !onUpdate.value
-                }.launchIn(viewModelScope)
+                }.catch {
+                    // If an error happens
+                }
+                .launchIn(viewModelScope)
         }?.run {
             // TODO: notify to view
         }
     }
+
+    fun multipleApiTest(repository: String) {
+        githubUseCase.getBranchAndCommit(lastSearchedOwner!!, repository)
+            .onEach {
+                val branchResponse = it.first
+                val commitResponse = it.second
+                Log.d(TAG, "result: ${commitResponse is Resource.Loading}")
+
+                _loadingResponse.value = commitResponse is Resource.Loading
+
+                if(commitResponse is Resource.Success) {
+                    Log.d(TAG, "commitResponse: ${commitResponse.value}")
+                    _commitResponse.value = commitResponse
+                }
+                if(branchResponse is Resource.Success) {
+                    Log.d(TAG, "branchResponse: ${branchResponse.value}")
+                    _branchResponse.value = branchResponse
+                }
+
+            }.catch {
+
+            }.launchIn(viewModelScope)
+    }
+
 }

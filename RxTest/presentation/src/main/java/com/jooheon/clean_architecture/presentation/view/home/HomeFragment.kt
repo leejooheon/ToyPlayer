@@ -25,15 +25,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.BaseComposeFragment
-import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
 import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class HomeFragment : BaseComposeFragment() {
@@ -112,30 +109,26 @@ class HomeFragment : BaseComposeFragment() {
             }
         ) {
             // screen conetnt
-            ReComposableHandler()
+            HelloText()
+            LoadingHandler()
         }
     }
 
-    @ExperimentalMaterialApi
-    @ExperimentalFoundationApi
     @Composable
-    fun ReComposableHandler() {
-        viewModel.onUpdate.value
-        HelloText()
+    fun LoadingHandler() {
+        viewModel.loadingResponse.value
+        if(viewModel.loadingResponse.value) {
+            showLoading()
+        } else {
+            hideLoading()
+        }
     }
-
 
     @ExperimentalMaterialApi
     @ExperimentalFoundationApi
     @Composable
     fun HelloText() {
         val response = viewModel.repositoryResponse.value
-
-        if(response is Resource.Loading) {
-            showLoading()
-        } else {
-            hideLoading()
-        }
 
         when(response) {
             is Resource.Success -> {
@@ -166,7 +159,8 @@ class HomeFragment : BaseComposeFragment() {
                     modifier,
                     repository,
                     onItemClicked = {
-                        viewModel.callCommitApi(it.name)
+//                        viewModel.callCommitApi(it.name)
+                                    viewModel.multipleApiTest(it.name)
                     },
                     onInfoButtonClicked = {
 
