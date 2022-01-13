@@ -16,6 +16,7 @@ object Libraries {
     const val retrofitConverter = "com.squareup.retrofit2:converter-gson:2.9.0"
     const val retrofitMock = "com.squareup.retrofit2:retrofit-mock:2.4.0"
     const val interceptor = "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
+    const val chuckLogging = "com.readystatesoftware.chuck:library:1.1.0"
 
     // xml component to rx observable
     const val rxConverter = "com.jakewharton.rxbinding4:rxbinding:4.0.0"  // xml componenet의 property들을 observable로 바꿔주는 라이브러리

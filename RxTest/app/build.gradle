@@ -87,6 +87,5 @@ dependencies {
     implementation(Libraries.retrofitConverter)
     implementation(Libraries.retrofitMock)
     implementation(Libraries.interceptor)
-
-
+    implementation(Libraries.chuckLogging)
 }
