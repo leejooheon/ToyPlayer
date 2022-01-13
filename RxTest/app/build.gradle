@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -77,12 +78,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
     implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0' // xml componenet의 property들을 observable로 바꿔주는 라이브러리
 
-    // util
-    implementation 'androidx.multidex:multidex:2.0.1'
-
     // retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
     implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
+
+    // util
+    implementation 'androidx.multidex:multidex:2.0.1'
 }

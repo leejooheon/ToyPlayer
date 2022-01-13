@@ -13,7 +13,6 @@
         android:supportsRtl="true">
         <activity
             android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,6 +24,16 @@
         <activity android:name="com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeActivity"
             android:exported="true">
         </activity>
+
+
+        <service
+            android:name="com.jooheon.clean_architecture.presentation.service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

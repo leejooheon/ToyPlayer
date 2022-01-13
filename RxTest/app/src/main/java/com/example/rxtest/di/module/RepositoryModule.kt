@@ -2,7 +2,10 @@ package com.example.rxtest.di.module
 
 import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
+import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.repository.FirebaseTokenRepositoryImpl
 import com.jooheon.clean_architecture.data.repository.GithubRepositoryImpl
+import com.jooheon.clean_architecture.domain.repository.FirebaseTokenRepository
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import dagger.Module
 import dagger.Provides
@@ -22,4 +25,13 @@ class RepositoryModule {
     ): GithubRepository {
         return GithubRepositoryImpl(githubRemoteDataSource, databaseSource)
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseTokenRepository(
+        appPreferences: AppPreferences
+    ): FirebaseTokenRepository {
+        return FirebaseTokenRepositoryImpl(appPreferences)
+    }
+
 }

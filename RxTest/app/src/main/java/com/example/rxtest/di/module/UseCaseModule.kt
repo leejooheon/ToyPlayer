@@ -1,6 +1,9 @@
 package com.example.rxtest.di.module
 
+import com.jooheon.clean_architecture.domain.repository.FirebaseTokenRepository
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
+import com.jooheon.clean_architecture.domain.usecase.firebase.FirebaseTokenUseCase
+import com.jooheon.clean_architecture.domain.usecase.firebase.FirebaseTokenUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCaseImpl
 import dagger.Module
@@ -17,4 +20,9 @@ class UseCaseModule {
     @Singleton
     fun provideGithubApi(repository: GithubRepository): GithubUseCase =
         GithubUseCaseImpl(repository)
+
+    @Provides
+    @Singleton
+    fun provideFirebaseTokenUseCase(firebaseTokenRepository: FirebaseTokenRepository): FirebaseTokenUseCase =
+        FirebaseTokenUseCaseImpl(firebaseTokenRepository)
 }
