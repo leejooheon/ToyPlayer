@@ -24,4 +24,11 @@ sealed class Entity {
         val sha: String,
         val node_id: String
     )
+
+    data class User(
+        val refreshToken: String,
+        val token: String,
+        val tokenExpirationDate: String,
+        val userId: String
+    )
 }
