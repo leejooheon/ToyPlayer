@@ -50,23 +50,30 @@ object RetrofitModule {
         authenticator: Authenticator,
         @ApplicationContext context: Context
     ): OkHttpClient {
-        return if(BuildConfig.DEBUG) {
-            OkHttpClient.Builder()
+        val okHttpClient: OkHttpClient
+        if(BuildConfig.DEBUG) {
+            val builder = OkHttpClient.Builder()
                 .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
                 .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
                 .authenticator(authenticator)
                 .addInterceptor(headersInterceptor)
                 .addNetworkInterceptor(httpLoggingInterceptor)
-                .addInterceptor(ChuckInterceptor(context))
-                .build()
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                builder.addInterceptor(ChuckInterceptor(context))
+            }
+
+            okHttpClient = builder.build()
         } else {
-            OkHttpClient.Builder()
+            okHttpClient = OkHttpClient.Builder()
                 .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
                 .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
                 .authenticator(authenticator)
                 .addInterceptor(headersInterceptor)
                 .build()
         }
+
+        return okHttpClient
     }
 
     @Provides
@@ -111,6 +118,12 @@ object RetrofitModule {
         return authenticator
     }
 
+    @Provides
+    fun provideOkHttpClientBuilder(): OkHttpClient.Builder = OkHttpClient.Builder()
+
+    @Provides
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
+
     private fun getXclientDescription(): String {
         var info = BuildConfig.APPLICATION_ID
 
@@ -129,8 +142,8 @@ object RetrofitModule {
     private fun isRequireAuthorizationHeader(url: HttpUrl): Boolean {
         val path = url.encodedPath
         return !path.isEmpty() &&
-                (path == "/oauth/token" ||
-                        path == "/api/v100/service/info") // FIXME: const val로 변경해야함
+                (path.equals("/oauth/token") ||
+                 path.equals("/api/v100/service/info")) // FIXME: const val로 변경해야함
     }
 
     private fun responseCount(response: Response): Int {
@@ -141,9 +154,4 @@ object RetrofitModule {
         }
         return result
     }
-    @Provides
-    fun provideOkHttpClientBuilder(): OkHttpClient.Builder = OkHttpClient.Builder()
-
-    @Provides
-    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor()
 }
