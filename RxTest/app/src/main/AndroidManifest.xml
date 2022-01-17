@@ -10,16 +10,27 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.RxTest"
         android:supportsRtl="true">
+
+
         <activity
-            android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
-            android:exported="true">
+            android:name="com.jooheon.clean_architecture.presentation.view.splash.SplashActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"
+            android:screenOrientation="fullSensor">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:exported="false"/>
 
         <activity android:name="com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeActivity"
             android:exported="true">
