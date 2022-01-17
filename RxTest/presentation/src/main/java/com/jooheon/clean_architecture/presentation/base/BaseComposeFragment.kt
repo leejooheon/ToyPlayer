@@ -11,12 +11,15 @@ import androidx.compose.runtime.remember
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.presentation.utils.forcehideLoadingDialog
 import com.jooheon.clean_architecture.presentation.utils.hideLoadingDialog
 import com.jooheon.clean_architecture.presentation.utils.showLoadingDialog
 import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
 
 abstract class BaseComposeFragment: Fragment() {
     private var mProgressDialog: Dialog? = null
+    private var mProgressDialogMillis: Long = 0L
+
     private var hasInitializedRootView: Boolean = false
 
     open fun registerListeners() {}
@@ -43,10 +46,14 @@ abstract class BaseComposeFragment: Fragment() {
     }
 
     fun showLoading() {
-        hideLoading()
+        forcehideLoadingDialog(mProgressDialog, requireActivity())
         mProgressDialog = showLoadingDialog(requireActivity())
+        mProgressDialogMillis = System.currentTimeMillis()
     }
-    fun hideLoading() = hideLoadingDialog(mProgressDialog, requireActivity())
+
+    fun hideLoading() {
+        hideLoadingDialog(mProgressDialog, requireActivity(), System.currentTimeMillis() - mProgressDialogMillis)
+    }
 
     @Composable
     fun handleApiFailure(response: Resource.Failure) {
