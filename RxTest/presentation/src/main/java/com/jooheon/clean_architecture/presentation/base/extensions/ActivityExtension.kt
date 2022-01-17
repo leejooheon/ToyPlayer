@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.common
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,4 +22,12 @@ fun AppCompatActivity.replaceFragment(
 fun AppCompatActivity.startActivityWithFinish(context: Context, activity: Class<*>) {
     startActivity(Intent(context, activity).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     this.finish()
+}
+
+fun <A : Activity> Activity.openActivityAndClearStack(activity: Class<A>) {
+    Intent(this, activity).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(this)
+        finish()
+    }
 }
