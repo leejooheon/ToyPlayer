@@ -9,7 +9,6 @@ import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.view.github.RepositoryFragment
-import com.jooheon.clean_architecture.presentation.view.home.HomeFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 
 import com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeFragment
@@ -35,9 +34,6 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
     }
 
     fun replaceHomeFragment(supportFragmentManager: FragmentManager) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<HomeFragment>(R.id.fragment_container_view)
-        }
+
     }
 }
