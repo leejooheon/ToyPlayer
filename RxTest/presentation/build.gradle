@@ -52,6 +52,7 @@ dependencies {
     implementation(Libraries.navigationUI)
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
+    implementation(Libraries.splashScreen)
 
     // coroutine
     implementation(Libraries.coroutineCore)
@@ -66,7 +67,13 @@ dependencies {
     implementation(Libraries.composeAnimation)
     implementation(Libraries.composeUiTools)
     implementation(Libraries.composeViewModel)
+    implementation(Libraries.composeIcon)
     androidTestImplementation(Libraries.composeTest)
+
+    // accompanist
+    implementation(Libraries.accompanistAnimation)
+    implementation(Libraries.accompanistInsets)
+    implementation(Libraries.accompanistInsetsUi)
 
     // hilt
     implementation(Libraries.hilt)
