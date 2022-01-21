@@ -5,13 +5,18 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -19,14 +24,20 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.AppBarAlphas
+import com.jooheon.clean_architecture.presentation.utils.HandleApiFailure
+import com.jooheon.clean_architecture.presentation.utils.ShowLoading
+import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import kotlinx.coroutines.flow.collect
 
@@ -37,6 +48,7 @@ private const val TAG = "Home"
 internal fun Home(
     onOpenSettings: () -> Unit,
 ) {
+    val viewModel: HomeViewModel = hiltViewModel()
     val navController = rememberAnimatedNavController()
 
     LaunchedEffect(navController) {
@@ -71,7 +83,7 @@ internal fun Home(
                 backgroundColor = Color.White,
                 navigationIcon = {
                     IconButton(onClick = {
-//                        viewModel.onNavigationClicked()
+                        viewModel.onNavigationClicked()
                         Log.d(TAG, "Menu IconButton")
                     }) {
                         Icon(Icons.Filled.Menu, contentDescription = null)
@@ -83,13 +95,13 @@ internal fun Home(
                         GithubSearchDialog(openDialog = openDialog, onDismiss = { owner ->
                             if (!owner.isEmpty()) {
                                 Log.d(TAG, owner)
-//                                viewModel.callRepositoryApi(owner)
+                                viewModel.callRepositoryApi(owner)
                             }
                         })
                     }
 
                     IconButton(onClick = {
-//                        viewModel.onFavoriteClicked()
+                        viewModel.onFavoriteClicked()
                         Log.d(TAG, "Favorite IconButton")
                     }) {
                         Icon(
@@ -106,7 +118,7 @@ internal fun Home(
                         )
                     }
                     IconButton(onClick = {
-//                        viewModel.onSettingClicked()
+                        viewModel.onSettingClicked()
                         Log.d(TAG, "Settings IconButton")
                     }) {
                         Icon(Icons.Filled.Settings, contentDescription = null)
@@ -118,7 +130,77 @@ internal fun Home(
             Text(text = "drawerContent")
         }
     ) {
+        LaunchInGithubRepositoryComposition(viewModel)
+    }
+}
 
+
+// TODO: NavGraphBuilder로 해서 옮기자
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun LaunchInGithubRepositoryComposition(viewModel: HomeViewModel) {
+    val response = viewModel.repositoryResponse.value
+
+    when(response) {
+        is Resource.Loading -> {
+            ShowLoading()
+        }
+        is Resource.Success -> {
+            DrawRepositories(viewModel, response.value)
+        }
+        is Resource.Failure -> {
+            HandleApiFailure(response = response)
+        }
+        is Resource.Default -> {
+            InfoText(text = "Resource.Default")
+        }
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun DrawRepositories(
+    viewModel: HomeViewModel,
+    repositories: List<Entity.Repository>
+) {
+    val repositoryList = remember { mutableStateListOf<Entity.Repository>() }
+
+    LaunchedEffect(Unit) {
+        val list = repositories
+        repositoryList.addAll(list)
+    }
+
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        cells = GridCells.Fixed(2)
+    ) {
+        itemsIndexed(repositories) { index, repository ->
+            val modifier = Modifier
+                .fillMaxWidth(0.5f) // half width
+                .padding(16.dp)
+            GithubRepositoryCard(
+                modifier,
+                repository,
+                onItemClicked = {
+//                        viewModel.callCommitApi(it.name)
+                    viewModel.multipleApiTest(it.name)
+                },
+                onInfoButtonClicked = {
+
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun InfoText(text: String) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = text)
     }
 }
 
@@ -256,3 +338,9 @@ private val HomeNavigationItems = listOf(
         iconImageVector = Icons.Default.Search,
     ),
 )
+
+@Preview
+@Composable
+fun PreviewHome() {
+    Home {  }
+}
