@@ -102,4 +102,8 @@ class HomeViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared")
+    }
 }
