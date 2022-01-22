@@ -79,7 +79,12 @@ dependencies {
     implementation(Libraries.composeUiTools)
     implementation(Libraries.composeViewModel)
     implementation(Libraries.composeIcon)
+    implementation(Libraries.composeNavigation)
     androidTestImplementation(Libraries.composeTest)
+
+    // compose navigation library
+    implementation(Libraries.composeDestinations)
+    ksp(Libraries.composeDestinationsKSP)
 
     // accompanist
     implementation(Libraries.accompanistAnimation)

@@ -39,8 +39,12 @@ object Libraries {
     const val composeUiTools = "androidx.compose.ui:ui-tooling:1.0.5" // Tooling support (Previews, etc.)
     const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0" // Integration with ViewModels
     const val composeIcon = "androidx.compose.material:material-icons-extended:1.2.0-alpha01"
-
+    const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
     const val composeTest = "androidx.compose.ui:ui-test-junit4:1.0.5" // // UI Tests
+
+    // Compose Navigation Library
+    const val composeDestinations = "io.github.raamcosta.compose-destinations:core:1.1.5-beta"
+    const val composeDestinationsKSP = "io.github.raamcosta.compose-destinations:ksp:1.1.5-beta"
 
     // Accompanist
     const val accompanistAnimation = "com.google.accompanist:accompanist-navigation-animation:0.21.5-rc"

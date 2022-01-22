@@ -5,15 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
-import com.google.accompanist.insets.ProvideWindowInsets
 
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
 import com.jooheon.clean_architecture.presentation.theme.ApplicationTheme
-import com.jooheon.clean_architecture.presentation.view.home.Home
+import com.jooheon.clean_architecture.presentation.view.NavGraphs
+import com.ramcosta.composedestinations.DestinationsNavHost
 
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,17 +34,21 @@ class MainActivity : BaseComposeActivity() {
 
     @Composable
     private fun AppContent() {
-        CompositionLocalProvider() { // TODO: 이게 뭐지??
-            ProvideWindowInsets(consumeWindowInsets = false) {
-                ApplicationTheme() {
-                    Home(
-                        onOpenSettings = {
-
-                        }
-                    )
-                }
-            }
+        ApplicationTheme() {
+            DestinationsNavHost(navGraph = NavGraphs.root)
         }
+
+//        CompositionLocalProvider() { // TODO: 이게 뭐지??
+//            ProvideWindowInsets(consumeWindowInsets = false) {
+//                ApplicationTheme() {
+//                    Home(
+//                        onOpenSettings = {
+//
+//                        }
+//                    )
+//                }
+//            }
+//        }
     }
 }
 

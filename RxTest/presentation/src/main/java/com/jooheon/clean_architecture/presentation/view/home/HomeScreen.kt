@@ -37,16 +37,21 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.AppBarAlphas
 import com.jooheon.clean_architecture.presentation.utils.HandleApiFailure
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
+import com.jooheon.clean_architecture.presentation.view.NavGraphs
 import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
+import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collect
 
 private const val TAG = "Home"
 
+@Destination(start = true)
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
-internal fun Home(
-    onOpenSettings: () -> Unit,
+fun HomeScreen(
+    navigator: DestinationsNavigator
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
     val navController = rememberAnimatedNavController()
@@ -118,8 +123,9 @@ internal fun Home(
                         )
                     }
                     IconButton(onClick = {
-                        viewModel.onSettingClicked()
+//                        viewModel.onSettingClicked()
                         Log.d(TAG, "Settings IconButton")
+                        navigator.navigate(TestScreenDestination())
                     }) {
                         Icon(Icons.Filled.Settings, contentDescription = null)
                     }
@@ -342,5 +348,5 @@ private val HomeNavigationItems = listOf(
 @Preview
 @Composable
 fun PreviewHome() {
-    Home {  }
+//    HomeScreen(navigator = DestinationsNavigator())
 }
