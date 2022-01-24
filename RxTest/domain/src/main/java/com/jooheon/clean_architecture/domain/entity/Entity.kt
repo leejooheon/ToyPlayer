@@ -31,4 +31,13 @@ sealed class Entity {
         val tokenExpirationDate: String,
         val userId: String
     )
+
+    data class TempImage(
+        val id: Long,
+        val name: String,
+        val imageUrl: String,
+        val price: Long,
+        val tagline: String = "",
+        val tags: Set<String> = emptySet()
+    )
 }

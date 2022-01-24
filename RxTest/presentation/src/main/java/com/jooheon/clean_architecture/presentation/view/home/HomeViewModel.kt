@@ -26,7 +26,8 @@ class HomeViewModel @Inject constructor(
     private val _branchResponse = mutableStateOf<Resource<List<Entity.Branch>>>(Resource.Default)
     val branchResponse = _branchResponse
 
-    private var lastSearchedOwner: String? = null
+    private val _lastSearchedOwner = MutableStateFlow("")
+    val lastSearchedOwner = _lastSearchedOwner
 
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
@@ -45,7 +46,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun callRepositoryApi(owner: String) {
-        lastSearchedOwner = owner
+        _lastSearchedOwner.value = owner
         githubUseCase.getRepository(owner)
             .onEach {
                 Log.d(TAG, "result: ${it}")
@@ -56,33 +57,35 @@ class HomeViewModel @Inject constructor(
     }
 
     fun callBranchApi(repository: String) {
-        lastSearchedOwner?.let { owner ->
-            githubUseCase.getBranch(owner, repository)
-                .onEach {
-                    Log.d(TAG, "result: ${it}")
-
-                    _branchResponse.value = it
-                }.launchIn(viewModelScope)
+        if(lastSearchedOwner.value.isEmpty()) {
+            return
         }
+
+        githubUseCase.getBranch(lastSearchedOwner.value, repository)
+            .onEach {
+                Log.d(TAG, "result: ${it}")
+
+                _branchResponse.value = it
+            }.launchIn(viewModelScope)
     }
 
     fun callCommitApi(repository: String) {
-        lastSearchedOwner?.let { owner ->
-            githubUseCase.getCommit(owner, repository)
-                .map { it }
-                .onEach {
-                    _commitResponse.value = it
-                }.catch {
-                    // If an error happens
-                }
-                .launchIn(viewModelScope)
-        }?.run {
-            // TODO: notify to view
+        if(lastSearchedOwner.value.isEmpty()) {
+            return
         }
+
+        githubUseCase.getCommit(lastSearchedOwner.value, repository)
+            .map { it }
+            .onEach {
+                _commitResponse.value = it
+            }.catch {
+                // If an error happens
+            }
+            .launchIn(viewModelScope)
     }
 
     fun multipleApiTest(repository: String) {
-        githubUseCase.getBranchAndCommit(lastSearchedOwner!!, repository)
+        githubUseCase.getBranchAndCommit(lastSearchedOwner.value, repository)
             .onEach {
                 val branchResponse = it.first
                 val commitResponse = it.second

@@ -7,9 +7,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -30,17 +28,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
 import com.jooheon.clean_architecture.presentation.theme.AppBarAlphas
+import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.utils.HandleApiFailure
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
-import com.jooheon.clean_architecture.presentation.view.NavGraphs
 import com.jooheon.clean_architecture.presentation.view.custom.GithubRepositoryCard
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
+import com.jooheon.clean_architecture.presentation.view.home.repo.RepositoryCollection
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.flow.collect
@@ -134,15 +135,16 @@ fun HomeScreen(
         },
         drawerContent = {
             Text(text = "drawerContent")
-        }
-    ) {
-        LaunchInGithubRepositoryComposition(viewModel)
-    }
+        },
+        content = {
+            LaunchInGithubRepositoryComposition(viewModel)
+        },
+        backgroundColor = CustomTheme.colors.uiBackground
+    )
 }
 
 
 // TODO: NavGraphBuilder로 해서 옮기자
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun LaunchInGithubRepositoryComposition(viewModel: HomeViewModel) {
     val response = viewModel.repositoryResponse.value
@@ -152,50 +154,26 @@ fun LaunchInGithubRepositoryComposition(viewModel: HomeViewModel) {
             ShowLoading()
         }
         is Resource.Success -> {
-            DrawRepositories(viewModel, response.value)
+            Box(modifier = Modifier) {
+                LazyColumn {
+                    item {
+                        Spacer(Modifier.statusBarsHeight(additional = 56.dp))
+                    }
+                    item(response.value) {
+                        RepositoryCollection(
+                            owner = viewModel.lastSearchedOwner.value,
+                            repositoryList = response.value) {
+                            Log.d(TAG, "onClicked: $it")
+                        }
+                    }
+                }
+            }
         }
         is Resource.Failure -> {
             HandleApiFailure(response = response)
         }
         is Resource.Default -> {
             InfoText(text = "Resource.Default")
-        }
-    }
-}
-
-
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
-@Composable
-fun DrawRepositories(
-    viewModel: HomeViewModel,
-    repositories: List<Entity.Repository>
-) {
-    val repositoryList = remember { mutableStateListOf<Entity.Repository>() }
-
-    LaunchedEffect(Unit) {
-        val list = repositories
-        repositoryList.addAll(list)
-    }
-
-    LazyVerticalGrid(
-        modifier = Modifier.fillMaxSize(),
-        cells = GridCells.Fixed(2)
-    ) {
-        itemsIndexed(repositories) { index, repository ->
-            val modifier = Modifier
-                .fillMaxWidth(0.5f) // half width
-                .padding(16.dp)
-            GithubRepositoryCard(
-                modifier,
-                repository,
-                onItemClicked = {
-//                        viewModel.callCommitApi(it.name)
-                    viewModel.multipleApiTest(it.name)
-                },
-                onInfoButtonClicked = {
-
-                }
-            )
         }
     }
 }
@@ -247,8 +225,8 @@ internal fun HomeBottomNavigation(
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
-        backgroundColor = MaterialTheme.colors.surface.copy(alpha = AppBarAlphas.translucentBarAlpha()),
-        contentColor = contentColorFor(MaterialTheme.colors.surface),
+        backgroundColor = CustomTheme.colors.uiBackground.copy(alpha = AlphaNearOpaque),
+        contentColor = CustomTheme.colors.textSecondary,
         modifier = modifier
     ) {
         HomeNavigationItems.forEach { item ->
