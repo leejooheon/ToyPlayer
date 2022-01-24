@@ -94,7 +94,9 @@ class SplashActivity: BaseComposeActivity() {
 
     @Composable
     fun PrepareRecomposableHandler() {
-        when(viewModel.done.value) {
+        val step = viewModel.done.value
+
+        when(step) {
             is SplashResult.Default -> {
                 viewModel.prepareLaunchApp(LocalContext.current)
             }
