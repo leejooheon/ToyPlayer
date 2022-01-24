@@ -26,9 +26,6 @@ class HomeViewModel @Inject constructor(
     private val _branchResponse = mutableStateOf<Resource<List<Entity.Branch>>>(Resource.Default)
     val branchResponse = _branchResponse
 
-    private val _loadingResponse = mutableStateOf(false)
-    val loadingResponse = _loadingResponse
-
     private var lastSearchedOwner: String? = null
 
     fun onNavigationClicked() {
@@ -53,7 +50,6 @@ class HomeViewModel @Inject constructor(
             .onEach {
                 Log.d(TAG, "result: ${it}")
 
-                _loadingResponse.value = it is Resource.Loading
                 _repositoryResponse.value = it
             }
             .launchIn(viewModelScope)
@@ -65,7 +61,6 @@ class HomeViewModel @Inject constructor(
                 .onEach {
                     Log.d(TAG, "result: ${it}")
 
-                    _loadingResponse.value = it is Resource.Loading
                     _branchResponse.value = it
                 }.launchIn(viewModelScope)
         }
@@ -76,7 +71,6 @@ class HomeViewModel @Inject constructor(
             githubUseCase.getCommit(owner, repository)
                 .map { it }
                 .onEach {
-                    _loadingResponse.value = it is Resource.Loading
                     _commitResponse.value = it
                 }.catch {
                     // If an error happens
@@ -94,8 +88,6 @@ class HomeViewModel @Inject constructor(
                 val commitResponse = it.second
                 Log.d(TAG, "result: ${commitResponse is Resource.Loading}")
 
-                _loadingResponse.value = commitResponse is Resource.Loading
-
                 if(commitResponse is Resource.Success) {
                     Log.d(TAG, "commitResponse: ${commitResponse.value}")
                     _commitResponse.value = commitResponse
@@ -110,4 +102,8 @@ class HomeViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared")
+    }
 }

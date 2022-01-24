@@ -3,6 +3,18 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id "dagger.hilt.android.plugin"
+    id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
+}
+
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 android {
@@ -28,8 +40,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.1'
-        kotlinCompilerVersion "1.5.21"
+        kotlinCompilerExtensionVersion "1.1.0-rc02"
     }
 }
 
@@ -52,6 +63,7 @@ dependencies {
     implementation(Libraries.navigationUI)
     implementation(Libraries.constraintLayout)
     implementation(Libraries.material)
+    implementation(Libraries.splashScreen)
 
     // coroutine
     implementation(Libraries.coroutineCore)
@@ -66,7 +78,18 @@ dependencies {
     implementation(Libraries.composeAnimation)
     implementation(Libraries.composeUiTools)
     implementation(Libraries.composeViewModel)
+    implementation(Libraries.composeIcon)
+    implementation(Libraries.composeNavigation)
     androidTestImplementation(Libraries.composeTest)
+
+    // compose navigation library
+    implementation(Libraries.composeDestinations)
+    ksp(Libraries.composeDestinationsKSP)
+
+    // accompanist
+    implementation(Libraries.accompanistAnimation)
+    implementation(Libraries.accompanistInsets)
+    implementation(Libraries.accompanistInsetsUi)
 
     // hilt
     implementation(Libraries.hilt)

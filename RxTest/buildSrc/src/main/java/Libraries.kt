@@ -30,6 +30,7 @@ object Libraries {
     const val navigationUI = "androidx.navigation:navigation-runtime-ktx:2.3.5"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
     const val material = "com.google.android.material:material:1.4.0"
+    const val splashScreen = "androidx.core:core-splashscreen:1.0.0-beta01"
 
     // Compose
     const val composeActivity = "androidx.activity:activity-compose:1.4.0"  // Integration with activities
@@ -37,7 +38,18 @@ object Libraries {
     const val composeAnimation = "androidx.compose.animation:animation:1.0.5" // Animations
     const val composeUiTools = "androidx.compose.ui:ui-tooling:1.0.5" // Tooling support (Previews, etc.)
     const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0" // Integration with ViewModels
+    const val composeIcon = "androidx.compose.material:material-icons-extended:1.2.0-alpha01"
+    const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
     const val composeTest = "androidx.compose.ui:ui-test-junit4:1.0.5" // // UI Tests
+
+    // Compose Navigation Library
+    const val composeDestinations = "io.github.raamcosta.compose-destinations:core:1.1.5-beta"
+    const val composeDestinationsKSP = "io.github.raamcosta.compose-destinations:ksp:1.1.5-beta"
+
+    // Accompanist
+    const val accompanistAnimation = "com.google.accompanist:accompanist-navigation-animation:0.21.5-rc"
+    const val accompanistInsets = "com.google.accompanist:accompanist-insets:0.21.5-rc"
+    const val accompanistInsetsUi = "com.google.accompanist:accompanist-insets-ui:0.21.5-rc"
 
     // lifecycle
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
