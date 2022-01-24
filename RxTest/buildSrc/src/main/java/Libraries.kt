@@ -50,6 +50,7 @@ object Libraries {
     const val accompanistAnimation = "com.google.accompanist:accompanist-navigation-animation:0.21.5-rc"
     const val accompanistInsets = "com.google.accompanist:accompanist-insets:0.21.5-rc"
     const val accompanistInsetsUi = "com.google.accompanist:accompanist-insets-ui:0.21.5-rc"
+    const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:0.22.0-rc"
 
     // lifecycle
     const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
@@ -61,4 +62,7 @@ object Libraries {
 
     // kotlin
     const val kotlin = "org.jetbrains.kotlin:kotlin-stdlib:"
+
+    // coil
+    const val coilCompose = "io.coil-kt:coil-compose:1.4.0"
 }
