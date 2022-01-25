@@ -20,8 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
     private val TAG = MainActivity::class.simpleName
 
-    val viewModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,18 +35,6 @@ class MainActivity : BaseComposeActivity() {
         ApplicationTheme() {
             DestinationsNavHost(navGraph = NavGraphs.root)
         }
-
-//        CompositionLocalProvider() { // TODO: 이게 뭐지??
-//            ProvideWindowInsets(consumeWindowInsets = false) {
-//                ApplicationTheme() {
-//                    Home(
-//                        onOpenSettings = {
-//
-//                        }
-//                    )
-//                }
-//            }
-//        }
     }
 }
 
@@ -64,3 +50,23 @@ private fun ComponentActivity.setOwners() { // TODO: 이게 뭐지??
         ViewTreeSavedStateRegistryOwner.set(decorView, this)
     }
 }
+/*
+suspend fun fcmRegister() {
+    val fcmToken = try {
+        suspendCoroutine<String> {
+            firebaseMessage.token
+                .addOnSuccessListener { fcmToken ->
+                    it.resume(fcmToken)
+                }
+                .addOnFailureListener { t ->
+                    it.resumeWithException(t)
+                }
+        }
+    } catch (t: Throwable) {
+        firebaseCrashlytics.recordException(t)
+        return
+    }
+
+    restApiService.register(fcmToken)
+}
+ */
