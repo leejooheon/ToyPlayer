@@ -9,10 +9,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,7 +22,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
-import com.jooheon.clean_architecture.presentation.view.home.*
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
@@ -107,6 +103,7 @@ fun TopBar(
     viewModel: MainViewModel,
     navigator: DestinationsNavigator
 ) {
+    val openGithubSearchDialog = remember { mutableStateOf(false) }
 
     TopAppBar(
         title = { Text(text = "My ToyProject") },
@@ -120,16 +117,6 @@ fun TopBar(
             }
         },
         actions = {
-            val openDialog = remember { mutableStateOf(false) }
-            if(openDialog.value) {
-                GithubSearchDialog(openDialog = openDialog, onDismiss = { owner ->
-                    if (!owner.isEmpty()) {
-                        Log.d(TAG, owner)
-                        viewModel.callRepositoryApi(owner)
-                    }
-                })
-            }
-
             IconButton(onClick = {
                 viewModel.onFavoriteClicked()
                 Log.d(TAG, "Favorite IconButton")
@@ -140,7 +127,7 @@ fun TopBar(
                 )
             }
             IconButton(onClick = {
-                openDialog.value = true
+                openGithubSearchDialog.value = true
             }) {
                 Icon(
                     Icons.Filled.Search,
@@ -156,4 +143,13 @@ fun TopBar(
             }
         }
     )
+
+    if(openGithubSearchDialog.value) {
+        GithubSearchDialog(openGithubSearchDialog, onDismiss = { owner ->
+            if (!owner.isEmpty()) {
+                Log.d(TAG, owner)
+                viewModel.callRepositoryApi(owner)
+            }
+        })
+    }
 }
