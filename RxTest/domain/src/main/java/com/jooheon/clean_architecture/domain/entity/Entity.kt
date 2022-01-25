@@ -1,6 +1,8 @@
 package com.jooheon.clean_architecture.domain.entity
 
-sealed class Entity {
+import java.io.Serializable
+
+sealed class Entity: Serializable {
 
     data class Repository(
         val name: String,
@@ -17,20 +19,20 @@ sealed class Entity {
         data class Commit(
             val sha: String,
             val url: String
-        )
+        ) : Entity()
     }
 
     data class Commit(
         val sha: String,
         val node_id: String
-    )
+    ) : Entity()
 
     data class User(
         val refreshToken: String,
         val token: String,
         val tokenExpirationDate: String,
         val userId: String
-    )
+    ) : Entity()
 
     data class TempImage(
         val id: Long,
@@ -39,5 +41,5 @@ sealed class Entity {
         val price: Long,
         val tagline: String = "",
         val tags: Set<String> = emptySet()
-    )
+    ) : Entity()
 }
