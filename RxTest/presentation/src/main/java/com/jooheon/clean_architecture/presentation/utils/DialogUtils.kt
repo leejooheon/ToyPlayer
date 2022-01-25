@@ -23,6 +23,11 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
 import kotlinx.coroutines.*
 
+
+fun showToastMessage(context: Context, message:String){
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
 @Composable
 fun HandleApiFailure(response: Resource.Failure) {
     val openDialog = remember { mutableStateOf(true) }

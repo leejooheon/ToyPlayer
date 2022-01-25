@@ -9,10 +9,12 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +27,9 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
 
     private val _lastSearchedOwner = MutableStateFlow("")
     val lastSearchedOwner = _lastSearchedOwner
+
+    private var _isDoubleBackPressed = mutableStateOf(true)
+    val isDoubleBackPressed = _isDoubleBackPressed
 
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
@@ -51,5 +56,13 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
                 _repositoryResponse.value = it
             }
             .launchIn(viewModelScope)
+    }
+
+    fun onBackPressed() {
+        viewModelScope.launch {
+            _isDoubleBackPressed.value = false
+            delay(2000)
+            _isDoubleBackPressed.value = true
+        }
     }
 }

@@ -196,3 +196,27 @@ fun TopBar(
         })
     }
 }
+
+@Composable
+fun RegisterBackPressedHandler (
+    viewModel: MainViewModel,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
+) {
+    val context = LocalContext.current
+    BackHandler(
+        enabled = scaffoldState.drawerState.isOpen || viewModel.isDoubleBackPressed.value
+    ) {
+        scope.launch {
+            if(scaffoldState.drawerState.isOpen) {
+                scope.launch { scaffoldState.drawerState.close() }
+                return@launch
+            }
+            if(viewModel.isDoubleBackPressed.value) {
+                viewModel.onBackPressed()
+                showToastMessage(context, "Press once more to exit.")
+                return@launch
+            }
+        }
+    }
+}
