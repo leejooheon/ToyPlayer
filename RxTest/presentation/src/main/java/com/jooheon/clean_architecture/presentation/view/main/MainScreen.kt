@@ -1,8 +1,13 @@
 package com.jooheon.clean_architecture.presentation.view.main
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -12,14 +17,18 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
@@ -31,6 +40,8 @@ import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
 
@@ -43,24 +54,54 @@ fun MainScreen(
     val viewModel: MainViewModel = hiltViewModel()
     val bottomNavController = rememberAnimatedNavController()
 
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scope = rememberCoroutineScope()
+
     Scaffold(
+        scaffoldState = scaffoldState,
         backgroundColor = CustomTheme.colors.uiBackground,
-        topBar = { TopBar(viewModel, navigator) },
+        topBar = { TopBar(viewModel, navigator, scaffoldState, scope) },
         bottomBar = { BottomBar(bottomNavController) },
-        drawerContent = { DrawerContent() },
+        drawerContent = { DrawerContent(scaffoldState, scope) },
+        drawerBackgroundColor = CustomTheme.colors.uiBackground,
         content = { RegisterBottomNavigation(viewModel, bottomNavController) }
     )
+
+    RegisterBackPressedHandler(viewModel, scaffoldState, scope)
 }
 
 @Composable
-fun DrawerContent() {
-    Text(text = "drawerContent")
+fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        Spacer(Modifier.statusBarsHeight(additional = 24.dp))
+
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = "drawerContent - 1"
+        )
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = "drawerContent - 2"
+        )
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable {
+                    scope.launch {
+                        scaffoldState.drawerState.close()
+                    }
+                },
+            text = "drawerContent - 3"
+        )
+    }
 }
 
 @Composable
 fun RegisterBottomNavigation(
     viewModel: MainViewModel,
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             HomeScreen(viewModel)
@@ -101,7 +142,9 @@ fun BottomBar(bottomNavController: NavController) {
 @Composable
 fun TopBar(
     viewModel: MainViewModel,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    scaffoldState: ScaffoldState,
+    scope: CoroutineScope
 ) {
     val openGithubSearchDialog = remember { mutableStateOf(false) }
 
@@ -110,7 +153,7 @@ fun TopBar(
         backgroundColor = Color.White,
         navigationIcon = {
             IconButton(onClick = {
-                viewModel.onNavigationClicked()
+                scope.launch { scaffoldState.drawerState.open() }
                 Log.d(TAG, "Menu IconButton")
             }) {
                 Icon(Icons.Filled.Menu, contentDescription = null)
