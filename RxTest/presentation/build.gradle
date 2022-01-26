@@ -80,6 +80,7 @@ dependencies {
     implementation(Libraries.composeViewModel)
     implementation(Libraries.composeIcon)
     implementation(Libraries.composeNavigation)
+    implementation(Libraries.composeUtils)
     androidTestImplementation(Libraries.composeTest)
 
     // compose navigation library
