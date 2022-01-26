@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RepositoryViewModel @Inject constructor(private val githubUseCase: GithubUseCase) : BaseViewModel() {
-    private val TAG = RepositoryViewModel::class.simpleName
+    override val TAG = RepositoryViewModel::class.java.simpleName
 
     var repositoryLiveData = MutableLiveData<String>()
 

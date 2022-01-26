@@ -23,7 +23,6 @@ import kotlin.math.ln
 
 /**
  * An alternative to [androidx.compose.material.Surface] utilizing
- * [com.example.jetsnack.ui.theme.JetsnackColors]
  */
 @Composable
 fun CustomSurface(

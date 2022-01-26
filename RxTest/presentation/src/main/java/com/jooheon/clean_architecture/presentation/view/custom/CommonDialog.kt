@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 
 
 @Composable
@@ -52,6 +53,7 @@ fun CommonDialog(
     if(!openDialog.value) { return }
 
     AlertDialog(
+        backgroundColor = CustomTheme.colors.uiBackground,
         onDismissRequest = { openDialog.value = false },
         title = { Text(text = title)},
         text = { Text(text = content)},
