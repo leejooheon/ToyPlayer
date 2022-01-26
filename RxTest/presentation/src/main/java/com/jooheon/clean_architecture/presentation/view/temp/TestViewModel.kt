@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TestViewModel @Inject constructor(): BaseViewModel() {
-
+    override val TAG: String = TestViewModel::class.java.simpleName
     private val TEXT = "this is test screen"
 
     private val _text = mutableStateOf(TEXT)
@@ -17,11 +17,5 @@ class TestViewModel @Inject constructor(): BaseViewModel() {
     private var testCount = 1
     fun onClicked() {
         _text.value = TEXT + testCount++
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-        Log.d("Test", "onCleared")
     }
 }

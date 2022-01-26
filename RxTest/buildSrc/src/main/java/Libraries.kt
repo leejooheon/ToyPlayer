@@ -40,6 +40,7 @@ object Libraries {
     const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0" // Integration with ViewModels
     const val composeIcon = "androidx.compose.material:material-icons-extended:1.2.0-alpha01"
     const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
+    const val composeUtils = "androidx.compose.ui:ui-util:1.2.0-alpha01"
     const val composeTest = "androidx.compose.ui:ui-test-junit4:1.0.5" // // UI Tests
 
     // Compose Navigation Library

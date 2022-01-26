@@ -13,29 +13,20 @@
         android:theme="@style/Theme.RxTest"
         android:supportsRtl="true">
 
-
         <activity
-            android:name="com.jooheon.clean_architecture.presentation.view.splash.SplashActivity"
+            android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:exported="true"
-            android:screenOrientation="fullSensor">
-
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.jooheon.clean_architecture.presentation.view.main.MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:exported="false"/>
-
         <activity android:name="com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeActivity"
             android:exported="true">
         </activity>
-
 
         <service
             android:name="com.jooheon.clean_architecture.presentation.service.MyFirebaseMessagingService"

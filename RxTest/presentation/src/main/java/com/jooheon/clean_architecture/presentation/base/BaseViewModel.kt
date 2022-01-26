@@ -1,10 +1,13 @@
 package com.jooheon.clean_architecture.presentation.base
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 
-open class BaseViewModel : ViewModel() {
+abstract class BaseViewModel : ViewModel() {
+    protected abstract val TAG: String
     override fun onCleared() {
         super.onCleared()
+        Log.d(TAG, "onCleared")
     }
 }
 
