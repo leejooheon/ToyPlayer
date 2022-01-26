@@ -30,6 +30,7 @@ import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryCard
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.custom.offsetGradientBackground
 
 private val CardWidth = 170.dp
@@ -45,7 +46,7 @@ fun RepositoryCollection(
     owner: String,
     repositoryList: List<Entity.Repository>,
     modifier: Modifier = Modifier,
-    onRepositoryClick: (String) -> Unit
+    onRepositoryClick: (Entity.Repository) -> Unit
 ) {
     Column(modifier = modifier) {
         Row(
@@ -87,7 +88,7 @@ fun RepositoryCollection(
 fun RepositoryItems(
     items: List<Entity.Repository>,
     modifier: Modifier = Modifier,
-    onRepositoryClick: (String) -> Unit
+    onRepositoryClick: (Entity.Repository) -> Unit
 ) {
     val index = 5
     val scroll = rememberScrollState(0)
@@ -120,7 +121,7 @@ fun RepositoryItems(
 @Composable
 fun RepositoryItem(
     item: Entity.Repository,
-    onRepositoryClick: (String) -> Unit,
+    onRepositoryClick: (Entity.Repository) -> Unit,
     index: Int,
     gradient: List<Color>,
     gradientWidth: Float,
@@ -140,7 +141,7 @@ fun RepositoryItem(
     ) {
         Column(
             modifier = Modifier
-                .clickable(onClick = { onRepositoryClick(item.id) })
+                .clickable(onClick = { onRepositoryClick(item) })
                 .fillMaxSize()
         ) {
             Box(
@@ -155,8 +156,8 @@ fun RepositoryItem(
                         .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
-                SnackImage(
-                    imageUrl = tempImages.get(index).imageUrl,
+                RepositoryImage(
+                    imageUrl = item.imageUrl,
                     contentDescription = null,
                     modifier = Modifier
                         .size(120.dp)

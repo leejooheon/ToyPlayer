@@ -15,7 +15,7 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
 
 ): BaseViewModel() {
-
+    override val TAG: String = SplashViewModel::class.java.simpleName
     private val _done = mutableStateOf<SplashResult<*>>(SplashResult.Default)
     val done = _done
 
@@ -41,10 +41,5 @@ class SplashViewModel @Inject constructor(
 
     private fun isFirstLaunched(): SplashResult.Account<Boolean> { // FIXME
         return SplashResult.Account(false)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("Splash", "onCleared")
     }
 }
