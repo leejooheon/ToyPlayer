@@ -3,11 +3,13 @@ package com.jooheon.clean_architecture.presentation.view.main
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -18,7 +20,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -45,13 +50,16 @@ import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
 
-@Destination(start = true)
+@Composable
+fun sharedViewModel() = LocalContext.current as MainActivity
+
 @OptIn(ExperimentalAnimationApi::class)
+@Destination
 @Composable
 fun MainScreen(
     navigator: DestinationsNavigator
 ) {
-    val viewModel: MainViewModel = hiltViewModel()
+    val viewModel: MainViewModel = hiltViewModel(sharedViewModel())
     val bottomNavController = rememberAnimatedNavController()
 
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
@@ -60,14 +68,51 @@ fun MainScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         backgroundColor = CustomTheme.colors.uiBackground,
+        snackbarHost = { state -> MySnackHost(state) },
         topBar = { TopBar(viewModel, navigator, scaffoldState, scope) },
         bottomBar = { BottomBar(bottomNavController) },
+        floatingActionButton = { MyFloatingActionButton(scaffoldState, scope) },
+        floatingActionButtonPosition = FabPosition.Center,
+        isFloatingActionButtonDocked = true,
         drawerContent = { DrawerContent(scaffoldState, scope) },
         drawerBackgroundColor = CustomTheme.colors.uiBackground,
-        content = { RegisterBottomNavigation(viewModel, bottomNavController) }
+        content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator) }
     )
 
     RegisterBackPressedHandler(viewModel, scaffoldState, scope)
+}
+
+@Composable
+fun MyFloatingActionButton(scaffoldState: ScaffoldState, scope: CoroutineScope) {
+    val floatingButtonText = remember { mutableStateOf("X")}
+
+    FloatingActionButton(
+        onClick = {
+            floatingButtonText.value = "+"
+            scope.launch {
+                val result = scaffoldState.snackbarHostState.showSnackbar(
+                    message = "Jetpack Compose Snackbar",
+                    actionLabel = "Ok"
+                )
+
+                when(result) {
+                    SnackbarResult.Dismissed -> {
+                        Log.d(TAG, "Snackbar dismissed")
+                        floatingButtonText.value = "X"
+                    }
+                    SnackbarResult.ActionPerformed -> {
+                        Log.d(TAG, "Snackbar action!")
+                        floatingButtonText.value = "X"
+                    }
+                }
+            }
+        }
+    ) {
+        Text(
+            text = floatingButtonText.value,
+            color = CustomTheme.colors.textInteractive
+        )
+    }
 }
 
 @Composable
@@ -100,11 +145,12 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 @Composable
 fun RegisterBottomNavigation(
     viewModel: MainViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    navigator: DestinationsNavigator
 ) {
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
-            HomeScreen(viewModel)
+            HomeScreen(navigator)
         }
         composable(Screen.Following.route) {
             FollowingScreen()
@@ -195,6 +241,38 @@ fun TopBar(
             }
         })
     }
+}
+
+@Composable
+fun MySnackHost(state: SnackbarHostState) {
+    SnackbarHost(
+        hostState = state,
+        snackbar = { data ->
+            Snackbar(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(CustomTheme.colors.notificationBadge, RoundedCornerShape(8.dp)),
+                action = {
+                    Text(
+                        text = data.actionLabel?.let { it } ?: run { "hide" },
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { state.currentSnackbarData?.dismiss() },
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = CustomTheme.colors.textPrimary,
+                            fontSize = 18.sp
+                        )
+                    )
+                }
+            ) {
+                Text(
+                    text = data.message,
+                    color = CustomTheme.colors.textInteractive
+                )
+            }
+        }
+    )
 }
 
 @Composable
