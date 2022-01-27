@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.Purple200
 import com.jooheon.clean_architecture.presentation.theme.Purple700
 
@@ -87,6 +88,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
                     text = "Search your\nRepository.",
+                    color = CustomTheme.colors.textSecondary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 5.dp)
@@ -120,6 +122,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                             )
                         },
                         colors = TextFieldDefaults.outlinedTextFieldColors(
+                            textColor = CustomTheme.colors.textPrimary,
                             focusedBorderColor = Color.Green,
                             unfocusedBorderColor = Color.Gray,
                             focusedLabelColor = Color.Green,

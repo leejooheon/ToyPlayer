@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "101791519599",
+    "project_id": "github-toyproject",
+    "storage_bucket": "github-toyproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101791519599:android:5809fdedf0dd4e98a28e9a",
+        "android_client_info": {
+          "package_name": "com.jooheon.clean_architecture.toyproject.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101791519599-uhi2o82li9a5uigjt800r1j4nb1p9jg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO6c254oYjPN7rAU1Gbiyl29STCOp72Mw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101791519599-uhi2o82li9a5uigjt800r1j4nb1p9jg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

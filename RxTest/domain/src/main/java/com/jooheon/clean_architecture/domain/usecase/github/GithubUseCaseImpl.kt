@@ -4,9 +4,7 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 
 class GithubUseCaseImpl(
     private val githubRepository: GithubRepository
@@ -17,7 +15,7 @@ class GithubUseCaseImpl(
 //            Log.d(TAG, "usecase start")
             emit(Resource.Loading)
             val result = githubRepository.getRepository(owner)
-
+            githubRepository
             when(result) {
                 is Resource.Success -> {
                     // do something ...
@@ -51,9 +49,24 @@ class GithubUseCaseImpl(
             emit(Resource.Loading)
             val result = githubRepository.getCommit(owner, repository)
             emit(result)
-        }.flowOn(Dispatchers.IO)
+        }
+        // flowOn affects the upstream flow ↑
+        .flowOn(Dispatchers.IO) // main thread에서 call했지 flowOn을 사용하여 IO thread로 변경한다.
+        // the downstream flow ↓ is not affected
     }
 
+    override fun getBranchAndCommit(
+        owner: String,
+        repository: String
+    ): Flow<Pair<Resource<List<Entity.Branch>>, Resource<List<Entity.Commit>>>> {
+        return flow {
+            emit(Pair(Resource.Loading, Resource.Loading))
+            val commitResponse = githubRepository.getCommit(owner, repository)
+            val branchResponse = githubRepository.getBranch(owner, repository)
+            emit(Pair(branchResponse, commitResponse))
+        }.flowOn(Dispatchers.IO)
+    }
+    // Pair<Resource<List<Entity.Branch>>, Resource<List<Entity.Commit>>>>
     companion object {
         val TAG = GithubUseCaseImpl::class.simpleName
     }

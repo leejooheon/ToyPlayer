@@ -3,6 +3,18 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id "dagger.hilt.android.plugin"
+    id 'com.google.devtools.ksp' version '1.6.10-1.0.2'
+}
+
+kotlin {
+    sourceSets {
+        debug {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
 }
 
 android {
@@ -28,8 +40,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion '1.0.1'
-        kotlinCompilerVersion "1.5.21"
+        kotlinCompilerExtensionVersion "1.1.0-rc02"
     }
 }
 
@@ -37,44 +48,68 @@ dependencies {
     implementation project(path: ':domain')
 
     // kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation Libraries.kotlin + "$kotlin_version"
 
     // support
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation(Libraries.appCompat)
+    implementation(Libraries.coreKtx)
 
     // lifecycle
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
-    implementation 'androidx.lifecycle:lifecycle-reactivestreams-ktx:2.4.0'
+    implementation(Libraries.lifecycle)
+    implementation(Libraries.lifecycleReactive)
 
     // UI
-    implementation "androidx.fragment:fragment-ktx:1.4.0"
-    implementation 'androidx.navigation:navigation-runtime-ktx:2.3.5'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation(Libraries.fragment)
+    implementation(Libraries.navigationUI)
+    implementation(Libraries.constraintLayout)
+    implementation(Libraries.material)
+    implementation(Libraries.splashScreen)
 
     // coroutine
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
-    implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0' // xml componenet의 property들을 observable로 바꿔주는 라이브러리
+    implementation(Libraries.coroutineCore)
+    implementation(Libraries.coroutineAndroid)
+
+    // xml component to rx observable
+    implementation(Libraries.rxConverter)
 
     // compose
-    implementation 'androidx.activity:activity-compose:1.4.0' // Integration with activities
-    implementation 'androidx.compose.material:material:1.0.5' // Compose Material Design
-    implementation 'androidx.compose.animation:animation:1.0.5' // Animations
-    implementation 'androidx.compose.ui:ui-tooling:1.0.5' // Tooling support (Previews, etc.)
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0' // Integration with ViewModels
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.5' // UI Tests
+    implementation(Libraries.composeActivity)
+    implementation(Libraries.composeMaterial)
+    implementation(Libraries.composeAnimation)
+    implementation(Libraries.composeUiTools)
+    implementation(Libraries.composeViewModel)
+    implementation(Libraries.composeIcon)
+    implementation(Libraries.composeNavigation)
+    implementation(Libraries.composeUtils)
+    androidTestImplementation(Libraries.composeTest)
+
+    // compose navigation library
+    implementation(Libraries.composeDestinations)
+    ksp(Libraries.composeDestinationsKSP)
+
+    // accompanist
+    implementation(Libraries.accompanistAnimation)
+    implementation(Libraries.accompanistInsets)
+    implementation(Libraries.accompanistInsetsUi)
+    implementation(Libraries.accompanistSystemUiController)
+
 
     // hilt
-    implementation "com.google.dagger:hilt-android:2.40.5"
-    kapt "com.google.dagger:hilt-android-compiler:2.40.5"
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0-rc01") // hilt <-> compose
+    implementation(Libraries.hilt)
+    implementation(Libraries.hiltForCompose)
+    kapt(Libraries.hiltDaggerCompiler)
 
 //    // fcm
 //    implementation 'com.google.firebase:firebase-crash:16.2.1'
 //    implementation 'com.google.firebase:firebase-messaging:23.0.0'
 //    implementation 'com.google.firebase:firebase-analytics:20.0.2'
+
+    // firebase
+    implementation platform(Libraries.fcmPlatform)
+    implementation(Libraries.fcmMessaging)
+
+    // coil
+    implementation(Libraries.coilCompose)
 
     // test
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

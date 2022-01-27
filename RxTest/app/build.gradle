@@ -3,20 +3,16 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
-
-    kapt {
-        correctErrorTypes true
-    }
+    compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.rxtest"
-        minSdkVersion 24
-        targetSdkVersion 31
+        applicationId "com.jooheon.clean_architecture.toyproject"
+        minSdk 24
+        targetSdk 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -25,6 +21,10 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+    }
+
+    kapt {
+        correctErrorTypes true
     }
 
     buildTypes {
@@ -66,23 +66,25 @@ dependencies {
     implementation project(path: ':data')
     implementation project(path: ':presentation')
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    // util
+    implementation(Libraries.multidex)
+    coreLibraryDesugaring(Libraries.desugar)
 
     // hilt
-    implementation "com.google.dagger:hilt-android:2.40.5"
-    kapt "com.google.dagger:hilt-android-compiler:2.40.5"
+    implementation(Libraries.hilt)
+    kapt(Libraries.hiltDaggerCompiler)
 
     // coroutine
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
-    implementation 'com.jakewharton.rxbinding4:rxbinding:4.0.0' // xml componenet의 property들을 observable로 바꿔주는 라이브러리
+    implementation(Libraries.coroutineCore)
+    implementation(Libraries.coroutineAndroid)
 
-    // util
-    implementation 'androidx.multidex:multidex:2.0.1'
+    // xml component to rx observable
+    implementation(Libraries.rxConverter)
 
     // retrofit
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.retrofit2:retrofit-mock:2.4.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2"
+    implementation(Libraries.retrofit)
+    implementation(Libraries.retrofitConverter)
+    implementation(Libraries.retrofitMock)
+    implementation(Libraries.interceptor)
+    implementation(Libraries.chuckLogging)
 }

@@ -10,12 +10,11 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import com.jooheon.clean_architecture.presentation.utils.hideLoadingDialog
-import com.jooheon.clean_architecture.presentation.utils.showLoadingDialog
 
 abstract class BaseFragment<VB : ViewDataBinding>: Fragment() {
 
     private var mProgressDialog: Dialog? = null
+    private var mProgressDialogMillis: Long = 0L
 
     private lateinit var viewDataBinding: VB
     open val binding get() = viewDataBinding
@@ -78,10 +77,14 @@ abstract class BaseFragment<VB : ViewDataBinding>: Fragment() {
     abstract fun getLayoutId(): Int
 
     fun showLoading() {
-        hideLoading()
-        mProgressDialog = showLoadingDialog(requireActivity())
     }
-    fun hideLoading() = hideLoadingDialog(mProgressDialog, requireActivity())
+
+    fun hideLoading() {
+
+    }
+
+    private fun forceHideLoading() {
+    }
 
     companion object {
         val TAG = "BaseFragment"
