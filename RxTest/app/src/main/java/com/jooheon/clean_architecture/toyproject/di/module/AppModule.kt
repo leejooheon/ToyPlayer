@@ -1,8 +1,8 @@
-package com.example.rxtest.di.module
+package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
 import android.content.res.Resources
-import com.example.rxtest.di.MyApplication
+import com.jooheon.clean_architecture.toyproject.di.MyApplication
 
 import dagger.Module
 import dagger.Provides

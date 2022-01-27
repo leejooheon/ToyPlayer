@@ -1,8 +1,8 @@
-package com.example.rxtest.di.module
+package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
 import android.os.Build
-import com.example.rxtest.BuildConfig
+import com.jooheon.clean_architecture.toyproject.BuildConfig
 
 import com.readystatesoftware.chuck.ChuckInterceptor
 import com.jooheon.clean_architecture.data.local.AppPreferences

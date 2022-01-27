@@ -7,17 +7,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
-
-    kapt {
-        correctErrorTypes true
-    }
+    compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.rxtest"
-        minSdkVersion 24
-        targetSdkVersion 31
+        applicationId "com.jooheon.clean_architecture.toyproject"
+        minSdk 24
+        targetSdk 31
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -26,6 +21,10 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+    }
+
+    kapt {
+        correctErrorTypes true
     }
 
     buildTypes {

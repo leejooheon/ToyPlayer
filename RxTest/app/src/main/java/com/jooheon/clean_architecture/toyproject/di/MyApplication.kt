@@ -1,4 +1,4 @@
-package com.example.rxtest.di
+package com.jooheon.clean_architecture.toyproject.di
 
 import android.app.Application
 import android.content.Context

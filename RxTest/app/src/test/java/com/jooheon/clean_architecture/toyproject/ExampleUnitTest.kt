@@ -1,4 +1,4 @@
-package com.example.rxtest
+package com.jooheon.clean_architecture.toyproject
 
 import org.junit.Test
 

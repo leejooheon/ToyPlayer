@@ -1,4 +1,4 @@
-package com.example.rxtest.di.module
+package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
 import com.jooheon.clean_architecture.data.local.AppPreferences

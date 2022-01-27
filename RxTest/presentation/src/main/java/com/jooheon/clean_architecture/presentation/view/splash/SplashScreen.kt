@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.clean_architecture.presentation.R
@@ -26,11 +28,15 @@ import com.jooheon.clean_architecture.presentation.view.destinations.MainScreenD
 import com.jooheon.clean_architecture.presentation.view.destinations.SplashScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
 @Destination(start = true)
 @Composable
-fun SplashScreen(navigator: DestinationsNavigator) {
-    val viewModel: SplashViewModel = hiltViewModel()
+fun SplashScreen(
+    navigator: DestinationsNavigator,
+    viewModel: SplashViewModel = hiltViewModel()
+) {
+
     SplashTheme() {
         val scale = remember { Animatable(0f) }
 
@@ -72,15 +78,15 @@ fun SplashScreen(navigator: DestinationsNavigator) {
             )
         }
 
-        PrepareRecomposableHandler(viewModel, navigator)
+        PrepareRecomposableHandler(navigator, viewModel)
     }
 }
 
 
 @Composable
 fun PrepareRecomposableHandler(
-    viewModel: SplashViewModel,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    viewModel: SplashViewModel
 ) {
     val step = viewModel.done.value
 
@@ -121,5 +127,13 @@ fun PrepareRecomposableHandler(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewSplashScreen() {
+    Button(onClick = {}) {
+        Text(text = "test")
     }
 }

@@ -1,4 +1,4 @@
-package com.example.rxtest.di.module
+package com.jooheon.clean_architecture.toyproject.di.module
 
 import com.jooheon.clean_architecture.domain.repository.FirebaseTokenRepository
 import com.jooheon.clean_architecture.domain.repository.GithubRepository

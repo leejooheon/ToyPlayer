@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:101791519599:android:5809fdedf0dd4e98a28e9a",
         "android_client_info": {
-          "package_name": "com.example.rxtest.debug"
+          "package_name": "com.jooheon.clean_architecture.toyproject.debug"
         }
       },
       "oauth_client": [

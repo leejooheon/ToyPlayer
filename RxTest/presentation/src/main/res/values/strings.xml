@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RxTest</string>
+    <string name="app_name">ToyProject</string>
     <string name="some_error">Some error occurred, try again later</string>
 
     <string name="home_title">Home</string>

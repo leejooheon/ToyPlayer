@@ -1,4 +1,4 @@
-package com.example.rxtest.di.module
+package com.jooheon.clean_architecture.toyproject.di.module
 
 import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
