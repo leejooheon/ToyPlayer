@@ -7,7 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 
 
 @Composable
@@ -67,4 +70,16 @@ fun CommonDialog(
             }
         }
     )
+}
+@Preview(showBackground = true)
+@Composable
+fun CommonDialogPreview() {
+    val openDialog = remember { mutableStateOf(true) }
+    // https://issuetracker.google.com/issues/186502047
+    // 현재 AlertDialog preview가 안되는 현상이있다고함.
+    // ChipMunk Canary5 버전부터 수정됨.
+
+    ProvideCustomColors(PreviewPallete) {
+//        CommonDialog()
+    }
 }

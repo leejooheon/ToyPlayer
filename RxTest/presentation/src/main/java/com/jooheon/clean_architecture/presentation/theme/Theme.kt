@@ -31,30 +31,6 @@ fun ApplicationTheme(
     }
 }
 
-@Composable
-fun SplashTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
-
-    val sysUiController = rememberSystemUiController()
-    SideEffect {
-        sysUiController.setSystemBarsColor(
-            color = colors.uiBackground.copy(alpha = AlphaNearOpaque)
-        )
-    }
-
-    ProvideCustomColors(colors) {
-        MaterialTheme(
-            colors = debugColors(darkTheme),
-            typography = Typography,
-            shapes = Shapes,
-            content = content
-        )
-    }
-}
-
 @Stable
 class CustomColors(
     gradient6_1: List<Color>,

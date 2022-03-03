@@ -30,8 +30,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.theme.Purple200
 import com.jooheon.clean_architecture.presentation.theme.Purple700
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 
 @Composable
 fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
@@ -51,7 +53,6 @@ fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: Stri
     }
 }
 
-@Preview
 @Composable
 private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boolean>,
                      onDismiss: (text:String) -> Unit) {
@@ -164,6 +165,16 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun GithubSearchDialogPreview() {
+    ProvideCustomColors(colors = PreviewPallete) {
+        val openDialog = remember { mutableStateOf(true) }
+
+        DialogUI(openDialog = openDialog, onDismiss = {})
     }
 }
 

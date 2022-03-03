@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -27,11 +28,13 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlin.math.max
 import kotlin.math.min
@@ -51,7 +54,7 @@ private val HzPadding = Modifier.padding(horizontal = 24.dp)
 @Composable
 fun RepositoryDetailScreen(
     item: Entity.Repository,
-    viewModel: MainViewModel = hiltViewModel(sharedViewModel())
+    viewModel: MainViewModel
 ) {
     val name = remember(item) { item.name }
     val date = remember(item) { item.created_at}
@@ -310,4 +313,29 @@ private fun commitReComposableHandler(viewModel: MainViewModel): String {
         }
     }
     return result
+}
+
+@Preview
+@Composable
+fun RepositoryDetailScreenPreview() {
+    val viewModel = MainViewModel(EmptyGithubUseCase())
+    val item: Entity.Repository = Entity.Repository(
+        name = "name",
+        id = "id",
+        created_at = "created_at",
+        html_url = "https://asd.com",
+        imageUrl = "image"
+    )
+
+    val name = remember(item) { item.name }
+    val date = remember(item) { item.created_at}
+    ProvideCustomColors(colors = PreviewPallete) {
+        Box(Modifier.fillMaxSize()) {
+            val scroll = rememberScrollState(0)
+            Header()
+            Body(viewModel, scroll)
+            Title(name, date, scroll.value)
+            Image(item.imageUrl, scroll.value)
+        }
+    }
 }

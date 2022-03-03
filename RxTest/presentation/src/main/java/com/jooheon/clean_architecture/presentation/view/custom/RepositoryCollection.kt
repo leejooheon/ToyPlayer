@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
@@ -30,8 +31,10 @@ import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryCard
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.custom.offsetGradientBackground
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 
 private val CardWidth = 170.dp
 private val CardPadding = 16.dp
@@ -181,5 +184,38 @@ fun RepositoryItem(
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun RepositoryItemPreview() {
+    ProvideCustomColors(colors = PreviewPallete) {
+        val index = 5
+        val scroll = rememberScrollState(0)
+        val gradient = when ((index / 2) % 2) {
+            0 -> CustomTheme.colors.gradient6_1
+            else -> CustomTheme.colors.gradient6_2
+        }
+        // The Cards show a gradient which spans 3 cards and scrolls with parallax.
+        val gradientWidth = with(LocalDensity.current) {
+            (6 * (CardWidth + CardPadding).toPx())
+        }
+        val item: Entity.Repository = Entity.Repository(
+            name = "name",
+            id = "id",
+            created_at = "created_at",
+            html_url = "https://asd.com",
+            imageUrl = "image"
+        )
+
+        RepositoryItem(
+            item,
+            {},
+            index,
+            gradient,
+            gradientWidth,
+            scroll.value
+        )
     }
 }
