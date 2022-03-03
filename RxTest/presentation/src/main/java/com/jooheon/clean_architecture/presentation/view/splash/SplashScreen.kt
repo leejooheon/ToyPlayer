@@ -116,7 +116,7 @@ internal fun PrepareRecomposableHandler(
         }
 
         is SplashResult.Done -> {
-            navigator.navigate(MainScreenDestination) {
+            navigator.navigate(MainScreenDestination.invoke()) {
                 launchSingleTop = true
                 popUpTo(SplashScreenDestination.route) {
                     inclusive = true

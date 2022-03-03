@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +33,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.*
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
@@ -43,23 +44,24 @@ import com.jooheon.clean_architecture.presentation.view.main.following.Following
 import com.jooheon.clean_architecture.presentation.view.main.home.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
 
-@Composable
-fun sharedViewModel() = LocalContext.current as MainActivity
-
 @OptIn(ExperimentalAnimationApi::class)
 @Destination
 @Composable
 fun MainScreen(
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    viewModel: MainViewModel = hiltViewModel(),
+    isPreview:Boolean = false
 ) {
-    val viewModel: MainViewModel = hiltViewModel(sharedViewModel())
     val bottomNavController = rememberAnimatedNavController()
 
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
@@ -76,7 +78,7 @@ fun MainScreen(
         isFloatingActionButtonDocked = true,
         drawerContent = { DrawerContent(scaffoldState, scope) },
         drawerBackgroundColor = CustomTheme.colors.uiBackground,
-        content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator) }
+        content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator, isPreview) }
     )
 
     RegisterBackPressedHandler(viewModel, scaffoldState, scope)
@@ -146,11 +148,15 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 fun RegisterBottomNavigation(
     viewModel: MainViewModel,
     navController: NavHostController,
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    isPreview:Boolean
 ) {
+    // NavHost가 Preview에서 에러나는현상이 있어 Flag로 막아둠.
+    if(isPreview) { return }
+
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
-            HomeScreen(navigator)
+            HomeScreen(navigator, viewModel)
         }
         composable(Screen.Following.route) {
             FollowingScreen()
@@ -296,5 +302,15 @@ fun RegisterBackPressedHandler (
                 return@launch
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewMainScreen() {
+    val viewModel = MainViewModel(EmptyGithubUseCase())
+    ProvideCustomColors(PreviewPallete) {
+        MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }
