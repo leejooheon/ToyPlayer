@@ -14,12 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.statusBarsHeight
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.HandleApiFailure
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
@@ -27,18 +29,19 @@ import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialo
 import com.jooheon.clean_architecture.presentation.view.destinations.RepositoryDetailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.home.repo.RepositoryCollection
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
 private const val TAG = "HomeScreen"
 
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    mainViewModel: MainViewModel = hiltViewModel(sharedViewModel())
+    mainViewModel: MainViewModel,
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val homeViewModel: HomeViewModel = hiltViewModel()
-
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             item {
@@ -129,5 +132,15 @@ fun InfoText(
                 mainViewModel.callRepositoryApi(owner)
             }
         })
+    }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    val mainViewModel = MainViewModel(EmptyGithubUseCase())
+    val homeViewModel = HomeViewModel(EmptyGithubUseCase())
+    ProvideCustomColors(PreviewPallete) {
+        HomeScreen(EmptyDestinationsNavigator, mainViewModel, homeViewModel)
     }
 }
