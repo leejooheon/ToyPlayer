@@ -49,6 +49,141 @@ sealed class Entity: Serializable {
         val tags: Set<String> = emptySet()
     ) : Entity()
 
+    data class Related(
+        val pages: List<Page>
+    ): Entity() {
+        data class Page(
+            val content_urls: ContentUrls,
+            val description: String,
+            val description_source: String,
+            val dir: String,
+            val displaytitle: String,
+            val extract: String?,
+            val extract_html: String,
+            val index: Int,
+            val lang: String,
+            val namespace: Namespace,
+            val normalizedtitle: String,
+            val ns: Int,
+            val originalimage: Originalimage,
+            val pageid: Int,
+            val revision: String,
+            val thumbnail: Thumbnail?,
+            val tid: String,
+            val timestamp: String,
+            val title: String?,
+            val titles: Titles,
+            val type: String,
+            val wikibase_item: String
+        ): Entity() {
+            data class ContentUrls(
+                val desktop: Desktop,
+                val mobile: Mobile
+            ): Entity() {
+                data class Desktop(
+                    val edit: String,
+                    val page: String,
+                    val revisions: String,
+                    val talk: String
+                ): Entity()
+
+                data class Mobile(
+                    val edit: String,
+                    val page: String,
+                    val revisions: String,
+                    val talk: String
+                ): Entity()
+            }
+
+            data class Namespace(
+                val id: Int,
+                val text: String
+            ): Entity()
+
+            data class Originalimage(
+                val height: Int,
+                val source: String,
+                val width: Int
+            ): Entity()
+
+            data class Thumbnail(
+                val height: Int,
+                val source: String,
+                val width: Int
+            ): Entity()
+
+            data class Titles(
+                val canonical: String,
+                val display: String,
+                val normalized: String
+            ): Entity()
+        }
+    }
+
+    data class Summary(
+        val content_urls: ContentUrls,
+        val description: String,
+        val description_source: String,
+        val dir: String,
+        val displaytitle: String,
+        val extract: String,
+        val extract_html: String,
+        val lang: String,
+        val namespace: Namespace,
+        val originalimage: Originalimage,
+        val pageid: Int,
+        val revision: String,
+        val thumbnail: Thumbnail?,
+        val tid: String,
+        val timestamp: String,
+        val title: String,
+        val titles: Titles,
+        val type: String,
+        val wikibase_item: String
+    ): Entity() {
+        data class ContentUrls(
+            val desktop: Desktop,
+            val mobile: Mobile
+        ): Entity() {
+            data class Desktop(
+                val edit: String,
+                val page: String,
+                val revisions: String,
+                val talk: String
+            ): Entity()
+
+            data class Mobile(
+                val edit: String,
+                val page: String,
+                val revisions: String,
+                val talk: String
+            ): Entity()
+        }
+
+        data class Namespace(
+            val id: Int,
+            val text: String
+        ): Entity()
+
+        data class Originalimage(
+            val height: Int,
+            val source: String,
+            val width: Int
+        ): Entity()
+
+        data class Thumbnail(
+            val height: Int,
+            val source: String,
+            val width: Int
+        ): Entity()
+
+        data class Titles(
+            val canonical: String,
+            val display: String,
+            val normalized: String
+        ): Entity()
+    }
+
     companion object {
         val tempImages: List<Entity.TempImage> = listOf(
             Entity.TempImage(
