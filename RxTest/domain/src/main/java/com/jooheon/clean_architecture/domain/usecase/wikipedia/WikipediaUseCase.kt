@@ -6,7 +6,7 @@ import com.jooheon.clean_architecture.domain.usecase.BaseUseCase
 import kotlinx.coroutines.flow.Flow
 
 interface WikipediaUseCase: BaseUseCase {
-    suspend fun getDetail(word: String): Flow<Resource<String>>
-    suspend fun getSummary(word: String): Flow<Resource<Entity.Summary>>
-    suspend fun getRelated(word: String): Flow<Resource<Entity.Related>>
+    fun getDetail(word: String): Flow<Resource<String>>
+    fun getSummary(word: String): Flow<Resource<Entity.Summary>>
+    fun getRelated(word: String): Flow<Resource<Entity.Related>>
 }

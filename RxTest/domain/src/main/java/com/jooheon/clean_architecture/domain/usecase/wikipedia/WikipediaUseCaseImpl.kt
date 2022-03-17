@@ -10,19 +10,19 @@ class WikipediaUseCaseImpl(
     private val wikipediaRepository: WikipediaRepository
 ): WikipediaUseCase {
 
-    override suspend fun getDetail(word: String): Flow<Resource<String>> = flow {
+    override fun getDetail(word: String): Flow<Resource<String>> = flow {
         emit(Resource.Loading)
         val response = wikipediaRepository.getDetail(word)
         emit(response)
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getSummary(word: String): Flow<Resource<Entity.Summary>> = flow {
+    override fun getSummary(word: String): Flow<Resource<Entity.Summary>> = flow {
         emit(Resource.Loading)
         val response = wikipediaRepository.getSummary(word)
         emit(response)
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getRelated(word: String): Flow<Resource<Entity.Related>> = flow {
+    override fun getRelated(word: String): Flow<Resource<Entity.Related>> = flow {
         emit(Resource.Loading)
         val response = wikipediaRepository.getRelated(word)
         emit(response)

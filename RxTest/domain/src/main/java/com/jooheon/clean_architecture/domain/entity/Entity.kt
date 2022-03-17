@@ -57,7 +57,7 @@ sealed class Entity: Serializable {
             val description: String,
             val description_source: String,
             val dir: String,
-            val displaytitle: String,
+            val displaytitle: String?,
             val extract: String?,
             val extract_html: String,
             val index: Int,
