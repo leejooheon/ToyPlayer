@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
         mutableStateOf<Resource<List<Entity.Repository>>>(Resource.Default)  // viewModel에서 값에 대한 변경권을 갖고 (private),
     val repositoryResponse = _repositoryResponse // view에서는 State를 활용해 참조만 가능하게 한다.
 
-    private val _lastSearchedOwner = MutableStateFlow("")
+    private val _lastSearchedOwner = mutableStateOf("")
     val lastSearchedOwner = _lastSearchedOwner
 
     private val _commitResponse = mutableStateOf<Resource<List<Entity.Commit>>>(Resource.Default)

@@ -35,6 +35,8 @@ import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlin.math.max
 import kotlin.math.min
@@ -54,7 +56,7 @@ private val HzPadding = Modifier.padding(horizontal = 24.dp)
 @Composable
 fun RepositoryDetailScreen(
     item: Entity.Repository,
-    viewModel: MainViewModel
+    sharedViewModel: MainViewModel = hiltViewModel(sharedViewModel()),
 ) {
     val name = remember(item) { item.name }
     val date = remember(item) { item.created_at}
@@ -62,7 +64,7 @@ fun RepositoryDetailScreen(
     Box(Modifier.fillMaxSize()) {
         val scroll = rememberScrollState(0)
         Header()
-        Body(viewModel, scroll)
+        Body(sharedViewModel, scroll)
         Title(name, date, scroll.value)
         Image(item.imageUrl, scroll.value)
     }

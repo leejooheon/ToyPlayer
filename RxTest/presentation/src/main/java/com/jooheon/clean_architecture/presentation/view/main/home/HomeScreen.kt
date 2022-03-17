@@ -29,6 +29,7 @@ import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialo
 import com.jooheon.clean_architecture.presentation.view.destinations.RepositoryDetailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.home.repo.RepositoryCollection
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
+import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -39,15 +40,14 @@ private const val TAG = "HomeScreen"
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
-    mainViewModel: MainViewModel,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    sharedViewModel: MainViewModel = hiltViewModel(sharedViewModel())
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             item {
-                ShowRepositories(mainViewModel, homeViewModel, navigator)
+                ShowRepositories(sharedViewModel, homeViewModel, navigator)
             }
-
         }
     }
 }
@@ -141,6 +141,6 @@ fun HomeScreenPreview() {
     val mainViewModel = MainViewModel(EmptyGithubUseCase())
     val homeViewModel = HomeViewModel(EmptyGithubUseCase())
     ProvideCustomColors(PreviewPallete) {
-        HomeScreen(EmptyDestinationsNavigator, mainViewModel, homeViewModel)
+        HomeScreen(EmptyDestinationsNavigator, homeViewModel, mainViewModel)
     }
 }

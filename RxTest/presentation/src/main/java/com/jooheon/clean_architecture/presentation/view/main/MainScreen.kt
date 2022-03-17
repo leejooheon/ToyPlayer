@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +41,7 @@ import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenD
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
-import com.jooheon.clean_architecture.presentation.view.main.following.FollowingScreen
+import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.main.home.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
@@ -54,16 +55,18 @@ import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
 
-@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun sharedViewModel() = LocalContext.current as MainActivity
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalComposeUiApi::class)
 @Destination
 @Composable
 fun MainScreen(
     navigator: DestinationsNavigator,
-    viewModel: MainViewModel = hiltViewModel(),
+    viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     isPreview:Boolean = false
 ) {
     val bottomNavController = rememberAnimatedNavController()
-
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val scope = rememberCoroutineScope()
 
@@ -108,7 +111,8 @@ fun MyFloatingActionButton(scaffoldState: ScaffoldState, scope: CoroutineScope) 
                     }
                 }
             }
-        }
+        },
+        backgroundColor = Color.Yellow
     ) {
         Text(
             text = floatingButtonText.value,
@@ -144,6 +148,7 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun RegisterBottomNavigation(
     viewModel: MainViewModel,
@@ -156,10 +161,10 @@ fun RegisterBottomNavigation(
 
     NavHost(navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
-            HomeScreen(navigator, viewModel)
+            HomeScreen(navigator)
         }
-        composable(Screen.Following.route) {
-            FollowingScreen()
+        composable(Screen.Wiki.route) {
+            WikipediaScreen()
         }
         composable(Screen.Watched.route) {
             WatchedScreen()

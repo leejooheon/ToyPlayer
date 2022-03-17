@@ -29,7 +29,7 @@ import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-    object Following : Screen("following")
+    object Wiki : Screen("wiki")
     object Watched : Screen("watched")
     object Search : Screen("search")
 }
@@ -43,9 +43,9 @@ private val BottomNavigationItems = listOf(
         selectedImageVector = Icons.Default.Weekend,
     ),
     BottomNavigationItem.ImageVectorIcon(
-        screen = Screen.Following,
-        labelResId = R.string.following_title,
-        contentDescriptionResId = R.string.cd_following_title,
+        screen = Screen.Wiki,
+        labelResId = R.string.wikipedia_title,
+        contentDescriptionResId = R.string.cd_wikipedia_title,
         iconImageVector = Icons.Default.FavoriteBorder,
         selectedImageVector = Icons.Default.Favorite,
     ),
@@ -75,8 +75,8 @@ fun NavController.currentScreenAsState(): State<Screen> {
                 destination.hierarchy.any { it.route == Screen.Home.route } -> {
                     selectedItem.value = Screen.Home
                 }
-                destination.hierarchy.any { it.route == Screen.Following.route } -> {
-                    selectedItem.value = Screen.Following
+                destination.hierarchy.any { it.route == Screen.Wiki.route } -> {
+                    selectedItem.value = Screen.Wiki
                 }
                 destination.hierarchy.any { it.route == Screen.Watched.route } -> {
                     selectedItem.value = Screen.Watched
