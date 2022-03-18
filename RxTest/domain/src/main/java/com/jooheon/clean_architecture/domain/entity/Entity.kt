@@ -53,26 +53,25 @@ sealed class Entity: Serializable {
         val pages: List<Page>
     ): Entity() {
         data class Page(
-            val content_urls: ContentUrls,
+            val content_urls: ContentUrls?,
             val description: String,
-            val description_source: String,
             val dir: String,
             val displaytitle: String?,
             val extract: String?,
             val extract_html: String,
             val index: Int,
             val lang: String,
-            val namespace: Namespace,
+            val namespace: Namespace?,
             val normalizedtitle: String,
             val ns: Int,
-            val originalimage: Originalimage,
+            val originalimage: Originalimage?,
             val pageid: Int,
             val revision: String,
             val thumbnail: Thumbnail?,
             val tid: String,
             val timestamp: String,
             val title: String?,
-            val titles: Titles,
+            val titles: Titles?,
             val type: String,
             val wikibase_item: String
         ): Entity() {

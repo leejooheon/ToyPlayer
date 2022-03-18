@@ -43,11 +43,12 @@ private const val TAG = "WikipediaScreen"
 @ExperimentalComposeUiApi
 @Composable
 fun WikipediaScreen(
-    viewModel: WikipediaViewModel = hiltViewModel()
+    viewModel: WikipediaViewModel = hiltViewModel(),
+    isPreview: Boolean = false
 ) {
     Column {
         SearchView(viewModel)
-        WikipediaListView(viewModel)
+        WikipediaListView(viewModel, isPreview)
     }
     ObserveAlertDialogState(viewModel)
     ObserveLoadingState(viewModel)
@@ -121,7 +122,10 @@ private fun SearchView(
 }
 
 @Composable
-private fun WikipediaListView(viewModel: WikipediaViewModel) {
+private fun WikipediaListView(
+    viewModel: WikipediaViewModel,
+    isPreview: Boolean
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             viewModel.relatedResponse.value?.pages?.let { pages ->
@@ -129,9 +133,12 @@ private fun WikipediaListView(viewModel: WikipediaViewModel) {
                     WikipediaListItem(index, page)
                 }
             }
-//            items(10) { index ->
-//                WikipediaListItem(index)
-//            }
+            if(isPreview) {
+                items(10) { index ->
+                    val page = EmptyWikipediaUseCase.dummyData(index)
+                    WikipediaListItem(index, page)
+                }
+            }
         }
     }
 }
@@ -139,9 +146,7 @@ private fun WikipediaListView(viewModel: WikipediaViewModel) {
 @Composable
 private fun WikipediaListItem(index: Int, page: Entity.Related.Page) {
     val title = page.displaytitle ?: run { "data is empty." }
-
     val description = page.extract ?: run { "data is empty." }
-
     val imgUrl = page.thumbnail?.source ?: run { R.drawable.ic_logo_github }
 
     Card(
@@ -225,6 +230,6 @@ fun ObserveLoadingState(viewModel: WikipediaViewModel) {
 fun PreviewWikipediaScreen() {
     val viewModel = WikipediaViewModel(EmptyWikipediaUseCase())
     ProvideCustomColors(colors = PreviewPallete) {
-        WikipediaScreen(viewModel)
+        WikipediaScreen(viewModel, true)
     }
 }

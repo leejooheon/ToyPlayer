@@ -17,4 +17,33 @@ class EmptyWikipediaUseCase: WikipediaUseCase {
     override fun getRelated(word: String): Flow<Resource<Entity.Related>> {
         TODO("Not yet implemented")
     }
+
+    companion object {
+        fun dummyData(index: Int): Entity.Related.Page {
+            val page = Entity.Related.Page(
+                content_urls = null,
+                description = "description",
+                dir = "dir",
+                displaytitle = "display_title - $index",
+                extract = "extract - $index",
+                extract_html = "ext",
+                index = 0,
+                lang = "lang",
+                namespace = null,
+                normalizedtitle = "",
+                ns = 0,
+                originalimage = null,
+                pageid = 0,
+                revision = "",
+                thumbnail = null,
+                tid = "",
+                timestamp = "",
+                title = "",
+                titles = null,
+                type = "",
+                wikibase_item = ""
+            )
+            return page
+        }
+    }
 }
