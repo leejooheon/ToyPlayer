@@ -13,7 +13,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
@@ -48,21 +47,6 @@ fun ObserveLoadingState(viewModel: BaseViewModel) {
 
 fun showToastMessage(context: Context, message:String){
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
-@Composable
-fun HandleApiFailure(
-    openDialog: MutableState<Boolean>,
-    response: Resource.Failure) {
-
-    CommonDialog(
-        openDialog,
-        content = "message: ${ response.message}\nstatus: ${response.failureStatus}\ncode: ${response.code}",
-        onConfirmButtonClicked = {
-            openDialog.value = false
-            Log.d("BaseFragment", "onConfirmButtonClicked")
-        }
-    )
 }
 
 @Composable

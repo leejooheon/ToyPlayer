@@ -28,7 +28,7 @@ import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 
 
 sealed class Screen(val route: String) {
-    object Home : Screen("home")
+    object Github : Screen("github")
     object Wiki : Screen("wiki")
     object Watched : Screen("watched")
     object Search : Screen("search")
@@ -36,9 +36,9 @@ sealed class Screen(val route: String) {
 
 private val BottomNavigationItems = listOf(
     BottomNavigationItem.ImageVectorIcon(
-        screen = Screen.Home,
-        labelResId = R.string.home_title,
-        contentDescriptionResId = R.string.cd_home_title,
+        screen = Screen.Github,
+        labelResId = R.string.github_title,
+        contentDescriptionResId = R.string.cd_github_title,
         iconImageVector = Icons.Outlined.Weekend,
         selectedImageVector = Icons.Default.Weekend,
     ),
@@ -67,13 +67,13 @@ private val BottomNavigationItems = listOf(
 @Stable
 @Composable
 fun NavController.currentScreenAsState(): State<Screen> {
-    val selectedItem = remember { mutableStateOf<Screen>(Screen.Home) }
+    val selectedItem = remember { mutableStateOf<Screen>(Screen.Github) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             when {
-                destination.hierarchy.any { it.route == Screen.Home.route } -> {
-                    selectedItem.value = Screen.Home
+                destination.hierarchy.any { it.route == Screen.Github.route } -> {
+                    selectedItem.value = Screen.Github
                 }
                 destination.hierarchy.any { it.route == Screen.Wiki.route } -> {
                     selectedItem.value = Screen.Wiki

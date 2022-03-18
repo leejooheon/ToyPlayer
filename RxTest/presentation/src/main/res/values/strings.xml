@@ -2,8 +2,8 @@
     <string name="app_name">ToyProject</string>
     <string name="some_error">Some error occurred, try again later</string>
 
-    <string name="home_title">Home</string>
-    <string name="cd_home_title">Home</string>
+    <string name="github_title">Github</string>
+    <string name="cd_github_title">Github</string>
 
     <string name="wikipedia_title">Wikipedia</string>
     <string name="cd_wikipedia_title">Wikipedia</string>

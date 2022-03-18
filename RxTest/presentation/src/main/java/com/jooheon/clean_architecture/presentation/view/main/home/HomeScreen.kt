@@ -27,8 +27,6 @@ import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.destinations.RepositoryDetailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.home.repo.GithubRepositoryItem
-import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -41,12 +39,11 @@ private const val TAG = "HomeScreen"
 fun HomeScreen(
     navigator: DestinationsNavigator,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    sharedViewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     isPreview: Boolean = false
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         SearchView(homeViewModel)
-        ShowRepositories(homeViewModel, navigator)
+        RepositoryItems(homeViewModel, navigator, isPreview)
     }
     ObserveGithubId(homeViewModel)
     ObserveAlertDialogState(homeViewModel)
@@ -135,7 +132,7 @@ private fun SearchView(
 
 @SuppressLint("UnrememberedMutableState", "StateFlowValueCalledInComposition")
 @Composable
-fun ShowRepositories(
+fun RepositoryItems(
     viewModel: HomeViewModel,
     navigator:DestinationsNavigator,
     isPreview:Boolean = false
@@ -157,7 +154,7 @@ fun ShowRepositories(
         }
     }
 
-    if(isPreview) { // FIXME: preview가 안보임 ㅠㅠ
+    if(isPreview) {
         GithubRepositoryItem(
             owner = "owner",
             repositoryList = EmptyGithubUseCase.repositoryDummyData(),
@@ -181,9 +178,8 @@ private fun ObserveGithubId(viewModel: HomeViewModel) {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    val mainViewModel = MainViewModel(EmptyGithubUseCase())
-    val homeViewModel = HomeViewModel(EmptyGithubUseCase())
+    val viewModel = HomeViewModel(EmptyGithubUseCase())
     ProvideCustomColors(PreviewPallete) {
-        HomeScreen(EmptyDestinationsNavigator, homeViewModel, mainViewModel, true)
+        HomeScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

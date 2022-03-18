@@ -159,8 +159,8 @@ fun RegisterBottomNavigation(
     // NavHost가 Preview에서 에러나는현상이 있어 Flag로 막아둠.
     if(isPreview) { return }
 
-    NavHost(navController, startDestination = Screen.Home.route) {
-        composable(Screen.Home.route) {
+    NavHost(navController, startDestination = Screen.Github.route) {
+        composable(Screen.Github.route) {
             HomeScreen(navigator)
         }
         composable(Screen.Wiki.route) {
