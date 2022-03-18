@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -13,7 +14,7 @@ abstract class BaseViewModel : ViewModel() {
     private val _loadingState = MutableSharedFlow<Boolean>(0)
     val loadingState = _loadingState
 
-    private val _alertDialogState = MutableSharedFlow<String>(0)
+    private val _alertDialogState = MutableSharedFlow<AlertDialogResource>(0)
     val alertDialogState = _alertDialogState
 
     protected fun <T: Any> handleResponse(response: Resource<T>?) {
@@ -37,7 +38,8 @@ abstract class BaseViewModel : ViewModel() {
 
     protected fun handleAlertDialogState(content: String) {
         viewModelScope.launch {
-            _alertDialogState.emit(content)
+            val resource = AlertDialogResource(content)
+            _alertDialogState.emit(resource)
         }
     }
 

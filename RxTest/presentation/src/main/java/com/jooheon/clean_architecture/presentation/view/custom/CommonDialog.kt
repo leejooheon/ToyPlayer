@@ -50,20 +50,18 @@ fun CommonDialog(
 @Composable
 fun CommonDialog(
     openDialog: MutableState<Boolean>,
-    title: String, content: String,
+    content: String,
     onConfirmButtonClicked: (() -> Unit)? = null) {
 
     if(!openDialog.value) { return }
 
     AlertDialog(
         backgroundColor = CustomTheme.colors.uiBackground,
-        onDismissRequest = { openDialog.value = false },
-        title = { Text(text = title)},
+        onDismissRequest = {  },
         text = { Text(text = content)},
 
         confirmButton = {
             TextButton(onClick = {
-                openDialog.value = false
                 onConfirmButtonClicked?.let { it() }
             }) {
                 Text("확인")

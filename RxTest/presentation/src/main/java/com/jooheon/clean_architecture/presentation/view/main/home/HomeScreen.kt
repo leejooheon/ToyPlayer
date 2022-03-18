@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.main.home
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,8 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.HandleApiFailure
+import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
+import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
@@ -50,8 +53,12 @@ fun HomeScreen(
             }
         }
     }
+
+    ObserveAlertDialogState(sharedViewModel)
+    ObserveLoadingState(sharedViewModel)
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun ShowRepositories(mainViewModel: MainViewModel, homeViewModel: HomeViewModel, navigator:DestinationsNavigator) {
     val response = mainViewModel.repositoryResponse.value
@@ -80,7 +87,9 @@ fun ShowRepositories(mainViewModel: MainViewModel, homeViewModel: HomeViewModel,
             MyDivider(thickness = 2.dp)
         }
         is Resource.Failure -> {
-            HandleApiFailure(response = response)
+            HandleApiFailure(
+                openDialog = mutableStateOf(true),
+                response = response)
         }
         is Resource.Default -> {
             InfoText(mainViewModel, "Input your id !!")

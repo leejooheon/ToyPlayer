@@ -15,7 +15,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,11 +31,9 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.utils.ShowLoading
-import com.jooheon.clean_architecture.presentation.utils.showToastMessage
+import com.jooheon.clean_architecture.presentation.utils.*
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
-import kotlinx.coroutines.flow.collect
 
 private const val TAG = "WikipediaScreen"
 
@@ -201,28 +198,6 @@ private fun WikipediaListItem(index: Int, page: Entity.Related.Page) {
         }
     }
 }
-
-// FIXME: 공통 처리해야함!!
-@Composable
-fun ObserveAlertDialogState(viewModel: WikipediaViewModel) {
-    val context = LocalContext.current
-    LaunchedEffect(key1 = viewModel.alertDialogState) {
-        viewModel.alertDialogState.collect {
-            showToastMessage(context, it)
-        }
-    }
-}
-
-// FIXME: 공통 처리해야함!!
-@Composable
-fun ObserveLoadingState(viewModel: WikipediaViewModel) {
-    val isShow = viewModel.loadingState.collectAsState(false).value
-
-    if(isShow) {
-        ShowLoading()
-    }
-}
-
 
 @ExperimentalComposeUiApi
 @Preview
