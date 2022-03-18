@@ -2,52 +2,49 @@ package com.jooheon.clean_architecture.presentation.base
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
     protected abstract val TAG: String
+
+    private val _loadingState = MutableSharedFlow<Boolean>(0)
+    val loadingState = _loadingState
+
+    private val _alertDialogState = MutableSharedFlow<AlertDialogResource>(0)
+    val alertDialogState = _alertDialogState
+
+    protected fun <T: Any> handleResponse(response: Resource<T>?) {
+        if(response is Resource.Loading) {
+            handleLoadingState(true)
+        } else {
+            handleLoadingState(false)
+        }
+
+        if(response is Resource.Failure) {
+            val content = "code: " + response.code.toString() + "\n" + "message: " + response.message
+            handleAlertDialogState(content)
+        }
+    }
+
+    protected fun handleLoadingState(state: Boolean) {
+        viewModelScope.launch {
+            _loadingState.emit(state)
+        }
+    }
+
+    protected fun handleAlertDialogState(content: String) {
+        viewModelScope.launch {
+            val resource = AlertDialogResource(content)
+            _alertDialogState.emit(resource)
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "onCleared")
     }
 }
-
-//open class BaseViewModel : ViewModel(){
-//    private val TAG = BaseViewModel::class.simpleName
-//    protected val mDisposable = CompositeDisposable()
-//
-//    val _errorMessageLiveData = MutableLiveData<String>()
-//    val _isSuccess = MutableLiveData<Boolean>()
-//
-//    val _loading = MutableLiveData<Boolean>()
-//    val loading: LiveData<Boolean> get() = _loading
-//
-//    override fun onCleared() {
-//        mDisposable.clear()
-//        super.onCleared()
-//    }
-//
-//    protected fun <T> MediatorLiveData<T>.add(publisher: Publisher<T>) {
-//        addSource(LiveDataReactiveStreams.fromPublisher(publisher)) {
-//            postValue(it)
-//        }
-//    }
-//
-//    // 일반적인 네트워크 통신시 사용할 base 통신 함수
-////    protected fun <T : Any> excute(
-////        single: Single<T>,
-////        res: (T) -> Unit,
-////        isShowLoad: Boolean = true
-////    ) {
-////        single.subscribeOn(Schedulers.io())
-////            .observeOn(AndroidSchedulers.mainThread())
-////            .doOnSubscribe { if (isShowLoad) _loading.value = true }
-////            .doAfterTerminate { if (isShowLoad) _loading.value = false }
-////            .subscribeBy(onSuccess = {
-////                res(it)
-////            }, onError = {// 에러나면 해당 에러메시지 토스트메시지로 띄워줌
-////                Log.e(TAG, "ViewModel Single Excute() onError -> " + it.message)
-////                _errorMessageLiveData.value = it.message
-////            })
-////            .addTo(compositeDisposable)
-////    }
-//}

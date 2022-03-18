@@ -16,7 +16,8 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        buildConfigField("String", "BASE_URL", "\"https://api.github.com\"")
+        buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
+        buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

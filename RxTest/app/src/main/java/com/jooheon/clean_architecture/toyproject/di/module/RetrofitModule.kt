@@ -24,6 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -34,9 +35,21 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
+    @Named(Constants.GITHUB_RETROFIT)
+    fun providesGithubRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl(BuildConfig.GITHUB_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @Named(Constants.WIKI_RETROFIT)
+    fun providesWikipediaRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.WIKIPEDIA_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
@@ -142,8 +155,8 @@ object RetrofitModule {
     private fun isRequireAuthorizationHeader(url: HttpUrl): Boolean {
         val path = url.encodedPath
         return !path.isEmpty() &&
-                (path.equals("/oauth/token") ||
-                 path.equals("/api/v100/service/info")) // FIXME: const val로 변경해야함
+                (path.equals(Constants.TOKEN_URL) ||
+                 path.equals(Constants.SERVICE_INFO_URL))
     }
 
     private fun responseCount(response: Response): Int {

@@ -25,4 +25,24 @@ class EmptyGithubUseCase: GithubUseCase {
     ): Flow<Pair<Resource<List<Entity.Branch>>, Resource<List<Entity.Commit>>>> {
         TODO("Not yet implemented")
     }
+
+    companion object {
+        fun repositoryDummyData():List<Entity.Repository> {
+            val items = ArrayList<Entity.Repository>()
+
+            for(i in 0..10) {
+                val item = Entity.Repository(
+                    name = "name $i",
+                    id = "id $i",
+                    created_at = "created_at",
+                    html_url = "html_url",
+                    imageUrl = Entity.tempImages.get(i).imageUrl
+                )
+
+                items.add(item)
+            }
+
+            return items
+        }
+    }
 }

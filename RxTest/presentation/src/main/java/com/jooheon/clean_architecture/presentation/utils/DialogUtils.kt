@@ -1,11 +1,8 @@
 package com.jooheon.clean_architecture.presentation.utils
 
-import android.app.Activity
-import android.app.Dialog
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 
-import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -13,30 +10,68 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.jooheon.clean_architecture.domain.common.Resource
-import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.base.BaseViewModel
+import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
+import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
-import kotlinx.coroutines.*
 
+private const val TAG = "DialogUtils"
+
+// FIXME: Compose function에 Base로 자동적용할수없을까?
+@SuppressLint("UnrememberedMutableState")
+@Composable
+fun ObserveAlertDialogState(viewModel: BaseViewModel) {
+    val resource = viewModel.alertDialogState.collectAsState(AlertDialogResource("")).value
+
+    if(!resource.content.isEmpty()) {
+        Log.d(TAG, "ObserveAlertDialogState execute")
+        ShowAlertDialog(
+            openDialog = mutableStateOf(true),
+            content = resource.content
+        )
+    }
+}
+
+// FIXME: Compose function에 Base로 자동적용할수없을까?
+@Composable
+fun ObserveLoadingState(viewModel: BaseViewModel) {
+    val isShow = viewModel.loadingState.collectAsState(false).value
+
+    if(isShow) {
+        ShowLoading()
+    }
+}
 
 fun showToastMessage(context: Context, message:String){
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 @Composable
-fun HandleApiFailure(response: Resource.Failure) {
-    val openDialog = remember { mutableStateOf(true) }
+fun HandleApiFailure(
+    openDialog: MutableState<Boolean>,
+    response: Resource.Failure) {
 
     CommonDialog(
-        openDialog = openDialog,
-        title = "Api Failure",
+        openDialog,
         content = "message: ${ response.message}\nstatus: ${response.failureStatus}\ncode: ${response.code}",
         onConfirmButtonClicked = {
+            openDialog.value = false
+            Log.d("BaseFragment", "onConfirmButtonClicked")
+        }
+    )
+}
+
+@Composable
+fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: String) {
+    CommonDialog(
+        openDialog,
+        content = content,
+        onConfirmButtonClicked = {
+            openDialog.value = false
             Log.d("BaseFragment", "onConfirmButtonClicked")
         }
     )
@@ -59,6 +94,9 @@ fun ShowLoading() {
     ) {
         // A pre-defined composable that's capable of rendering a circular progress indicator. It
         // honors the Material Design specification.
-        CircularProgressIndicator(modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally))
+        CircularProgressIndicator(
+            modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally),
+            color = CustomTheme.colors.textPrimary
+        )
     }
 }
