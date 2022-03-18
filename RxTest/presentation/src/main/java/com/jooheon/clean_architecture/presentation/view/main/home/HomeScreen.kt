@@ -151,7 +151,7 @@ fun ShowRepositories(
             owner = githubId,
             repositoryList = it) { item ->
             Log.d(TAG, "onClicked: $item")
-            navigator.navigate(RepositoryDetailScreenDestination(item)) {
+            navigator.navigate(RepositoryDetailScreenDestination(githubId, item)) {
                 launchSingleTop = true
             }
         }
