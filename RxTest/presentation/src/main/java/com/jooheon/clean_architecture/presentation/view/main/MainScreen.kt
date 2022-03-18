@@ -248,7 +248,7 @@ fun TopBar(
         GithubSearchDialog(openGithubSearchDialog, onDismiss = { owner ->
             if (!owner.isEmpty()) {
                 Log.d(TAG, owner)
-                viewModel.callRepositoryApi(owner)
+//                viewModel.callRepositoryApi(owner)
             }
         })
     }
