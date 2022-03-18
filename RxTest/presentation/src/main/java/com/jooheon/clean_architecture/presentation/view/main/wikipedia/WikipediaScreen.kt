@@ -67,9 +67,20 @@ private fun SearchView(
         val maxCharacterSize = 10
         var text by remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
+
+
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = "Input wiki\nKeyword",
+            color = CustomTheme.colors.textPrimary,
+            textAlign = TextAlign.Start,
+
+            style = MaterialTheme.typography.h5,
+            overflow = TextOverflow.Ellipsis
+        )
+
         OutlinedTextField(
-            modifier = Modifier
-                .widthIn(1.dp, Dp.Infinity),
+            modifier = Modifier.width(150.dp),
             value = text,
             onValueChange = {
                 if(it.length <= maxCharacterSize) {
@@ -81,7 +92,7 @@ private fun SearchView(
             label = { Text(text = "Input") },
             placeholder = {
                 Text(
-                    text = "input keyword",
+                    text = "github id",
                     style = TextStyle(
                         color = Color.LightGray,
                         textAlign = TextAlign.Center
