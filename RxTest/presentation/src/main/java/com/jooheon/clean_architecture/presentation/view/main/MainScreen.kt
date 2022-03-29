@@ -164,7 +164,7 @@ fun RegisterBottomNavigation(
             HomeScreen(navigator)
         }
         composable(Screen.Wiki.route) {
-            WikipediaScreen()
+            WikipediaScreen(navigator)
         }
         composable(Screen.Watched.route) {
             WatchedScreen()

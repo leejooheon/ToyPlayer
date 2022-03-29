@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.presentation.view.main.wikipedia
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -22,7 +23,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,20 +32,24 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.*
+import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
 private const val TAG = "WikipediaScreen"
 
 @ExperimentalComposeUiApi
 @Composable
 fun WikipediaScreen(
+    navigator: DestinationsNavigator,
     viewModel: WikipediaViewModel = hiltViewModel(),
     isPreview: Boolean = false
 ) {
     Column {
         SearchView(viewModel)
-        WikipediaListView(viewModel, isPreview)
+        WikipediaListView(navigator, viewModel, isPreview)
     }
     ObserveAlertDialogState(viewModel)
     ObserveLoadingState(viewModel)
@@ -131,6 +135,7 @@ private fun SearchView(
 
 @Composable
 private fun WikipediaListView(
+    navigator: DestinationsNavigator,
     viewModel: WikipediaViewModel,
     isPreview: Boolean
 ) {
@@ -138,7 +143,10 @@ private fun WikipediaListView(
         LazyColumn {
             viewModel.relatedResponse.value?.pages?.let { pages ->
                 itemsIndexed(pages) { index, page ->
-                    WikipediaListItem(index, page)
+                    WikipediaListItem(index, page) {
+                        Log.d(TAG, "onClicked: ${it.displaytitle}")
+                        navigator.navigate(WikipediaDatailScreenDestination.invoke("Bug"))
+                    }
                 }
             }
             if(isPreview) {
@@ -152,7 +160,10 @@ private fun WikipediaListView(
 }
 
 @Composable
-private fun WikipediaListItem(index: Int, page: Entity.Related.Page) {
+private fun WikipediaListItem(
+    index: Int,
+    page: Entity.Related.Page,
+    onClicked: ((Entity.Related.Page) -> Unit)? = null) {
     val title = page.displaytitle ?: run { "data is empty." }
     val description = page.extract ?: run { "data is empty." }
     val imgUrl = page.thumbnail?.source ?: run { R.drawable.ic_logo_github }
@@ -161,7 +172,10 @@ private fun WikipediaListItem(index: Int, page: Entity.Related.Page) {
         modifier = Modifier
             .fillMaxWidth()
             .height(150.dp)
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp),
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            .clickable {
+                onClicked?.let { it(page) }
+            },
         shape = RoundedCornerShape(8.dp),
         backgroundColor = CustomTheme.colors.uiBackground,
         elevation = 5.dp
@@ -216,6 +230,6 @@ private fun WikipediaListItem(index: Int, page: Entity.Related.Page) {
 fun PreviewWikipediaScreen() {
     val viewModel = WikipediaViewModel(EmptyWikipediaUseCase())
     ProvideCustomColors(colors = PreviewPallete) {
-        WikipediaScreen(viewModel, true)
+        WikipediaScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }
