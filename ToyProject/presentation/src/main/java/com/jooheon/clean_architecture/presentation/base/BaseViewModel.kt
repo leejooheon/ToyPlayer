@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
+import com.jooheon.clean_architecture.presentation.utils.UiText
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
@@ -25,7 +26,7 @@ abstract class BaseViewModel : ViewModel() {
         }
 
         if(response is Resource.Failure) {
-            val content = "code: " + response.code.toString() + "\n" + "message: " + response.message
+            val content = UiText.DynamicString("code: " + response.code.toString() + "\n" + "message: " + response.message)
             handleAlertDialogState(content)
         }
     }
@@ -36,7 +37,7 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
 
-    protected fun handleAlertDialogState(content: String) {
+    protected fun handleAlertDialogState(content: UiText) {
         viewModelScope.launch {
             val resource = AlertDialogResource(content)
             _alertDialogState.emit(resource)

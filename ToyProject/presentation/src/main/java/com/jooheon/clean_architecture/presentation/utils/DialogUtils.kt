@@ -24,9 +24,9 @@ private const val TAG = "DialogUtils"
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ObserveAlertDialogState(viewModel: BaseViewModel) {
-    val resource = viewModel.alertDialogState.collectAsState(AlertDialogResource("")).value
+    val resource = viewModel.alertDialogState.collectAsState(AlertDialogResource(UiText.DynamicString(""))).value
 
-    if(!resource.content.isEmpty()) {
+    if(!resource.content.asString().isEmpty()) {
         Log.d(TAG, "ObserveAlertDialogState execute")
         ShowAlertDialog(
             openDialog = mutableStateOf(true),
@@ -50,10 +50,10 @@ fun showToastMessage(context: Context, message:String){
 }
 
 @Composable
-fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: String) {
+fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: UiText) {
     CommonDialog(
         openDialog,
-        content = content,
+        content = content.toString(),
         onConfirmButtonClicked = {
             openDialog.value = false
             Log.d("BaseFragment", "onConfirmButtonClicked")
