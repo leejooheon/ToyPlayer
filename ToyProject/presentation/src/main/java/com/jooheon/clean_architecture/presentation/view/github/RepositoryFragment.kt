@@ -29,7 +29,7 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding>() {
     val viewModel: RepositoryViewModel by viewModels()
 
     override fun initStartView() {
-
+        // commit test
     }
 
     override fun initDataBinding() {
