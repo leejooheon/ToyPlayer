@@ -45,7 +45,6 @@ fun HomeScreen(
         SearchView(homeViewModel)
         RepositoryItems(homeViewModel, navigator, isPreview)
     }
-    ObserveGithubId(homeViewModel)
     ObserveAlertDialogState(homeViewModel)
     ObserveLoadingState(homeViewModel)
 }
@@ -119,7 +118,7 @@ private fun SearchView(
                 Log.d(TAG, "onClick!!")
                 keyboardController?.hide()
                 viewModel.githubId.value = id
-//                viewModel.callRepositoryApi(id)
+                viewModel.callRepositoryApi(id)
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = CustomTheme.colors.uiBackground
@@ -162,15 +161,6 @@ fun RepositoryItems(
                 // nothing
             }
         )
-    }
-}
-
-@Composable
-private fun ObserveGithubId(viewModel: HomeViewModel) {
-    val githubId = viewModel.githubId.collectAsState("").value
-
-    if(!githubId.isEmpty()) {
-        viewModel.callRepositoryApi(githubId)
     }
 }
 
