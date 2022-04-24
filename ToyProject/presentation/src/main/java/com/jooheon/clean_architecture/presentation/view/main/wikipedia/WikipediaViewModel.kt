@@ -11,6 +11,7 @@ import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -27,14 +28,16 @@ class WikipediaViewModel @Inject constructor(
     private val _relatedResponse = mutableStateOf<Entity.Related?>(null)
     val relatedResponse = _relatedResponse
 
-    fun callRelatedApi(word: String) {
-        if(word.isEmpty()) {
+    val searchWord = MutableStateFlow("")
+
+    fun callRelatedApi() {
+        if(searchWord.value.isEmpty()) {
             handleAlertDialogState(UiText.DynamicString("text is empty"))
             return
         }
 
         wikipediaUseCase
-            .getRelated(word)
+            .getRelated(searchWord.value)
             .onEach { resource ->
                 Log.d(TAG, "callRelatedApi: $resource")
                 handleResponse(resource)

@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.main.wikipedia
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -55,6 +56,7 @@ fun WikipediaScreen(
     ObserveLoadingState(viewModel)
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @ExperimentalComposeUiApi
 @Composable
 private fun SearchView(
@@ -69,9 +71,8 @@ private fun SearchView(
         verticalAlignment = Alignment.CenterVertically
     ) {
         val maxCharacterSize = 10
-        var text by remember { mutableStateOf("") }
+        var text by remember { mutableStateOf(viewModel.searchWord.value) }
         val keyboardController = LocalSoftwareKeyboardController.current
-
 
         Text(
             modifier = Modifier.padding(10.dp),
@@ -88,6 +89,7 @@ private fun SearchView(
             value = text,
             onValueChange = {
                 if(it.length <= maxCharacterSize) {
+                    viewModel.searchWord.value = it
                     text = it
                 }
             },
@@ -121,8 +123,7 @@ private fun SearchView(
                 .padding(start = 10.dp),
             onClick = {
                 keyboardController?.hide()
-                viewModel.callRelatedApi(text) // FIXME
-                Log.d(TAG, "onClick!!")
+                viewModel.callRelatedApi()
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = CustomTheme.colors.uiBackground
