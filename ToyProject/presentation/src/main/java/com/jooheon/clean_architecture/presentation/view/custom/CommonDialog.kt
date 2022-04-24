@@ -51,17 +51,21 @@ fun CommonDialog(
 fun CommonDialog(
     openDialog: MutableState<Boolean>,
     content: String,
+    onDismiss: (() -> Unit)? = null,
     onConfirmButtonClicked: (() -> Unit)? = null) {
 
     if(!openDialog.value) { return }
 
     AlertDialog(
         backgroundColor = CustomTheme.colors.uiBackground,
-        onDismissRequest = {  },
+        onDismissRequest = {
+            onDismiss?.let { it() }
+        },
         text = { Text(text = content)},
 
         confirmButton = {
             TextButton(onClick = {
+                onDismiss?.let { it() }
                 onConfirmButtonClicked?.let { it() }
             }) {
                 Text("확인")

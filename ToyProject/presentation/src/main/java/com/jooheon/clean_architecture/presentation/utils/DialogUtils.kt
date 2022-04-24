@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.utils
 
-import android.annotation.SuppressLint
 import android.content.Context
 
 import android.util.Log
@@ -17,20 +16,20 @@ import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "DialogUtils"
 
 // FIXME: Compose function에 Base로 자동적용할수없을까?
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun ObserveAlertDialogState(viewModel: BaseViewModel) {
-    val resource = viewModel.alertDialogState.collectAsState(AlertDialogResource(UiText.DynamicString(""))).value
-
-    if(!resource.content.asString().isEmpty()) {
-        Log.d(TAG, "ObserveAlertDialogState execute")
+    val state = viewModel.alertDialogState.collectAsState(initial = null).value
+    state?.let {
         ShowAlertDialog(
             openDialog = mutableStateOf(true),
-            content = resource.content
+            content = it.content,
+            viewModel = viewModel
         )
     }
 }
@@ -50,10 +49,14 @@ fun showToastMessage(context: Context, message:String){
 }
 
 @Composable
-fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: UiText) {
+fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: UiText, viewModel: BaseViewModel) {
     CommonDialog(
         openDialog,
-        content = content.toString(),
+        content = content.asString(),
+        onDismiss = {
+            viewModel.dismissAlertDialog()
+            Log.d("BaseFragment", "onDismiss")
+        },
         onConfirmButtonClicked = {
             openDialog.value = false
             Log.d("BaseFragment", "onConfirmButtonClicked")
