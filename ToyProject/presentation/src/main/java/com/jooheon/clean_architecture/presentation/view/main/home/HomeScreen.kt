@@ -63,9 +63,8 @@ private fun SearchView(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         val maxCharacterSize = 10
-        var id by remember { mutableStateOf("") }
+        var text by remember { mutableStateOf(viewModel.githubId.value) }
         val keyboardController = LocalSoftwareKeyboardController.current
 
         Text(
@@ -80,10 +79,11 @@ private fun SearchView(
 
         OutlinedTextField(
             modifier = Modifier.width(150.dp),
-            value = id,
+            value = text,
             onValueChange = {
                 if(it.length <= maxCharacterSize) {
-                    id = it
+                    viewModel.githubId.value = it
+                    text = it
                 }
             },
             singleLine = true,
@@ -117,8 +117,7 @@ private fun SearchView(
             onClick = {
                 Log.d(TAG, "onClick!!")
                 keyboardController?.hide()
-                viewModel.githubId.value = id
-                viewModel.callRepositoryApi(id)
+                viewModel.callRepositoryApi()
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = CustomTheme.colors.uiBackground

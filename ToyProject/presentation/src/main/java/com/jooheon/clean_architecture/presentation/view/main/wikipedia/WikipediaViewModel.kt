@@ -46,6 +46,11 @@ class WikipediaViewModel @Inject constructor(
                     _relatedResponse.value = resource.value
                 }
 
+                if(resource is Resource.Failure) {
+                    _relatedResponse.value = null
+                    searchWord.value = ""
+                }
+
             }.launchIn(viewModelScope)
     }
 
