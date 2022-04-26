@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.github
+package com.jooheon.clean_architecture.presentation.view.temp.old
 
 import android.util.Log
 import androidx.lifecycle.Observer
@@ -15,8 +15,6 @@ import com.jooheon.clean_architecture.presentation.databinding.FragmentRepositor
 
 import dagger.hilt.android.AndroidEntryPoint
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn

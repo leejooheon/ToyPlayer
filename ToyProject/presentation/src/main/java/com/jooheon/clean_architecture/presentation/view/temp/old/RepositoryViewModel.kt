@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.github
+package com.jooheon.clean_architecture.presentation.view.temp.old
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

@@ -15,7 +15,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -49,7 +49,7 @@ fun RepositoryImage(
 @Preview
 @Composable
 fun RepositoryImagePreview() {
-    ProvideCustomColors(colors = PreviewColorPallete()) {
+    ProvideCustomColors(colors = previewColorPallete()) {
         Box(
             modifier = Modifier
                 .height(160.dp)

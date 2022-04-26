@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.home
+package com.jooheon.clean_architecture.presentation.view.main.github
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -28,7 +28,7 @@ import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.destinations.RepositoryDetailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.home.repo.GithubRepositoryItem
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
@@ -168,7 +168,7 @@ fun RepositoryItems(
 @Composable
 fun HomeScreenPreview() {
     val viewModel = HomeViewModel(EmptyGithubUseCase())
-    ProvideCustomColors(PreviewColorPallete()) {
+    ProvideCustomColors(previewColorPallete()) {
         HomeScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

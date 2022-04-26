@@ -25,7 +25,7 @@ import com.jooheon.clean_architecture.presentation.view.custom.RepositoryCard
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.custom.offsetGradientBackground
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 private val CardWidth = 170.dp
 private val CardPadding = 16.dp
@@ -181,7 +181,7 @@ fun RepositoryItem(
 @Preview
 @Composable
 fun RepositoryItemPreview() {
-    ProvideCustomColors(colors = PreviewColorPallete()) {
+    ProvideCustomColors(colors = previewColorPallete()) {
         val index = 5
         val scroll = rememberScrollState(0)
         val gradient = when ((index / 2) % 2) {

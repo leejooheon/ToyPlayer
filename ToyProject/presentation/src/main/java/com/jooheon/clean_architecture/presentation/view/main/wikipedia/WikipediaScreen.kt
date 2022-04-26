@@ -35,7 +35,7 @@ import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.*
 import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
@@ -230,7 +230,7 @@ private fun WikipediaListItem(
 @Composable
 fun PreviewWikipediaScreen() {
     val viewModel = WikipediaViewModel(EmptyWikipediaUseCase())
-    ProvideCustomColors(colors = PreviewColorPallete()) {
+    ProvideCustomColors(colors = previewColorPallete()) {
         WikipediaScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

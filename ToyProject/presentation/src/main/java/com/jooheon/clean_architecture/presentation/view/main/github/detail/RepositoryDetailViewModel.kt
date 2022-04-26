@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.home.detail
+package com.jooheon.clean_architecture.presentation.view.main.github.detail
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf

@@ -25,7 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 @Composable
 fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
@@ -163,7 +163,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
 @Preview
 @Composable
 fun GithubSearchDialogPreview() {
-    ProvideCustomColors(colors = PreviewColorPallete()) {
+    ProvideCustomColors(colors = previewColorPallete()) {
         val openDialog = remember { mutableStateOf(true) }
 
         DialogUI(openDialog = openDialog, onDismiss = {})

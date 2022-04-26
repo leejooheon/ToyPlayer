@@ -41,11 +41,11 @@ import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavi
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
-import com.jooheon.clean_architecture.presentation.view.main.home.HomeScreen
+import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -330,7 +330,7 @@ fun RegisterBackPressedHandler (
 @Composable
 fun PreviewMainScreen() {
     val viewModel = MainViewModel(EmptyGithubUseCase())
-    ProvideCustomColors(PreviewColorPallete(true)) {
+    ProvideCustomColors(previewColorPallete(true)) {
         MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

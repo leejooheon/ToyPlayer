@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.home
+package com.jooheon.clean_architecture.presentation.view.main.github
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -33,9 +33,9 @@ import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
-import com.jooheon.clean_architecture.presentation.view.main.home.detail.RepositoryDetailViewModel
+import com.jooheon.clean_architecture.presentation.view.main.github.detail.RepositoryDetailViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
+import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlin.math.max
@@ -332,7 +332,7 @@ fun RepositoryDetailScreenPreview() {
 
     val name = remember(item) { item.name }
     val date = remember(item) { item.created_at}
-    ProvideCustomColors(colors = PreviewColorPallete()) {
+    ProvideCustomColors(colors = previewColorPallete()) {
         Box(Modifier.fillMaxSize()) {
             val scroll = rememberScrollState(0)
             Header()
