@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +34,6 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.theme.*
-import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
@@ -47,7 +45,7 @@ import com.jooheon.clean_architecture.presentation.view.main.home.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -332,7 +330,7 @@ fun RegisterBackPressedHandler (
 @Composable
 fun PreviewMainScreen() {
     val viewModel = MainViewModel(EmptyGithubUseCase())
-    ProvideCustomColors(PreviewPallete) {
+    ProvideCustomColors(PreviewColorPallete(true)) {
         MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

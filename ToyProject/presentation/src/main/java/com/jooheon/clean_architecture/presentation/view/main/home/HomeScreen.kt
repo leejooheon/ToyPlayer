@@ -28,7 +28,7 @@ import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.destinations.RepositoryDetailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.home.repo.GithubRepositoryItem
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
@@ -168,7 +168,7 @@ fun RepositoryItems(
 @Composable
 fun HomeScreenPreview() {
     val viewModel = HomeViewModel(EmptyGithubUseCase())
-    ProvideCustomColors(PreviewPallete) {
+    ProvideCustomColors(PreviewColorPallete()) {
         HomeScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -16,7 +15,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
@@ -50,7 +49,7 @@ fun RepositoryImage(
 @Preview
 @Composable
 fun RepositoryImagePreview() {
-    ProvideCustomColors(colors = PreviewPallete) {
+    ProvideCustomColors(colors = PreviewColorPallete()) {
         Box(
             modifier = Modifier
                 .height(160.dp)

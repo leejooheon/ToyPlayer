@@ -24,7 +24,6 @@ import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
@@ -32,14 +31,11 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
-import com.jooheon.clean_architecture.presentation.utils.ShowLoading
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
-import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.home.detail.RepositoryDetailViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
 
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlin.math.max
@@ -336,7 +332,7 @@ fun RepositoryDetailScreenPreview() {
 
     val name = remember(item) { item.name }
     val date = remember(item) { item.created_at}
-    ProvideCustomColors(colors = PreviewPallete) {
+    ProvideCustomColors(colors = PreviewColorPallete()) {
         Box(Modifier.fillMaxSize()) {
             val scroll = rememberScrollState(0)
             Header()

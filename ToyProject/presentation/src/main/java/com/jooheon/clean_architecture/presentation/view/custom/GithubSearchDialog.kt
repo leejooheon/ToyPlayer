@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
-import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,14 +7,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -31,9 +25,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.theme.Purple200
-import com.jooheon.clean_architecture.presentation.theme.Purple700
-import com.jooheon.clean_architecture.presentation.view.temp.PreviewPallete
+import com.jooheon.clean_architecture.presentation.view.temp.PreviewColorPallete
 
 @Composable
 fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
@@ -171,7 +163,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
 @Preview
 @Composable
 fun GithubSearchDialogPreview() {
-    ProvideCustomColors(colors = PreviewPallete) {
+    ProvideCustomColors(colors = PreviewColorPallete()) {
         val openDialog = remember { mutableStateOf(true) }
 
         DialogUI(openDialog = openDialog, onDismiss = {})
