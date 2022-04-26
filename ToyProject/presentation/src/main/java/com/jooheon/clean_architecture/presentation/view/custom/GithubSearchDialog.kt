@@ -74,11 +74,11 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(CustomTheme.colors.uiFloated)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_logo_github),
-                colorFilter = ColorFilter.tint(color = Color.Black),
+                colorFilter = ColorFilter.tint(color = CustomTheme.colors.iconPrimary),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -117,16 +117,16 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                             Text(
                                 text = "input your github id",
                                 style = TextStyle(
-                                    color = Color.LightGray,
+                                    color = CustomTheme.colors.textHelp,
                                     textAlign = TextAlign.Center
                                 )
                             )
                         },
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             textColor = CustomTheme.colors.textPrimary,
-                            focusedBorderColor = Color.Green,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedLabelColor = Color.Green,
+                            focusedBorderColor = CustomTheme.colors.brandSecondary,
+                            unfocusedBorderColor = CustomTheme.colors.brand,
+                            focusedLabelColor = CustomTheme.colors.brandSecondary,
                             unfocusedLabelColor = Color.Transparent
                         ),
                     )
@@ -135,7 +135,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
-                .background(Purple200),
+                .background(CustomTheme.colors.uiBorder),
                 horizontalArrangement = Arrangement.SpaceAround) { // spaceAround가 뭐자??
                 TextButton(
                     onClick = {
@@ -146,7 +146,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                     Text(
                         text = "Cancel",
                         fontWeight = FontWeight.Light,
-                        color = Color.LightGray,
+                        color = CustomTheme.colors.textSecondary,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
                 }
@@ -159,7 +159,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                     Text(
                         text = "Search",
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black,
+                        color = CustomTheme.colors.textPrimary,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
                 }

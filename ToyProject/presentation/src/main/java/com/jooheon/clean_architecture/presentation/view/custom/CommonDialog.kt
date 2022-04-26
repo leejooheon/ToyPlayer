@@ -57,18 +57,25 @@ fun CommonDialog(
     if(!openDialog.value) { return }
 
     AlertDialog(
-        backgroundColor = CustomTheme.colors.uiBackground,
+        backgroundColor = CustomTheme.colors.uiFloated,
         onDismissRequest = {
             onDismiss?.let { it() }
         },
-        text = { Text(text = content)},
-
+        text = {
+            Text(
+                text = content,
+                color = CustomTheme.colors.textHelp
+            )
+        },
         confirmButton = {
             TextButton(onClick = {
                 onDismiss?.let { it() }
                 onConfirmButtonClicked?.let { it() }
             }) {
-                Text("확인")
+                Text(
+                    text = "확인",
+                    color = CustomTheme.colors.textSecondary
+                )
             }
         }
     )

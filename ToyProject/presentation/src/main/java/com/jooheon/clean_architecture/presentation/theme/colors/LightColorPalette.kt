@@ -1,19 +1,21 @@
-package com.jooheon.clean_architecture.presentation.view.temp
+package com.jooheon.clean_architecture.presentation.theme.colors
 
 import com.jooheon.clean_architecture.presentation.theme.*
 
-val PreviewPallete = CustomColors(
+
+internal val LightColorPalette = CustomColors(
     brand = Shadow5,
     brandSecondary = Ocean3,
     uiBackground = Neutral0,
     uiBorder = Neutral4,
     uiFloated = FunctionalGrey,
-    uiTopbar = Shadow1,
+    uiTopbar = Neutral1,
     textSecondary = Neutral7,
     textHelp = Neutral6,
     textInteractive = Neutral0,
     textLink = Ocean11,
-    iconSecondary = Neutral7,
+    iconPrimary = Shadow4,
+    iconSecondary = Neutral4,
     iconInteractive = Neutral0,
     iconInteractiveInactive = Neutral1,
     error = FunctionalRed,

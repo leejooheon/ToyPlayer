@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.theme.*
+import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
@@ -112,7 +113,7 @@ fun MyFloatingActionButton(scaffoldState: ScaffoldState, scope: CoroutineScope) 
                 }
             }
         },
-        backgroundColor = Color.Yellow
+        backgroundColor = CustomTheme.colors.iconPrimary
     ) {
         Text(
             text = floatingButtonText.value,
@@ -129,11 +130,13 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "drawerContent - 1"
+            text = "drawerContent - 1",
+            color = CustomTheme.colors.textPrimary
         )
         Text(
             modifier = Modifier.padding(16.dp),
-            text = "drawerContent - 2"
+            text = "drawerContent - 2",
+            color = CustomTheme.colors.textPrimary
         )
         Text(
             modifier = Modifier
@@ -143,7 +146,8 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
                         scaffoldState.drawerState.close()
                     }
                 },
-            text = "drawerContent - 3"
+            text = "drawerContent - 3",
+            color = CustomTheme.colors.textPrimary
         )
     }
 }
@@ -204,16 +208,24 @@ fun TopBar(
     scope: CoroutineScope
 ) {
     val openGithubSearchDialog = remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     TopAppBar(
-        title = { Text(text = "My ToyProject") },
-        backgroundColor = Color.White,
+        backgroundColor = CustomTheme.colors.uiTopbar,
+        title = {
+            Text(
+                text = "My ToyProject",
+                color = CustomTheme.colors.textSecondary
+            )
+        },
         navigationIcon = {
             IconButton(onClick = {
                 scope.launch { scaffoldState.drawerState.open() }
                 Log.d(TAG, "Menu IconButton")
             }) {
-                Icon(Icons.Filled.Menu, contentDescription = null)
+                Icon(
+                    Icons.Filled.Menu,
+                    tint = CustomTheme.colors.iconPrimary,
+                    contentDescription = null)
             }
         },
         actions = {
@@ -223,6 +235,7 @@ fun TopBar(
             }) {
                 Icon(
                     Icons.Filled.Favorite,
+                    tint = CustomTheme.colors.iconPrimary,
                     contentDescription = "first IconButton description"
                 )
             }
@@ -231,6 +244,7 @@ fun TopBar(
             }) {
                 Icon(
                     Icons.Filled.Search,
+                    tint = CustomTheme.colors.iconPrimary,
                     contentDescription = "second IconButton description"
                 )
             }
@@ -239,7 +253,10 @@ fun TopBar(
                 Log.d(TAG, "Settings IconButton")
                 navigator.navigate(TestScreenDestination())
             }) {
-                Icon(Icons.Filled.Settings, contentDescription = null)
+                Icon(
+                    Icons.Filled.Settings,
+                    tint = CustomTheme.colors.iconPrimary,
+                    contentDescription = null)
             }
         }
     )

@@ -52,7 +52,7 @@ fun GithubRepositoryItem(
             Text(
                 text = owner,
                 style = MaterialTheme.typography.h6,
-                color = Color.Black,
+                color = CustomTheme.colors.textPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
