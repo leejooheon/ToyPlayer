@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.temp
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

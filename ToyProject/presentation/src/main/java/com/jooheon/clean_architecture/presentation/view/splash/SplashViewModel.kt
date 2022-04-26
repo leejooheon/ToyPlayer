@@ -1,7 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.splash
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel

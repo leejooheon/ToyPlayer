@@ -2,26 +2,20 @@ package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
 import android.os.Build
-import com.jooheon.clean_architecture.toyproject.BuildConfig
-
-import com.readystatesoftware.chuck.ChuckInterceptor
-import com.jooheon.clean_architecture.data.local.AppPreferences
-
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-
+import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.toyproject.BuildConfig
+import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
-
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Named

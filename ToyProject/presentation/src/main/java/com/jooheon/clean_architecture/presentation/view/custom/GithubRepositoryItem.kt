@@ -8,24 +8,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.jooheon.clean_architecture.domain.entity.Entity
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryCard
-import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.custom.offsetGradientBackground
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 private val CardWidth = 170.dp
 private val CardPadding = 16.dp
@@ -181,7 +180,7 @@ fun RepositoryItem(
 @Preview
 @Composable
 fun RepositoryItemPreview() {
-    ProvideCustomColors(colors = previewColorPallete()) {
+    PreviewTheme(true) {
         val index = 5
         val scroll = rememberScrollState(0)
         val gradient = when ((index / 2) % 2) {

@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import kotlin.math.ln
 
 /**

@@ -1,7 +1,6 @@
 package com.jooheon.clean_architecture.presentation.utils
 
 import android.content.Context
-
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -9,15 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "DialogUtils"
 

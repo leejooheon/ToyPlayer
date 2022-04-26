@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
-import com.google.accompanist.insets.ui.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -22,9 +21,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
+import com.google.accompanist.insets.ui.BottomNavigation
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 
 
 sealed class Screen(val route: String) {

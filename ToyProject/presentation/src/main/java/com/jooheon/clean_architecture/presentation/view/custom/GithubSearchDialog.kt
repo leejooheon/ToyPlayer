@@ -19,13 +19,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
-import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 
 @Composable
 fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
@@ -51,8 +49,8 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
     var text by remember { mutableStateOf("") }
 
     Card (
+        modifier = modifier.padding(10.dp, 5.dp, 10.dp, 5.dp), // start top end bottom
         shape = RoundedCornerShape(10.dp),
-        modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 5.dp), // start top end bottom
         elevation = 8.dp
     ){
 //      val focusRequester = FocusRequester()
@@ -163,7 +161,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
 @Preview
 @Composable
 fun GithubSearchDialogPreview() {
-    ProvideCustomColors(colors = previewColorPallete()) {
+    PreviewTheme(true) {
         val openDialog = remember { mutableStateOf(true) }
 
         DialogUI(openDialog = openDialog, onDismiss = {})

@@ -1,7 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.splash
 
-import com.jooheon.clean_architecture.domain.common.Resource
-
 sealed class SplashResult<out T> {
     object Default : SplashResult<Nothing>()
     class NetworkAvailable<out T>(val value: T) : SplashResult<T>()

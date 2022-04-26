@@ -8,9 +8,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
-import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 
 
 @Composable
@@ -88,7 +87,7 @@ fun CommonDialogPreview() {
     // 현재 AlertDialog preview가 안되는 현상이있다고함.
     // ChipMunk Canary5 버전부터 수정됨.
 
-    ProvideCustomColors(previewColorPallete()) {
+    PreviewTheme {
 //        CommonDialog()
     }
 }

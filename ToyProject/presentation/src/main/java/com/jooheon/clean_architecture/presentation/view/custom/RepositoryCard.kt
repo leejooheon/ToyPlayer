@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 
 @Composable
 fun RepositoryCard(

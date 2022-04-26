@@ -3,14 +3,13 @@ package com.jooheon.clean_architecture.presentation.view.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
-import com.jooheon.clean_architecture.presentation.theme.ApplicationTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.view.NavGraphs
 import com.ramcosta.composedestinations.DestinationsNavHost
 

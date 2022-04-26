@@ -1,19 +1,17 @@
 package com.jooheon.clean_architecture.data.datasource
 
 
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.jooheon.clean_architecture.domain.common.BaseResponse
 import com.jooheon.clean_architecture.domain.common.ErrorResponse
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
-
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.net.UnknownHostException
 import javax.inject.Inject
-
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 
 open class BaseRemoteDataSource @Inject constructor() {
 

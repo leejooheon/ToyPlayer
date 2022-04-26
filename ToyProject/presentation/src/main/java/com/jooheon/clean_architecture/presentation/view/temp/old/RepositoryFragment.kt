@@ -1,20 +1,20 @@
 package com.jooheon.clean_architecture.presentation.view.temp.old
 
+
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.fragment.app.viewModels
-
-
-import com.jooheon.clean_architecture.presentation.base.BaseFragment
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.base.BaseFragment
 import com.jooheon.clean_architecture.presentation.base.extensions.hideKeyboard
 import com.jooheon.clean_architecture.presentation.base.extensions.textChanges
 import com.jooheon.clean_architecture.presentation.databinding.FragmentRepositoryBinding
-
 import dagger.hilt.android.AndroidEntryPoint
-
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
@@ -30,6 +30,7 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding>() {
         // commit test
     }
 
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     override fun initDataBinding() {
         // viewModel의 LiveData 참조
         viewModel.repositoryLiveData.observe(this, Observer {
@@ -44,6 +45,7 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding>() {
             }.launchIn(lifecycleScope)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initAfterBinding() {
         lifecycleScope.launchWhenResumed {
             viewModel.repositoryResponse.collect {
@@ -63,6 +65,12 @@ class RepositoryFragment: BaseFragment<FragmentRepositoryBinding>() {
                     is Resource.Failure -> {
                         Log.d(TAG, "Failure ${it.message}, ${it.failureStatus}, ${it.code}")
                         binding.tvRepository.text = "${it.message}, ${it.failureStatus}, ${it.code}"
+                    }
+                    is Resource.Default -> {
+                        Log.d(TAG, "default")
+                    }
+                    else -> {
+                        Log.d(TAG, "error")
                     }
                 }
             }

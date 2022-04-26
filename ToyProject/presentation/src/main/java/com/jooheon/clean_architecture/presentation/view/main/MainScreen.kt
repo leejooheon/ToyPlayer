@@ -33,19 +33,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.clean_architecture.presentation.theme.*
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
-import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
 import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
+import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -71,6 +71,7 @@ fun MainScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
+
         backgroundColor = CustomTheme.colors.uiBackground,
         snackbarHost = { state -> MySnackHost(state) },
         topBar = { TopBar(viewModel, navigator, scaffoldState, scope) },
@@ -80,7 +81,8 @@ fun MainScreen(
         isFloatingActionButtonDocked = true,
         drawerContent = { DrawerContent(scaffoldState, scope) },
         drawerBackgroundColor = CustomTheme.colors.uiBackground,
-        content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator, isPreview) }
+        content = { RegisterBottomNavigation(bottomNavController, navigator, isPreview) },
+
     )
 
     RegisterBackPressedHandler(viewModel, scaffoldState, scope)
@@ -153,7 +155,6 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 @ExperimentalComposeUiApi
 @Composable
 fun RegisterBottomNavigation(
-    viewModel: MainViewModel,
     navController: NavHostController,
     navigator: DestinationsNavigator,
     isPreview:Boolean
@@ -206,7 +207,6 @@ fun TopBar(
     scope: CoroutineScope
 ) {
     val openGithubSearchDialog = remember { mutableStateOf(false) }
-    val context = LocalContext.current
     TopAppBar(
         backgroundColor = CustomTheme.colors.uiTopbar,
         title = {
@@ -281,6 +281,7 @@ fun MySnackHost(state: SnackbarHostState) {
                 action = {
                     Text(
                         text = data.actionLabel?.let { it } ?: run { "hide" },
+                        color = CustomTheme.colors.textHelp,
                         modifier = Modifier
                             .padding(8.dp)
                             .clickable { state.currentSnackbarData?.dismiss() },
@@ -294,7 +295,7 @@ fun MySnackHost(state: SnackbarHostState) {
             ) {
                 Text(
                     text = data.message,
-                    color = CustomTheme.colors.textInteractive
+                    color = CustomTheme.colors.textLink
                 )
             }
         }
@@ -330,7 +331,7 @@ fun RegisterBackPressedHandler (
 @Composable
 fun PreviewMainScreen() {
     val viewModel = MainViewModel(EmptyGithubUseCase())
-    ProvideCustomColors(previewColorPallete(true)) {
+    PreviewTheme(true) {
         MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

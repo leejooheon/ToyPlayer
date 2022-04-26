@@ -89,3 +89,8 @@ dependencies {
     implementation(Libraries.interceptor)
     implementation(Libraries.chuckLogging)
 }
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
+    }
+}

@@ -2,7 +2,6 @@ package com.jooheon.clean_architecture.data.api
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface GithubApi {

@@ -6,9 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import androidx.annotation.CheckResult
-import androidx.core.widget.doOnTextChanged
-import com.jakewharton.rxbinding4.internal.checkMainThread
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

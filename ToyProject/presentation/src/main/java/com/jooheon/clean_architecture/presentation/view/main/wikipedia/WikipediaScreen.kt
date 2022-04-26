@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -30,12 +29,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.theme.CustomTheme
-import com.jooheon.clean_architecture.presentation.theme.ProvideCustomColors
-import com.jooheon.clean_architecture.presentation.utils.*
+import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
+import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
+import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
@@ -95,23 +95,22 @@ private fun SearchView(
             },
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-            label = { Text(text = "Input") },
+            label = {
+                Text(
+                    text = "Input",
+                    color = CustomTheme.colors.textSecondary
+                )
+            },
             placeholder = {
                 Text(
                     text = "github id",
                     style = TextStyle(
-                        color = Color.LightGray,
+                        color = CustomTheme.colors.textHelp,
                         textAlign = TextAlign.Center
                     )
                 )
             },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = CustomTheme.colors.textPrimary,
-                focusedBorderColor = Color.Green,
-                unfocusedBorderColor = Color.Gray,
-                focusedLabelColor = Color.Green,
-                unfocusedLabelColor = Color.Transparent
-            ),
+            colors = outlinedTextFieldColor(),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = { keyboardController?.hide() }
@@ -126,10 +125,13 @@ private fun SearchView(
                 viewModel.callRelatedApi()
             },
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.uiBackground
+                backgroundColor = CustomTheme.colors.uiFloated
             )
         ) {
-            Text("확인")
+            Text(
+                text = "확인",
+                color = CustomTheme.colors.textHelp
+            )
         }
     }
 }
@@ -230,7 +232,7 @@ private fun WikipediaListItem(
 @Composable
 fun PreviewWikipediaScreen() {
     val viewModel = WikipediaViewModel(EmptyWikipediaUseCase())
-    ProvideCustomColors(colors = previewColorPallete()) {
+    PreviewTheme(false) {
         WikipediaScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }
