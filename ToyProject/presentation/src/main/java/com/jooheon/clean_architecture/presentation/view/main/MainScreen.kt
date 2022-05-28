@@ -5,10 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,8 +79,9 @@ fun MainScreen(
         isFloatingActionButtonDocked = true,
         drawerContent = { DrawerContent(scaffoldState, scope) },
         drawerBackgroundColor = CustomTheme.colors.uiBackground,
-        content = { RegisterBottomNavigation(bottomNavController, navigator, isPreview) },
-
+        content = { paddingValue ->
+            RegisterBottomNavigation(bottomNavController, navigator, paddingValue, isPreview)
+        }
     )
 
     RegisterBackPressedHandler(viewModel, scaffoldState, scope)
@@ -125,9 +124,7 @@ fun MyFloatingActionButton(scaffoldState: ScaffoldState, scope: CoroutineScope) 
 @Composable
 fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
     Column(modifier = Modifier.fillMaxWidth()) {
-
         Spacer(Modifier.statusBarsHeight(additional = 24.dp))
-
         Text(
             modifier = Modifier.padding(16.dp),
             text = "drawerContent - 1",
@@ -157,23 +154,25 @@ fun DrawerContent(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 fun RegisterBottomNavigation(
     navController: NavHostController,
     navigator: DestinationsNavigator,
+    paddingValues: PaddingValues,
     isPreview:Boolean
 ) {
     // NavHost가 Preview에서 에러나는현상이 있어 Flag로 막아둠.
     if(isPreview) { return }
-
-    NavHost(navController, startDestination = Screen.Github.route) {
-        composable(Screen.Github.route) {
-            HomeScreen(navigator)
-        }
-        composable(Screen.Wiki.route) {
-            WikipediaScreen(navigator)
-        }
-        composable(Screen.Watched.route) {
-            WatchedScreen()
-        }
-        composable(Screen.Search.route) {
-            SearchScreen()
+    Box(modifier = Modifier.padding(paddingValues)) {
+        NavHost(navController, startDestination = Screen.Github.route) {
+            composable(Screen.Github.route) {
+                HomeScreen(navigator)
+            }
+            composable(Screen.Wiki.route) {
+                WikipediaScreen(navigator)
+            }
+            composable(Screen.Watched.route) {
+                WatchedScreen()
+            }
+            composable(Screen.Search.route) {
+                SearchScreen()
+            }
         }
     }
 }
@@ -211,8 +210,10 @@ fun TopBar(
         backgroundColor = CustomTheme.colors.uiTopbar,
         title = {
             Text(
-                text = "My ToyProject",
-                color = CustomTheme.colors.textSecondary
+                text = "ToyProject",
+                color = CustomTheme.colors.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         },
         navigationIcon = {
