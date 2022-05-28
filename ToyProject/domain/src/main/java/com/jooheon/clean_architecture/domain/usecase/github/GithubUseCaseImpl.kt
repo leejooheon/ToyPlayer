@@ -32,6 +32,7 @@ class GithubUseCaseImpl(
                 is Resource.Default -> {
                     // do something ...
                 }
+                else -> {}
             }
 //            Log.d(TAG, "usecase end")
             emit(result)

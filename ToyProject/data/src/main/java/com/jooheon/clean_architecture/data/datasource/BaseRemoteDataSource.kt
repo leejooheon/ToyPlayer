@@ -51,7 +51,7 @@ open class BaseRemoteDataSource @Inject constructor() {
                             val apiResponse = jObjError.toString()
                             val response = Gson().fromJson(apiResponse, BaseResponse::class.java)
 
-                            return Resource.Failure(FailureStatus.API_FAIL, throwable.code(), "")
+                            return Resource.Failure(FailureStatus.API_FAIL, throwable.code(), response.detail)
                         }
                         throwable.code() == 401 -> {
                             val errorResponse = Gson().fromJson(
