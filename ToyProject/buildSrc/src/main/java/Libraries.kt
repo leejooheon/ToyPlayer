@@ -8,8 +8,8 @@ object Libraries {
     const val hiltForCompose = "androidx.hilt:hilt-navigation-compose:1.0.0-rc01"  // option: hilt <-> compose
 
     // coroutine
-    const val coroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
-    const val coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    const val coroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1"
+    const val coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
     // retrofit
     const val retrofit = "com.squareup.retrofit2:retrofit:2.9.0"
@@ -26,22 +26,30 @@ object Libraries {
     const val fcmMessaging = "com.google.firebase:firebase-messaging-ktx:23.0.0"
 
     // UI
-    const val fragment = "androidx.fragment:fragment-ktx:1.4.0"
-    const val navigationUI = "androidx.navigation:navigation-runtime-ktx:2.3.5"
-    const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.2"
-    const val material = "com.google.android.material:material:1.4.0"
-    const val splashScreen = "androidx.core:core-splashscreen:1.0.0-beta01"
+    const val fragment = "androidx.fragment:fragment-ktx:1.4.1"
+    const val navigationUI = "androidx.navigation:navigation-runtime-ktx:2.4.2"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
+    const val material = "com.google.android.material:material:1.6.0"
+    const val splashScreen = "androidx.core:core-splashscreen:1.0.0-rc01"
 
     // Compose
     const val composeActivity = "androidx.activity:activity-compose:1.4.0"  // Integration with activities
-    const val composeMaterial = "androidx.compose.material:material:1.0.5" // Compose Material Design
-    const val composeAnimation = "androidx.compose.animation:animation:1.0.5" // Animations
-    const val composeUiTools = "androidx.compose.ui:ui-tooling:1.0.5" // Tooling support (Previews, etc.)
-    const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0" // Integration with ViewModels
-    const val composeIcon = "androidx.compose.material:material-icons-extended:1.2.0-alpha01"
-    const val composeNavigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
-    const val composeUtils = "androidx.compose.ui:ui-util:1.2.0-alpha01"
-    const val composeTest = "androidx.compose.ui:ui-test-junit4:1.0.5" // // UI Tests
+    const val composeMaterial = "androidx.compose.material:material:1.1.1" // Compose Material Design
+    const val composeAnimation = "androidx.compose.animation:animation:1.1.1" // Animations
+    const val composeUiTools = "androidx.compose.ui:ui-tooling:1.1.1" // Tooling support (Previews, etc.)
+    const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1" // Integration with ViewModels
+    const val composeIcon = "androidx.compose.material:material-icons-extended:1.2.0-beta02"
+    const val composeNavigation = "androidx.navigation:navigation-compose:2.5.0-rc01"
+    const val composeUtils = "androidx.compose.ui:ui-util:1.2.0-beta02"
+    const val composeTest = "androidx.compose.ui:ui-test-junit4:1.1.1" // // UI Tests
+
+    // Compose Material3
+    const val composeMaterial3 = "androidx.compose.material3:material3:1.0.0-alpha12"
+    const val composeMaterial3WindowSize = "androidx.compose.material3:material3-window-size-class:1.0.0-alpha12"
+
+    // Test
+    const val jUnit = "androidx.test.ext:junit:1.1.3"
+    const val espresso = "androidx.test.espresso:espresso-core:3.4.0"
 
     // Compose Navigation Library
     const val composeDestinations = "io.github.raamcosta.compose-destinations:core:1.1.5-beta"
@@ -54,11 +62,11 @@ object Libraries {
     const val accompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:0.22.0-rc"
 
     // lifecycle
-    const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
-    const val lifecycleReactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.4.0"
+    const val lifecycle = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    const val lifecycleReactive = "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.4.1"
 
     // support
-    const val appCompat = "androidx.appcompat:appcompat:1.4.0"
+    const val appCompat = "androidx.appcompat:appcompat:1.4.1"
     const val coreKtx = "androidx.core:core-ktx:1.7.0"
 
     // kotlin

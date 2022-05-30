@@ -60,6 +60,7 @@ android {
     dataBinding {
         enabled = true
     }
+    namespace 'com.jooheon.clean_architecture.toyproject'
 }
 
 dependencies {

@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
@@ -44,9 +43,6 @@ private fun ComponentActivity.setOwners() { // TODO: 이게 뭐지??
     }
     if (ViewTreeViewModelStoreOwner.get(decorView) == null) {
         ViewTreeViewModelStoreOwner.set(decorView, this)
-    }
-    if (ViewTreeSavedStateRegistryOwner.get(decorView) == null) {
-        ViewTreeSavedStateRegistryOwner.set(decorView, this)
     }
 }
 /*
