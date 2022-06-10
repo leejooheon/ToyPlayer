@@ -17,7 +17,7 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
     private val _lastSearchedOwner = mutableStateOf("")
     val lastSearchedOwner = _lastSearchedOwner
 
-    private var _isDoubleBackPressed = mutableStateOf(true)
+    private var _isDoubleBackPressed = mutableStateOf(true) // FIXME: 2번연속했을떄 안되넴
     val isDoubleBackPressed = _isDoubleBackPressed
 
     fun onNavigationClicked() {

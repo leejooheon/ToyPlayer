@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -82,7 +82,7 @@ fun ShowLoading() {
         // honors the Material Design specification.
         CircularProgressIndicator(
             modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally),
-            color = CustomTheme.colors.textPrimary
+            color = CustomTheme.colors.material3Colors.primary
         )
     }
 }

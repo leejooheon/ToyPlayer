@@ -3,19 +3,23 @@ package com.jooheon.clean_architecture.presentation.view.main.wikipedia
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +39,7 @@ import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
+import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -48,93 +53,106 @@ fun WikipediaScreen(
     viewModel: WikipediaViewModel = hiltViewModel(),
     isPreview: Boolean = false
 ) {
-    Column {
-        SearchView(viewModel)
+    val localFocusManager = LocalFocusManager.current
+    Column(
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = {
+                    localFocusManager.clearFocus()
+                }
+            )
+        }
+    ) {
+
+        SearchView(
+            title = "input wiki\nKeyword",
+            content = viewModel.searchWord.value,
+            onTextChanged = { viewModel.searchWord.value = it },
+            onButtonClicked = { viewModel.callRelatedApi() }
+        )
         WikipediaListView(navigator, viewModel, isPreview)
     }
     ObserveAlertDialogState(viewModel)
     ObserveLoadingState(viewModel)
 }
 
-@SuppressLint("StateFlowValueCalledInComposition")
-@ExperimentalComposeUiApi
-@Composable
-private fun SearchView(
-    viewModel: WikipediaViewModel
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val maxCharacterSize = 10
-        var text by remember { mutableStateOf(viewModel.searchWord.value) }
-        val keyboardController = LocalSoftwareKeyboardController.current
-
-        Text(
-            modifier = Modifier.padding(10.dp),
-            text = "Input wiki\nKeyword",
-            color = CustomTheme.colors.textPrimary,
-            textAlign = TextAlign.Start,
-
-            style = MaterialTheme.typography.h5,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        OutlinedTextField(
-            modifier = Modifier.width(150.dp),
-            value = text,
-            onValueChange = {
-                if(it.length <= maxCharacterSize) {
-                    viewModel.searchWord.value = it
-                    text = it
-                }
-            },
-            singleLine = true,
-            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-            label = {
-                Text(
-                    text = "Input",
-                    color = CustomTheme.colors.textSecondary
-                )
-            },
-            placeholder = {
-                Text(
-                    text = "github id",
-                    style = TextStyle(
-                        color = CustomTheme.colors.textHelp,
-                        textAlign = TextAlign.Center
-                    )
-                )
-            },
-            colors = outlinedTextFieldColor(),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = { keyboardController?.hide() }
-            )
-        )
-
-        OutlinedButton(
-            modifier = Modifier
-                .padding(start = 10.dp),
-            onClick = {
-                keyboardController?.hide()
-                viewModel.callRelatedApi()
-            },
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = CustomTheme.colors.uiFloated
-            )
-        ) {
-            Text(
-                text = "확인",
-                color = CustomTheme.colors.textHelp
-            )
-        }
-    }
-}
+//@OptIn(ExperimentalComposeUiApi::class)
+//@Composable
+//private fun SearchView(
+//    viewModel: WikipediaViewModel
+//) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(100.dp)
+//            .padding(top = 10.dp),
+//        horizontalArrangement = Arrangement.Center,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        val maxCharacterSize = 10
+//        var text by remember { mutableStateOf(viewModel.searchWord.value) }
+//        val keyboardController = LocalSoftwareKeyboardController.current
+//
+//        Text(
+//            modifier = Modifier.padding(10.dp),
+//            text = "Input wiki\nKeyword",
+//            color = CustomTheme.colors.material3Colors.primary,
+//            textAlign = TextAlign.Start,
+//            style = MaterialTheme.typography.bodyLarge,
+//            overflow = TextOverflow.Ellipsis
+//        )
+//
+//        OutlinedTextField(
+//            modifier = Modifier.width(120.dp),
+//            value = text,
+//            onValueChange = {
+//                if(it.length <= maxCharacterSize) {
+//                    viewModel.searchWord.value = it
+//                    text = it
+//                }
+//            },
+//            singleLine = true,
+//            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+//            label = {
+//                Text(
+//                    text = "Input",
+//                    color = CustomTheme.colors.material3Colors.tertiary
+//                )
+//            },
+//            placeholder = {
+//                Text(
+//                    text = "this is placeholder",
+//                    style = TextStyle(
+//                        color = CustomTheme.colors.material3Colors.secondary,
+//                        textAlign = TextAlign.Center
+//                    )
+//                )
+//            },
+////            colors = outlinedTextFieldColor(),
+//            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+//            keyboardActions = KeyboardActions(
+//                onDone = { keyboardController?.hide() }
+//            )
+//        )
+//
+//        OutlinedButton(
+//            modifier = Modifier
+//                .padding(horizontal = 10.dp),
+//            onClick = {
+//                keyboardController?.hide()
+//                viewModel.callRelatedApi()
+//            },
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = CustomTheme.colors.material3Colors.secondary
+//            )
+//        ) {
+//            Text(
+//                text = "확인",
+//                color = CustomTheme.colors.material3Colors.onSecondary
+//            )
+//        }
+//    }
+//}
 
 @Composable
 private fun WikipediaListView(
@@ -162,6 +180,7 @@ private fun WikipediaListView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WikipediaListItem(
     index: Int,
@@ -176,18 +195,23 @@ private fun WikipediaListItem(
             .fillMaxWidth()
             .height(150.dp)
             .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+            .background(CustomTheme.colors.material3Colors.surface)
             .clickable {
                 onClicked?.let { it(page) }
             },
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = CustomTheme.colors.uiBackground,
-        elevation = 5.dp
+
+//        backgroundColor = CustomTheme.colors.material3Colors.background,
+//        elevation = 5.dp
     ) {
         Row(modifier = Modifier
             .padding(10.dp)
             .fillMaxSize()
         ) {
             Image(
+                modifier = Modifier
+                    .width(120.dp)
+                    .fillMaxHeight(),
                 painter = rememberImagePainter(
                     data = imgUrl,
                     builder = {
@@ -196,7 +220,6 @@ private fun WikipediaListItem(
                     }
                 ),
                 contentDescription = "description",
-                modifier = Modifier.width(120.dp),
                 contentScale = ContentScale.Crop,
             )
 
@@ -209,18 +232,16 @@ private fun WikipediaListItem(
                     overflow = TextOverflow.Ellipsis,
                     text = title,
                     fontWeight = FontWeight.Bold,
-                    color = CustomTheme.colors.textPrimary,
-                    textAlign = TextAlign.Center,
-                    fontSize = 15.sp,
+                    color = CustomTheme.colors.material3Colors.onSurface,
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
                     modifier = Modifier.padding(top = 10.dp),
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis,
                     text = description,
-                    color = CustomTheme.colors.textSecondary,
-                    fontSize = 10.sp,
-                    lineHeight = 13.sp
+                    color = CustomTheme.colors.material3Colors.onSurface,
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
         }
