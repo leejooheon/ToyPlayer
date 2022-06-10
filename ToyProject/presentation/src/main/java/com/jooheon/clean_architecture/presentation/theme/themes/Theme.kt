@@ -1,11 +1,15 @@
 package com.jooheon.clean_architecture.presentation.theme.themes
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
 import com.jooheon.clean_architecture.presentation.theme.Shapes
@@ -14,25 +18,29 @@ import com.jooheon.clean_architecture.presentation.theme.colors.CustomColors
 import com.jooheon.clean_architecture.presentation.theme.colors.DarkColorPalette
 import com.jooheon.clean_architecture.presentation.theme.colors.LightColorPalette
 import com.jooheon.clean_architecture.presentation.theme.colors.LocalCustomColors
-import com.jooheon.clean_architecture.presentation.theme.colors.pallette.debugColors
 
 @Composable
 fun ApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
-
+    val useDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 12 이상일때
+    val customColors = when {
+        useDynamicColors && darkTheme -> DarkColorPalette.update(dynamicDarkColorScheme(LocalContext.current))
+        useDynamicColors && !darkTheme -> LightColorPalette.update(dynamicLightColorScheme(LocalContext.current))
+        darkTheme -> DarkColorPalette
+        else -> LightColorPalette
+    }
     val sysUiController = rememberSystemUiController()
     SideEffect {
         sysUiController.setSystemBarsColor(
-            color = colors.uiBackground.copy(alpha = AlphaNearOpaque)
+            color = customColors.material3Colors.background.copy(alpha = AlphaNearOpaque)
         )
     }
 
-    ProvideCustomColors(colors) {
+    ProvideCustomColors(customColors) {
         MaterialTheme(
-            colors = debugColors(darkTheme),
+            colorScheme = customColors.material3Colors,
             typography = Typography,
             shapes = Shapes,
             content = content

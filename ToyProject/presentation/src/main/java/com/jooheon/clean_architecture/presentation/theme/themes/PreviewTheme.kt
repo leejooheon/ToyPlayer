@@ -1,13 +1,9 @@
 package com.jooheon.clean_architecture.presentation.theme.themes
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import com.jooheon.clean_architecture.presentation.theme.Shapes
-import com.jooheon.clean_architecture.presentation.theme.Typography
 import com.jooheon.clean_architecture.presentation.theme.colors.LocalCustomColors
-import com.jooheon.clean_architecture.presentation.theme.colors.pallette.debugColors
 import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
 
 

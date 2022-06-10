@@ -5,7 +5,7 @@ import com.jooheon.clean_architecture.presentation.theme.colors.DarkColorPalette
 import com.jooheon.clean_architecture.presentation.theme.colors.LightColorPalette
 
 @Composable
-fun previewColorPallete(darkTheme:Boolean = false) = when(darkTheme) {
+internal fun previewColorPallete(darkTheme:Boolean = false) = when(darkTheme) {
     true -> DarkColorPalette
     false -> LightColorPalette
 }
