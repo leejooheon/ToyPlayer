@@ -2,8 +2,8 @@ package com.jooheon.clean_architecture.presentation.view.main.github
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +64,11 @@ fun RepositoryDetailScreen(
 
     initialize(viewModel, initialized, githubId, item.name)
 
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(CustomTheme.colors.material3Colors.background)
+    ) {
         val scroll = rememberScrollState(0)
         Header()
         Body(viewModel, scroll)
@@ -94,7 +98,7 @@ private fun Header() {
         modifier = Modifier
             .height(280.dp)
             .fillMaxWidth()
-            .background(Brush.horizontalGradient(CustomTheme.colors.tornado1))
+            .background(Brush.horizontalGradient(CustomTheme.colors.gradient2_1))
     )
 }
 
@@ -140,20 +144,20 @@ private fun Title(
             .heightIn(min = TitleHeight)
             .statusBarsPadding()
             .graphicsLayer { translationY = offset }
-            .background(color = CustomTheme.colors.uiBackground)
+            .background(color = CustomTheme.colors.material3Colors.surface)
     ) {
         Spacer(Modifier.height(16.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.h4,
-            color = CustomTheme.colors.textSecondary,
+            style = MaterialTheme.typography.headlineMedium,
+            color = CustomTheme.colors.material3Colors.onSurface,
             modifier = HzPadding
         )
         Spacer(Modifier.height(4.dp))
         Text(
             text = date,
-            style = MaterialTheme.typography.subtitle2,
-            color = CustomTheme.colors.textHelp,
+            style = MaterialTheme.typography.headlineSmall,
+            color = CustomTheme.colors.material3Colors.onSurface,
             modifier = HzPadding
         )
         Spacer(Modifier.height(8.dp))
@@ -219,8 +223,8 @@ private fun Body(
                     Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(id = R.string.branch_header),
-                        style = MaterialTheme.typography.overline,
-                        color = CustomTheme.colors.textHelp,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = CustomTheme.colors.material3Colors.onPrimary,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(16.dp))
@@ -229,8 +233,8 @@ private fun Body(
 
                     Text(
                         text = detailContent,
-                        style = MaterialTheme.typography.body1,
-                        color = CustomTheme.colors.textHelp,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CustomTheme.colors.material3Colors.onPrimary,
                         maxLines = if (seeMore.value) 5 else Int.MAX_VALUE,
                         overflow = TextOverflow.Ellipsis,
                         modifier = HzPadding
@@ -244,9 +248,9 @@ private fun Body(
 
                     Text(
                         text = textButton,
-                        style = MaterialTheme.typography.button,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        color = CustomTheme.colors.textLink,
+                        color = CustomTheme.colors.material3Colors.tertiary,
                         modifier = Modifier
                             .heightIn(20.dp)
                             .fillMaxWidth()
@@ -260,15 +264,15 @@ private fun Body(
 
                     Text(
                         text = stringResource(R.string.commit_header),
-                        style = MaterialTheme.typography.overline,
-                        color = CustomTheme.colors.textHelp,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = CustomTheme.colors.material3Colors.onPrimary,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = detailCommit,
-                        style = MaterialTheme.typography.body1,
-                        color = CustomTheme.colors.textHelp,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = CustomTheme.colors.material3Colors.onPrimary,
                         modifier = HzPadding
                     )
 

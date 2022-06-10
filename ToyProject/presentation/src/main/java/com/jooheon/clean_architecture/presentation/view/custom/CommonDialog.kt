@@ -1,8 +1,8 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -56,14 +56,14 @@ fun CommonDialog(
     if(!openDialog.value) { return }
 
     AlertDialog(
-        backgroundColor = CustomTheme.colors.uiFloated,
+//        backgroundColor = CustomTheme.colors.material3Colors.secondary,
         onDismissRequest = {
             onDismiss?.let { it() }
         },
         text = {
             Text(
                 text = content,
-                color = CustomTheme.colors.textHelp
+                color = CustomTheme.colors.material3Colors.onSecondary
             )
         },
         confirmButton = {
@@ -73,7 +73,7 @@ fun CommonDialog(
             }) {
                 Text(
                     text = "확인",
-                    color = CustomTheme.colors.textSecondary
+                    color = CustomTheme.colors.material3Colors.onSecondary
                 )
             }
         }

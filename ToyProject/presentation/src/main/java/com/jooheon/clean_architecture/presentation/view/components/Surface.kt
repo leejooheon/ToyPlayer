@@ -5,7 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -28,8 +28,8 @@ import kotlin.math.ln
 fun CustomSurface(
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
-    color: Color = CustomTheme.colors.uiBackground,
-    contentColor: Color = CustomTheme.colors.textSecondary,
+    color: Color = CustomTheme.colors.material3Colors.background,
+    contentColor: Color = CustomTheme.colors.material3Colors.onBackground,
     border: BorderStroke? = null,
     elevation: Dp = 0.dp,
     content: @Composable () -> Unit

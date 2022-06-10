@@ -21,10 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.jooheon.clean_architecture.presentation.view.temp.compose.ComposeActivity"
-            android:exported="true">
-        </activity>
-
         <service
             android:name="com.jooheon.clean_architecture.presentation.service.MyFirebaseMessagingService"
             android:exported="true">

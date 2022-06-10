@@ -4,27 +4,43 @@ import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.Weekend
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.MaterialTheme
+//import androidx.compose.material.icons.outlined.Visibility
+//import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
 import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.presentation.view.main.MainScreen
+import com.jooheon.clean_architecture.presentation.view.main.TAG
+import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
 
 sealed class Screen(val route: String) {
@@ -39,28 +55,29 @@ private val BottomNavigationItems = listOf(
         screen = Screen.Github,
         labelResId = R.string.github_title,
         contentDescriptionResId = R.string.cd_github_title,
-        iconImageVector = Icons.Outlined.Weekend,
-        selectedImageVector = Icons.Default.Weekend,
+        iconImageVector = Icons.Outlined.Search,
+        selectedImageVector = Icons.Filled.Search,
     ),
     BottomNavigationItem.ImageVectorIcon(
         screen = Screen.Wiki,
         labelResId = R.string.wikipedia_title,
         contentDescriptionResId = R.string.cd_wikipedia_title,
-        iconImageVector = Icons.Default.FavoriteBorder,
+        iconImageVector = Icons.Outlined.FavoriteBorder,
         selectedImageVector = Icons.Default.Favorite,
     ),
     BottomNavigationItem.ImageVectorIcon(
         screen = Screen.Watched,
         labelResId = R.string.watched_title,
         contentDescriptionResId = R.string.cd_watched_title,
-        iconImageVector = Icons.Outlined.Visibility,
-        selectedImageVector = Icons.Default.Visibility,
+        iconImageVector = Icons.Outlined.Add,
+        selectedImageVector = Icons.Default.Add,
     ),
     BottomNavigationItem.ImageVectorIcon(
         screen = Screen.Search,
         labelResId = R.string.search_title,
         contentDescriptionResId = R.string.cd_search_title,
-        iconImageVector = Icons.Default.Search,
+        iconImageVector = Icons.Outlined.Build,
+        selectedImageVector = Icons.Default.Build,
     ),
 )
 
@@ -104,26 +121,29 @@ internal fun MyBottomNavigation(
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
-        backgroundColor = CustomTheme.colors.uiBackground.copy(alpha = AlphaNearOpaque),
-        contentColor = CustomTheme.colors.textSecondary,
+        backgroundColor = CustomTheme.colors.material3Colors.tertiary.copy(alpha = AlphaNearOpaque),
+        contentColor = CustomTheme.colors.material3Colors.onTertiary,
         contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
         modifier = modifier
     ) {
         BottomNavigationItems.forEach { item ->
             BottomNavigationItem(
-                selectedContentColor = CustomTheme.colors.iconPrimary,
-                unselectedContentColor = CustomTheme.colors.iconSecondary,
                 icon = {
-                       Icon(
-                           painter = rememberVectorPainter(item.iconImageVector),
-                           contentDescription = stringResource(item.contentDescriptionResId)
-                       )
-//                    BottomNavigationItemIcon(
-//                        item = item,
-//                        selected = selectedNavigation == item.screen
-//                    )
+                    Icon(
+                        painter = rememberVectorPainter(item.iconImageVector),
+                        contentDescription = stringResource(item.contentDescriptionResId)
+                    )
+                    BottomNavigationItemIcon(
+                        item = item,
+                        selected = selectedNavigation == item.screen
+                    )
                 },
-                label = { Text(text = stringResource(item.labelResId)) },
+                label = {
+                    Text(
+                        text = stringResource(item.labelResId),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                },
                 selected = selectedNavigation == item.screen,
                 onClick = { onNavigationSelected(item.screen) },
             )
@@ -133,10 +153,6 @@ internal fun MyBottomNavigation(
 
 @Composable
 private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boolean) {
-    if(selected) {
-        Log.d("jh", "selected")
-    }
-
     val painter = when (item) {
         is BottomNavigationItem.ResourceIcon -> painterResource(item.iconResId)
         is BottomNavigationItem.ImageVectorIcon -> rememberVectorPainter(item.iconImageVector)
@@ -181,4 +197,19 @@ private sealed class BottomNavigationItem(
         val iconImageVector: ImageVector,
         val selectedImageVector: ImageVector? = null,
     ) : BottomNavigationItem(screen, labelResId, contentDescriptionResId)
+}
+
+@ExperimentalAnimationApi
+@Preview
+@Composable
+fun PreviewBottomNav() {
+    val bottomNavController = rememberAnimatedNavController()
+    val currentSelectedItem by bottomNavController.currentScreenAsState()
+    PreviewTheme(false) {
+        MyBottomNavigation(
+            modifier = Modifier.fillMaxWidth(),
+            selectedNavigation = currentSelectedItem,
+            onNavigationSelected = { }
+        )
+    }
 }

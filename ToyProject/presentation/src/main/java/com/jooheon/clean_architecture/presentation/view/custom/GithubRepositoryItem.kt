@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.runtime.Composable
@@ -50,8 +50,8 @@ fun GithubRepositoryItem(
         ) {
             Text(
                 text = owner,
-                style = MaterialTheme.typography.h6,
-                color = CustomTheme.colors.textPrimary,
+                style = MaterialTheme.typography.bodyLarge,
+                color = CustomTheme.colors.material3Colors.onPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -162,15 +162,15 @@ fun RepositoryItem(
                 text = item.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.h6,
-                color = CustomTheme.colors.textSecondary,
+                style = MaterialTheme.typography.bodyMedium,
+                color = CustomTheme.colors.material3Colors.onPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = item.created_at,
-                style = MaterialTheme.typography.caption,
-                color = CustomTheme.colors.textHelp,
+                style = MaterialTheme.typography.bodySmall,
+                color = CustomTheme.colors.material3Colors.onPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }

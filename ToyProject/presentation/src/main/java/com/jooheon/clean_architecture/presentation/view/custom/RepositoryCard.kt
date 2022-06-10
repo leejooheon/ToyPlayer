@@ -1,7 +1,7 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,8 +15,8 @@ import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 fun RepositoryCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    color: Color = CustomTheme.colors.uiBackground,
-    contentColor: Color = CustomTheme.colors.textPrimary,
+    color: Color = CustomTheme.colors.material3Colors.background,
+    contentColor: Color = CustomTheme.colors.material3Colors.onBackground,
     border: BorderStroke? = null,
     elevation: Dp = 4.dp,
     content: @Composable () -> Unit

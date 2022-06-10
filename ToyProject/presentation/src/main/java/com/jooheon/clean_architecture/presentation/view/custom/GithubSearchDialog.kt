@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +24,9 @@ import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 
+@ExperimentalMaterial3Api
 @Composable
 fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
     Dialog(
@@ -43,6 +45,7 @@ fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: Stri
     }
 }
 
+@ExperimentalMaterial3Api
 @Composable
 private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boolean>,
                      onDismiss: (text:String) -> Unit) {
@@ -51,7 +54,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
     Card (
         modifier = modifier.padding(10.dp, 5.dp, 10.dp, 5.dp), // start top end bottom
         shape = RoundedCornerShape(10.dp),
-        elevation = 8.dp
+//        elevation = 8.dp
     ){
 //      val focusRequester = FocusRequester()
 //        DisposableEffect(Unit) {
@@ -64,11 +67,11 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CustomTheme.colors.uiFloated)
+                .background(CustomTheme.colors.material3Colors.surface)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_logo_github),
-                colorFilter = ColorFilter.tint(color = CustomTheme.colors.iconPrimary),
+                colorFilter = ColorFilter.tint(color = CustomTheme.colors.material3Colors.primary),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -79,12 +82,12 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
                     text = "Search your\nRepository.",
-                    color = CustomTheme.colors.textSecondary,
+                    color = CustomTheme.colors.material3Colors.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -93,39 +96,29 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                     .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     OutlinedTextField(
-                        modifier = Modifier
-                            .widthIn(1.dp, Dp.Infinity),
+                        modifier = Modifier.widthIn(1.dp, Dp.Infinity),
                         value = text,
                         onValueChange = { text = it },
-                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                        label = {
-                            Text(
-                                text = "Input"
-                            )
-                        },
+                        textStyle = MaterialTheme.typography.bodySmall,
+                        maxLines = 1,
+                        label = { Text(text = "Input") },
                         placeholder = {
                             Text(
                                 text = "input your github id",
                                 style = TextStyle(
-                                    color = CustomTheme.colors.textHelp,
+                                    color = CustomTheme.colors.material3Colors.onSurface,
                                     textAlign = TextAlign.Center
                                 )
                             )
                         },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            textColor = CustomTheme.colors.textPrimary,
-                            focusedBorderColor = CustomTheme.colors.brandSecondary,
-                            unfocusedBorderColor = CustomTheme.colors.brand,
-                            focusedLabelColor = CustomTheme.colors.brandSecondary,
-                            unfocusedLabelColor = Color.Transparent
-                        ),
+                        colors = outlinedTextFieldColor()
                     )
                 }
             }
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
-                .background(CustomTheme.colors.uiBorder),
+                .background(CustomTheme.colors.material3Colors.surfaceVariant),
                 horizontalArrangement = Arrangement.SpaceAround) { // spaceAround가 뭐자??
                 TextButton(
                     onClick = {
@@ -135,8 +128,8 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                 ) {
                     Text(
                         text = "Cancel",
-                        fontWeight = FontWeight.Light,
-                        color = CustomTheme.colors.textSecondary,
+                        color = CustomTheme.colors.material3Colors.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
                 }
@@ -148,8 +141,8 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                 ) {
                     Text(
                         text = "Search",
-                        fontWeight = FontWeight.Bold,
-                        color = CustomTheme.colors.textPrimary,
+                        color = CustomTheme.colors.material3Colors.tertiary,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
                 }
@@ -158,6 +151,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
     }
 }
 
+@ExperimentalMaterial3Api
 @Preview
 @Composable
 fun GithubSearchDialogPreview() {

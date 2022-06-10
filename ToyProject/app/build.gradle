@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.jooheon.clean_architecture.toyproject"
         minSdk 24
-        targetSdk 31
+        targetSdk 32
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -69,8 +69,8 @@ dependencies {
     implementation project(path: ':presentation')
 
     // util
-    implementation(Libraries.multidex)
-    coreLibraryDesugaring(Libraries.desugar)
+    implementation("androidx.multidex:multidex:2.0.1")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     // hilt
     implementation(Libraries.hilt)
@@ -90,6 +90,7 @@ dependencies {
     implementation(Libraries.interceptor)
     implementation(Libraries.chuckLogging)
 }
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += "-Xopt-in=io.ktor.util.KtorExperimentalAPI"
