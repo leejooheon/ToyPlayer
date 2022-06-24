@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -54,16 +55,16 @@ fun CommonDialog(
     onConfirmButtonClicked: (() -> Unit)? = null) {
 
     if(!openDialog.value) { return }
-
     AlertDialog(
-//        backgroundColor = CustomTheme.colors.material3Colors.secondary,
+        containerColor = MaterialTheme.colorScheme.secondary,
+        textContentColor = MaterialTheme.colorScheme.onSecondary,
         onDismissRequest = {
             onDismiss?.let { it() }
         },
         text = {
             Text(
                 text = content,
-                color = CustomTheme.colors.material3Colors.onSecondary
+                style = MaterialTheme.typography.bodyMedium
             )
         },
         confirmButton = {
@@ -73,7 +74,8 @@ fun CommonDialog(
             }) {
                 Text(
                     text = "확인",
-                    color = CustomTheme.colors.material3Colors.onSecondary
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
             }
         }

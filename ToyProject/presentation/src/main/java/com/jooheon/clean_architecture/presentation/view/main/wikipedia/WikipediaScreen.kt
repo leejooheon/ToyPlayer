@@ -96,7 +96,7 @@ fun WikipediaScreen(
 //        Text(
 //            modifier = Modifier.padding(10.dp),
 //            text = "Input wiki\nKeyword",
-//            color = CustomTheme.colors.material3Colors.primary,
+//            color = MaterialTheme.colorScheme.primary,
 //            textAlign = TextAlign.Start,
 //            style = MaterialTheme.typography.bodyLarge,
 //            overflow = TextOverflow.Ellipsis
@@ -116,14 +116,14 @@ fun WikipediaScreen(
 //            label = {
 //                Text(
 //                    text = "Input",
-//                    color = CustomTheme.colors.material3Colors.tertiary
+//                    color = MaterialTheme.colorScheme.tertiary
 //                )
 //            },
 //            placeholder = {
 //                Text(
 //                    text = "this is placeholder",
 //                    style = TextStyle(
-//                        color = CustomTheme.colors.material3Colors.secondary,
+//                        color = MaterialTheme.colorScheme.secondary,
 //                        textAlign = TextAlign.Center
 //                    )
 //                )
@@ -143,12 +143,12 @@ fun WikipediaScreen(
 //                viewModel.callRelatedApi()
 //            },
 //            colors = ButtonDefaults.buttonColors(
-//                containerColor = CustomTheme.colors.material3Colors.secondary
+//                containerColor = MaterialTheme.colorScheme.secondary
 //            )
 //        ) {
 //            Text(
 //                text = "확인",
-//                color = CustomTheme.colors.material3Colors.onSecondary
+//                color = MaterialTheme.colorScheme.onSecondary
 //            )
 //        }
 //    }
@@ -195,13 +195,13 @@ private fun WikipediaListItem(
             .fillMaxWidth()
             .height(150.dp)
             .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-            .background(CustomTheme.colors.material3Colors.surface)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable {
                 onClicked?.let { it(page) }
             },
         shape = RoundedCornerShape(8.dp),
 
-//        backgroundColor = CustomTheme.colors.material3Colors.background,
+//        backgroundColor = MaterialTheme.colorScheme.background,
 //        elevation = 5.dp
     ) {
         Row(modifier = Modifier
@@ -232,7 +232,7 @@ private fun WikipediaListItem(
                     overflow = TextOverflow.Ellipsis,
                     text = title,
                     fontWeight = FontWeight.Bold,
-                    color = CustomTheme.colors.material3Colors.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
@@ -240,7 +240,7 @@ private fun WikipediaListItem(
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis,
                     text = description,
-                    color = CustomTheme.colors.material3Colors.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodySmall
                 )
             }

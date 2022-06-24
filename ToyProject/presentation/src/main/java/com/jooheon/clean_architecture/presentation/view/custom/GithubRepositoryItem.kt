@@ -51,7 +51,7 @@ fun GithubRepositoryItem(
             Text(
                 text = owner,
                 style = MaterialTheme.typography.bodyLarge,
-                color = CustomTheme.colors.material3Colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -163,14 +163,14 @@ fun RepositoryItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
-                color = CustomTheme.colors.material3Colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = item.created_at,
                 style = MaterialTheme.typography.bodySmall,
-                color = CustomTheme.colors.material3Colors.onPrimary,
+                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }

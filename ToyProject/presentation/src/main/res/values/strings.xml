@@ -8,8 +8,8 @@
     <string name="wikipedia_title">Wikipedia</string>
     <string name="cd_wikipedia_title">Wikipedia</string>
 
-    <string name="watched_title">Watched</string>
-    <string name="cd_watched_title">Watched</string>
+    <string name="map_title">Map</string>
+    <string name="cd_map_title">Map</string>
 
     <string name="search_title">Search</string>
     <string name="cd_search_title">Search</string>

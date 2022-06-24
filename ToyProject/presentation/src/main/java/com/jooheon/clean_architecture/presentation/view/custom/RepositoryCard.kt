@@ -15,8 +15,8 @@ import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 fun RepositoryCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    color: Color = CustomTheme.colors.material3Colors.background,
-    contentColor: Color = CustomTheme.colors.material3Colors.onBackground,
+    color: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = MaterialTheme.colorScheme.onBackground,
     border: BorderStroke? = null,
     elevation: Dp = 4.dp,
     content: @Composable () -> Unit

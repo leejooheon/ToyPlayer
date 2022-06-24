@@ -3,12 +3,15 @@ package com.jooheon.clean_architecture.toyproject.di.module
 import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
 import com.jooheon.clean_architecture.data.datasource.WikipediaRemoteDataSource
+import com.jooheon.clean_architecture.data.datasource.local.ParkingSpotDataSource
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.data.repository.FirebaseTokenRepositoryImpl
 import com.jooheon.clean_architecture.data.repository.GithubRepositoryImpl
+import com.jooheon.clean_architecture.data.repository.ParkingSpotRepositoryImpl
 import com.jooheon.clean_architecture.data.repository.WikipediaRepositoryImpl
 import com.jooheon.clean_architecture.domain.repository.FirebaseTokenRepository
 import com.jooheon.clean_architecture.domain.repository.GithubRepository
+import com.jooheon.clean_architecture.domain.repository.ParkingSpotRepository
 import com.jooheon.clean_architecture.domain.repository.WikipediaRepository
 import dagger.Module
 import dagger.Provides
@@ -46,4 +49,11 @@ class RepositoryModule {
         return FirebaseTokenRepositoryImpl(appPreferences)
     }
 
+    @Provides
+    @Singleton
+    fun provideParkingSpotRepository(
+        parkingSpotDataSource: ParkingSpotDataSource
+    ): ParkingSpotRepository {
+        return ParkingSpotRepositoryImpl(parkingSpotDataSource)
+    }
 }

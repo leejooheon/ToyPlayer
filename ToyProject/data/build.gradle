@@ -37,6 +37,11 @@ dependencies {
     implementation(Libraries.interceptor)
     implementation(Libraries.chuckLogging)
 
+    // Room
+    implementation(Libraries.room)
+    kapt(Libraries.roomCompile)
+    implementation(Libraries.room_ktx)
+
     // Project Modules
     implementation project(path: ':domain')
 }

@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.components
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -9,11 +10,11 @@ import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 @Composable
 fun outlinedTextFieldColor() : TextFieldColors {
     return TextFieldDefaults.outlinedTextFieldColors(
-        cursorColor = CustomTheme.colors.material3Colors.onBackground,
-        textColor = CustomTheme.colors.material3Colors.onBackground,
-        focusedBorderColor = CustomTheme.colors.material3Colors.tertiary,
-        unfocusedBorderColor = CustomTheme.colors.material3Colors.onTertiary,
-        focusedLabelColor = CustomTheme.colors.material3Colors.tertiary,
-        unfocusedLabelColor = CustomTheme.colors.material3Colors.onTertiary
+        cursorColor = MaterialTheme.colorScheme.onBackground,
+        textColor = MaterialTheme.colorScheme.onBackground,
+        focusedBorderColor = MaterialTheme.colorScheme.tertiary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+        focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onTertiary
     )
 }

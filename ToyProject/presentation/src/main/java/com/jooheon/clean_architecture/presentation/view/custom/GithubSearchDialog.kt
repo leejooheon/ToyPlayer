@@ -67,11 +67,11 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(CustomTheme.colors.material3Colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_logo_github),
-                colorFilter = ColorFilter.tint(color = CustomTheme.colors.material3Colors.primary),
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
@@ -82,7 +82,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(
                     text = "Search your\nRepository.",
-                    color = CustomTheme.colors.material3Colors.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .padding(top = 5.dp)
@@ -106,7 +106,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                             Text(
                                 text = "input your github id",
                                 style = TextStyle(
-                                    color = CustomTheme.colors.material3Colors.onSurface,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center
                                 )
                             )
@@ -118,7 +118,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
-                .background(CustomTheme.colors.material3Colors.surfaceVariant),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
                 horizontalArrangement = Arrangement.SpaceAround) { // spaceAround가 뭐자??
                 TextButton(
                     onClick = {
@@ -128,7 +128,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                 ) {
                     Text(
                         text = "Cancel",
-                        color = CustomTheme.colors.material3Colors.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
@@ -141,7 +141,7 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
                 ) {
                     Text(
                         text = "Search",
-                        color = CustomTheme.colors.material3Colors.tertiary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
                     )
