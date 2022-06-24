@@ -90,6 +90,10 @@ dependencies {
     implementation(Libraries.retrofitMock)
     implementation(Libraries.interceptor)
     implementation(Libraries.chuckLogging)
+
+    // Room
+    implementation(Libraries.room)
+    kapt(Libraries.roomCompile)
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {

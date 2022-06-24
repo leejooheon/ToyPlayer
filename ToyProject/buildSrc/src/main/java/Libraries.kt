@@ -17,4 +17,9 @@ object Libraries { // 각각의 모듈에서 중복된 라이브러리 항목만
 
     // xml component to rx observable
     const val rxConverter = "com.jakewharton.rxbinding4:rxbinding:4.0.0"  // xml componenet의 property들을 observable로 바꿔주는 라이브러리
+
+    // room
+    const val room = "androidx.room:room-runtime:2.4.2" // implementation
+    const val roomCompile = "androidx.room:room-compiler:2.4.2" // kapt
+    const val room_ktx = "androidx.room:room-ktx:2.4.2" // Kotlin Extensions and Coroutines support for Room
 }
