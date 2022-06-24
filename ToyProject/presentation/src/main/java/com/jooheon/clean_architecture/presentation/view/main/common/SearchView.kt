@@ -53,7 +53,7 @@ internal fun SearchView(
         Text(
             modifier = Modifier.padding(10.dp),
             text = title,
-            color = CustomTheme.colors.material3Colors.primary,
+            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.bodyLarge,
             overflow = TextOverflow.Ellipsis
@@ -73,14 +73,14 @@ internal fun SearchView(
             label = {
                 Text(
                     text = "Input",
-                    color = CustomTheme.colors.material3Colors.tertiary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             },
             placeholder = {
                 Text(
                     text = "this is placeholder",
                     style = TextStyle(
-                        color = CustomTheme.colors.material3Colors.secondary,
+                        color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Center
                     )
                 )
@@ -100,12 +100,12 @@ internal fun SearchView(
                 onButtonClicked()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = CustomTheme.colors.material3Colors.secondary
+                containerColor = MaterialTheme.colorScheme.secondary
             )
         ) {
             Text(
                 text = "확인",
-                color = CustomTheme.colors.material3Colors.onSecondary,
+                color = MaterialTheme.colorScheme.onSecondary,
             )
         }
     }

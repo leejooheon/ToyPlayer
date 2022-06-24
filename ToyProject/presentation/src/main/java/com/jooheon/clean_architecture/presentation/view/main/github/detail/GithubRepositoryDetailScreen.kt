@@ -67,7 +67,7 @@ fun RepositoryDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(CustomTheme.colors.material3Colors.background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         val scroll = rememberScrollState(0)
         Header()
@@ -144,20 +144,20 @@ private fun Title(
             .heightIn(min = TitleHeight)
             .statusBarsPadding()
             .graphicsLayer { translationY = offset }
-            .background(color = CustomTheme.colors.material3Colors.surface)
+            .background(color = MaterialTheme.colorScheme.surface)
     ) {
         Spacer(Modifier.height(16.dp))
         Text(
             text = name,
             style = MaterialTheme.typography.headlineMedium,
-            color = CustomTheme.colors.material3Colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = HzPadding
         )
         Spacer(Modifier.height(4.dp))
         Text(
             text = date,
             style = MaterialTheme.typography.headlineSmall,
-            color = CustomTheme.colors.material3Colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = HzPadding
         )
         Spacer(Modifier.height(8.dp))
@@ -224,7 +224,7 @@ private fun Body(
                     Text(
                         text = stringResource(id = R.string.branch_header),
                         style = MaterialTheme.typography.titleSmall,
-                        color = CustomTheme.colors.material3Colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(16.dp))
@@ -234,7 +234,7 @@ private fun Body(
                     Text(
                         text = detailContent,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CustomTheme.colors.material3Colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         maxLines = if (seeMore.value) 5 else Int.MAX_VALUE,
                         overflow = TextOverflow.Ellipsis,
                         modifier = HzPadding
@@ -250,7 +250,7 @@ private fun Body(
                         text = textButton,
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
-                        color = CustomTheme.colors.material3Colors.tertiary,
+                        color = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier
                             .heightIn(20.dp)
                             .fillMaxWidth()
@@ -265,14 +265,14 @@ private fun Body(
                     Text(
                         text = stringResource(R.string.commit_header),
                         style = MaterialTheme.typography.titleSmall,
-                        color = CustomTheme.colors.material3Colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = detailCommit,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = CustomTheme.colors.material3Colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = HzPadding
                     )
 

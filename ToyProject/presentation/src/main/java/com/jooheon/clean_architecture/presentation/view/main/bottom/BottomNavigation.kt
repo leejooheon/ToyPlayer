@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.main.bottom
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.Crossfade
@@ -24,29 +23,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.utils.UiText
-import com.jooheon.clean_architecture.presentation.view.main.MainScreen
-import com.jooheon.clean_architecture.presentation.view.main.TAG
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
 
 sealed class Screen(val route: String) {
     object Github : Screen("github")
     object Wiki : Screen("wiki")
-    object Watched : Screen("watched")
+    object Map : Screen("map")
     object Search : Screen("search")
 }
 
@@ -66,9 +58,9 @@ private val BottomNavigationItems = listOf(
         selectedImageVector = Icons.Default.Favorite,
     ),
     BottomNavigationItem.ImageVectorIcon(
-        screen = Screen.Watched,
-        labelResId = R.string.watched_title,
-        contentDescriptionResId = R.string.cd_watched_title,
+        screen = Screen.Map,
+        labelResId = R.string.map_title,
+        contentDescriptionResId = R.string.cd_map_title,
         iconImageVector = Icons.Outlined.Add,
         selectedImageVector = Icons.Default.Add,
     ),
@@ -95,8 +87,8 @@ fun NavController.currentScreenAsState(): State<Screen> {
                 destination.hierarchy.any { it.route == Screen.Wiki.route } -> {
                     selectedItem.value = Screen.Wiki
                 }
-                destination.hierarchy.any { it.route == Screen.Watched.route } -> {
-                    selectedItem.value = Screen.Watched
+                destination.hierarchy.any { it.route == Screen.Map.route } -> {
+                    selectedItem.value = Screen.Map
                 }
                 destination.hierarchy.any { it.route == Screen.Search.route } -> {
                     selectedItem.value = Screen.Search
@@ -121,8 +113,8 @@ internal fun MyBottomNavigation(
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
-        backgroundColor = CustomTheme.colors.material3Colors.tertiary.copy(alpha = AlphaNearOpaque),
-        contentColor = CustomTheme.colors.material3Colors.onTertiary,
+        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaNearOpaque),
+        contentColor = MaterialTheme.colorScheme.onPrimary,
         contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
         modifier = modifier
     ) {
