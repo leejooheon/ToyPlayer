@@ -35,7 +35,7 @@ import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
-import com.jooheon.clean_architecture.presentation.view.main.watched.WatchedScreen
+import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.ramcosta.composedestinations.annotation.Destination
@@ -67,61 +67,62 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
-        containerColor = CustomTheme.colors.material3Colors.background,
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
         topBar = { TopBar(viewModel, navigator, drawerState, scope) },
         bottomBar = { BottomBar(bottomNavController) },
-        floatingActionButton = { MyFloatingActionButton(scope, snackbarHostState) },
+        floatingActionButton = { MyFloatingActionButton(viewModel, scope, snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center,
-        contentColor = CustomTheme.colors.material3Colors.background,
-        content = { paddingValue ->
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = { DrawerContent(drawerState, scope, paddingValue) },
-                content = { RegisterBottomNavigation(bottomNavController, navigator, paddingValue, isPreview) }
-            )
-        },
+        contentColor = MaterialTheme.colorScheme.background,
+        content = { paddingParent ->
+            RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingParent, isPreview)
+//            BottomSheetScaffold(
+//                modifier = Modifier.padding(paddingParent),
+//                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
+//                sheetContent = { BottomSheetContent() }
+//            ) { paddingValue ->
+//                ModalNavigationDrawer(
+//                    drawerState = drawerState,
+//                    drawerContent = { DrawerContent(drawerState, scope, paddingValue) },
+//                    content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingValue, isPreview) }
+//                )
+//            }
+        }
     )
-
     RegisterBackPressedHandler(viewModel, drawerState, scope)
 }
 
 @Composable
+private fun BottomSheetContent() {
+    Box (
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            text = "this is bottom sheet",
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.labelLarge
+        )
+    }
+}
+
+@Composable
 fun MyFloatingActionButton(
+    viewModel: MainViewModel,
     scope: CoroutineScope,
     snackbarHostState: SnackbarHostState
 ) {
     val floatingButtonText = remember { mutableStateOf("X")}
 
     FloatingActionButton(
-        onClick = {
-            floatingButtonText.value = "+"
-            scope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = "Jetpack Compose Snackbar",
-                    actionLabel = "Ok"
-                )
-
-                when(result) {
-                    SnackbarResult.Dismissed -> {
-                        Log.d(TAG, "Snackbar dismissed")
-                        floatingButtonText.value = "X"
-                    }
-                    SnackbarResult.ActionPerformed -> {
-                        Log.d(TAG, "Snackbar action!")
-                        floatingButtonText.value = "X"
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-        },
-        containerColor = CustomTheme.colors.material3Colors.tertiary
+        onClick = { viewModel.onFloatingButtonClicked() },
+        containerColor = MaterialTheme.colorScheme.tertiary
     ) {
         Text(
             text = floatingButtonText.value,
-            color = CustomTheme.colors.material3Colors.onTertiary
+            color = MaterialTheme.colorScheme.onTertiary
         )
     }
 }
@@ -166,6 +167,7 @@ fun DrawerContent(
 @ExperimentalComposeUiApi
 @Composable
 fun RegisterBottomNavigation(
+    viewModel: MainViewModel,
     navController: NavHostController,
     navigator: DestinationsNavigator,
     paddingValues: PaddingValues,
@@ -181,8 +183,8 @@ fun RegisterBottomNavigation(
             composable(Screen.Wiki.route) {
                 WikipediaScreen(navigator)
             }
-            composable(Screen.Watched.route) {
-                WatchedScreen()
+            composable(Screen.Map.route) {
+                MapScreen(navigator, viewModel)
             }
             composable(Screen.Search.route) {
                 SearchScreen()

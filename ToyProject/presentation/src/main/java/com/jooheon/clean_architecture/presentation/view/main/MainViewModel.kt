@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +21,9 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
 
     private var _isDoubleBackPressed = mutableStateOf(true) // FIXME: 2번연속했을떄 안되넴
     val isDoubleBackPressed = _isDoubleBackPressed
+
+    private val _floatingActionClicked = Channel<Unit>()
+    val floatingActionClicked = _floatingActionClicked.receiveAsFlow()
 
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
@@ -34,6 +39,12 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
 
     fun onSettingClicked() {
         Log.d(TAG, "onSettingClicked")
+    }
+
+    fun onFloatingButtonClicked() {
+        viewModelScope.launch {
+            _floatingActionClicked.send(Unit)
+        }
     }
 
     fun onBackPressed() {
