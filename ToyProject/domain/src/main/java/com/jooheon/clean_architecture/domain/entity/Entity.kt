@@ -3,6 +3,11 @@ package com.jooheon.clean_architecture.domain.entity
 import java.io.Serializable
 
 sealed class Entity: Serializable {
+    data class ParkingSpot(
+        val lat: Double,
+        val lng: Double,
+        val id: Int?
+    ) : Entity()
 
     data class Repository(
         val name: String,
