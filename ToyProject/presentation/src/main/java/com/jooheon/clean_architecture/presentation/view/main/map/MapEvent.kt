@@ -7,4 +7,5 @@ sealed class MapEvent {
     object ToggleFalloutMap: MapEvent()
     data class OnMapLongClick(val latLng: LatLng): MapEvent()
     data class OnInfoWindowLongClick(val spot: Entity.ParkingSpot): MapEvent()
+    data class OnLocationPermissionChanged(val isGranted: Boolean): MapEvent()
 }
