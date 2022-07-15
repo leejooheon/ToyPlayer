@@ -25,6 +25,9 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
     private val _floatingActionClicked = Channel<Unit>()
     val floatingActionClicked = _floatingActionClicked.receiveAsFlow()
 
+    private val _floatingButtonState = mutableStateOf(false)
+    val floatingButtonState = _floatingButtonState
+
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
     }
@@ -42,6 +45,7 @@ class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase
     }
 
     fun onFloatingButtonClicked() {
+        _floatingButtonState.value = !(_floatingButtonState.value)
         viewModelScope.launch {
             _floatingActionClicked.send(Unit)
         }

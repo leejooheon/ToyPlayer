@@ -7,8 +7,6 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -18,8 +16,8 @@ abstract class BaseViewModel : ViewModel() {
     private val _loadingState = Channel<Boolean>(0)
     val loadingState = _loadingState.receiveAsFlow()
 
-    private val _alertDialogState = Channel<AlertDialogResource?>(0)
-    val alertDialogState = _alertDialogState.receiveAsFlow()
+    private val _alertDialogChannel = Channel<AlertDialogResource?>(0)
+    val alertDialogFlow = _alertDialogChannel.receiveAsFlow()
 
     protected fun <T: Any> handleResponse(response: Resource<T>?) {
         if(response is Resource.Loading) {
@@ -43,13 +41,18 @@ abstract class BaseViewModel : ViewModel() {
     protected fun handleAlertDialogState(content: UiText) {
         viewModelScope.launch {
             val resource = AlertDialogResource(content)
-            _alertDialogState.send(resource)
+            _alertDialogChannel.send(resource)
         }
     }
 
-    fun dismissAlertDialog() {
+    protected open fun onOkButtonClicked() {
+        Log.d(TAG, "onOkButtonClicked")
+    }
+
+    open fun dismissAlertDialog() {
         viewModelScope.launch {
-            _alertDialogState.send(null)
+            _alertDialogChannel.send(null)
+            onOkButtonClicked()
         }
     }
 

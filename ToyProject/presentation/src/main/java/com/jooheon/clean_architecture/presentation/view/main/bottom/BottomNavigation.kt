@@ -10,13 +10,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Build
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.MaterialTheme
-//import androidx.compose.material.icons.outlined.Visibility
-//import androidx.compose.material.icons.outlined.Weekend
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,8 +42,8 @@ private val BottomNavigationItems = listOf(
         screen = Screen.Github,
         labelResId = R.string.github_title,
         contentDescriptionResId = R.string.cd_github_title,
-        iconImageVector = Icons.Outlined.Search,
-        selectedImageVector = Icons.Filled.Search,
+        iconImageVector = Icons.Outlined.Category ,
+        selectedImageVector = Icons.Default.Category,
     ),
     BottomNavigationItem.ImageVectorIcon(
         screen = Screen.Wiki,
@@ -61,8 +56,8 @@ private val BottomNavigationItems = listOf(
         screen = Screen.Map,
         labelResId = R.string.map_title,
         contentDescriptionResId = R.string.cd_map_title,
-        iconImageVector = Icons.Outlined.Add,
-        selectedImageVector = Icons.Default.Add,
+        iconImageVector = Icons.Outlined.Map,
+        selectedImageVector = Icons.Default.Map,
     ),
     BottomNavigationItem.ImageVectorIcon(
         screen = Screen.Search,

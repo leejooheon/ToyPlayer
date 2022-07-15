@@ -1,5 +1,7 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -9,52 +11,28 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 
-
-@Composable
-fun CommonDialog(
-    openDialog: MutableState<Boolean>,
-    title: String, content: String,
-    onConfirmButtonClicked: () -> Unit,
-    onDismissButtonClicked: () -> Unit) {
-
-    if(!openDialog.value) { return }
-
-    AlertDialog(
-        onDismissRequest = { openDialog.value = false },
-        title = { Text(text = title)},
-        text = { Text(text = content)},
-
-        confirmButton = {
-            TextButton(onClick = {
-                openDialog.value = false
-                onConfirmButtonClicked()
-            }) {
-                Text("확인")
-
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                openDialog.value = false
-                onDismissButtonClicked()
-            }) {
-                Text("취소")
-            }
+fun DialogTest(context: Context) {
+    MaterialAlertDialogBuilder(context)
+        .setTitle("title")
+        .setMessage("message - 123")
+        .setPositiveButton("Ok") { a, b ->
+            Log.d("asdasd", "asd")
         }
-    )
+        .show()
 }
 
 @Composable
-fun CommonDialog(
+fun MyAlertDialog(
     openDialog: MutableState<Boolean>,
     content: String,
     onDismiss: (() -> Unit)? = null,
-    onConfirmButtonClicked: (() -> Unit)? = null) {
-
+    onConfirmButtonClicked: (() -> Unit)? = null
+) {
     if(!openDialog.value) { return }
+
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.secondary,
         textContentColor = MaterialTheme.colorScheme.onSecondary,

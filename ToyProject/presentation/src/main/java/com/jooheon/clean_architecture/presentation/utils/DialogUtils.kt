@@ -16,20 +16,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
-import com.jooheon.clean_architecture.presentation.view.custom.CommonDialog
+import com.jooheon.clean_architecture.presentation.view.custom.MyAlertDialog
 
 private const val TAG = "DialogUtils"
 
 // FIXME: Compose function에 Base로 자동적용할수없을까?
 @Composable
-fun ObserveAlertDialogState(viewModel: BaseViewModel) {
-    val state = viewModel.alertDialogState.collectAsState(initial = null).value
+fun ObserveAlertDialogState(
+    viewModel: BaseViewModel,
+    onOkButtonClicked: (() -> Unit)? = null,
+) {
+    val state = viewModel.alertDialogFlow.collectAsState(initial = null).value
     state?.let {
         ShowAlertDialog(
             openDialog = mutableStateOf(true),
             content = it.content,
-            viewModel = viewModel
+            viewModel = viewModel,
+            onOkButtonClicked
         )
     }
 }
@@ -49,8 +52,13 @@ fun showToastMessage(context: Context, message:String){
 }
 
 @Composable
-fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: UiText, viewModel: BaseViewModel) {
-    CommonDialog(
+fun ShowAlertDialog(
+    openDialog: MutableState<Boolean>,
+    content: UiText,
+    viewModel: BaseViewModel,
+    onOkButtonClicked: (() -> Unit)?
+) {
+    MyAlertDialog(
         openDialog,
         content = content.asString(),
         onDismiss = {
@@ -60,6 +68,7 @@ fun ShowAlertDialog(openDialog: MutableState<Boolean>, content: UiText, viewMode
         onConfirmButtonClicked = {
             openDialog.value = false
             Log.d("BaseFragment", "onConfirmButtonClicked")
+            onOkButtonClicked?.invoke()
         }
     )
 }

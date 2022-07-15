@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
@@ -54,7 +55,6 @@ fun sharedViewModel() = LocalContext.current as MainActivity
     ExperimentalAnimationApi::class,
     ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class,
-    ExperimentalMaterialApi::class
 )
 @Destination
 @Composable
@@ -73,7 +73,7 @@ fun MainScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
         topBar = { TopBar(viewModel, navigator, drawerState, scope) },
         bottomBar = { BottomBar(bottomNavController) },
-        floatingActionButton = { MyFloatingActionButton(viewModel, scope, snackbarHostState) },
+        floatingActionButton = { MyFloatingActionButton(viewModel) },
         floatingActionButtonPosition = FabPosition.Center,
         contentColor = MaterialTheme.colorScheme.background,
         content = { paddingParent ->
@@ -113,18 +113,18 @@ private fun BottomSheetContent() {
 @Composable
 fun MyFloatingActionButton(
     viewModel: MainViewModel,
-    scope: CoroutineScope,
-    snackbarHostState: SnackbarHostState
 ) {
-    val floatingButtonText = remember { mutableStateOf("X")}
-
     FloatingActionButton(
+        shape = CircleShape,
         onClick = { viewModel.onFloatingButtonClicked() },
-        containerColor = MaterialTheme.colorScheme.tertiary
+        containerColor = MaterialTheme.colorScheme.tertiary,
+        contentColor = MaterialTheme.colorScheme.onTertiary
     ) {
-        Text(
-            text = floatingButtonText.value,
-            color = MaterialTheme.colorScheme.onTertiary
+        Icon(
+            imageVector = if (viewModel.floatingButtonState.value) {
+                Icons.Default.ToggleOff
+            } else Icons.Default.ToggleOn,
+            contentDescription = "floating action button"
         )
     }
 }
