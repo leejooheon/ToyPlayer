@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
     id "dagger.hilt.android.plugin"
     id 'com.google.devtools.ksp' version '1.6.20-1.0.5' // https://github.com/google/ksp/releases
 }
@@ -23,6 +24,7 @@ android {
     defaultConfig {
         minSdk = 24
         vectorDrawables.useSupportLibrary = true
+        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
     }
 
     buildTypes {
@@ -114,6 +116,9 @@ dependencies {
     // google map
     implementation "com.google.maps.android:maps-compose:1.0.0"
     implementation "com.google.android.gms:play-services-maps:18.0.2"
+
+    // exoplayer
+    implementation "com.google.android.exoplayer:exoplayer:2.18.0"
 
     // test
     testImplementation 'junit:junit:4.13.2'
