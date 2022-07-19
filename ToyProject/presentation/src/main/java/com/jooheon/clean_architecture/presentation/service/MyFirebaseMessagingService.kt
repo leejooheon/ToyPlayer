@@ -12,8 +12,8 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.jooheon.clean_architecture.domain.usecase.firebase.FirebaseTokenUseCase
+import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.view.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Singleton

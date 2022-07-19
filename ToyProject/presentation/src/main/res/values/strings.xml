@@ -25,4 +25,17 @@
     <!-- exoPlayer test   -->
     <string name="test_mp3">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
     <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
+
+    <!-- Notofication -->
+    <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
+    <string name="playing_notification_name">재생 중 알림</string>
+    <string name="action_next">다음</string>
+    <string name="action_play">재생</string>
+    <string name="action_play_all">Play all</string>
+    <string name="action_play_next">다음 곡 재생</string>
+    <string name="action_play_pause">재생/일시정지</string>
+    <string name="action_previous">이전</string>
+    <string name="action_cancel">현재 타이머 취소</string>
+    <string name="action_toggle_favorite">Toggle favorite</string>
+
 </resources>

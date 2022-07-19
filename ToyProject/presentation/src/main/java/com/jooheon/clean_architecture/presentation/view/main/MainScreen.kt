@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
@@ -28,6 +27,8 @@ import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
@@ -36,7 +37,7 @@ import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavi
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
-import com.jooheon.clean_architecture.presentation.view.main.search.SearchScreen
+import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
@@ -166,6 +167,7 @@ fun DrawerContent(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @ExperimentalComposeUiApi
 @Composable
 fun RegisterBottomNavigation(
@@ -189,7 +191,7 @@ fun RegisterBottomNavigation(
                 MapScreen(navigator, viewModel)
             }
             composable(Screen.Search.route) {
-                SearchScreen()
+                ExoPlayerScreen()
             }
         }
     }

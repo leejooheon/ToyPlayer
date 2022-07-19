@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -14,8 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -34,13 +36,16 @@ import com.jooheon.clean_architecture.presentation.utils.UiText
 private const val TAG = "PlayerScreen"
 @ExperimentalPermissionsApi
 @Composable
-fun SearchScreen() {
+fun ExoPlayerScreen(
+    viewModel: PlayerViewModel = hiltViewModel(),
+) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
 
     val context = LocalContext.current
     val exoPlayer = remember { createExoPlayer(context) }
     var contentsFlag by remember { mutableStateOf(false) }
+
     setMediaContent(context, exoPlayer, contentsFlag)
 
     Column(
@@ -61,8 +66,9 @@ fun SearchScreen() {
         OutlinedButton(
             modifier = Modifier,
             onClick = {
-                setMediaContent(context, exoPlayer, contentsFlag)
-                contentsFlag = !contentsFlag
+                viewModel.fetchSongs()
+//                setMediaContent(context, exoPlayer, contentsFlag)
+//                contentsFlag = !contentsFlag
             },
             content = {
                 Text(
@@ -72,7 +78,27 @@ fun SearchScreen() {
                 )
             },
         )
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            modifier = Modifier.padding(10.dp),
+            text = "Local Song List",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        LazyColumn {
+            viewModel.songList.value?.let { songs ->
+                itemsIndexed(songs) { index, song ->
+                    Text(
+                        text = "${index + 1}: ${song.title}",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+        }
+
         AndroidView(
             modifier = Modifier
                 .fillMaxWidth()
@@ -173,13 +199,15 @@ private val listener = object : Player.Listener {
     override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
         super.onMediaMetadataChanged(mediaMetadata)
         Log.d(TAG, "onMediaMetadataChanged title: ${mediaMetadata.title}, displayTtle: ${mediaMetadata.displayTitle}")
+
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 fun PreviewSearchScreen() {
     PreviewTheme(false) {
-        SearchScreen()
+        ExoPlayerScreen()
     }
 }
