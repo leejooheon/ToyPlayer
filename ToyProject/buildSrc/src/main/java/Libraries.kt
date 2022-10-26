@@ -22,4 +22,13 @@ object Libraries { // 각각의 모듈에서 중복된 라이브러리 항목만
     const val room = "androidx.room:room-runtime:2.4.2" // implementation
     const val roomCompile = "androidx.room:room-compiler:2.4.2" // kapt
     const val room_ktx = "androidx.room:room-ktx:2.4.2" // Kotlin Extensions and Coroutines support for Room
+
+
+    //exoplayer
+    const val exoplayer_version = "2.18.1"
+    const val exoplayer_core = "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    const val exoplayer_ui = "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+    const val exoplayer_dash = "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
+    const val exoplayer_streaming = "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
+    const val exoplayer_mediasession = "com.google.android.exoplayer:extension-mediasession:$exoplayer_version"
 }
