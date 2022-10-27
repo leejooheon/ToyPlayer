@@ -25,10 +25,12 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.view.destinations.MainScreenDestination
 import com.jooheon.clean_architecture.presentation.view.destinations.SplashScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 @Composable
 fun SplashScreen(
     navigator: DestinationsNavigator,
