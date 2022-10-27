@@ -1,6 +1,8 @@
 package com.jooheon.clean_architecture.presentation.view.custom
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,5 +37,12 @@ fun RepositoryCard(
 @Preview
 @Composable
 fun RepositoryCardPreview() {
+    RepositoryCard(
+        modifier = Modifier.size(
+                width = 170.dp,
+                height = 250.dp
+            ).padding(bottom = 16.dp)
+    ) {
 
+    }
 }

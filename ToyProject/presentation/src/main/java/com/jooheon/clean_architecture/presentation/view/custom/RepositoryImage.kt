@@ -8,10 +8,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 
@@ -29,12 +31,11 @@ fun RepositoryImage(
         modifier = modifier
     ) {
         Image(
-            painter = rememberImagePainter(
-                data = imageUrl,
-                builder = {
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
                     crossfade(true)
                     placeholder(drawableResId = R.drawable.ic_logo_github)
-                }
+                }).build()
             ),
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize(),

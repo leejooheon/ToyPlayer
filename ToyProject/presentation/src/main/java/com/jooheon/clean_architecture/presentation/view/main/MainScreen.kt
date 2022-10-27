@@ -7,9 +7,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -30,6 +34,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
@@ -52,6 +57,7 @@ const val TAG = "MainScreen"
 @Composable
 fun sharedViewModel() = LocalContext.current as MainActivity
 
+//https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
 @OptIn(
     ExperimentalAnimationApi::class,
     ExperimentalComposeUiApi::class,
@@ -68,6 +74,7 @@ fun MainScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+//    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

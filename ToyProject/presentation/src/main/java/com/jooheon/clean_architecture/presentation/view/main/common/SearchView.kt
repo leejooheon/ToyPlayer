@@ -1,13 +1,8 @@
 package com.jooheon.clean_architecture.presentation.view.main.bottom
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,16 +15,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
-import com.jooheon.clean_architecture.presentation.view.main.github.GithubViewModel
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 
-@ExperimentalComposeUiApi
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 internal fun SearchView(
     title: String,

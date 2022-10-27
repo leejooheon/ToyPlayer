@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.presentation.view.main.wikipedia
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,34 +9,26 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
-import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
@@ -212,12 +203,11 @@ private fun WikipediaListItem(
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight(),
-                painter = rememberImagePainter(
-                    data = imgUrl,
-                    builder = {
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current).data(data = imgUrl).apply(block = fun ImageRequest.Builder.() {
                         crossfade(true)
                         placeholder(drawableResId = R.drawable.ic_logo_github)
-                    }
+                    }).build()
                 ),
                 contentDescription = "description",
                 contentScale = ContentScale.Crop,

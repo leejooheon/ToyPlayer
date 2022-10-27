@@ -22,6 +22,5 @@ fun MyDivider(
         modifier = modifier,
         color = color,
         thickness = thickness,
-        startIndent = startIndent
     )
 }

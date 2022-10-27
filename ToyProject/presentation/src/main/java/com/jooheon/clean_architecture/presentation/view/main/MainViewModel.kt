@@ -13,7 +13,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val githubUseCase: GithubUseCase): BaseViewModel() {
+class MainViewModel @Inject constructor(
+    private val githubUseCase: GithubUseCase,
+): BaseViewModel() {
     override val TAG: String = MainViewModel::class.java.simpleName
 
     private val _lastSearchedOwner = mutableStateOf("")

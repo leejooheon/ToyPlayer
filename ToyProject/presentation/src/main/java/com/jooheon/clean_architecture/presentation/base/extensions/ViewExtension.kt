@@ -48,3 +48,10 @@ fun EditText.textChanges(): Flow<CharSequence?> {
         awaitClose { removeTextChangedListener(listener) }
     }.onStart { emit(text) }
 }
+
+fun Long.formatDuration(): String {
+    var seconds = this / 1000
+    val minutes = seconds / 60
+    seconds %= 60
+    return String.format("%02d:%02d", minutes, seconds)
+}

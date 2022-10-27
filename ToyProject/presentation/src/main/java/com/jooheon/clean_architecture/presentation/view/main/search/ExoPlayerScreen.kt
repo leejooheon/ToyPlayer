@@ -44,7 +44,7 @@ fun ExoPlayerScreen(
 
     val context = LocalContext.current
     val exoPlayer = remember { createExoPlayer(context) }
-    var contentsFlag by remember { mutableStateOf(false) }
+    val contentsFlag by remember { mutableStateOf(false) }
 
     setMediaContent(context, exoPlayer, contentsFlag)
 
