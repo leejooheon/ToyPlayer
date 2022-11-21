@@ -18,9 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,8 +98,12 @@ fun ExoPlayerScreen(
             } ?: return@LazyColumn
 
             itemsIndexed(songList) { index, song ->
-                MusicItem(modifier = Modifier, song = song) {
-                    MusicPlayerRemote.openQueue(listOf(it))
+                MusicItem(modifier = Modifier, song = song) { song, isPlaying ->
+                    if(isPlaying) {
+                        MusicPlayerRemote.pauseSong()
+                    } else {
+                        MusicPlayerRemote.openQueue(listOf(song))
+                    }
                 }
             }
         }
@@ -110,14 +116,19 @@ fun ExoPlayerScreen(
 private fun MusicItem(
     modifier: Modifier,
     song: Entity.Song,
-    onClick: (Entity.Song) -> Unit
+    onClick: (Entity.Song, Boolean) -> Unit
 ) {
+    val isPlaying = remember { mutableStateOf(false) }
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp, top = 8.dp)
             .heightIn(min = 50.dp)
-            .clickable { onClick.invoke(song) }
+            .clickable {
+                onClick.invoke(song, isPlaying.value)
+
+                isPlaying.value = !isPlaying.value
+            }
     ) {
         Row {
             val imageUrl = MusicUtil.getMediaStoreAlbumCoverUri(song.albumId)
@@ -152,6 +163,18 @@ private fun MusicItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
+
+            Image(
+                painter = painterResource(id = if(isPlaying.value) {
+                    R.drawable.ic_play_arrow_white_48dp
+                } else {
+                    R.drawable.ic_pause_white_48dp
+                }),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(50.dp)
+            )
         }
     }
 }
@@ -186,7 +209,7 @@ fun PreviewSearchScreen() {
     val viewModel = PlayerViewModel(EmptyMusicUseCase())
     PreviewTheme(false) {
 //        ExoPlayerScreen(viewModel)
-        MusicItem(Modifier, EmptyMusicUseCase.dummyData().first()) {
+        MusicItem(Modifier, EmptyMusicUseCase.dummyData().first()) { song, isPlaying ->
 
         }
     }

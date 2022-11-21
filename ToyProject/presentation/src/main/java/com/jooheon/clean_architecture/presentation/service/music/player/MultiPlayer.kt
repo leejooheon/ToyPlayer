@@ -49,19 +49,26 @@ class MultiPlayer(context: Context) : LocalPlayback(context) {
         }
     }
 
-    override fun setNextDataSource(path: String?) {
-        // nothing yet
+    override fun pause(): Boolean {
+        super.pause()
+        return try {
+            mCurrentMediaPlayer.pause()
+            true
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+            false
+        }
     }
 
     override fun stop() {
         TODO("Not yet implemented")
     }
 
-    override fun release() {
-        TODO("Not yet implemented")
+    override fun setNextDataSource(path: String?) {
+        // nothing yet
     }
 
-    override fun pause(): Boolean {
+    override fun release() {
         TODO("Not yet implemented")
     }
 

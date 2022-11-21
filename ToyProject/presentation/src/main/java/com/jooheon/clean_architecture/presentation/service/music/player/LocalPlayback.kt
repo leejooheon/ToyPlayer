@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.PlaybackParams
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
@@ -17,11 +18,14 @@ import com.jooheon.clean_architecture.presentation.service.music.playback.Playba
 import com.jooheon.clean_architecture.presentation.utils.VersionUtils
 
 abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
-    var playbackSpeed = 1f // Fixme: preference로 옮기자
-    var playbackPitch = 1f // Fixme: preference로 옮기자
+    private val TAG = LocalPlayback::class.java.simpleName
+    private val AUDIO_TAG = AudioManager::class.java.simpleName
 
     private val audioManager: AudioManager? = context.getSystemService()
     private var isPausedByTransientLossOfFocus = false
+
+    private var playbackSpeed = 1f // Fixme: preference로 옮기자
+    private var playbackPitch = 1f // Fixme: preference로 옮기자
 
     /**
      * @param player The [MediaPlayer] to use
@@ -72,10 +76,23 @@ abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErr
         return true
     }
 
+    @CallSuper
+    override fun pause(): Boolean {
+//        unregisterBecomingNoisyReceiver()
+        return true
+    }
+
+    private fun requestFocus(): Boolean {
+        return AudioManagerCompat.requestAudioFocus(
+            audioManager!!,
+            audioFocusRequest
+        ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+    }
 
     private val audioFocusListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
         when (focusChange) {
             AudioManager.AUDIOFOCUS_GAIN -> {
+                Log.d(AUDIO_TAG, "AUDIOFOCUS_GAIN")
                 if (!isPlaying && isPausedByTransientLossOfFocus) {
                     start()
                     callbacks?.onPlayStateChanged()
@@ -85,6 +102,7 @@ abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErr
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 // Lost focus for an unbounded amount of time: stop playback and release media playback
+                Log.d(AUDIO_TAG, "AUDIOFOCUS_LOSS")
                 pause()
                 callbacks?.onPlayStateChanged()
             }
@@ -92,6 +110,7 @@ abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErr
                 // Lost focus for a short time, but we have to stop
                 // playback. We don't release the media playback because playback
                 // is likely to resume
+                Log.d(AUDIO_TAG, "AUDIOFOCUS_LOSS_TRANSIENT")
                 val wasPlaying = isPlaying
                 pause()
                 callbacks?.onPlayStateChanged()
@@ -100,11 +119,11 @@ abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErr
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 // Lost focus for a short time, but it's ok to keep playing
                 // at an attenuated level
+                Log.d(AUDIO_TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK")
                 setVolume(Volume.DUCK)
             }
         }
     }
-
 
     private val audioFocusRequest: AudioFocusRequestCompat =
         AudioFocusRequestCompat.Builder(AudioManagerCompat.AUDIOFOCUS_GAIN)
@@ -113,13 +132,6 @@ abstract class LocalPlayback(val context: Context) : Playback, MediaPlayer.OnErr
                 AudioAttributesCompat.Builder()
                     .setContentType(AudioAttributesCompat.CONTENT_TYPE_MUSIC).build()
             ).build()
-
-    private fun requestFocus(): Boolean {
-        return AudioManagerCompat.requestAudioFocus(
-            audioManager!!,
-            audioFocusRequest
-        ) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-    }
 
     object Volume {
         /**

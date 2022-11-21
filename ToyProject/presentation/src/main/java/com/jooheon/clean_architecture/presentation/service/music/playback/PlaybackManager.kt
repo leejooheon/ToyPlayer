@@ -22,6 +22,13 @@ class PlaybackManager(val context: Context) {
         }
     }
 
+    fun pause(force: Boolean, onPause: () -> Unit) {
+        if (playback != null && playback!!.isPlaying) {
+            playback?.pause()
+            onPause()
+        }
+    }
+
     fun setDataSource(
         song: Entity.Song,
         force: Boolean,

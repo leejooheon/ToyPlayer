@@ -59,6 +59,10 @@ object MusicPlayerRemote {
         musicService?.openQueue(queue)
     }
 
+    fun pauseSong() {
+        musicService?.pause()
+    }
+
     class ServiceBinder internal constructor(private val mCallback: ServiceConnection?) :
         ServiceConnection {
 

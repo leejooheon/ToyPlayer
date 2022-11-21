@@ -26,8 +26,6 @@ class MusicService: MediaBrowserServiceCompat() {
     private lateinit var playbackManager: PlaybackManager
     val playback: Playback? get() = playbackManager.playback
 
-    private var uiThreadHandler: Handler? = null
-
     val currentSong: Entity.Song
         get() = getSongAt(getPosition())
 
@@ -44,7 +42,6 @@ class MusicService: MediaBrowserServiceCompat() {
         Log.d(TAG, "onCreate")
 
         playbackManager = PlaybackManager(this)
-        uiThreadHandler = Handler(Looper.getMainLooper())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,10 +72,7 @@ class MusicService: MediaBrowserServiceCompat() {
         result.sendResult(listOf(storage.recentSong()))
     }
 
-
-    fun openQueue(
-        playingQueue: List<Entity.Song>?
-    ) {
+    fun openQueue(playingQueue: List<Entity.Song>?) { // 플레이리스트를 업데이트한다.
         if(playingQueue == null) return
 
         Log.d(TAG, "openQueue ${playingQueue.first()}")
@@ -88,33 +82,35 @@ class MusicService: MediaBrowserServiceCompat() {
         playSongAt(0)
     }
 
-    fun playSongAt(position: Int) {
+    private fun playSongAt(position: Int) { // 플레이리스트를 기반으로 오디오를 출력할 준비를 한다.
         // Every chromecast method needs to run on main thread or you are greeted with IllegalStateException
-        // Playback Manager 추가하자.
+        // Fixme: 크롬캐스트는 Main Thread에서 동작해야한다!!
         serviceScope.launch(Dispatchers.Default) {
             openTrackAndPrepareNextAt(position) { success ->
                 if (success) {
                     play()
                 } else {
-                    runOnUiThread {
-                        showToast(getString(R.string.some_error))
-                    }
+                    runOnUiThread { showToast(getString(R.string.some_error)) }
                 }
             }
         }
     }
 
     @Synchronized
-    fun openTrackAndPrepareNextAt(position: Int, completion: (success: Boolean) -> Unit) {
+    private fun openTrackAndPrepareNextAt(
+        position: Int,
+        completion: (success: Boolean) -> Unit
+    ) { // position을 업데이트한다.
         this.position = position
         openCurrent { success ->
             Log.d(TAG, "is Success: ${success}")
             completion(success)
         }
     }
+
     @Synchronized
     private fun openCurrent(completion: (success: Boolean) -> Unit) {
-        val force = true
+        val force = true // 음악을 강제로 바꾸는지, 아니면 다음 곡 재생을 위해 준비하는건지 변수
 
         playbackManager.setDataSource(currentSong, force) { success ->
             completion(success)
@@ -122,13 +118,18 @@ class MusicService: MediaBrowserServiceCompat() {
     }
 
     @Synchronized
-    fun play() {
-        playbackManager.play { playSongAt(getPosition()) }
-//        if (notHandledMetaChangedForCurrentTrack) {
-//            handleChangeInternal(META_CHANGED)
-//            notHandledMetaChangedForCurrentTrack = false
-//        }
-//        notifyChange(PLAY_STATE_CHANGED)
+    fun play() { // 재생한다.
+        playbackManager.play(
+            onNotInitialized = {
+                playSongAt(getPosition()) // 초기화가 안되어있으면 재시도한다.
+            }
+        )
+    }
+
+    fun pause(force: Boolean = false) {
+        playbackManager.pause(force) {
+//            notifyChange(PLAY_STATE_CHANGED)
+        }
     }
 
     private fun getSongAt(position: Int): Entity.Song {
@@ -142,8 +143,10 @@ class MusicService: MediaBrowserServiceCompat() {
         return position
     }
 
-    fun runOnUiThread(runnable: Runnable?) {
-        uiThreadHandler?.post(runnable!!)
+    private fun runOnUiThread(content: () -> Unit) {
+        serviceScope.launch(Dispatchers.Main) {
+            content.invoke()
+        }
     }
 
     companion object {
