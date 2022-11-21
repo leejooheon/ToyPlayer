@@ -1,23 +1,41 @@
 package com.jooheon.clean_architecture.presentation.view.main.search
 
+import android.content.ContentUris
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 
 private const val TAG = "PlayerScreen"
@@ -25,6 +43,7 @@ private const val TAG = "PlayerScreen"
 @Composable
 fun ExoPlayerScreen(
     viewModel: PlayerViewModel = hiltViewModel(),
+    isPreview: Boolean = false
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
@@ -52,11 +71,7 @@ fun ExoPlayerScreen(
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedButton(
             modifier = Modifier,
-            onClick = {
-//                viewModel.fetchSongs()
-//                setMediaContent(context, exoPlayer, contentsFlag)
-//                contentsFlag = !contentsFlag
-            },
+            onClick = { viewModel.fetchSongs() },
             content = {
                 Text(
                     text = "Toggle to " + if(contentsFlag) { "mp3" } else { "mp4" },
@@ -73,35 +88,72 @@ fun ExoPlayerScreen(
             color = MaterialTheme.colorScheme.onBackground
         )
 
-//        LazyColumn {
-//            viewModel.songList.value?.let { songs ->
-//                itemsIndexed(songs) { index, song ->
-//                    Text(
-//                        text = "${index + 1}: ${song.title}",
-//                        style = MaterialTheme.typography.labelLarge,
-//                        color = MaterialTheme.colorScheme.onBackground
-//                    )
-//                    Spacer(modifier = Modifier.height(8.dp))
-//                }
-//            }
-//        }
+        LazyColumn {
+            val songList = if(isPreview) {
+                EmptyMusicUseCase.dummyData()
+            } else {
+                viewModel.songList.value
+            } ?: return@LazyColumn
 
-//        AndroidView(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .heightIn(
-//                    min = 100.dp,
-//                    max = 400.dp
-//                ),
-//            factory = {
-//                StyledPlayerView(it).apply {
-//                    player = exoPlayer
-//                }
-//            }
-//        )
+            itemsIndexed(songList) { index, song ->
+                MusicItem(modifier = Modifier, song = song) {
+                    MusicPlayerRemote.openQueue(listOf(it))
+                }
+            }
+        }
     }
 
     ObserveLifecycleEvent()
+}
+
+@Composable
+private fun MusicItem(
+    modifier: Modifier,
+    song: Entity.Song,
+    onClick: (Entity.Song) -> Unit
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+            .heightIn(min = 50.dp)
+            .clickable { onClick.invoke(song) }
+    ) {
+        Row {
+            val imageUrl = MusicUtil.getMediaStoreAlbumCoverUri(song.albumId)
+            Image(
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
+                        crossfade(true)
+                        placeholder(drawableResId = R.drawable.ic_logo_github)
+                    }).build()
+                ),
+                contentDescription = "music name is " + song.title,
+                modifier = Modifier.width(50.dp),
+                contentScale = ContentScale.Crop,
+            )
+            Column(
+                modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp)
+            ) {
+                Text(
+                    text = song.title,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.heightIn(4.dp))
+                Text(
+                    text = song.artistName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+    }
 }
 
 @ExperimentalPermissionsApi
@@ -127,12 +179,15 @@ private fun ObserveLifecycleEvent(
 //        }
 //    )
 }
-@OptIn(ExperimentalPermissionsApi::class)
+
 @Preview
 @Composable
 fun PreviewSearchScreen() {
     val viewModel = PlayerViewModel(EmptyMusicUseCase())
     PreviewTheme(false) {
-        ExoPlayerScreen(viewModel)
+//        ExoPlayerScreen(viewModel)
+        MusicItem(Modifier, EmptyMusicUseCase.dummyData().first()) {
+
+        }
     }
 }
