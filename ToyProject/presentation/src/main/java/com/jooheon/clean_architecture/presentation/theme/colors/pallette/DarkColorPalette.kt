@@ -5,44 +5,33 @@ import com.jooheon.clean_architecture.presentation.theme.*
 
 internal val DarkColorPalette = CustomColors(
     material3Colors = darkColorScheme(
-        primary = DarkGreen40,
-        onPrimary = Neutral0,
-        inversePrimary = DarkGreen80,
-
-        primaryContainer = DarkGreen10,
-        onPrimaryContainer = DarkGreen90,
-
-        secondary = GreenGrey30,
-        onSecondary = Neutral10,
-
-        secondaryContainer = GreenGrey10,
-        onSecondaryContainer = GreenGrey90,
-
-        tertiary = Teal40,
-        onTertiary = Neutral0,
-
-        tertiaryContainer = Teal10,
-        onTertiaryContainer = Teal90,
-
-        error = Red20,
-        onError = Red80,
-
-        errorContainer = Red30,
-        onErrorContainer = Red90,
-
-        background = Neutral10,
-        onBackground = Neutral99,
-
-        surface = Neutral10,
-        onSurface = Neutral99,
-
-        surfaceVariant = Neutral_Variant30,
-        onSurfaceVariant = Neutral_Variant90,
-
-        inverseSurface = Neutral99,
-        inverseOnSurface = Neutral10,
-
-        outline = Neutral_Variant50
+        primary = md_theme_dark_primary,
+        onPrimary = md_theme_dark_onPrimary,
+        primaryContainer = md_theme_dark_primaryContainer,
+        onPrimaryContainer = md_theme_dark_onPrimaryContainer,
+        secondary = md_theme_dark_secondary,
+        onSecondary = md_theme_dark_onSecondary,
+        secondaryContainer = md_theme_dark_secondaryContainer,
+        onSecondaryContainer = md_theme_dark_onSecondaryContainer,
+        tertiary = md_theme_dark_tertiary,
+        onTertiary = md_theme_dark_onTertiary,
+        tertiaryContainer = md_theme_dark_tertiaryContainer,
+        onTertiaryContainer = md_theme_dark_onTertiaryContainer,
+        error = md_theme_dark_error,
+        errorContainer = md_theme_dark_errorContainer,
+        onError = md_theme_dark_onError,
+        onErrorContainer = md_theme_dark_onErrorContainer,
+        background = md_theme_dark_background,
+        onBackground = md_theme_dark_onBackground,
+        surface = md_theme_dark_surface,
+        onSurface = md_theme_dark_onSurface,
+        surfaceVariant = md_theme_dark_surfaceVariant,
+        onSurfaceVariant = md_theme_dark_onSurfaceVariant,
+        outline = md_theme_dark_outline,
+        inverseOnSurface = md_theme_dark_inverseOnSurface,
+        inverseSurface = md_theme_dark_inverseSurface,
+        inversePrimary = md_theme_dark_inversePrimary,
+//    shadow = md_theme_dark_shadow,
     ),
 
     gradient6_1 = listOf(Shadow5, Ocean7, Shadow9, Ocean7, Shadow5),

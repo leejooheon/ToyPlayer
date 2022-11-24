@@ -5,44 +5,33 @@ import com.jooheon.clean_architecture.presentation.theme.*
 
 internal val LightColorPalette = CustomColors(
     material3Colors = lightColorScheme(
-        primary = DarkGreen80,
-        onPrimary = Neutral7,
-        inversePrimary = DarkGreen20,
-
-        primaryContainer = DarkGreen90,
-        onPrimaryContainer = DarkGreen10,
-
-        secondary = GreenGrey80,
-        onSecondary = Neutral7,
-
-        secondaryContainer = GreenGrey90,
-        onSecondaryContainer = GreenGrey10,
-
-        tertiary = Teal60,
-        onTertiary = Neutral0,
-
-        tertiaryContainer = Teal90,
-        onTertiaryContainer = Teal10,
-
-        error = Red80,
-        onError = Red20,
-
-        errorContainer = Red90,
-        onErrorContainer = Red30,
-
-        background = Neutral99,
-        onBackground = Neutral10,
-
-        surface = Neutral99,
-        onSurface = Neutral10,
-
-        surfaceVariant = Neutral_Variant90,
-        onSurfaceVariant = Neutral_Variant30,
-
-        inverseSurface = Neutral10,
-        inverseOnSurface = Neutral99,
-
-        outline = Neutral_Variant50
+        primary = md_theme_light_primary,
+        onPrimary = md_theme_light_onPrimary,
+        primaryContainer = md_theme_light_primaryContainer,
+        onPrimaryContainer = md_theme_light_onPrimaryContainer,
+        secondary = md_theme_light_secondary,
+        onSecondary = md_theme_light_onSecondary,
+        secondaryContainer = md_theme_light_secondaryContainer,
+        onSecondaryContainer = md_theme_light_onSecondaryContainer,
+        tertiary = md_theme_light_tertiary,
+        onTertiary = md_theme_light_onTertiary,
+        tertiaryContainer = md_theme_light_tertiaryContainer,
+        onTertiaryContainer = md_theme_light_onTertiaryContainer,
+        error = md_theme_light_error,
+        errorContainer = md_theme_light_errorContainer,
+        onError = md_theme_light_onError,
+        onErrorContainer = md_theme_light_onErrorContainer,
+        background = md_theme_light_background,
+        onBackground = md_theme_light_onBackground,
+        surface = md_theme_light_surface,
+        onSurface = md_theme_light_onSurface,
+        surfaceVariant = md_theme_light_surfaceVariant,
+        onSurfaceVariant = md_theme_light_onSurfaceVariant,
+        outline = md_theme_light_outline,
+        inverseOnSurface = md_theme_light_inverseOnSurface,
+        inverseSurface = md_theme_light_inverseSurface,
+        inversePrimary = md_theme_light_inversePrimary,
+//    shadow = md_theme_light_shadow,
     ),
     gradient6_1 = listOf(Shadow4, Ocean3, Shadow2, Ocean3, Shadow4),
     gradient6_2 = listOf(Rose4, Lavender3, Rose2, Lavender3, Rose4),
@@ -53,3 +42,4 @@ internal val LightColorPalette = CustomColors(
     gradient2_3 = listOf(Lavender3, Rose2),
     isDark = false
 )
+
