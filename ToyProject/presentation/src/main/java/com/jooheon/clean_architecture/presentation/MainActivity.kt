@@ -19,11 +19,14 @@ import com.jooheon.clean_architecture.presentation.view.NavGraphs
 import com.ramcosta.composedestinations.DestinationsNavHost
 
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
     private val TAG = MainActivity::class.simpleName
     private var serviceToken: MusicPlayerRemote.ServiceToken? = null
+    @Inject
+    lateinit var musicPlayerRemote: MusicPlayerRemote
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +40,7 @@ class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        MusicPlayerRemote.unbindFromService(serviceToken)
+        musicPlayerRemote.unbindFromService(serviceToken)
     }
 
     @Composable
@@ -48,7 +51,7 @@ class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
     }
 
     private fun initMusicServiceToken() {
-        serviceToken = MusicPlayerRemote.bindToService(this, object : ServiceConnection {
+        serviceToken = musicPlayerRemote.bindToService(this, object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 this@MainActivity.onServiceConnected()
             }

@@ -9,6 +9,7 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
+import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.utils.VersionUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val musicUseCase: MusicUseCase
+    private val musicUseCase: MusicUseCase,
+    private val musicPlayerRemote: MusicPlayerRemote
 ): BaseViewModel() {
     override val TAG = PlayerViewModel::class.java.simpleName
 
@@ -44,6 +46,10 @@ class PlayerViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun playSong(list: List<Entity.Song>) {
+        musicPlayerRemote.openQueue(list)
     }
 
     private fun getUri(): Uri {
