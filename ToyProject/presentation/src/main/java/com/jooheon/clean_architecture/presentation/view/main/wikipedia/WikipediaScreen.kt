@@ -29,6 +29,7 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
+import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
@@ -179,7 +180,7 @@ private fun WikipediaListItem(
     onClicked: ((Entity.Related.Page) -> Unit)? = null) {
     val title = page.displaytitle ?: run { "data is empty." }
     val description = page.extract ?: run { "data is empty." }
-    val imgUrl = page.thumbnail?.source ?: run { R.drawable.ic_logo_github }
+    val imgUrl = page.thumbnail?.source ?: ""
 
     Card(
         modifier = Modifier
@@ -199,18 +200,12 @@ private fun WikipediaListItem(
             .padding(10.dp)
             .fillMaxSize()
         ) {
-            Image(
+            CoilImage(
+                url = imgUrl,
+                contentDescription = null,
                 modifier = Modifier
                     .width(120.dp)
                     .fillMaxHeight(),
-                painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current).data(data = imgUrl).apply(block = fun ImageRequest.Builder.() {
-                        crossfade(true)
-                        placeholder(drawableResId = R.drawable.ic_logo_github)
-                    }).build()
-                ),
-                contentDescription = "description",
-                contentScale = ContentScale.Crop,
             )
 
             Column(modifier = Modifier

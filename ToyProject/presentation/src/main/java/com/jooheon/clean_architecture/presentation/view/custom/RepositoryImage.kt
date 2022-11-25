@@ -16,6 +16,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 
 @Composable
 fun RepositoryImage(
@@ -30,16 +31,10 @@ fun RepositoryImage(
         shape = CircleShape,
         modifier = modifier
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
-                    crossfade(true)
-                    placeholder(drawableResId = R.drawable.ic_logo_github)
-                }).build()
-            ),
+        CoilImage(
+            url = imageUrl,
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
         )
     }
 }
