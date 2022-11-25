@@ -2,8 +2,10 @@ package com.jooheon.clean_architecture.presentation.view.main.github
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -65,7 +67,6 @@ fun RepositoryItems(
     val githubId = viewModel.githubId.value // FIXME: id는 다른데서 참조해야할듯
     val response = viewModel.repositoryResponse.value
 
-    Spacer(Modifier.statusBarsHeight(additional = 12.dp))
     MyDivider(thickness = 2.dp)
 
     response?.let {
@@ -82,6 +83,7 @@ fun RepositoryItems(
     if(isPreview) {
         GithubRepositoryItem(
             owner = "owner",
+            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             repositoryList = EmptyGithubUseCase.repositoryDummyData(),
             onRepositoryClick = {
                 // nothing

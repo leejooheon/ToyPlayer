@@ -1,43 +1,25 @@
 package com.jooheon.clean_architecture.presentation.view.main.search
 
-import android.content.ContentUris
-import android.content.Context
-import android.net.Uri
-import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
-import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
+import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 
 private const val TAG = "PlayerScreen"
@@ -49,62 +31,57 @@ fun ExoPlayerScreen(
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
-
-    val context = LocalContext.current
-//    val exoPlayer = remember { createExoPlayer(context) }
-    val contentsFlag by remember { mutableStateOf(false) }
-
-//    setMediaContent(context, exoPlayer, contentsFlag)
+    var songList by viewModel.songList
+    if(isPreview) { songList = EmptyMusicUseCase.dummyData() }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 10.dp)
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(top = 10.dp, bottom = 64.dp), //  64dp is music bottom bar size
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
 
         Text(
-            text = "This is ExoPlayer",
-            style = MaterialTheme.typography.labelLarge,
+            text = "This is Music Tab",
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         OutlinedButton(
             modifier = Modifier,
             onClick = { viewModel.fetchSongs() },
             content = {
                 Text(
-                    text = "Toggle to " + if(contentsFlag) { "mp3" } else { "mp4" },
+                    text = "GET local song list",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
         )
 
-        Text(
-            modifier = Modifier.padding(10.dp),
-            text = "Local Song List",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        if(songList.isNotEmpty()) {
+            Text(
+                modifier = Modifier.padding(10.dp),
+                text = "Local Song List",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        } else {
+            EmptySongItem()
+        }
 
         LazyColumn {
-            val songList = if(isPreview) {
-                EmptyMusicUseCase.dummyData()
-            } else {
-                viewModel.songList.value
-            } ?: return@LazyColumn
-
             itemsIndexed(songList) { index, song ->
-                MusicItem(modifier = Modifier, song = song) { song, isPlaying ->
-                    if(isPlaying) {
-                        MusicPlayerRemote.pauseSong()
-                    } else {
-                        MusicPlayerRemote.openQueue(listOf(song))
+                MusicItem(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .height(96.dp),
+                    song = song,
+                    onItemClick = {
+                        MusicPlayerRemote.openQueue(listOf(it))
                     }
-                }
+                )
             }
         }
     }
@@ -112,70 +89,75 @@ fun ExoPlayerScreen(
     ObserveLifecycleEvent()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MusicItem(
     modifier: Modifier,
     song: Entity.Song,
-    onClick: (Entity.Song, Boolean) -> Unit
+    onItemClick: (Entity.Song) -> Unit
 ) {
-    val isPlaying = remember { mutableStateOf(false) }
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 8.dp, end = 8.dp, top = 8.dp)
-            .heightIn(min = 50.dp)
-            .clickable {
-                onClick.invoke(song, isPlaying.value)
-
-                isPlaying.value = !isPlaying.value
-            }
+    Surface(
+        onClick = { onItemClick(song) },
+        tonalElevation = 4.dp,
+        shadowElevation = 4.dp,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.secondary
     ) {
-        Row {
-            val imageUrl = MusicUtil.getMediaStoreAlbumCoverUri(song.albumId)
-            Image(
-                painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
-                        crossfade(true)
-                        placeholder(drawableResId = R.drawable.ic_logo_github)
-                    }).build()
-                ),
-                contentDescription = "music name is " + song.title,
-                modifier = Modifier.width(50.dp),
-                contentScale = ContentScale.Crop,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            CoilImage(
+                url = MusicUtil.getMediaStoreAlbumCoverUri(song.albumId).toString(),
+                contentDescription = song.title + "_Image",
+                shape = RoundedCornerShape(10.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
             )
+            Spacer(modifier = Modifier.width(16.dp))
             Column(
-                modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                modifier = Modifier
+                    .weight(1f)
             ) {
                 Text(
                     text = song.title,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.heightIn(4.dp))
+                Spacer(modifier = Modifier.height(0.dp))
                 Text(
                     text = song.artistName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
+                    style = MaterialTheme.typography.labelSmall,
+                    overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.6f)
                 )
             }
-
-            Image(
-                painter = painterResource(id = if(isPlaying.value) {
-                    R.drawable.ic_play_arrow_white_48dp
-                } else {
-                    R.drawable.ic_pause_white_48dp
-                }),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(50.dp)
-            )
         }
+    }
+}
+
+@Composable
+private fun EmptySongItem(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.padding(8.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "\uD83D\uDE31",
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = "no songs!",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -205,12 +187,27 @@ private fun ObserveLifecycleEvent(
 
 @Preview
 @Composable
+private fun PreviewEmptySong() {
+    ApplicationTheme(false) {
+        EmptySongItem(
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Preview
+@Composable
 fun PreviewSearchScreen() {
     val viewModel = PlayerViewModel(EmptyMusicUseCase())
-    PreviewTheme(false) {
-//        ExoPlayerScreen(viewModel)
-        MusicItem(Modifier, EmptyMusicUseCase.dummyData().first()) { song, isPlaying ->
-
-        }
+    ApplicationTheme(false) {
+        ExoPlayerScreen(viewModel, true)
+//        MusicItem(
+//            modifier = Modifier
+//                .padding(horizontal = 8.dp, vertical = 4.dp)
+//                .height(96.dp),
+//            EmptyMusicUseCase.dummyData().first()
+//        ) { }
     }
 }

@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.home.repo
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -51,7 +52,7 @@ fun GithubRepositoryItem(
             Text(
                 text = owner,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -125,12 +126,11 @@ fun RepositoryItem(
         (CardWidth + CardPadding).toPx()
     }
     RepositoryCard(
-        modifier = modifier
-            .size(
+        modifier = modifier.size(
                 width = 170.dp,
                 height = 250.dp
-            )
-            .padding(bottom = 16.dp)
+            ).padding(bottom = 16.dp)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier
@@ -163,14 +163,14 @@ fun RepositoryItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = item.created_at,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
@@ -180,7 +180,7 @@ fun RepositoryItem(
 @Preview
 @Composable
 fun RepositoryItemPreview() {
-    PreviewTheme(true) {
+    PreviewTheme(false) {
         val index = 5
         val scroll = rememberScrollState(0)
         val gradient = when ((index / 2) % 2) {

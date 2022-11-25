@@ -12,8 +12,8 @@ import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 @Composable
 fun outlinedTextFieldColor() : TextFieldColors {
     return TextFieldDefaults.outlinedTextFieldColors(
-        cursorColor = MaterialTheme.colorScheme.onBackground,
-        textColor = MaterialTheme.colorScheme.onBackground,
+        cursorColor = MaterialTheme.colorScheme.onSecondary,
+        textColor = MaterialTheme.colorScheme.onSecondary,
         focusedBorderColor = MaterialTheme.colorScheme.tertiary,
         unfocusedBorderColor = MaterialTheme.colorScheme.onTertiary,
         focusedLabelColor = MaterialTheme.colorScheme.tertiary,

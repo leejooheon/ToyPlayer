@@ -253,18 +253,18 @@ sealed class Entity: Serializable {
             @JvmStatic
             val emptySong = Song(
                 id = -1,
-                title = "",
+                title = "emptySongTitle",
                 trackNumber = -1,
                 year = -1,
                 duration = -1,
-                data = "",
+                data = "emptySongData",
                 dateModified = -1,
                 albumId = -1,
-                albumName = "",
+                albumName = "emptySongAlbumName",
                 artistId = -1,
-                artistName = "",
-                composer = "",
-                albumArtist = ""
+                artistName = "emptySongArtistName",
+                composer = "emptySongComposer",
+                albumArtist = "emptySongAlbumArtist"
             )
         }
     }

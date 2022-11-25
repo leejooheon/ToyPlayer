@@ -7,13 +7,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetScaffoldState
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -32,15 +38,16 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
 import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
+import com.jooheon.clean_architecture.presentation.view.main.common.MusicBottomBar
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
@@ -81,11 +88,11 @@ fun MainScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
         topBar = { TopBar(viewModel, navigator, drawerState, scope) },
         bottomBar = { BottomBar(bottomNavController) },
-        floatingActionButton = { MyFloatingActionButton(viewModel) },
-        floatingActionButtonPosition = FabPosition.Center,
-        contentColor = MaterialTheme.colorScheme.background,
+//        floatingActionButton = { MyFloatingActionButton(viewModel) },
+//        floatingActionButtonPosition = FabPosition.End,
+        contentColor = MaterialTheme.colorScheme.surface,
         content = { paddingParent ->
-            RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingParent, isPreview)
+            RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingParent)
 //            BottomSheetScaffold(
 //                modifier = Modifier.padding(paddingParent),
 //                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
@@ -147,20 +154,20 @@ fun DrawerContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(paddingValues)
     ) {
         Spacer(Modifier.statusBarsHeight(additional = 24.dp))
         Text(
             modifier = Modifier.padding(16.dp),
             text = "drawerContent - 1",
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.labelMedium
         )
         Text(
             modifier = Modifier.padding(16.dp),
             text = "drawerContent - 2",
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.labelMedium
         )
         Text(
@@ -168,7 +175,7 @@ fun DrawerContent(
                 .padding(16.dp)
                 .clickable { scope.launch { drawerState.close() } },
             text = "drawerContent - 3",
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onPrimary,
             style = MaterialTheme.typography.labelMedium
         )
     }
@@ -182,10 +189,7 @@ fun RegisterBottomNavigation(
     navController: NavHostController,
     navigator: DestinationsNavigator,
     paddingValues: PaddingValues,
-    isPreview:Boolean
 ) {
-    // NavHost가 Preview에서 에러나는현상이 있어 Flag로 막아둠.
-    if(isPreview) { return }
     Box(modifier = Modifier.padding(paddingValues)) {
         NavHost(navController, startDestination = Screen.Github.route) {
             composable(Screen.Github.route) {
@@ -201,6 +205,16 @@ fun RegisterBottomNavigation(
                 ExoPlayerScreen()
             }
         }
+        MusicBottomBar(
+            song = Entity.Song.emptySong,
+            isPlaying = false,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .align(Alignment.BottomCenter),
+            onItemClick = { },
+            onPlayPauseButtonPressed = { }
+        )
     }
 }
 
@@ -363,7 +377,7 @@ fun RegisterBackPressedHandler (
 @Composable
 fun PreviewMainScreen() {
     val viewModel = MainViewModel(EmptyGithubUseCase())
-    PreviewTheme(true) {
+    PreviewTheme(false) {
         MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }
 }

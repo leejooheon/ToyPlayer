@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.main.bottom
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,8 +36,9 @@ internal fun SearchView(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .padding(top = 10.dp),
+            .heightIn(min = 100.dp)
+            .background(MaterialTheme.colorScheme.secondary)
+            .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -48,7 +50,7 @@ internal fun SearchView(
         Text(
             modifier = Modifier.padding(10.dp),
             text = title,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onSecondary,
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.bodyLarge,
             overflow = TextOverflow.Ellipsis
@@ -68,14 +70,14 @@ internal fun SearchView(
             label = {
                 Text(
                     text = "Input",
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
             },
             placeholder = {
                 Text(
                     text = "this is placeholder",
                     style = TextStyle(
-                        color = MaterialTheme.colorScheme.secondary,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center
                     )
                 )

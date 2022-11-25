@@ -67,7 +67,7 @@ fun RepositoryDetailScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         val scroll = rememberScrollState(0)
         Header()
@@ -212,7 +212,9 @@ private fun Body(
                 .height(MinTitleOffset)
         )
         Column(
-            modifier = Modifier.verticalScroll(scroll)
+            modifier = Modifier
+                .verticalScroll(scroll)
+                .background(MaterialTheme.colorScheme.surface)
         ) {
             Spacer(Modifier.height(GradientScroll))
             CustomSurface(Modifier.fillMaxWidth()) {
@@ -224,7 +226,7 @@ private fun Body(
                     Text(
                         text = stringResource(id = R.string.branch_header),
                         style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(16.dp))
@@ -234,7 +236,7 @@ private fun Body(
                     Text(
                         text = detailContent,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         maxLines = if (seeMore.value) 5 else Int.MAX_VALUE,
                         overflow = TextOverflow.Ellipsis,
                         modifier = HzPadding
@@ -265,14 +267,14 @@ private fun Body(
                     Text(
                         text = stringResource(R.string.commit_header),
                         style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = HzPadding
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = detailCommit,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = HzPadding
                     )
 
@@ -334,7 +336,7 @@ fun RepositoryDetailScreenPreview() {
 
     val name = remember(item) { item.name }
     val date = remember(item) { item.created_at}
-    PreviewTheme(true) {
+    PreviewTheme(false) {
         Box(Modifier.fillMaxSize()) {
             val scroll = rememberScrollState(0)
             Header()

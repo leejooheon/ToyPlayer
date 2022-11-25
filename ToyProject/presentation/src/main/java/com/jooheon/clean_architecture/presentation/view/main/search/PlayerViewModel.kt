@@ -21,7 +21,7 @@ class PlayerViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG = PlayerViewModel::class.java.simpleName
 
-    private val _songList = mutableStateOf<List<Entity.Song>?>(null)
+    private val _songList = mutableStateOf<List<Entity.Song>>(emptyList())
     val songList = _songList
 
     fun fetchAlbums() {
