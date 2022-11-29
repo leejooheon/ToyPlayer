@@ -56,7 +56,6 @@ import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -80,6 +79,7 @@ fun sharedViewModel() = LocalContext.current as MainActivity
 fun MainScreen(
     navigator: DestinationsNavigator,
     viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
+    musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
     isPreview:Boolean = false
 ) {
     val bottomNavController = rememberAnimatedNavController()
@@ -97,7 +97,7 @@ fun MainScreen(
 //        floatingActionButtonPosition = FabPosition.End,
         contentColor = MaterialTheme.colorScheme.surface,
         content = { paddingParent ->
-            RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingParent)
+            RegisterBottomNavigation(viewModel, musicPlayerViewModel, bottomNavController, navigator, paddingParent)
 //            BottomSheetScaffold(
 //                modifier = Modifier.padding(paddingParent),
 //                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
@@ -191,6 +191,7 @@ fun DrawerContent(
 @Composable
 fun RegisterBottomNavigation(
     viewModel: MainViewModel,
+    musicPlayerViewModel: MusicPlayerViewModel,
     navController: NavHostController,
     navigator: DestinationsNavigator,
     paddingValues: PaddingValues,
@@ -211,7 +212,7 @@ fun RegisterBottomNavigation(
             }
         }
         MusicBar(
-            viewModel = viewModel,
+            viewModel = musicPlayerViewModel,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
         )
@@ -220,7 +221,7 @@ fun RegisterBottomNavigation(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun MusicBar(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+private fun MusicBar(viewModel: MusicPlayerViewModel, modifier: Modifier = Modifier) {
     val uiState = viewModel.uiState.value
     AnimatedVisibility(
         visible = uiState.isMusicBottomBarVisible,
@@ -398,8 +399,10 @@ fun RegisterBackPressedHandler (
 @Preview
 @Composable
 fun PreviewMainScreen() {
-    val viewModel = MainViewModel(EmptyMusicUseCase(), MusicPlayerRemote(LocalContext.current))
+    val context = LocalContext.current
+    val viewModel = MainViewModel(EmptyMusicUseCase())
+    val musicViewModel = MusicPlayerViewModel(MusicPlayerRemote(context))
     PreviewTheme(false) {
-        MainScreen(EmptyDestinationsNavigator, viewModel, true)
+        MainScreen(EmptyDestinationsNavigator, viewModel, musicViewModel, true)
     }
 }

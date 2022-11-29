@@ -25,14 +25,11 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
-import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -209,9 +206,7 @@ private fun PreviewMapScreen() {
     PreviewTheme(true) {
         MapScreen(
             navigator = EmptyDestinationsNavigator,
-            sharedViewModel = MainViewModel(EmptyMusicUseCase(),
-                MusicPlayerRemote(LocalContext.current)
-            ),
+            sharedViewModel = MainViewModel(EmptyMusicUseCase()),
             viewModel = viewModel,
             isPreview = true
         )

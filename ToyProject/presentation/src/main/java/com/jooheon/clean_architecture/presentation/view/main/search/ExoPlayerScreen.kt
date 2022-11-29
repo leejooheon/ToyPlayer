@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.main.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,22 +21,23 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
 import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
-import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
+import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
+import com.jooheon.clean_architecture.presentation.view.main.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 
 private const val TAG = "PlayerScreen"
 @ExperimentalPermissionsApi
 @Composable
 fun ExoPlayerScreen(
-    viewModel: PlayerViewModel = hiltViewModel(),
+    viewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
     isPreview: Boolean = false
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
-    var songList by viewModel.songList
-    if(isPreview) { songList = EmptyMusicUseCase.dummyData() }
 
+    val uiState = viewModel.uiState.value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,7 +54,7 @@ fun ExoPlayerScreen(
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedButton(
             modifier = Modifier,
-            onClick = { viewModel.fetchSongs() },
+            onClick = { Log.d(TAG, "onClick") },
             content = {
                 Text(
                     text = "GET local song list",
@@ -62,7 +64,7 @@ fun ExoPlayerScreen(
             },
         )
 
-        if(songList.isNotEmpty()) {
+        if(uiState.songList.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(10.dp),
                 text = "Local Song List",
@@ -74,14 +76,14 @@ fun ExoPlayerScreen(
         }
 
         LazyColumn {
-            itemsIndexed(songList) { index, song ->
+            itemsIndexed(uiState.songList) { index, song ->
                 MusicItem(
                     modifier = Modifier
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                         .height(96.dp),
                     song = song,
                     onItemClick = {
-                        viewModel.playSong(listOf(it))
+                        viewModel.playFromMediaId(it.id.toString())
                     }
                 )
             }
@@ -203,7 +205,7 @@ private fun PreviewEmptySong() {
 @Composable
 fun PreviewSearchScreen() {
     val context = LocalContext.current
-    val viewModel = PlayerViewModel(EmptyMusicUseCase(), MusicPlayerRemote(context))
+    val viewModel = MusicPlayerViewModel(MusicPlayerRemote(context))
     ApplicationTheme(false) {
         ExoPlayerScreen(viewModel, true)
     }

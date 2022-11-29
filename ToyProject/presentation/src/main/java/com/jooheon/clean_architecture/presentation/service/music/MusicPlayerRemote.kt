@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.presentation.service.music
 
 import android.content.*
+import android.media.MediaMetadata
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -40,8 +41,8 @@ class MusicPlayerRemote @Inject constructor(
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private val _allSongs = MutableStateFlow<MutableList<Entity.Song>?>(null)
-    val allSongs = _allSongs.asStateFlow()
+    private val _songList = MutableStateFlow<MutableList<Entity.Song>?>(null)
+    val songList = _songList.asStateFlow()
 
     private val _playbackState = MutableStateFlow<PlaybackStateCompat?>(null)
     val playbackState = _playbackState.asStateFlow()
@@ -70,8 +71,13 @@ class MusicPlayerRemote @Inject constructor(
         mediaBrowser.unsubscribe(parentId)
     }
 
+    fun updateSongList(queue: List<Entity.Song>) {
+        emit { _songList.value = queue.toMutableList() }
+    }
+
     fun openQueue(queue: List<Entity.Song>) {
         Log.d(TAG, "openQueue: ${queue.first()}")
+
         playFromMediaId(queue.first().id.toString())
     }
 
@@ -83,6 +89,21 @@ class MusicPlayerRemote @Inject constructor(
             playFromMediaId(songId)
         }
     }
+    fun stopPlaying() = transportControls.stop()
+
+    fun seekTo(pos: Long) = transportControls.seekTo(pos)
+
+    fun pause() = transportControls.pause()
+
+    fun play(){ transportControls.play() }
+
+    fun fastForward() = transportControls.fastForward()
+
+    fun rewind() = transportControls.rewind()
+
+    fun skipToNextTrack() = transportControls.skipToNext()
+
+    fun skipToPrev() = transportControls.skipToPrevious()
 
     private fun playFromMediaId(mediaId: String) = transportControls.playFromMediaId(mediaId, null)
 
@@ -138,17 +159,14 @@ class MusicPlayerRemote @Inject constructor(
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             super.onMetadataChanged(metadata)
-            Log.d(TAG, "onMetadataChanged - ${metadata}")
+
+            Log.d(TAG, "onMetadataChanged - ${metadata?.description?.title ?: "null"}")
+            (metadata?.mediaMetadata as? MediaMetadata)?.let {
+                Log.d("JH", "onMetadataChanged: albumId - ${it.getString(MediaMetadata.METADATA_KEY_ARTIST)}")
+                Log.d("JH", "onMetadataChanged: albumName - ${it.getString(MediaMetadata.METADATA_KEY_AUTHOR)}")
+            }
             emit { _currentSong.emit(metadata) }
         }
-    }
-
-    // call from MainActivity!! don't use
-    fun updateQueue(list: MutableList<MediaBrowserCompat.MediaItem>) {
-        val songs = list.map {
-            MusicUtil.parseSongFromMediaItem(it)
-        }.toMutableList()
-        emit { _allSongs.emit(songs) }
     }
 
     private fun emit(emission: suspend () -> Unit) = coroutineScope.launch {
