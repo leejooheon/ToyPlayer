@@ -2,7 +2,10 @@ package com.jooheon.clean_architecture.presentation.view.main
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,6 +43,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.MainActivity
+import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
@@ -53,6 +57,7 @@ import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScr
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -205,15 +210,32 @@ fun RegisterBottomNavigation(
                 ExoPlayerScreen()
             }
         }
+        MusicBar(
+            viewModel = viewModel,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun MusicBar(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    val uiState = viewModel.uiState.value
+    AnimatedVisibility(
+        visible = uiState.isMusicBottomBarVisible,
+        enter = scaleIn(),
+        exit = ExitTransition.None,
+        modifier = modifier
+    ) {
         MusicBottomBar(
-            song = Entity.Song.emptySong,
-            isPlaying = false,
+            song = uiState.currentPlayingMusic ?: Entity.Song.emptySong,
+            isPlaying = uiState.isMusicPlaying,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
-                .align(Alignment.BottomCenter),
-            onItemClick = { },
-            onPlayPauseButtonPressed = { }
+                .height(64.dp),
+            onItemClick = viewModel::onMusicBottomBarPressed,
+            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed
         )
     }
 }
@@ -376,7 +398,7 @@ fun RegisterBackPressedHandler (
 @Preview
 @Composable
 fun PreviewMainScreen() {
-    val viewModel = MainViewModel(EmptyGithubUseCase())
+    val viewModel = MainViewModel(EmptyMusicUseCase(), MusicPlayerRemote(LocalContext.current))
     PreviewTheme(false) {
         MainScreen(EmptyDestinationsNavigator, viewModel, true)
     }

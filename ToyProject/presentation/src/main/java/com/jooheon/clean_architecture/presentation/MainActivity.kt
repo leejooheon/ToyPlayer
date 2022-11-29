@@ -1,9 +1,7 @@
 package com.jooheon.clean_architecture.presentation
 
-import android.content.ComponentName
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
+import android.support.v4.media.MediaBrowserCompat
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,8 +10,8 @@ import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.lifecycle.ViewTreeViewModelStoreOwner
 
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
-import com.jooheon.clean_architecture.presentation.service.music.IMusicServiceEventListener
 import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
+import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.view.NavGraphs
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -22,9 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
+class MainActivity : BaseComposeActivity() {
     private val TAG = MainActivity::class.simpleName
-    private var serviceToken: MusicPlayerRemote.ServiceToken? = null
     @Inject
     lateinit var musicPlayerRemote: MusicPlayerRemote
 
@@ -40,7 +37,8 @@ class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        musicPlayerRemote.unbindFromService(serviceToken)
+//        musicPlayerRemote.unbindFromService(serviceToken)
+        musicPlayerRemote.unsubscribe(MusicService.MEDIA_ID_ROOT)
     }
 
     @Composable
@@ -51,27 +49,24 @@ class MainActivity : BaseComposeActivity(), IMusicServiceEventListener {
     }
 
     private fun initMusicServiceToken() {
-        serviceToken = musicPlayerRemote.bindToService(this, object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                this@MainActivity.onServiceConnected()
+        musicPlayerRemote.subscribe(
+            MusicService.MEDIA_ID_ROOT,
+            object : MediaBrowserCompat.SubscriptionCallback() {
+                override fun onChildrenLoaded(
+                    parentId: String,
+                    children: MutableList<MediaBrowserCompat.MediaItem>
+                ) {
+                    super.onChildrenLoaded(parentId, children)
+                    Log.d("MusicService-MainActivity", "onChildrenLoaded - ${children.size}")
+                    musicPlayerRemote.updateQueue(children)
+                }
+
+                override fun onError(parentId: String) {
+                    super.onError(parentId)
+                    Log.d("MusicService-MainActivity", "onError")
+                }
             }
-
-            override fun onServiceDisconnected(name: ComponentName) {
-                this@MainActivity.onServiceDisconnected()
-            }
-        })
-    }
-
-    override fun onServiceConnected() {
-        Log.d(TAG, "onServiceConnected")
-    }
-
-    override fun onServiceDisconnected() {
-        Log.d(TAG, "onServiceDisconnected")
-    }
-
-    override fun onQueueChanged() {
-        Log.d(TAG, "onQueueChanged")
+        )
     }
 }
 

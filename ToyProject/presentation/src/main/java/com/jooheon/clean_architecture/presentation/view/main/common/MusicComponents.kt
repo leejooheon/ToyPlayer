@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
+import com.jooheon.clean_architecture.presentation.base.extensions.uri
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
@@ -136,7 +138,7 @@ fun RoundImageButton(
 private fun parseSongImageUrl(song: Entity.Song) = if(song.albumId == -1L) {
     Entity.tempImages.first().imageUrl
 } else {
-    MusicUtil.getMediaStoreAlbumCoverUri(song.albumId).toString()
+    song.albumArtUri.toString()
 }
 
 private fun getPlayPauseIcon(isPlaying: Boolean) = if (isPlaying) {

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
 import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
@@ -110,7 +111,7 @@ private fun MusicItem(
             modifier = Modifier.padding(8.dp)
         ) {
             CoilImage(
-                url = MusicUtil.getMediaStoreAlbumCoverUri(song.albumId).toString(),
+                url = song.albumArtUri.toString(),
                 contentDescription = song.title + "_Image",
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -205,11 +206,5 @@ fun PreviewSearchScreen() {
     val viewModel = PlayerViewModel(EmptyMusicUseCase(), MusicPlayerRemote(context))
     ApplicationTheme(false) {
         ExoPlayerScreen(viewModel, true)
-//        MusicItem(
-//            modifier = Modifier
-//                .padding(horizontal = 8.dp, vertical = 4.dp)
-//                .height(96.dp),
-//            EmptyMusicUseCase.dummyData().first()
-//        ) { }
     }
 }

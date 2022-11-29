@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,6 +25,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
@@ -31,6 +33,7 @@ import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
@@ -206,7 +209,9 @@ private fun PreviewMapScreen() {
     PreviewTheme(true) {
         MapScreen(
             navigator = EmptyDestinationsNavigator,
-            sharedViewModel = MainViewModel(EmptyGithubUseCase()),
+            sharedViewModel = MainViewModel(EmptyMusicUseCase(),
+                MusicPlayerRemote(LocalContext.current)
+            ),
             viewModel = viewModel,
             isPreview = true
         )

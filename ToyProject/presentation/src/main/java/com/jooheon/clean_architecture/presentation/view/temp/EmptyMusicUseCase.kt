@@ -14,6 +14,10 @@ class EmptyMusicUseCase: MusicUseCase {
         TODO("Not yet implemented")
     }
 
+    override fun getSongsSync(uri: String): Flow<Resource<List<Entity.Song>>> {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         fun dummyData(): List<Entity.Song> {
             val songs = mutableListOf<Entity.Song>()

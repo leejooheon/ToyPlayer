@@ -1,92 +1,157 @@
 package com.jooheon.clean_architecture.presentation.service.music
 
-import android.app.Activity
 import android.content.*
-import android.os.IBinder
+import android.os.Bundle
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.service.music.extensions.currentPlaybackPosition
+import com.jooheon.clean_architecture.presentation.service.music.extensions.isPlayEnabled
+import com.jooheon.clean_architecture.presentation.service.music.extensions.isPlaying
+import com.jooheon.clean_architecture.presentation.service.music.extensions.isPrepared
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MusicPlayerRemote @Inject constructor(@ApplicationContext private val context: Context) {
-    private val TAG = MusicPlayerRemote::class.java.simpleName
-    private val connectionMap = WeakHashMap<Context, ServiceBinder>()
-    private var musicService: MusicService? = null
+class MusicPlayerRemote @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
+    private val TAG = "Remote" + MusicService::class.java.simpleName
+    private lateinit var mediaController: MediaControllerCompat
 
-    fun bindToService(context: Context, callback: ServiceConnection): ServiceToken? {
-        val realActivity = (context as Activity).parent ?: context
-        val contextWrapper = ContextWrapper(realActivity)
-        val intent = Intent(contextWrapper, MusicService::class.java)
-        try {
-            contextWrapper.startService(intent)
-        } catch (ignored: IllegalStateException) {
-            runCatching {
-                ContextCompat.startForegroundService(context, intent)
-            }
-        }
+    private val mediaBrowser = MediaBrowserCompat(
+        context,
+        ComponentName(context, MusicService::class.java),
+        ConnectionCallback(), null
+    ).apply { connect() }
 
-        val binder = ServiceBinder(
-            serviceConnected = { className, service ->
-                val binder = service as MusicService.MusicBinder
-                musicService = binder.service
-                callback.onServiceConnected(className, service)
-            },
-            serviceDisconnected = { className ->
-                callback.onServiceDisconnected(className)
-                musicService = null
-            }
-        )
-        if (contextWrapper.bindService(
-                Intent().setClass(contextWrapper, MusicService::class.java),
-                binder,
-                Context.BIND_AUTO_CREATE
-            )
-        ) {
-            connectionMap[contextWrapper] = binder
-            return ServiceToken(contextWrapper)
-        }
-        return null
-    }
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    fun unbindFromService(token: ServiceToken?) {
-        if (token == null) {
-            return
-        }
-        val mContextWrapper = token.mWrappedContext
-        val mBinder = connectionMap.remove(mContextWrapper) ?: return
-        mContextWrapper.unbindService(mBinder)
-        if (connectionMap.isEmpty()) {
-            musicService = null
+    private val _allSongs = MutableStateFlow<MutableList<Entity.Song>?>(null)
+    val allSongs = _allSongs.asStateFlow()
+
+    private val _playbackState = MutableStateFlow<PlaybackStateCompat?>(null)
+    val playbackState = _playbackState.asStateFlow()
+
+    private val _currentSong = MutableStateFlow<MediaMetadataCompat?>(null)
+    val currentSong = _currentSong.asStateFlow()
+
+    val timePassed = flow {
+        while (true) {
+            val duration = playbackState.value?.currentPlaybackPosition
+                ?: 0
+//            if (uiState.value.musicSliderState.timePassed != duration)
+            emit(duration)
+            delay(1000L)
         }
     }
 
-    /**
-     * Async
-     */
+    private val transportControls: MediaControllerCompat.TransportControls
+        get() = mediaController.transportControls
+
+    fun subscribe(parentId: String, callbacks: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser.subscribe(parentId, callbacks)
+    }
+
+    fun unsubscribe(parentId: String) {
+        mediaBrowser.unsubscribe(parentId)
+    }
+
     fun openQueue(queue: List<Entity.Song>) {
         Log.d(TAG, "openQueue: ${queue.first()}")
-        musicService?.openQueue(queue)
+        playFromMediaId(queue.first().id.toString())
     }
 
-    fun pauseSong() {
-        musicService?.pause()
-    }
-
-    class ServiceBinder internal constructor(
-        private val serviceConnected: (className: ComponentName, service: IBinder) -> Unit,
-        private val serviceDisconnected: (className: ComponentName) -> Unit
-    ) : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            serviceConnected(className, service)
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            serviceDisconnected(className)
+    fun playPause(songId: String, toggle: Boolean = false) {
+        val isPrepared = playbackState.value?.isPrepared ?: false
+        if (isPrepared && songId == currentSong.value?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)) {
+            playPauseCurrentSong(toggle)
+        } else {
+            playFromMediaId(songId)
         }
     }
-    class ServiceToken internal constructor(internal var mWrappedContext: ContextWrapper)
+
+    private fun playFromMediaId(mediaId: String) = transportControls.playFromMediaId(mediaId, null)
+
+    private fun playPauseCurrentSong(toggle: Boolean) {
+        playbackState.value?.let {
+            when {
+                it.isPlaying -> if (toggle) transportControls.pause()
+                it.isPlayEnabled -> transportControls.play()
+                else -> Unit
+            }
+        }
+    }
+
+    private inner class ConnectionCallback: MediaBrowserCompat.ConnectionCallback() {
+        override fun onConnected() {
+            super.onConnected()
+            Log.d(TAG, "onConnected")
+            mediaController =  MediaControllerCompat(
+                context, mediaBrowser.sessionToken
+            ).apply {
+                registerCallback(MediaControllerCallback())
+            }
+        }
+
+        override fun onConnectionSuspended() {
+            super.onConnectionSuspended()
+            Log.d(TAG, "onConnectionSuspended")
+        }
+
+        override fun onConnectionFailed() {
+            super.onConnectionFailed()
+            Log.d(TAG, "onConnectionFailed")
+        }
+    }
+
+    private inner class MediaControllerCallback: MediaControllerCompat.Callback() {
+
+        override fun onSessionDestroyed() {
+            super.onSessionDestroyed()
+            Log.d(TAG, "onSessionDestroyed")
+        }
+
+        override fun onSessionEvent(event: String?, extras: Bundle?) {
+            super.onSessionEvent(event, extras)
+            Log.d(TAG, "onSessionEvent")
+        }
+
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            super.onPlaybackStateChanged(state)
+            Log.d(TAG, "onPlaybackStateChanged - ${state?.state ?: "error"}")
+            emit { _playbackState.emit(state) }
+        }
+
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            super.onMetadataChanged(metadata)
+            Log.d(TAG, "onMetadataChanged - ${metadata}")
+            emit { _currentSong.emit(metadata) }
+        }
+    }
+
+    // call from MainActivity!! don't use
+    fun updateQueue(list: MutableList<MediaBrowserCompat.MediaItem>) {
+        val songs = list.map {
+            MusicUtil.parseSongFromMediaItem(it)
+        }.toMutableList()
+        emit { _allSongs.emit(songs) }
+    }
+
+    private fun emit(emission: suspend () -> Unit) = coroutineScope.launch {
+        emission()
+    }
 }
