@@ -8,24 +8,20 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.upstream.DefaultDataSource
-import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
-import com.jooheon.clean_architecture.presentation.service.music.callbacks.MediaPlayerEventListener
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerDataSource
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,19 +35,14 @@ class MusicService: MediaBrowserServiceCompat() {
     lateinit var exoPlayer: ExoPlayer
 
     @Inject
-    lateinit var musicUseCase: MusicUseCase
-
-    @Inject
     lateinit var dataSourceFactory: DefaultDataSource.Factory
 
     @Inject
-    lateinit var musicDataSource: MusicPlayerDataSource
+    lateinit var musicDataSource: MusicPlayerUseCase
 
     private lateinit var playBackPreparer: MusicPlaybackPreparer
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var connector: MediaSessionConnector
-
-    private lateinit var mediaPlayerEventListener: MediaPlayerEventListener
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -65,7 +56,6 @@ class MusicService: MediaBrowserServiceCompat() {
             setPlaybackPreparer(playBackPreparer)
             setQueueNavigator(QueueNavigator(mediaSession))
         }
-        exoPlayer.addListener(mediaPlayerEventListener)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,9 +65,6 @@ class MusicService: MediaBrowserServiceCompat() {
 
     private fun initialize() {
         Log.d(TAG, "initialize")
-        serviceScope.launch {
-            musicDataSource.getMusic()
-        }
 
         val activityIntent = packageManager.getLaunchIntentForPackage(packageName)?.let {
             PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
@@ -92,7 +79,6 @@ class MusicService: MediaBrowserServiceCompat() {
 
         connector = MediaSessionConnector(mediaSession)
         dataSourceFactory = DefaultDataSource.Factory(this)
-        mediaPlayerEventListener = MediaPlayerEventListener(this)
 
         playBackPreparer = MusicPlaybackPreparer(
             dataSource = musicDataSource,
@@ -142,21 +128,23 @@ class MusicService: MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<List<MediaBrowserCompat.MediaItem>>,
     ) {
-        Log.d(TAG, "onLoadChildren")
-        val uri = MusicUtil.localMusicStorageUri().toString()
-        musicUseCase.getSongs(uri).onEach { resource ->
-            when(resource) {
-                is Resource.Success -> {
-                    resource.value.map { MusicUtil.parseMediaItemFromSong(it) }.also {
-                        result.sendResult(it)
-                    }
-                }
-                is Resource.Failure -> result.sendError(null)
-                else -> { /** Nothing **/ }
+        if(parentId != MEDIA_ID_ROOT) {
+            Log.e(TAG, "onLoadChildren: requested parentId is invalid -> ${parentId}")
+            return
+        }
+
+        val resultSend = musicDataSource.loadMusic(serviceScope).whenReady { isReady ->
+            Log.e(TAG, "onLoadChildren: isReady: ${isReady}")
+            if(!isReady) {
+                result.sendResult(emptyList())
+                return@whenReady
             }
-        }.launchIn(serviceScope)
-        result.detach()
+            val list = musicDataSource.allMusicAsMediaItem.toMutableList()
+            result.sendResult(list)
+        }
+        if(!resultSend) result.detach()
     }
+
     fun openQueue(playingQueue: List<Entity.Song>?) { // 플레이리스트를 업데이트한다.
         if(playingQueue == null) return
     }

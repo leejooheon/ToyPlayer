@@ -5,10 +5,9 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
 import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
-import com.jooheon.clean_architecture.presentation.service.music.datasource.LocalMusicPlayerDataSource
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerDataSource
-import dagger.Binds
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,23 +38,24 @@ object ServiceModule {
 
     @ServiceScoped
     @Provides
-    fun provideMusicPlayerRemote(@ApplicationContext context: Context) = MusicPlayerRemote(context)
-
-    @ServiceScoped
-    @Provides
     fun providesDataSourceFactor(
         @ApplicationContext context: Context
     ): DefaultDataSource.Factory = DefaultDataSource.Factory(context)
 
-}
-
-@Module
-@InstallIn(ServiceComponent::class)
-abstract class ServiceInterfaces {
+    @ServiceScoped
+    @Provides
+    fun provideMusicPlayerRemote(
+        @ApplicationContext context: Context
+    ) = MusicPlayerRemote(context)
 
     @ServiceScoped
-    @Binds
-    abstract fun bindsMusicDataSource(
-        localMusicPlayerDataSource: LocalMusicPlayerDataSource
-    ): MusicPlayerDataSource
+    @Provides
+    fun providesMusicDataSource(
+        musicUseCase: MusicUseCase
+    ): MusicPlayerUseCase = MusicPlayerUseCase(musicUseCase)
 }
+
+//@Module
+//@InstallIn(ServiceComponent::class)
+//abstract class ServiceInterfaces {
+//}

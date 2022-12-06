@@ -8,10 +8,10 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerDataSource
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 
 class MusicPlaybackPreparer(
-    private val dataSource: MusicPlayerDataSource,
+    private val dataSource: MusicPlayerUseCase,
     private val onPlayerPrepared: (MediaMetadataCompat) -> Unit
 ) : MediaSessionConnector.PlaybackPreparer {
     private val TAG = MusicService::class.java.simpleName

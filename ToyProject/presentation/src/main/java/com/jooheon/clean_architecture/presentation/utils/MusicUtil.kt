@@ -25,6 +25,8 @@ import com.jooheon.clean_architecture.presentation.service.music.MusicService.Co
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.DURATION
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.TRACK_NUMBER
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.YEAR
+import com.jooheon.clean_architecture.presentation.service.music.extensions.*
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil.print
 
 object MusicUtil {
     fun localMusicStorageUri(): Uri {
@@ -49,44 +51,6 @@ object MusicUtil {
     fun getMediaStoreAlbumCoverUri(albumId: Long): Uri {
         val sArtworkUri = "content://media/external/audio/albumart".toUri()
         return ContentUris.withAppendedId(sArtworkUri, albumId)
-    }
-
-    fun parseSongFromMediaItem(meta: MediaBrowserCompat.MediaItem): Entity.Song {
-        val song = Entity.Song(
-            id = meta.description.mediaId?.toLong() ?: 0,
-            title = meta.description.title.toString(),
-            duration = meta.description.extras?.getLong(DURATION) ?: 0,
-            trackNumber = meta.description.extras?.getInt(TRACK_NUMBER) ?: 0,
-            year = meta.description.extras?.getInt(YEAR) ?: 0, // here
-            data = meta.description.extras?.getString(DATA) ?: "", // here,
-            dateModified = meta.description.extras?.getLong(DATE_MODIFIED) ?: 0,
-            albumId = meta.description.extras?.getLong(ALBUM_ID) ?: 0,
-            albumName = meta.description.extras?.getString(ALBUM_NAME) ?: "",
-            albumArtist = meta.description.extras?.getString(ALBUM_ARTIST) ?: "",
-            artistId = meta.description.extras?.getLong(ARTIST_ID) ?: 0,
-            artistName = meta.description.extras?.getString(ARTIST_NAME) ?: "",
-            composer = meta.description.extras?.getString(COMPOSER) ?: ""
-        )
-        return song
-    }
-
-    fun parseSongFromMediaMetadata(meta: MediaMetadata): Entity.Song {
-        val song = Entity.Song(
-            id = meta.description.mediaId?.toLong() ?: 0,
-            title = meta.description.title.toString(),
-            duration = meta.getLong(MediaMetadata.METADATA_KEY_DURATION),
-            trackNumber = meta.getLong(MediaMetadata.METADATA_KEY_TRACK_NUMBER).toInt(),
-            year = meta.getLong(MediaMetadata.METADATA_KEY_YEAR).toInt(),
-            data = "null",
-            dateModified = meta.getText(MediaMetadata.METADATA_KEY_DATE)?.toString()?.toLongOrNull() ?: 0,
-            albumId = meta.getString(MediaMetadata.METADATA_KEY_ALBUM)?.toLongOrNull() ?: 0,
-            albumName = meta.getString(MediaMetadata.METADATA_KEY_WRITER) ?: "",
-            albumArtist = meta.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST) ?: "",
-            artistId = meta.getString(MediaMetadata.METADATA_KEY_ARTIST)?.toLongOrNull() ?: 0,
-            artistName = meta.getString(MediaMetadata.METADATA_KEY_AUTHOR) ?: "",
-            composer = meta.getString(MediaMetadata.METADATA_KEY_COMPOSER) ?: null
-        )
-        return song
     }
 
     fun parseMediaItemFromSong(song: Entity.Song) = MediaBrowserCompat.MediaItem(
@@ -114,34 +78,75 @@ object MusicUtil {
         }.build(),
         MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
     )
-
     fun parseMetadataCompatFromSong(song: Entity.Song): MediaMetadataCompat {
-        val mediaMetadataCompat = MediaMetadataCompat.fromMediaMetadata(
-            MediaMetadata.Builder().apply {
-                putString(MediaMetadata.METADATA_KEY_MEDIA_ID, song.id.toString())
-                putString(MediaMetadata.METADATA_KEY_TITLE, song.title)
-                putLong(MediaMetadata.METADATA_KEY_TRACK_NUMBER, song.trackNumber.toLong())
-                putLong(MediaMetadata.METADATA_KEY_YEAR, song.year.toLong())
-                putLong(MediaMetadata.METADATA_KEY_DURATION, song.duration)
-                // data
-                putText(MediaMetadata.METADATA_KEY_DATE, song.dateModified.toString())
-                putString(MediaMetadata.METADATA_KEY_ALBUM, song.albumId.toString())
-                putString(MediaMetadata.METADATA_KEY_WRITER, song.albumName) // albumName
+        val mediaMetadataCompat = MediaMetadataCompat.Builder().apply {
+            id = song.id.toString()
+            title = song.title
+            trackNumber = song.trackNumber.toLong()
+            year = song.year.toLong()
+            duration = song.duration
+            data = song.data
+            date = song.dateModified.toString()
+            albumArtUri = song.albumArtUri.toString()
 
-                putString(MediaMetadata.METADATA_KEY_ARTIST, song.artistId.toString())
-                putString(MediaMetadata.METADATA_KEY_AUTHOR, song.albumName) // artistName
-
-                putString(MediaMetadata.METADATA_KEY_COMPOSER, song.composer)
-                putString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST, song.albumArtist)
-
-                putString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI, song.albumArtUri.toString())
-                putString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI, song.albumArtUri.toString())
-            }.build()
-        )
-        val test = mediaMetadataCompat.mediaMetadata as MediaMetadata
-        Log.d("JH", "albumId - ${test.getString(MediaMetadata.METADATA_KEY_ARTIST)}")
-        Log.d("JH", "albumName - ${test.getString(MediaMetadata.METADATA_KEY_AUTHOR)}")
+//            putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.id.toString())
+//            putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.title)
+//            putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, song.trackNumber.toLong())
+//            putLong(MediaMetadataCompat.METADATA_KEY_YEAR, song.year.toLong())
+//            putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.duration)
+//            // data
+//            putString(MediaMetadataCompat.METADATA_KEY_DATE, song.dateModified.toString())
+//            putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.albumId.toString())
+//            putString(MediaMetadataCompat.METADATA_KEY_WRITER, song.albumName) // albumName
+//
+//            putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.artistId.toString())
+//            putString(MediaMetadataCompat.METADATA_KEY_AUTHOR, song.albumName) // artistName
+//
+//            putString(MediaMetadataCompat.METADATA_KEY_COMPOSER, song.composer)
+//            putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, song.albumArtist)
+//
+//            putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, song.albumArtUri.toString())
+//            putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, song.albumArtUri.toString())
+        }.build()
+//        mediaMetadataCompat.print()
         return mediaMetadataCompat
+    }
+
+    fun MediaMetadataCompat.print() {
+        val res = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_TITLE) + ", " +
+                getLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER) + ", " +
+                getLong(MediaMetadataCompat.METADATA_KEY_YEAR) + ", " +
+                getLong(MediaMetadataCompat.METADATA_KEY_DURATION) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_DATE) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_ALBUM) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_WRITER) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_ARTIST) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_AUTHOR) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_COMPOSER) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI) + ", " +
+                getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI)
+        Log.d("JH", description.toString())
+
+    }
+    fun MediaMetadata.print() {
+        val res = getString(MediaMetadata.METADATA_KEY_MEDIA_ID) + ", " +
+                getString(MediaMetadata.METADATA_KEY_TITLE) + ", " +
+                getLong(MediaMetadata.METADATA_KEY_TRACK_NUMBER) + ", " +
+                getLong(MediaMetadata.METADATA_KEY_YEAR) + ", " +
+                getLong(MediaMetadata.METADATA_KEY_DURATION) + ", " +
+                getString(MediaMetadata.METADATA_KEY_DATE) + ", " +
+                getString(MediaMetadata.METADATA_KEY_ALBUM) + ", " +
+                getString(MediaMetadata.METADATA_KEY_WRITER) + ", " +
+                getString(MediaMetadata.METADATA_KEY_ARTIST) + ", " +
+                getString(MediaMetadata.METADATA_KEY_AUTHOR) + ", " +
+                getString(MediaMetadata.METADATA_KEY_COMPOSER) + ", " +
+                getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST) + ", " +
+                getString(MediaMetadata.METADATA_KEY_ALBUM_ART_URI) + ", " +
+                getString(MediaMetadata.METADATA_KEY_DISPLAY_ICON_URI)
+        Log.d("JH", res)
+//        Log.d("JH", "year: ${getLong(MediaMetadata.METADATA_KEY_YEAR)}")
     }
 
 }

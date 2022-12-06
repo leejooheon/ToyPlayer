@@ -189,6 +189,56 @@ sealed class Entity: Serializable {
     }
 
     // update equals and hashcode if fields changes
+    data class Music(
+        val mediaId: String,
+        val title: String,
+        val subtitle: String,
+        val albumArtUri: String,
+        val browsable: Boolean,
+        var playbackRes: Int
+    ) : Entity() {
+
+
+        // need to override manually because is open and cannot be a data class
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Music
+
+            if (mediaId != other.mediaId) return false
+            if (title != other.title) return false
+            if (subtitle != other.subtitle) return false
+            if (albumArtUri != other.albumArtUri) return false
+            if (browsable != other.browsable) return false
+            if (playbackRes != other.playbackRes) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = mediaId.hashCode()
+            result = 31 * result + title.hashCode()
+            result = 31 * result + subtitle.hashCode()
+            result = 31 * result + albumArtUri.hashCode()
+            result = 31 * result + browsable.hashCode()
+            result = 31 * result + playbackRes
+            return result
+        }
+
+        companion object {
+            @JvmStatic
+            val emptyMusic = Music(
+                mediaId = "empty-id",
+                title = "empty-title",
+                subtitle = "empty-subtitle",
+                albumArtUri = "empty-albumArtUri",
+                browsable = false,
+                playbackRes = -1,
+            )
+        }
+    }
+    // update equals and hashcode if fields changes
     data class Song(
         val id: Long,
         val title: String,

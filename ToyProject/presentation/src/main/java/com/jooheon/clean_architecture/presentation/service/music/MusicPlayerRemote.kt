@@ -8,12 +8,12 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import com.jooheon.clean_architecture.domain.common.FailureStatus
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.service.music.extensions.currentPlaybackPosition
-import com.jooheon.clean_architecture.presentation.service.music.extensions.isPlayEnabled
-import com.jooheon.clean_architecture.presentation.service.music.extensions.isPlaying
-import com.jooheon.clean_architecture.presentation.service.music.extensions.isPrepared
+import com.jooheon.clean_architecture.presentation.service.music.extensions.*
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil.print
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class MusicPlayerRemote @Inject constructor(
@@ -63,7 +65,35 @@ class MusicPlayerRemote @Inject constructor(
     private val transportControls: MediaControllerCompat.TransportControls
         get() = mediaController.transportControls
 
-    fun subscribe(parentId: String, callbacks: MediaBrowserCompat.SubscriptionCallback) {
+
+    suspend fun subscribeToService(): Resource<List<MediaBrowserCompat.MediaItem>> =
+        suspendCoroutine {
+            subscribe(
+                MusicService.MEDIA_ID_ROOT,
+                object : MediaBrowserCompat.SubscriptionCallback() {
+                    override fun onChildrenLoaded(
+                        parentId: String,
+                        children: MutableList<MediaBrowserCompat.MediaItem>
+                    ) {
+                        super.onChildrenLoaded(parentId, children)
+                        Log.d(TAG,"children loaded $children")
+                        it.resume(Resource.Success(children))
+                    }
+
+                    override fun onError(parentId: String) {
+                        super.onError(parentId)
+                        it.resume(
+                            Resource.Failure(
+                                failureStatus = FailureStatus.EMPTY,
+                                message = "Failed to subscribe"
+                            )
+                        )
+                    }
+                }
+            )
+        }
+
+    private fun subscribe(parentId: String, callbacks: MediaBrowserCompat.SubscriptionCallback) {
         mediaBrowser.subscribe(parentId, callbacks)
     }
 
@@ -159,13 +189,15 @@ class MusicPlayerRemote @Inject constructor(
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             super.onMetadataChanged(metadata)
+            emit {
+                val data = if (metadata?.id == null) {
+                    NOTHING_PLAYING
+                } else {
+                    metadata
+                }
 
-            Log.d(TAG, "onMetadataChanged - ${metadata?.description?.title ?: "null"}")
-            (metadata?.mediaMetadata as? MediaMetadata)?.let {
-                Log.d("JH", "onMetadataChanged: albumId - ${it.getString(MediaMetadata.METADATA_KEY_ARTIST)}")
-                Log.d("JH", "onMetadataChanged: albumName - ${it.getString(MediaMetadata.METADATA_KEY_AUTHOR)}")
+                _currentSong.emit(data)
             }
-            emit { _currentSong.emit(metadata) }
         }
     }
 

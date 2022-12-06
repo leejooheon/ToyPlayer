@@ -17,6 +17,7 @@ import com.jooheon.clean_architecture.presentation.service.music.extensions.Musi
 import com.jooheon.clean_architecture.presentation.service.music.extensions.MusicState
 import com.jooheon.clean_architecture.presentation.service.music.extensions.getMusicState
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil.print
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +36,7 @@ class MusicPlayerViewModel @Inject constructor(
     val uiState: State<MusicScreenState> = _uiState
 
     init {
+        initMusicService()
         collectTimePassed()
         collectCurrentSong()
         collectPlaybackState()
@@ -50,15 +52,14 @@ class MusicPlayerViewModel @Inject constructor(
     private fun collectCurrentSong() = viewModelScope.launch {
         musicPlayerRemote.currentSong.collectLatest {
             val mediaMeta = it ?: return@collectLatest
-            (mediaMeta.mediaMetadata as? MediaMetadata) ?.let {
-                Log.d("JH", "r: albumId - ${it.getString(MediaMetadata.METADATA_KEY_ARTIST)}")
-                Log.d("JH", "r: albumName - ${it.getString(MediaMetadata.METADATA_KEY_AUTHOR)}")
+            mediaMeta.print()
 
-                val song = MusicUtil.parseSongFromMediaMetadata(it)
-                _uiState.value = uiState.value.copy(currentPlayingMusic = song)
-            } ?: run {
-                Log.d(TAG, "collectCurrentSong - null")
-            }
+//            (mediaMeta.mediaMetadata as? MediaMetadata) ?.let {
+//                val song = MusicUtil.parseSongFromMediaMetadata(it)
+//                _uiState.value = uiState.value.copy(currentPlayingMusic = song)
+//            } ?: run {
+//                Log.d(TAG, "collectCurrentSong - null")
+//            }
         }
     }
 
@@ -75,10 +76,6 @@ class MusicPlayerViewModel @Inject constructor(
             val songList = it ?: return@collectLatest
             _uiState.value = uiState.value.copy(songList = songList)
         }
-    }
-
-    fun updateSongList(songList: List<Entity.Song>) {
-        musicPlayerRemote.updateSongList(songList)
     }
 
     fun skipToNextTrack() = musicPlayerRemote.skipToNextTrack()
@@ -103,35 +100,21 @@ class MusicPlayerViewModel @Inject constructor(
         Log.d(TAG, "onMusicBottomBarPressed")
     }
 
+    private fun initMusicService() = viewModelScope.launch {
+        val resource = musicPlayerRemote.subscribeToService()
+        if(resource is Resource.Success) {
+            val allSongs = resource.value
+            Log.d(TAG, "onChildrenLoaded - ${allSongs.size}")
+//            allSongs.map { MusicUtil.parseSongFromMediaItem(it) }.also {
+//                musicPlayerRemote.updateSongList(it)
+//            }
+        } else {
+            Log.d(TAG, (resource as? Resource.Failure)?.message ?: "Failure")
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         musicPlayerRemote.unsubscribe(MEDIA_ID_ROOT)
     }
-
-    suspend fun subscribeToService(): Resource<List<MediaBrowserCompat.MediaItem>> =
-        suspendCoroutine {
-            musicPlayerRemote.subscribe(
-                MEDIA_ID_ROOT,
-                object : MediaBrowserCompat.SubscriptionCallback() {
-                    override fun onChildrenLoaded(
-                        parentId: String,
-                        children: MutableList<MediaBrowserCompat.MediaItem>
-                    ) {
-                        super.onChildrenLoaded(parentId, children)
-                        Log.d(TAG,"children loaded $children")
-                        it.resume(Resource.Success(children))
-                    }
-
-                    override fun onError(parentId: String) {
-                        super.onError(parentId)
-                        it.resume(
-                            Resource.Failure(
-                                failureStatus = FailureStatus.EMPTY,
-                                message = "Failed to subscribe"
-                            )
-                        )
-                    }
-                }
-            )
-        }
 }

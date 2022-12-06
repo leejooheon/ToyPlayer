@@ -27,13 +27,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
-    private val TAG = MainActivity::class.simpleName
-
-    private val musicPlayerViewModel by viewModels<MusicPlayerViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initMusicServiceToken()
         setContent {
             AppContent()
         }
@@ -43,21 +38,6 @@ class MainActivity : BaseComposeActivity() {
     private fun AppContent() {
         ApplicationTheme() {
             DestinationsNavHost(navGraph = NavGraphs.root)
-        }
-    }
-
-    private fun initMusicServiceToken() {
-        lifecycleScope.launch {
-            val resource = musicPlayerViewModel.subscribeToService()
-            if(resource is Resource.Success) {
-                val allSongs = resource.value
-                Log.d("MusicService-MainActivity", "onChildrenLoaded - ${allSongs.size}")
-                allSongs.map { MusicUtil.parseSongFromMediaItem(it) }.also {
-                    musicPlayerViewModel.updateSongList(it)
-                }
-            } else {
-                Log.d("MusicService-MainActivity", (resource as? Resource.Failure)?.message ?: "Failure")
-            }
         }
     }
 }
