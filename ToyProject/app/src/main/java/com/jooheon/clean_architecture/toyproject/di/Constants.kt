@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.toyproject.di.module
+package com.jooheon.clean_architecture.toyproject.di
 
 internal object Constants {
 

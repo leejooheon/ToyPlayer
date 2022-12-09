@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.presentation.service.music.extensions
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 
 @Suppress("PropertyName")
@@ -14,6 +15,9 @@ val NOTHING_PLAYING: MediaMetadataCompat = MediaMetadataCompat.Builder()
  * Useful extensions for [MediaMetadataCompat].
  */
 fun String?.toUri(): Uri = this?.let { Uri.parse(it) } ?: Uri.EMPTY
+
+fun MediaMetadataCompat.mediaId() = description.mediaId?.toLong() ?: -1L
+fun MediaBrowserCompat.MediaItem.mediaId() = description.mediaId?.toLong() ?: -1L
 
 inline val MediaMetadataCompat.id: String?
     get() = getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)

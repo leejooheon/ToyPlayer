@@ -2,10 +2,7 @@ package com.jooheon.clean_architecture.presentation.view.main
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.scaleIn
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -41,12 +38,15 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.MainActivity
-import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
+import com.jooheon.clean_architecture.presentation.view.destinations.PlayListScreenDestination
 import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
@@ -61,6 +61,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
@@ -86,32 +89,37 @@ fun MainScreen(
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-//    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomBarVisibility = remember { mutableStateOf(true) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
         topBar = { TopBar(viewModel, navigator, drawerState, scope) },
-        bottomBar = { BottomBar(bottomNavController) },
+        bottomBar = { BottomBar(bottomNavController, bottomBarVisibility.value) },
 //        floatingActionButton = { MyFloatingActionButton(viewModel) },
 //        floatingActionButtonPosition = FabPosition.End,
         contentColor = MaterialTheme.colorScheme.surface,
         content = { paddingParent ->
-            RegisterBottomNavigation(viewModel, musicPlayerViewModel, bottomNavController, navigator, paddingParent)
-//            BottomSheetScaffold(
-//                modifier = Modifier.padding(paddingParent),
-//                sheetBackgroundColor = MaterialTheme.colorScheme.surface,
-//                sheetContent = { BottomSheetContent() }
-//            ) { paddingValue ->
-//                ModalNavigationDrawer(
-//                    drawerState = drawerState,
-//                    drawerContent = { DrawerContent(drawerState, scope, paddingValue) },
-//                    content = { RegisterBottomNavigation(viewModel, bottomNavController, navigator, paddingValue, isPreview) }
-//                )
-//            }
+            RegisterBottomNavigation(
+                mainViewModel = viewModel,
+                musicPlayerViewModel = musicPlayerViewModel,
+                navController = bottomNavController,
+                navigator = navigator,
+                modifier = Modifier.padding(paddingParent),
+            )
         }
     )
     RegisterBackPressedHandler(viewModel, drawerState, scope)
+
+    CollectEvents(
+        event = musicPlayerViewModel.navigateToPlayListScreen,
+        navigateTo = {
+            bottomBarVisibility.value = false
+            navigator.navigate(
+                PlayListScreenDestination()
+            )
+        }
+    )
 }
 
 @Composable
@@ -190,13 +198,13 @@ fun DrawerContent(
 @ExperimentalComposeUiApi
 @Composable
 fun RegisterBottomNavigation(
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
     musicPlayerViewModel: MusicPlayerViewModel,
     navController: NavHostController,
     navigator: DestinationsNavigator,
-    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.padding(paddingValues)) {
+    Box(modifier = modifier) {
         NavHost(navController, startDestination = Screen.Github.route) {
             composable(Screen.Github.route) {
                 HomeScreen(navigator)
@@ -205,7 +213,7 @@ fun RegisterBottomNavigation(
                 WikipediaScreen(navigator)
             }
             composable(Screen.Map.route) {
-                MapScreen(navigator, viewModel)
+                MapScreen(navigator, mainViewModel)
             }
             composable(Screen.Search.route) {
                 ExoPlayerScreen()
@@ -221,45 +229,61 @@ fun RegisterBottomNavigation(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun MusicBar(viewModel: MusicPlayerViewModel, modifier: Modifier = Modifier) {
-    val uiState = viewModel.uiState.value
+private fun MusicBar(
+    viewModel: MusicPlayerViewModel,
+    modifier: Modifier = Modifier,
+    isPreview: Boolean = false
+) {
+    val uiState by viewModel.musicState.collectAsState()
+
     AnimatedVisibility(
-        visible = uiState.isMusicBottomBarVisible,
+        visible = if(!isPreview) uiState.isMusicBottomBarVisible else true,
         enter = scaleIn(),
         exit = ExitTransition.None,
         modifier = modifier
     ) {
         MusicBottomBar(
-            song = uiState.currentPlayingMusic ?: Entity.Song.emptySong,
-            isPlaying = uiState.isMusicPlaying,
+            song = uiState.currentPlayingMusic,
+            isPlaying = uiState.isPlaying,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(64.dp),
             onItemClick = viewModel::onMusicBottomBarPressed,
-            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed
+            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
+            onPlayListButtonPressed = viewModel::onPlayListButtonPressed
         )
     }
 }
 
 @Composable
-fun BottomBar(bottomNavController: NavController) {
-    val currentSelectedItem by bottomNavController.currentScreenAsState()
-    MyBottomNavigation(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.inverseSurface),
-        selectedNavigation = currentSelectedItem,
-        onNavigationSelected = { selectedScreen ->
-            Log.d(TAG, "selectedScreen: $selectedScreen")
+fun BottomBar(
+    bottomNavController: NavController,
+    visibility: Boolean
+) {
+    AnimatedVisibility(
+        visible = visibility,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it }),
+        content = {
+            val currentSelectedItem by bottomNavController.currentScreenAsState()
+            MyBottomNavigation(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.inverseSurface),
+                selectedNavigation = currentSelectedItem,
+                onNavigationSelected = { selectedScreen ->
+                    Log.d(TAG, "selectedScreen: $selectedScreen")
 
-            bottomNavController.navigate(selectedScreen.route) {
-                launchSingleTop = true
-                restoreState = true
+                    bottomNavController.navigate(selectedScreen.route) {
+                        launchSingleTop = true
+                        restoreState = true
 
-                popUpTo(bottomNavController.graph.findStartDestination().id) {
-                    saveState = true
+                        popUpTo(bottomNavController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
                 }
-            }
+            )
         }
     )
 }
@@ -270,8 +294,9 @@ fun TopBar(
     viewModel: MainViewModel,
     navigator: DestinationsNavigator,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) {
+
     val openGithubSearchDialog = remember { mutableStateOf(false) }
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.primary,
@@ -370,6 +395,18 @@ fun TopBar(
 //    )
 //}
 
+@Composable
+fun CollectEvents(
+    event: SharedFlow<Boolean>,
+    navigateTo: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        event.collectLatest {
+            if (it) navigateTo()
+        }
+    }
+}
+
 @ExperimentalMaterial3Api
 @Composable
 fun RegisterBackPressedHandler (
@@ -395,14 +432,38 @@ fun RegisterBackPressedHandler (
     }
 }
 
+@Preview
+@Composable
+private fun PreviewMusicBar() {
+    val context = LocalContext.current
+    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val musicPlayerViewModel = MusicPlayerViewModel(
+        context = context,
+        dispatcher= Dispatchers.IO,
+        musicController = MusicController(context, musicPlayerUseCase, true)
+    )
+
+    PreviewTheme(false) {
+        MusicBar(
+            viewModel = musicPlayerViewModel,
+            modifier = Modifier.fillMaxWidth(),
+            isPreview = true
+        )
+    }
+}
 
 @Preview
 @Composable
-fun PreviewMainScreen() {
+private fun PreviewMainScreen() {
     val context = LocalContext.current
     val viewModel = MainViewModel(EmptyMusicUseCase())
-    val musicViewModel = MusicPlayerViewModel(MusicPlayerRemote(context))
+    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val musicPlayerViewModel = MusicPlayerViewModel(
+        context = context,
+        dispatcher= Dispatchers.IO,
+        musicController = MusicController(context, musicPlayerUseCase, true)
+    )
     PreviewTheme(false) {
-        MainScreen(EmptyDestinationsNavigator, viewModel, musicViewModel, true)
+        MainScreen(EmptyDestinationsNavigator, viewModel, musicPlayerViewModel, true)
     }
 }

@@ -85,12 +85,7 @@ fun RepositoryItems(
             owner = "owner",
             modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             repositoryList = EmptyGithubUseCase.repositoryDummyData(),
-            onRepositoryClick = {
-                // nothing
-                navigator.navigate(RepositoryDetailScreenDestination(githubId, it)) {
-                    launchSingleTop = true
-                }
-            }
+            onRepositoryClick = { }
         )
     }
 }

@@ -27,6 +27,7 @@ import com.jooheon.clean_architecture.presentation.service.music.MusicService.Co
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.YEAR
 import com.jooheon.clean_architecture.presentation.service.music.extensions.*
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil.print
+import java.util.*
 
 object MusicUtil {
     fun localMusicStorageUri(): Uri {
@@ -36,6 +37,29 @@ object MusicUtil {
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         }
         return uri
+    }
+
+    fun toReadableDurationString(songDurationMillis: Long): String {
+        var minutes = songDurationMillis / 1000 / 60
+        val seconds = songDurationMillis / 1000 % 60
+        return if (minutes < 60) {
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d",
+                minutes,
+                seconds
+            )
+        } else {
+            val hours = minutes / 60
+            minutes %= 60
+            String.format(
+                Locale.getDefault(),
+                "%02d:%02d:%02d",
+                hours,
+                minutes,
+                seconds
+            )
+        }
     }
 
     // song.uri 사용하자.

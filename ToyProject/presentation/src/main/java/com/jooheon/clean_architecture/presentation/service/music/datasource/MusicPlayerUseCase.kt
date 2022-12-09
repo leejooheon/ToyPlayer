@@ -3,11 +3,6 @@ package com.jooheon.clean_architecture.presentation.service.music.datasource
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
@@ -18,7 +13,6 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class MusicPlayerUseCase @Inject constructor(
     private val musicUseCase: MusicUseCase,
 ) {
@@ -51,6 +45,7 @@ class MusicPlayerUseCase @Inject constructor(
         musicUseCase.getSongs(uri).onEach { resource ->
             when(resource) {
                 is Resource.Success -> {
+                    Log.d("asd", "singleton test ${this}")
                     allMusic = resource.value
                     state = State.STATE_INITIALIZED
                 }
@@ -61,14 +56,6 @@ class MusicPlayerUseCase @Inject constructor(
         }.launchIn(scope)
 
         return this
-    }
-
-    fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory): MediaSource {
-        val mediaSources = allMusic.map {
-            ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(it.uri))
-        }
-        return ConcatenatingMediaSource().apply { addMediaSources(mediaSources) }
     }
 
     fun whenReady(onReady: (Boolean) -> Unit): Boolean =

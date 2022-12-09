@@ -5,27 +5,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
-import com.jooheon.clean_architecture.presentation.service.music.MusicPlayerRemote
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
-import com.jooheon.clean_architecture.presentation.view.components.CoilImage
-import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.main.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.view.main.music.EmptySongItem
+import com.jooheon.clean_architecture.presentation.view.main.music.MusicItem
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "PlayerScreen"
 @ExperimentalPermissionsApi
@@ -37,7 +34,8 @@ fun ExoPlayerScreen(
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
 
-    val uiState = viewModel.uiState.value
+    val uiState by viewModel.musicState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +62,7 @@ fun ExoPlayerScreen(
             },
         )
 
-        if(uiState.songList.isNotEmpty()) {
+        if(uiState.songs.isNotEmpty()) {
             Text(
                 modifier = Modifier.padding(10.dp),
                 text = "Local Song List",
@@ -76,93 +74,19 @@ fun ExoPlayerScreen(
         }
 
         LazyColumn {
-            itemsIndexed(uiState.songList) { index, song ->
+            itemsIndexed(uiState.songs) { index, song ->
                 MusicItem(
                     modifier = Modifier
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                         .height(96.dp),
                     song = song,
-                    onItemClick = {
-                        viewModel.playFromMediaId(it.id.toString())
-                    }
+                    onItemClick = viewModel::onPlayPauseButtonPressed
                 )
             }
         }
     }
 
     ObserveLifecycleEvent()
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MusicItem(
-    modifier: Modifier,
-    song: Entity.Song,
-    onItemClick: (Entity.Song) -> Unit
-) {
-    Surface(
-        onClick = { onItemClick(song) },
-        tonalElevation = 4.dp,
-        shadowElevation = 4.dp,
-        shape = RoundedCornerShape(12.dp),
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.secondary
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            CoilImage(
-                url = song.albumArtUri.toString(),
-                contentDescription = song.title + "_Image",
-                shape = RoundedCornerShape(10.dp),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Text(
-                    text = song.title,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(0.dp))
-                Text(
-                    text = song.artistName,
-                    style = MaterialTheme.typography.labelSmall,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.6f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun EmptySongItem(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.padding(8.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "\uD83D\uDE31",
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = "no songs!",
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-    }
 }
 
 @ExperimentalPermissionsApi
@@ -189,24 +113,19 @@ private fun ObserveLifecycleEvent(
 //    )
 }
 
-@Preview
-@Composable
-private fun PreviewEmptySong() {
-    ApplicationTheme(false) {
-        EmptySongItem(
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-    }
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 fun PreviewSearchScreen() {
     val context = LocalContext.current
-    val viewModel = MusicPlayerViewModel(MusicPlayerRemote(context))
+    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val musicPlayerViewModel = MusicPlayerViewModel(
+        context = context,
+        dispatcher= Dispatchers.IO,
+        musicController = MusicController(context, musicPlayerUseCase, true)
+    )
+
     ApplicationTheme(false) {
-        ExoPlayerScreen(viewModel, true)
+        ExoPlayerScreen(musicPlayerViewModel, true)
     }
 }

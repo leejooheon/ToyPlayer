@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.service
+package com.jooheon.clean_architecture.presentation.service.firebase
 
 import android.annotation.SuppressLint
 import android.app.Notification

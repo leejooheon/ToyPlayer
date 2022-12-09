@@ -29,6 +29,7 @@ object Libraries { // 각각의 모듈에서 중복된 라이브러리 항목만
 
     //exoplayer
     const val exoplayer_version = "2.18.1"
+    const val exoplayer_test = "androidx.media3:media3-exoplayer:1.0.0-beta03"
     const val exoplayer_core = "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
     const val exoplayer_ui = "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
     const val exoplayer_dash = "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"

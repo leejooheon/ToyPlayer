@@ -50,7 +50,7 @@
         </service>
 
         <service
-            android:name="com.jooheon.clean_architecture.presentation.service.MyFirebaseMessagingService"
+            android:name="com.jooheon.clean_architecture.presentation.service.firebase.MyFirebaseMessagingService"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

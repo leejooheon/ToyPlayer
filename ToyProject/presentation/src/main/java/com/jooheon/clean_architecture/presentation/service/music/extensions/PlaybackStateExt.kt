@@ -3,11 +3,6 @@ package com.jooheon.clean_architecture.presentation.service.music.extensions
 import android.os.SystemClock
 import android.support.v4.media.session.PlaybackStateCompat
 
-fun PlaybackStateCompat.getMusicState(): MusicState = when {
-    isPlaying -> MusicState.PLAYING
-    isPrepared -> MusicState.PAUSED
-    else -> MusicState.NONE
-}
 inline val PlaybackStateCompat.isPrepared
     get() = state == PlaybackStateCompat.STATE_BUFFERING ||
             state == PlaybackStateCompat.STATE_PLAYING ||

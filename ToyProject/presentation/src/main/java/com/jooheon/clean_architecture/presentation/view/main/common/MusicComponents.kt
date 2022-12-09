@@ -32,7 +32,8 @@ fun MusicBottomBar(
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
     onItemClick: (Entity.Song) -> Unit,
-    onPlayPauseButtonPressed: (Entity.Song) -> Unit
+    onPlayPauseButtonPressed: (Entity.Song) -> Unit,
+    onPlayListButtonPressed: () -> Unit
 ) {
     Surface(
         onClick = { onItemClick(song) },
@@ -77,6 +78,9 @@ fun MusicBottomBar(
                 isPlaying = isPlaying,
                 onPlayPauseButtonPressed = onPlayPauseButtonPressed
             )
+            PlayListButton(
+                onPlayListButtonPressed = onPlayListButtonPressed
+            )
         }
     }
 }
@@ -100,7 +104,26 @@ fun PlayPauseButton(
         modifier = Modifier
             .fillMaxHeight()
             .aspectRatio(1f),
-        iconOffset = if (isPlaying) 0.dp else 4.dp,
+    )
+}
+
+@Composable
+fun PlayListButton(
+    iconRelativeSize: Float = 0.4f,
+    onPlayListButtonPressed: () -> Unit
+) {
+    RoundImageButton(
+        image = R.drawable.ic_round_playlist_play_24,
+        iconTint = MaterialTheme.colorScheme.tertiary,
+        iconRelativeSize = iconRelativeSize,
+        backgroundColor = Color.Transparent,
+        contentDescription = PLAY_LIST_CD,
+        onClick = {
+            onPlayListButtonPressed.invoke()
+        },
+        modifier = Modifier
+            .fillMaxHeight()
+            .aspectRatio(1f),
     )
 }
 
@@ -149,6 +172,7 @@ private fun getPlayPauseIcon(isPlaying: Boolean) = if (isPlaying) {
 
 const val PLAY_MUSIC_CD = "Play music"
 const val PAUSE_MUSIC_CD = "Pause music"
+const val PLAY_LIST_CD = "Play list"
 
 @Preview
 @Composable
@@ -161,7 +185,8 @@ private fun MusicBottomBarPreviewLight() {
                 .fillMaxWidth()
                 .height(64.dp),
             onItemClick = { },
-            onPlayPauseButtonPressed = { }
+            onPlayPauseButtonPressed = { },
+            onPlayListButtonPressed = { }
         )
     }
 }
@@ -177,7 +202,8 @@ private fun MusicBottomBarPreviewDark() {
                 .fillMaxWidth()
                 .height(64.dp),
             onItemClick = { },
-            onPlayPauseButtonPressed = { }
+            onPlayPauseButtonPressed = { },
+            onPlayListButtonPressed = { }
         )
     }
 }
@@ -208,5 +234,37 @@ fun PlayButtonPreviewDark() {
             iconRelativeSize = 0.4f,
             modifier = Modifier.size(72.dp),
         ) {}
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PlayListButtonPreviewLight() {
+    PreviewTheme(false) {
+        RoundImageButton(
+            image = R.drawable.ic_round_playlist_play_24,
+            iconTint = MaterialTheme.colorScheme.tertiary,
+            iconRelativeSize = 0.4f,
+            backgroundColor = Color.Transparent,
+            contentDescription = PLAY_LIST_CD,
+            onClick = {},
+            modifier = Modifier.size(72.dp),
+        )
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun PlayListButtonPreviewDark() {
+    PreviewTheme(true) {
+        RoundImageButton(
+            image = R.drawable.ic_round_playlist_play_24,
+            iconTint = MaterialTheme.colorScheme.tertiary,
+            iconRelativeSize = 0.4f,
+            backgroundColor = Color.Transparent,
+            contentDescription = PLAY_LIST_CD,
+            onClick = {},
+            modifier = Modifier.size(72.dp),
+        )
     }
 }

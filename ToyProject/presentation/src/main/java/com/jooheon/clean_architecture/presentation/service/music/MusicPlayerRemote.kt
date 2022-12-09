@@ -11,6 +11,7 @@ import android.util.Log
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.extensions.*
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil.print
@@ -28,20 +29,28 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-@Singleton
 class MusicPlayerRemote @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val musicPlayerUseCase: MusicPlayerUseCase,
+    private val isPreview: Boolean = false
 ) {
     private val TAG = "Remote" + MusicService::class.java.simpleName
-    private lateinit var mediaController: MediaControllerCompat
-
-    private val mediaBrowser = MediaBrowserCompat(
-        context,
-        ComponentName(context, MusicService::class.java),
-        ConnectionCallback(), null
-    ).apply { connect() }
-
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+    private lateinit var mediaController: MediaControllerCompat
+    private lateinit var mediaBrowser: MediaBrowserCompat
+
+    init {
+        if(!isPreview) {
+            mediaBrowser = MediaBrowserCompat(
+                context,
+                ComponentName(context, MusicService::class.java),
+                ConnectionCallback(), null
+            ).apply {
+                connect()
+            }
+        }
+    }
 
     private val _songList = MutableStateFlow<MutableList<Entity.Song>?>(null)
     val songList = _songList.asStateFlow()
@@ -101,8 +110,11 @@ class MusicPlayerRemote @Inject constructor(
         mediaBrowser.unsubscribe(parentId)
     }
 
-    fun updateSongList(queue: List<Entity.Song>) {
-        emit { _songList.value = queue.toMutableList() }
+    fun updateSongList() {
+        emit {
+            Log.d("asd", "singleton test - remote ${musicPlayerUseCase}")
+            _songList.value = musicPlayerUseCase.allMusic.toMutableList()
+        }
     }
 
     fun openQueue(queue: List<Entity.Song>) {

@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.toyproject.BuildConfig
+import com.jooheon.clean_architecture.toyproject.di.Constants
 import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides

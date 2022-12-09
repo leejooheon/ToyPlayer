@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.jooheon.clean_architecture.data.api.GithubApi
 import com.jooheon.clean_architecture.data.api.WikipediaApi
 import com.jooheon.clean_architecture.data.dao.parkingspot.ParkingSpotDatabase
+import com.jooheon.clean_architecture.toyproject.di.Constants
 import com.jooheon.clean_architecture.toyproject.di.MyApplication
 import dagger.Module
 import dagger.Provides
