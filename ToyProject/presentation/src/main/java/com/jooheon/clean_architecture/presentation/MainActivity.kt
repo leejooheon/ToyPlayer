@@ -15,7 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
-    private val TAG = MainActivity::class.java.simpleName
     private val musicPlayerViewModel: MusicPlayerViewModel by viewModels()
     private var serviceToken: MusicPlayerViewModel.ServiceToken? = null
 
@@ -38,5 +37,9 @@ class MainActivity : BaseComposeActivity() {
         ApplicationTheme() {
             DestinationsNavHost(navGraph = NavGraphs.root)
         }
+    }
+
+    companion object {
+        private val TAG = MainActivity::class.java.simpleName
     }
 }

@@ -1,16 +1,26 @@
 package com.jooheon.clean_architecture.presentation.service.music
 
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Intent
-import android.media.session.MediaSession
+import android.media.session.PlaybackState
 import android.os.*
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import android.view.KeyEvent
 import androidx.media.MediaBrowserServiceCompat
-import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import androidx.media.app.NotificationCompat.MediaStyle
+import com.jooheon.clean_architecture.presentation.BuildConfig
+import com.jooheon.clean_architecture.presentation.service.music.extensions.MusicState
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
+import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver
+import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaSessionCallback
+import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.PlayingNotificationManager
+import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.PlayingNotificationManager.Companion.NOTIFICATION_ID
+import com.jooheon.clean_architecture.presentation.utils.MusicUtil
+import com.jooheon.clean_architecture.presentation.utils.VersionUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,51 +37,106 @@ class MusicService: MediaBrowserServiceCompat() {
     @Inject
     lateinit var musicController: MusicController
 
-    private lateinit var mediaSession: MediaSession
+    private lateinit var mediaSession: MediaSessionCompat
+    private lateinit var mediaStyle: MediaStyle
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var playingNotificationManager: PlayingNotificationManager
+    private var isForegroundService = false
 
     private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+    val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
+
 
     override fun onCreate() {
         super.onCreate()
+
         Log.d(TAG, "onCreate")
         Log.d(TAG, "musicController - ${musicController}")
         initialize()
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        mediaSession.isActive = false
+        mediaSession.release()
+        notificationManager.cancelAll()
+        stopForeground(STOP_FOREGROUND_REMOVE).also {
+            isForegroundService = false
+        }
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        serviceScope.launch { musicController.stop() }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "onStartCommand")
-        return super.onStartCommand(intent, flags, startId)
+
+        intent?.getParcelableExtra<MusicState>("MusicService")?.also { newState ->
+            if(!isForegroundService) return@also
+            updateMediaSession(newState)
+
+            notificationManager.notify(
+                NOTIFICATION_ID,
+                playingNotificationManager.notificationMediaPlayer(
+                    applicationContext,
+                    mediaStyle,
+                    newState
+                )
+            )
+        }
+
+        return START_NOT_STICKY
     }
 
     private fun initialize() {
         Log.d(TAG, "initialize")
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        playingNotificationManager = PlayingNotificationManager(
+            context = this,
+            notificationManager = notificationManager
+        )
+
         musicController.loadMusic(serviceScope)
-        initMediaSession()
+        setupMediaSession()
     }
 
-    private fun initMediaSession() {
-        mediaSession = MediaSession(this, MEDIA_SESSION).apply {
-            setCallback(object : MediaSession.Callback() {
-                override fun onMediaButtonEvent(mediaButtonIntent: Intent): Boolean {
-                    val event = if(Intent.ACTION_MEDIA_BUTTON == mediaButtonIntent.action) {
-                        mediaButtonIntent.getParcelableExtra(Intent.EXTRA_KEY_EVENT) as? KeyEvent
-                    } else { null }
+    private fun setupMediaSession() {
+        val mediaButtonReceiverComponentName = ComponentName(
+            applicationContext,
+            MediaButtonIntentReceiver::class.java
+        )
 
-//                    event?.let {
-//                        when (it.keyCode) {
-//                            KeyEvent.KEYCODE_MEDIA_PLAY -> Log.d(TAG, "KEYCODE_MEDIA_PLAY")
-//                            KeyEvent.KEYCODE_MEDIA_PAUSE -> Log.d(TAG, "KEYCODE_MEDIA_PLAY")
-//                            KeyEvent.KEYCODE_MEDIA_NEXT -> Log.d(TAG, "KEYCODE_MEDIA_PLAY")
-//                            KeyEvent.KEYCODE_MEDIA_PREVIOUS -> Log.d(TAG, "KEYCODE_MEDIA_PLAY")
-//                            else -> Log.d(TAG, "KEYCODE_ELSE")
-//                        }
-//                    }
-                    return true
-                }
-            })
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON).apply {
+            component = mediaButtonReceiverComponentName
         }
 
+        val mediaButtonReceiverPendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
+            0,
+            mediaButtonIntent,
+            if (VersionUtils.hasMarshmallow()) PendingIntent.FLAG_IMMUTABLE else 0
+        )
+
+        mediaSession = MediaSessionCompat(
+            this,
+            BuildConfig.APPLICATION_ID,
+            mediaButtonReceiverComponentName,
+            mediaButtonReceiverPendingIntent
+        ).apply {
+            isActive = true
+            setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
+            setCallback(MediaSessionCallback(this@MusicService))
+        }.also {
+            sessionToken = it.sessionToken
+            mediaStyle = MediaStyle().setMediaSession(it.sessionToken)
+        }
+
+        val notification = playingNotificationManager.foregroundNotification()
+        startForeground(NOTIFICATION_ID, notification).also {
+            isForegroundService = true
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -120,22 +185,38 @@ class MusicService: MediaBrowserServiceCompat() {
         }
     }
 
+    private fun updateMediaSession(state: MusicState) {
+        val playbackStateBuilder = PlaybackStateCompat.Builder()
+            .setActions(MEDIA_SESSION_ACTIONS)
+            .setState(
+                getPlayingState(state),
+                state.currentDuration,
+                1f
+            )
+
+//        setCustomAction(playbackStateBuilder)
+        mediaSession.setPlaybackState(playbackStateBuilder.build())
+        mediaSession.setMetadata(
+            MusicUtil.parseMediaMetadataCompatFromMusicState(state)
+        )
+    }
+
+    private fun getPlayingState(state: MusicState) = if(state.isPlaying) {
+        PlaybackState.STATE_PLAYING
+    } else {
+        PlaybackState.STATE_PAUSED
+    }
+
     companion object {
         const val MEDIA_ID_ROOT = "__ROOT__"
-        private const val MEDIA_SESSION = "JooheonMediaSession"
 
-
-        const val DURATION = "duration"
-        const val TRACK_NUMBER = "track_number"
-        const val YEAR = "year"
-        const val DATA = "data"
-        const val DATE_MODIFIED = "date_modified"
-        const val ALBUM_ID = "album_id"
-        const val ALBUM_NAME = "album_name"
-        const val ALBUM_ARTIST = "album_artist"
-        const val ARTIST_ID = "artist_id"
-        const val ARTIST_NAME = "artist_name"
-        const val COMPOSER = "composer"
+        private const val MEDIA_SESSION_ACTIONS = (PlaybackStateCompat.ACTION_PLAY
+                or PlaybackStateCompat.ACTION_PAUSE
+                or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                or PlaybackStateCompat.ACTION_STOP
+                or PlaybackStateCompat.ACTION_SEEK_TO)
     }
 
     inner class MediaPlayerServiceBinder : Binder() {

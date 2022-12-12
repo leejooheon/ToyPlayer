@@ -5,12 +5,6 @@ import android.net.Uri
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 
-@Suppress("PropertyName")
-val NOTHING_PLAYING: MediaMetadataCompat = MediaMetadataCompat.Builder()
-    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "")
-    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
-    .build()
-
 /**
  * Useful extensions for [MediaMetadataCompat].
  */

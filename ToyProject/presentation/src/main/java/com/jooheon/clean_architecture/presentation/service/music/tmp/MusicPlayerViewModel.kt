@@ -45,13 +45,15 @@ class MusicPlayerViewModel @Inject constructor(
         collectSongList()
         collectCurrentSong()
         collectIsPlaying()
+        collectDuration()
     }
 
     private fun collectMusicState() {
         viewModelScope.launch(dispatcher) {
             musicState.collectLatest { state ->
                 if(serviceIntent == null) return@collectLatest
-                serviceIntent.putExtra("State", state) // FIXME: name 디파인해서 쓰자
+
+                serviceIntent.putExtra("MusicService", state) // FIXME: name 디파인해서 쓰자
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     context.startForegroundService(serviceIntent)
@@ -77,6 +79,11 @@ class MusicPlayerViewModel @Inject constructor(
             _musicState.value = musicState.value.copy(isPlaying = it)
         }
     }
+    private fun collectDuration() = viewModelScope.launch {
+        musicController.currentDuration.collectLatest {
+            _musicState.value = musicState.value.copy(currentDuration = it)
+        }
+    }
 
     fun onPlayPauseButtonPressed(song: Entity.Song) = viewModelScope.launch(Dispatchers.IO) {
         Log.d(TAG, "onPlayPauseButtonPressed")
@@ -86,6 +93,7 @@ class MusicPlayerViewModel @Inject constructor(
             musicController.play(song)
         }
     }
+
     fun onPlayListButtonPressed() = viewModelScope.launch(Dispatchers.Main) {
         _navigateToPlayListScreen.emit(true)
     }
@@ -188,9 +196,7 @@ class MusicPlayerViewModel @Inject constructor(
 //        musicPlayerRemote.unsubscribe(MEDIA_ID_ROOT)
     }
 
-    private val serviceIntent = Intent(context, MusicService::class.java).apply {
-        putExtra("MusicService", musicState.value)
-    }
+    private val serviceIntent = Intent(context, MusicService::class.java)
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {

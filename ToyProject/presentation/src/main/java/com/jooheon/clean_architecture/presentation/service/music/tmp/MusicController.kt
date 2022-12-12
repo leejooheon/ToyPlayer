@@ -12,6 +12,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.extensions.uri
+import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,7 @@ class MusicController @Inject constructor(
     private val musicPlayerUseCase: MusicPlayerUseCase,
     isPreview: Boolean = false
 ) : IMusicController{
-    private val TAG = MusicController::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
 
     private lateinit var exoPlayer: ExoPlayer
     private var uiThreadHandler: Handler? = null
@@ -42,6 +43,9 @@ class MusicController @Inject constructor(
     private val _currentPlayingMusic = MutableStateFlow(Entity.Song.emptySong)
     val currentPlayingMusic: StateFlow<Entity.Song> = _currentPlayingMusic
 
+    private val _currentDuration = MutableStateFlow(0L)
+    val currentDuration: StateFlow<Long> = _currentDuration
+
     init {
         if(isPreview) {
             /** nothing **/
@@ -56,25 +60,90 @@ class MusicController @Inject constructor(
     }
 
     override suspend fun play(song: Entity.Song) {
-        Log.d(TAG, "play")
         runOnUiThread {
-            exoPlayer.setMediaItem(MediaItem.fromUri(song.uri))
-            exoPlayer.prepare()
-            exoPlayer.play()
+            if(currentPlayingMusic.value == song) {
+                resume()
+                return@runOnUiThread
+            }
+            Log.d(TAG, "play")
+
             _currentPlayingMusic.tryEmit(song)
+            exoPlayer.run {
+                playWhenReady = true
+                setMediaItem(MediaItem.fromUri(song.uri))
+                prepare()
+                play()
+            }
+        }
+    }
+
+    private fun resume() {
+        Log.d(TAG, "resume")
+        exoPlayer.play()
+    }
+
+    override suspend fun pause() {
+        runOnUiThread {
+            _isPlaying.tryEmit(false)
+            exoPlayer.run {
+                playWhenReady = true
+                pause()
+            }
         }
     }
 
     override suspend fun stop() {
         Log.d(TAG, "stop")
         runOnUiThread {
+            _currentPlayingMusic.tryEmit(Entity.Song.emptySong)
+            _isPlaying.tryEmit(false)
+
             exoPlayer.stop()
+        }
+    }
+
+    override suspend fun previous() {
+        Log.d(TAG, "previous")
+        val currentSongQueue = currentSongQueue.value
+        val currentIndex = currentSongQueue.indexOfFirst {
+            it.id == currentPlayingMusic.value.id
+        }
+
+        val previousSong = when {
+            currentIndex == 0 -> currentSongQueue.last()
+            currentIndex >= 1 -> currentSongQueue.get(currentIndex - 1)
+            else -> currentSongQueue.first()
+        }
+
+        play(previousSong)
+    }
+
+    override suspend fun next() {
+        val currentSongQueue = currentSongQueue.value
+        val currentIndex = currentSongQueue.indexOfFirst {
+            it.id == currentPlayingMusic.value.id
+        }
+
+        val nextSong = when {
+            currentIndex >= currentSongQueue.lastIndex -> currentSongQueue.first()
+            currentIndex != -1 -> currentSongQueue.get(currentIndex + 1)
+            else -> currentSongQueue.first()
+        }
+
+        play(nextSong)
+    }
+
+    override suspend fun snapTo(duration: Long) {
+        runOnUiThread {
+            _currentDuration.tryEmit(duration)
+            exoPlayer.seekTo(duration)
         }
     }
 
     override fun loadMusic(scope: CoroutineScope) {
         musicPlayerUseCase.loadMusic(scope).whenReady { isReady ->
             _songs.tryEmit(musicPlayerUseCase.allMusic)
+            _currentSongQueue.tryEmit(musicPlayerUseCase.allMusic) // FIXME: 수정!!!
         }
     }
 

@@ -1,28 +1,18 @@
 package com.jooheon.clean_architecture.presentation.service.music.datasource
 
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
-import com.jooheon.clean_architecture.presentation.base.extensions.uri
 import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class MusicPlayerUseCase @Inject constructor(
     private val musicUseCase: MusicUseCase,
 ) {
     var allMusic: List<Entity.Song> = emptyList()
-
-    val allMusicAsMetadata: List<MediaMetadataCompat>
-        get() = allMusic.map { MusicUtil.parseMetadataCompatFromSong(it) }
-
-    val allMusicAsMediaItem: List<MediaBrowserCompat.MediaItem>
-        get() = allMusic.map { MusicUtil.parseMediaItemFromSong(it) }
 
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
