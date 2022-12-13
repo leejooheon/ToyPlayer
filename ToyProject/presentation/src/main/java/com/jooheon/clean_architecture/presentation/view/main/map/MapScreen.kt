@@ -19,10 +19,7 @@ import com.google.accompanist.permissions.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.*
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
@@ -117,7 +114,7 @@ private fun ParkingSpotMarker(
     val latitude = viewModel.decimalFormat.format(spot.lat)
     val longitude = viewModel.decimalFormat.format(spot.lng)
     Marker(
-        position = LatLng(spot.lat, spot.lng),
+        state = MarkerState(position = LatLng(spot.lat, spot.lng)) ,
         title = "Spot (${latitude}, ${longitude})",
         snippet = "Long click to delete",
         onInfoWindowLongClick = { viewModel.onEvent(MapEvent.OnInfoWindowLongClick(spot)) },

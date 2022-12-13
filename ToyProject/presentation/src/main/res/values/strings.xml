@@ -37,5 +37,7 @@
     <string name="action_previous">이전</string>
     <string name="action_cancel">현재 타이머 취소</string>
     <string name="action_toggle_favorite">Toggle favorite</string>
+    <string name="action_cycle_repeat">Cycle repeat mode</string>
+    <string name="action_toggle_shuffle">Toggle shuffle mode</string>
 
 </resources>

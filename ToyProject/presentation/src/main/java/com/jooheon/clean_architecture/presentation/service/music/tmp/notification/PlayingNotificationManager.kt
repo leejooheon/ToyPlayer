@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Icon
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.jooheon.clean_architecture.presentation.MainActivity
@@ -16,7 +15,7 @@ import com.jooheon.clean_architecture.presentation.utils.VersionUtils
 import androidx.core.app.NotificationCompat
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.extensions.MusicState
-import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver.Companion.ACTION_QUIT
+import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaSessionCallback.Companion.ACTION_QUIT
 
 class PlayingNotificationManager(
     private val context: Context,
@@ -45,14 +44,8 @@ class PlayingNotificationManager(
             setDeleteIntent(deleteIntent)
         }.build()
 
-        /**
-         * Set Action!!
-         * perv, next, play, pause etc...
-         */
-
         return notification
     }
-
 
     fun notificationMediaPlayer(
         context: Context,

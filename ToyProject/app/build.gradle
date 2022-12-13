@@ -87,14 +87,6 @@ dependencies {
     implementation(Libraries.interceptor)
     implementation(Libraries.chuckLogging)
 
-    // exoplayer
-    implementation(Libraries.exoplayer_test)
-//    implementation(Libraries.exoplayer_core)
-//    implementation(Libraries.exoplayer_ui)
-//    implementation(Libraries.exoplayer_dash)
-//    implementation(Libraries.exoplayer_streaming)
-//    implementation(Libraries.exoplayer_mediasession)
-
     // Room
     implementation(Libraries.room)
     kapt(Libraries.roomCompile)

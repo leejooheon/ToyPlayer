@@ -1,24 +1,25 @@
 package com.jooheon.clean_architecture.presentation.service.music.tmp
 
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.compose.runtime.compositionLocalOf
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
+import androidx.media3.common.*
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.extensions.uri
 import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
+import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import java.security.PrivilegedAction
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import java.lang.Runnable
 import javax.inject.Inject
 
 class MusicController @Inject constructor(
@@ -28,8 +29,11 @@ class MusicController @Inject constructor(
 ) : IMusicController{
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
 
-    private lateinit var exoPlayer: ExoPlayer
+    lateinit var exoPlayer: ExoPlayer
+        private set
+
     private var uiThreadHandler: Handler? = null
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying
@@ -43,8 +47,23 @@ class MusicController @Inject constructor(
     private val _currentPlayingMusic = MutableStateFlow(Entity.Song.emptySong)
     val currentPlayingMusic: StateFlow<Entity.Song> = _currentPlayingMusic
 
+
+    private val _repeatMode = MutableStateFlow(RepeatMode.REPEAT_OFF)
+    val repeatMode: StateFlow<RepeatMode> = _repeatMode
+
+    private val _shuffleMode = MutableStateFlow(ShuffleMode.NONE)
+    val shuffleMode: StateFlow<ShuffleMode> = _shuffleMode
+
     private val _currentDuration = MutableStateFlow(0L)
     val currentDuration: StateFlow<Long> = _currentDuration
+
+    val timePassed = flow {
+        while (true) {
+            val duration = if (exoPlayer.duration != -1L) exoPlayer.currentPosition else 0L
+            emit(duration)
+            delay(500L)
+        }
+    }
 
     init {
         if(isPreview) {
@@ -60,26 +79,46 @@ class MusicController @Inject constructor(
     }
 
     override suspend fun play(song: Entity.Song) {
-        runOnUiThread {
-            if(currentPlayingMusic.value == song) {
-                resume()
-                return@runOnUiThread
-            }
-            Log.d(TAG, "play")
+        if(currentPlayingMusic.value == song) {
+            resume()
+            return
+        }
 
+        runOnUiThread {
+            Log.d(TAG, "play - ${song.id}")
+            playWithMediaItem(MediaItem.fromUri(song.uri))
             _currentPlayingMusic.tryEmit(song)
-            exoPlayer.run {
-                playWhenReady = true
-                setMediaItem(MediaItem.fromUri(song.uri))
-                prepare()
-                play()
+        }
+    }
+
+    override suspend fun play(_uri: Uri?) {
+        val uri = _uri ?: return
+        val song = songs.value.firstOrNull { it.uri == uri }
+
+        runOnUiThread {
+            if(song != null) {
+                playWithMediaItem(MediaItem.fromUri(song.uri))
+                _currentPlayingMusic.tryEmit(song)
+            } else {
+                playWithMediaItem(MediaItem.fromUri(uri))
             }
+        }
+    }
+
+    private fun playWithMediaItem(mediaItem: MediaItem) {
+        exoPlayer.run {
+            playWhenReady = true
+            setMediaItem(mediaItem)
+            prepare()
+            play()
         }
     }
 
     private fun resume() {
         Log.d(TAG, "resume")
-        exoPlayer.play()
+        runOnUiThread {
+            exoPlayer.play()
+        }
     }
 
     override suspend fun pause() {
@@ -133,10 +172,33 @@ class MusicController @Inject constructor(
         play(nextSong)
     }
 
-    override suspend fun snapTo(duration: Long) {
+    override suspend fun snapTo(duration: Long, fromUser: Boolean) {
         runOnUiThread {
             _currentDuration.tryEmit(duration)
-            exoPlayer.seekTo(duration)
+            if(fromUser) exoPlayer.seekTo(duration)
+        }
+    }
+
+    override suspend fun changeRepeatMode() {
+        val repeatMode = when(repeatMode.value) {
+            RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
+            RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
+            RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
+        }
+
+        runOnUiThread {
+            _repeatMode.tryEmit(repeatMode)
+        }
+    }
+
+    override suspend fun changeShuffleMode() {
+        val shuffleMode = when(shuffleMode.value) {
+            ShuffleMode.SHUFFLE -> ShuffleMode.NONE
+            ShuffleMode.NONE -> ShuffleMode.SHUFFLE
+        }
+
+        runOnUiThread {
+            _shuffleMode.tryEmit(shuffleMode)
         }
     }
 
@@ -152,6 +214,7 @@ class MusicController @Inject constructor(
     }
 
     private fun initExoPlayer() {
+        // 오디오 포커스 관리: https://developer.android.com/guide/topics/media-apps/audio-focus
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
@@ -165,18 +228,31 @@ class MusicController @Inject constructor(
                 addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
                         super.onPlaybackStateChanged(playbackState)
+                        Log.d(TAG, "onPlaybackStateChanged - ${playbackState}")
                         when(playbackState) {
                             ExoPlayer.STATE_IDLE -> Log.d(TAG, "STATE_IDLE")
                             ExoPlayer.STATE_BUFFERING -> Log.d(TAG, "STATE_IDLE")
-                            ExoPlayer.STATE_READY -> Log.d(TAG, "STATE_READY")
-                            ExoPlayer.STATE_ENDED -> Log.d(TAG, "STATE_ENDED")
+                            ExoPlayer.STATE_READY -> {
+                                Log.d(TAG, "STATE_READY")
+                            }
+                            ExoPlayer.STATE_ENDED -> {
+                                Log.d(TAG, "STATE_ENDED")
+                                CoroutineScope(dispatcher).launch {
+                                    this@MusicController.next()
+                                }
+                            }
                         }
                     }
 
                     override fun onIsPlayingChanged(isPlaying: Boolean) {
                         super.onIsPlayingChanged(isPlaying)
-                        Log.d(TAG, "onIsPlayingChanged")
+                        Log.d(TAG, "onIsPlayingChanged - ${isPlaying}")
                         _isPlaying.tryEmit(isPlaying)
+                    }
+
+                    override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
+                        super.onPlaylistMetadataChanged(mediaMetadata)
+                        Log.d(TAG, "onPlaylistMetadataChanged")
                     }
                 })
             }

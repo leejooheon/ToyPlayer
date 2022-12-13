@@ -1,6 +1,9 @@
 package com.jooheon.clean_architecture.presentation.service.music.tmp
 
+import android.net.Uri
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
+import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -9,17 +12,12 @@ interface IMusicController {
     fun updateQueueSong(songs: List<Entity.Song>)
 
     suspend fun play(song: Entity.Song)
+    suspend fun play(_uri: Uri?)
     suspend fun stop()
     suspend fun pause()
-    suspend fun snapTo(duration: Long)
+    suspend fun snapTo(duration: Long, fromUser: Boolean)
     suspend fun previous()
     suspend fun next()
-//    fun forward()
-//    fun backward()
-//    fun changePlaybackMode()
-//    fun updateSong(song: Entity.Song)
-//    fun playAll(songs: List<Entity.Song>)
-//    fun setShuffled(shuffle: Boolean)
-//    fun hideBottomMusicPlayer()
-//    fun showBottomMusicPlayer()
+    suspend fun changeRepeatMode()
+    suspend fun changeShuffleMode()
 }
