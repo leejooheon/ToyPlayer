@@ -22,6 +22,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.MUSIC_STATE
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 
 @HiltViewModel
 class MusicPlayerViewModel @Inject constructor(
@@ -37,11 +38,11 @@ class MusicPlayerViewModel @Inject constructor(
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
-    private val _navigateToPlayListScreen = MutableSharedFlow<Boolean>()
-    val navigateToPlayListScreen = _navigateToPlayListScreen.asSharedFlow()
+    private val _navigateToPlayListScreen = Channel<Unit>()
+    val navigateToPlayListScreen = _navigateToPlayListScreen.receiveAsFlow()
 
-    private val _navigateToAodPlayer = MutableSharedFlow<Boolean>()
-    val navigateToAodPlayer = _navigateToAodPlayer.asSharedFlow()
+    private val _navigateToAodPlayer = Channel<Unit>()
+    val navigateToAodPlayer = _navigateToAodPlayer.receiveAsFlow()
 
     private val _expandTest = MutableSharedFlow<Boolean>()
     val expandTest = _expandTest.asSharedFlow()
@@ -140,11 +141,11 @@ class MusicPlayerViewModel @Inject constructor(
     }
 
     fun onPlayListButtonPressed() = viewModelScope.launch(Dispatchers.Main) {
-        _navigateToPlayListScreen.emit(true)
+        _navigateToPlayListScreen.send(Unit)
     }
 
-    fun onMusicBottomBarPressed(song: Entity.Song) = viewModelScope.launch(Dispatchers.Main) {
-        Log.d(TAG, "onMusicBottomBarPressed")
+    fun onMusicBottomBarPressed() = viewModelScope.launch(Dispatchers.Main) {
+        _navigateToAodPlayer.send(Unit)
     }
 
     fun onShuffleButtonPressed() = viewModelScope.launch(Dispatchers.IO) {

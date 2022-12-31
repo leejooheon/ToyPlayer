@@ -55,10 +55,10 @@ internal fun BottomMusicPlayer(
                 isPlaying = isPlaying,
                 song = song,
                 modifier = Modifier
+                    .padding(horizontal = 16.dp)
                     .height(MOTION_CONTENT_HEIGHT)
                     .aspectRatio(1.0f)
             )
-            Spacer(modifier = Modifier.padding(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = song.title,

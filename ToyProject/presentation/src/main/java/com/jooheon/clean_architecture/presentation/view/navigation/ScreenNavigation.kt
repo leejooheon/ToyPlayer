@@ -25,7 +25,12 @@ sealed class ScreenNavigation(open val route: String) {
 
     object Splash: ScreenNavigation("splash")
     object Main: ScreenNavigation("main")
-    object MusicPlayer: ScreenNavigation("music_player")
+
+    class Music {
+        object AodPlayer: ScreenNavigation("aod_player")
+        object PlayList: ScreenNavigation("playlist")
+    }
+
 
     class Detail {
         object GithubDetail: ScreenNavigation(route = "github_detail?id={github_id}&item={repository}") {

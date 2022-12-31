@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
@@ -26,10 +25,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.statusBarsHeight
@@ -44,13 +48,14 @@ import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.main.bottom.*
-import com.jooheon.clean_architecture.presentation.view.main.common.CollectEvent
 import com.jooheon.clean_architecture.presentation.view.navigation.BottomNavigationHost
 import com.jooheon.clean_architecture.presentation.view.navigation.MyBottomNavigation
+import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
@@ -109,14 +114,10 @@ fun MainScreen(
 
     RegisterBackPressedHandler(viewModel, drawerState, scope)
 
-    CollectEvent(
-        event = musicPlayerViewModel.navigateToPlayListScreen,
-        navigateTo = {
-            bottomBarVisibility.value = false
-//            navigator.navigate(
-//                PlayListScreenDestination()
-//            )
-        }
+    ObserveEvents(
+        navigator = navigator,
+        mainViewModel = viewModel,
+        musicPlayerViewModel = musicPlayerViewModel
     )
 }
 
@@ -199,11 +200,7 @@ private fun BoxScope.MusicBar(
             isPlaying = uiState.isPlaying,
             onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
             onPlayListButtonPressed = viewModel::onPlayListButtonPressed,
-            onItemClick = {
-//                navigator.navigate(
-//                    MusicPlayerScreenDestination()
-//                )
-            }
+            onItemClick = viewModel::onMusicBottomBarPressed
         )
     }
 }
@@ -292,11 +289,7 @@ fun TopBar(
                     contentDescription = "second IconButton description"
                 )
             }
-            IconButton(onClick = {
-//                        viewModel.onSettingClicked()
-                Log.d(TAG, "Settings IconButton")
-//                navigator.navigate(TestScreenDestination())
-            }) {
+            IconButton(onClick = viewModel::onSettingClicked) {
                 Icon(
                     Icons.Filled.Settings,
                     tint = MaterialTheme.colorScheme.onPrimary,
@@ -315,38 +308,41 @@ fun TopBar(
     }
 }
 
-//@Composable
-//fun MySnackHost(state: SnackbarHostState) {
-//    SnackbarHost(
-//        hostState = state,
-//        snackbar = { data ->
-//            Snackbar(
-//                modifier = Modifier
-//                    .padding(8.dp)
-//                    .background(MaterialTheme.colorScheme.inverseSurface, RoundedCornerShape(8.dp)),
-//                action = {
-//                    Text(
-//                        text = data.actionLabel?.let { it } ?: run { "hide" },
-//                        color = MaterialTheme.colorScheme.inverseOnSurface,
-//                        modifier = Modifier
-//                            .padding(8.dp)
-//                            .clickable { state.currentSnackbarData?.dismiss() },
-//                        style = TextStyle(
-//                            fontWeight = FontWeight.Bold,
-//                            color = MaterialTheme.colorScheme.inverseOnSurface,
-//                            fontSize = 18.sp
-//                        )
-//                    )
-//                }
-//            ) {
-//                Text(
-//                    text = data.message,
-//                    color = MaterialTheme.colorScheme.inverseOnSurface
-//                )
-//            }
-//        }
-//    )
-//}
+
+@Composable
+private fun ObserveEvents(
+    navigator: NavController,
+    mainViewModel: MainViewModel,
+    musicPlayerViewModel: MusicPlayerViewModel,
+) {
+    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+    DisposableEffect(
+        key1 = lifecycleOwner,
+        effect = {
+            val observer = LifecycleEventObserver { lifecycleOwner, event ->
+                lifecycleOwner.lifecycleScope.launch {
+                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        musicPlayerViewModel.navigateToPlayListScreen.collectLatest {
+                            navigator.navigate(ScreenNavigation.Music.PlayList.route)
+                        }
+                    }
+                }
+                lifecycleOwner.lifecycleScope.launch {
+                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        musicPlayerViewModel.navigateToAodPlayer.collectLatest {
+                            navigator.navigate(ScreenNavigation.Music.AodPlayer.route)
+                        }
+                    }
+                }
+            }
+
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+    )
+}
 
 @ExperimentalMaterial3Api
 @Composable

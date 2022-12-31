@@ -25,15 +25,16 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
 import com.jooheon.clean_architecture.presentation.view.main.common.MusicPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.RepositoryDetailScreen
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
+import com.jooheon.clean_architecture.presentation.view.main.music.PlayListScreen
 import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaDatailScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
+import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -109,6 +110,9 @@ internal fun FullScreenNavigationHost(
                     navigator = navController
                 )
             }
+            composable(ScreenNavigation.Setting.route) {
+                SettingScreen(navigator = navController)
+            }
 
             composable(
                 route = ScreenNavigation.Detail.GithubDetail.route,
@@ -132,10 +136,12 @@ internal fun FullScreenNavigationHost(
                 WikipediaDatailScreen(keyword = page.title ?: "")
             }
 
-            bottomSheet(ScreenNavigation.MusicPlayer.route) {
-                MusicPlayerScreen(
-                    navigator = navController
-                )
+            bottomSheet(ScreenNavigation.Music.AodPlayer.route) {
+                MusicPlayerScreen(navigator = navController)
+            }
+
+            bottomSheet(ScreenNavigation.Music.PlayList.route) {
+                PlayListScreen()
             }
         }
     }

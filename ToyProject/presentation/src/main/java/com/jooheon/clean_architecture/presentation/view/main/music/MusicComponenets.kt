@@ -340,9 +340,7 @@ internal fun PlayListButton(
         iconRelativeSize = iconRelativeSize,
         backgroundColor = Color.Transparent,
         contentDescription = PLAY_LIST_CD,
-        onClick = {
-            onPlayListButtonPressed.invoke()
-        },
+        onClick = onPlayListButtonPressed,
         modifier = modifier,
     )
 }
