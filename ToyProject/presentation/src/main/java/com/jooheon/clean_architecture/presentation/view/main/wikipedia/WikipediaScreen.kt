@@ -14,14 +14,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.jooheon.clean_architecture.domain.entity.Entity
@@ -30,22 +35,24 @@ import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
-import com.jooheon.clean_architecture.presentation.view.destinations.WikipediaDatailScreenDestination
 import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
+import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 private const val TAG = "WikipediaScreen"
 
 @ExperimentalComposeUiApi
 @Composable
 fun WikipediaScreen(
-    navigator: DestinationsNavigator,
+    navigator: NavController,
     viewModel: WikipediaViewModel = hiltViewModel(),
     isPreview: Boolean = false
 ) {
     val localFocusManager = LocalFocusManager.current
+    val searchWord = viewModel.searchWord.collectAsState()
     Column(
         modifier = Modifier
             .pointerInput(Unit) {
@@ -58,108 +65,32 @@ fun WikipediaScreen(
 
         SearchView(
             title = "input wiki\nKeyword",
-            content = viewModel.searchWord.value,
+            content = searchWord.value,
             onTextChanged = { viewModel.searchWord.value = it },
             onButtonClicked = { viewModel.callRelatedApi() }
         )
-        WikipediaListView(navigator, viewModel, isPreview)
+        WikipediaListView(viewModel, isPreview)
     }
     ObserveAlertDialogState(viewModel)
     ObserveLoadingState(viewModel)
+    ObserveEvents(navigator, viewModel)
 }
-
-//@OptIn(ExperimentalComposeUiApi::class)
-//@Composable
-//private fun SearchView(
-//    viewModel: WikipediaViewModel
-//) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .height(100.dp)
-//            .padding(top = 10.dp),
-//        horizontalArrangement = Arrangement.Center,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        val maxCharacterSize = 10
-//        var text by remember { mutableStateOf(viewModel.searchWord.value) }
-//        val keyboardController = LocalSoftwareKeyboardController.current
-//
-//        Text(
-//            modifier = Modifier.padding(10.dp),
-//            text = "Input wiki\nKeyword",
-//            color = MaterialTheme.colorScheme.primary,
-//            textAlign = TextAlign.Start,
-//            style = MaterialTheme.typography.bodyLarge,
-//            overflow = TextOverflow.Ellipsis
-//        )
-//
-//        OutlinedTextField(
-//            modifier = Modifier.width(120.dp),
-//            value = text,
-//            onValueChange = {
-//                if(it.length <= maxCharacterSize) {
-//                    viewModel.searchWord.value = it
-//                    text = it
-//                }
-//            },
-//            singleLine = true,
-//            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-//            label = {
-//                Text(
-//                    text = "Input",
-//                    color = MaterialTheme.colorScheme.tertiary
-//                )
-//            },
-//            placeholder = {
-//                Text(
-//                    text = "this is placeholder",
-//                    style = TextStyle(
-//                        color = MaterialTheme.colorScheme.secondary,
-//                        textAlign = TextAlign.Center
-//                    )
-//                )
-//            },
-////            colors = outlinedTextFieldColor(),
-//            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-//            keyboardActions = KeyboardActions(
-//                onDone = { keyboardController?.hide() }
-//            )
-//        )
-//
-//        OutlinedButton(
-//            modifier = Modifier
-//                .padding(horizontal = 10.dp),
-//            onClick = {
-//                keyboardController?.hide()
-//                viewModel.callRelatedApi()
-//            },
-//            colors = ButtonDefaults.buttonColors(
-//                containerColor = MaterialTheme.colorScheme.secondary
-//            )
-//        ) {
-//            Text(
-//                text = "확인",
-//                color = MaterialTheme.colorScheme.onSecondary
-//            )
-//        }
-//    }
-//}
 
 @Composable
 private fun WikipediaListView(
-    navigator: DestinationsNavigator,
     viewModel: WikipediaViewModel,
     isPreview: Boolean
 ) {
+    val relatedList by viewModel.relatedResponse.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            viewModel.relatedResponse.value?.pages?.let { pages ->
+            relatedList?.pages?.let { pages ->
                 itemsIndexed(pages) { index, page ->
-                    WikipediaListItem(index, page) {
-                        Log.d(TAG, "onClicked: ${it.displaytitle}")
-                        navigator.navigate(WikipediaDatailScreenDestination.invoke("Bug"))
-                    }
+                    WikipediaListItem(
+                        index = index,
+                        page = page,
+                        onClicked = viewModel::onRelatedItemClicked
+                    )
                 }
             }
             if(isPreview) {
@@ -233,12 +164,45 @@ private fun WikipediaListItem(
     }
 }
 
+
+@Composable
+private fun ObserveEvents(
+    navigator: NavController,
+    viewModel: WikipediaViewModel,
+) {
+    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+    DisposableEffect(
+        key1 = lifecycleOwner,
+        effect = {
+            val observer = LifecycleEventObserver { lifecycleOwner, event ->
+                lifecycleOwner.lifecycleScope.launch {
+                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel.navigateToWikipediaDetailScreen.collectLatest {
+                            navigator.navigate(
+                                ScreenNavigation.Detail.WikipediaDetail.createRoute(it)
+                            ) {
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+    )
+}
+
 @ExperimentalComposeUiApi
 @Preview
 @Composable
 fun PreviewWikipediaScreen() {
+    val context = LocalContext.current
     val viewModel = WikipediaViewModel(EmptyWikipediaUseCase())
     PreviewTheme(false) {
-        WikipediaScreen(EmptyDestinationsNavigator, viewModel, true)
+        WikipediaScreen(NavController(context), viewModel, true)
     }
 }

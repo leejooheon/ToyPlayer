@@ -35,7 +35,6 @@ import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
 import com.jooheon.clean_architecture.presentation.view.main.github.detail.GithubRepositoryDetailViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
-import com.ramcosta.composedestinations.annotation.Destination
 import kotlin.math.max
 import kotlin.math.min
 
@@ -50,7 +49,6 @@ private val ExpandedImageSize = 300.dp
 private val CollapsedImageSize = 150.dp
 private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
-@Destination
 @Composable
 fun RepositoryDetailScreen(
     githubId: String,

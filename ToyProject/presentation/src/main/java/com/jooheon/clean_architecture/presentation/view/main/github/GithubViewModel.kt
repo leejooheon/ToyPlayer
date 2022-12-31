@@ -10,9 +10,12 @@ import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.channels.Channel
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,8 +26,11 @@ class GithubViewModel @Inject constructor(
 
     val githubId = MutableStateFlow("")
 
-    private val _repositoryResponse = mutableStateOf<List<Entity.Repository>?>(null)
-    val repositoryResponse = _repositoryResponse
+    private val _repositoryList = MutableStateFlow<List<Entity.Repository>>(emptyList())
+    val repositoryList = _repositoryList.asStateFlow()
+
+    private val _navigateToGithubDetailScreen = Channel<Entity.Repository>()
+    val navigateToGithubDetailScreen = _navigateToGithubDetailScreen.receiveAsFlow()
 
     fun callRepositoryApi() {
         if(githubId.value.isEmpty()) {
@@ -40,15 +46,22 @@ class GithubViewModel @Inject constructor(
 
                 if(resource is Resource.Success) {
                     insertDummyImageUrl(resource.value)
-                    _repositoryResponse.value = resource.value
+                    _repositoryList.value = resource.value
                 }
 
                 if(resource is Resource.Failure) {
-                    _repositoryResponse.value = null
+                    _repositoryList.value = emptyList()
                     githubId.value = ""
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun onRepositoryClicked(item: Entity.Repository) = viewModelScope.launch(Dispatchers.Main) {
+
+        val repository = Json.encodeToString(item)
+        Log.d(TAG, "repository: $repository")
+        _navigateToGithubDetailScreen.send(item)
     }
 
     private fun insertDummyImageUrl(resource: List<Entity.Repository>) {

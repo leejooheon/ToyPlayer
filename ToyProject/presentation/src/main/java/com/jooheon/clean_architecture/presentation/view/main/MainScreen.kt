@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,13 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
@@ -46,24 +43,14 @@ import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayer
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
-import com.jooheon.clean_architecture.presentation.view.destinations.PlayListScreenDestination
-import com.jooheon.clean_architecture.presentation.view.destinations.TestScreenDestination
-import com.jooheon.clean_architecture.presentation.view.main.bottom.MyBottomNavigation
-import com.jooheon.clean_architecture.presentation.view.main.bottom.Screen
-import com.jooheon.clean_architecture.presentation.view.main.bottom.currentScreenAsState
-import com.jooheon.clean_architecture.presentation.view.main.common.MusicBottomBar
-import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
-import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
-import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
-import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
+import com.jooheon.clean_architecture.presentation.view.main.bottom.*
+import com.jooheon.clean_architecture.presentation.view.main.common.CollectEvent
+import com.jooheon.clean_architecture.presentation.view.navigation.BottomNavigationHost
+import com.jooheon.clean_architecture.presentation.view.navigation.MyBottomNavigation
+import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
@@ -77,65 +64,60 @@ fun sharedViewModel() = LocalContext.current as MainActivity
     ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class,
 )
-@Destination
+
 @Composable
 fun MainScreen(
-    navigator: DestinationsNavigator,
+    navigator: NavController,
     viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
-    isPreview:Boolean = false
 ) {
+    Log.d(TAG, "viewModel: ${musicPlayerViewModel}")
     val bottomNavController = rememberAnimatedNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val bottomBarVisibility = remember { mutableStateOf(true) }
+    val bottomBarPadding = remember { mutableStateOf(60.dp) }
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
-        topBar = { TopBar(viewModel, navigator, drawerState, scope) },
-        bottomBar = { BottomBar(bottomNavController, bottomBarVisibility.value) },
-//        floatingActionButton = { MyFloatingActionButton(viewModel) },
-//        floatingActionButtonPosition = FabPosition.End,
-        contentColor = MaterialTheme.colorScheme.surface,
-        content = { paddingParent ->
-            RegisterBottomNavigation(
-                mainViewModel = viewModel,
-                musicPlayerViewModel = musicPlayerViewModel,
-                navController = bottomNavController,
-                navigator = navigator,
-                modifier = Modifier.padding(paddingParent),
-            )
-        }
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.background,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
+            topBar = { TopBar(viewModel, drawerState, scope) },
+            bottomBar = { BottomBar(bottomNavController, bottomBarVisibility.value) },
+//            floatingActionButton = { MyFloatingActionButton(viewModel) },
+            floatingActionButtonPosition = FabPosition.End,
+            contentColor = MaterialTheme.colorScheme.surface,
+            content = { paddingParent ->
+                bottomBarPadding.value = paddingParent.calculateBottomPadding()
+                BottomNavigationHost(
+                    navController = bottomNavController,
+                    navigator = navigator,
+                    modifier = Modifier.padding(paddingParent),
+                )
+            }
+        )
+
+        MusicBar(
+            navigator = navigator,
+            viewModel = musicPlayerViewModel,
+            modifier = Modifier
+                .padding(bottom = bottomBarPadding.value + 2.dp)
+                .align(Alignment.BottomCenter)
+        )
+    }
+
     RegisterBackPressedHandler(viewModel, drawerState, scope)
 
-    CollectEvents(
+    CollectEvent(
         event = musicPlayerViewModel.navigateToPlayListScreen,
         navigateTo = {
             bottomBarVisibility.value = false
-            navigator.navigate(
-                PlayListScreenDestination()
-            )
+//            navigator.navigate(
+//                PlayListScreenDestination()
+//            )
         }
     )
-}
-
-@Composable
-private fun BottomSheetContent() {
-    Box (
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp),
-        contentAlignment = Alignment.Center
-    ){
-        Text(
-            text = "this is bottom sheet",
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelLarge
-        )
-    }
 }
 
 @Composable
@@ -194,63 +176,34 @@ fun DrawerContent(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
-@ExperimentalComposeUiApi
 @Composable
-fun RegisterBottomNavigation(
-    mainViewModel: MainViewModel,
-    musicPlayerViewModel: MusicPlayerViewModel,
-    navController: NavHostController,
-    navigator: DestinationsNavigator,
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier) {
-        NavHost(navController, startDestination = Screen.Github.route) {
-            composable(Screen.Github.route) {
-                HomeScreen(navigator)
-            }
-            composable(Screen.Wiki.route) {
-                WikipediaScreen(navigator)
-            }
-            composable(Screen.Map.route) {
-                MapScreen(navigator, mainViewModel)
-            }
-            composable(Screen.Search.route) {
-                ExoPlayerScreen()
-            }
-        }
-        MusicBar(
-            viewModel = musicPlayerViewModel,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-        )
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-private fun MusicBar(
+private fun BoxScope.MusicBar(
+    navigator: NavController,
     viewModel: MusicPlayerViewModel,
     modifier: Modifier = Modifier,
-    isPreview: Boolean = false
 ) {
     val uiState by viewModel.musicState.collectAsState()
 
     AnimatedVisibility(
-        visible = if(!isPreview) uiState.isMusicBottomBarVisible else true,
-        enter = scaleIn(),
-        exit = ExitTransition.None,
+        visible = uiState.isMusicBottomBarVisible,
+        enter = slideInVertically(
+            initialOffsetY = { it }
+        ),
+        exit = slideOutVertically(targetOffsetY = { it }),
         modifier = modifier
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
     ) {
-        MusicBottomBar(
+        BottomMusicPlayer(
             song = uiState.currentPlayingMusic,
             isPlaying = uiState.isPlaying,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp),
-            onItemClick = viewModel::onMusicBottomBarPressed,
             onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
-            onPlayListButtonPressed = viewModel::onPlayListButtonPressed
+            onPlayListButtonPressed = viewModel::onPlayListButtonPressed,
+            onItemClick = {
+//                navigator.navigate(
+//                    MusicPlayerScreenDestination()
+//                )
+            }
         )
     }
 }
@@ -260,12 +213,13 @@ fun BottomBar(
     bottomNavController: NavController,
     visibility: Boolean
 ) {
+    val currentSelectedItem by bottomNavController.currentBottomNavScreenAsState()
+
     AnimatedVisibility(
         visible = visibility,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
-            val currentSelectedItem by bottomNavController.currentScreenAsState()
             MyBottomNavigation(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -292,7 +246,6 @@ fun BottomBar(
 @Composable
 fun TopBar(
     viewModel: MainViewModel,
-    navigator: DestinationsNavigator,
     drawerState: DrawerState,
     scope: CoroutineScope,
 ) {
@@ -342,7 +295,7 @@ fun TopBar(
             IconButton(onClick = {
 //                        viewModel.onSettingClicked()
                 Log.d(TAG, "Settings IconButton")
-                navigator.navigate(TestScreenDestination())
+//                navigator.navigate(TestScreenDestination())
             }) {
                 Icon(
                     Icons.Filled.Settings,
@@ -395,18 +348,6 @@ fun TopBar(
 //    )
 //}
 
-@Composable
-fun CollectEvents(
-    event: SharedFlow<Boolean>,
-    navigateTo: () -> Unit
-) {
-    LaunchedEffect(Unit) {
-        event.collectLatest {
-            if (it) navigateTo()
-        }
-    }
-}
-
 @ExperimentalMaterial3Api
 @Composable
 fun RegisterBackPressedHandler (
@@ -434,26 +375,6 @@ fun RegisterBackPressedHandler (
 
 @Preview
 @Composable
-private fun PreviewMusicBar() {
-    val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
-        context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
-    )
-
-    PreviewTheme(false) {
-        MusicBar(
-            viewModel = musicPlayerViewModel,
-            modifier = Modifier.fillMaxWidth(),
-            isPreview = true
-        )
-    }
-}
-
-@Preview
-@Composable
 private fun PreviewMainScreen() {
     val context = LocalContext.current
     val viewModel = MainViewModel(EmptyMusicUseCase())
@@ -464,6 +385,6 @@ private fun PreviewMainScreen() {
         musicController = MusicController(context, musicPlayerUseCase, true)
     )
     PreviewTheme(false) {
-        MainScreen(EmptyDestinationsNavigator, viewModel, musicPlayerViewModel, true)
+        MainScreen(NavController(context), viewModel, musicPlayerViewModel)
     }
 }

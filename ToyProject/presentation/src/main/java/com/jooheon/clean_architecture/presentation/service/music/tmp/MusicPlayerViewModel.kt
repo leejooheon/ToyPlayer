@@ -2,10 +2,8 @@ package com.jooheon.clean_architecture.presentation.service.music.tmp
 
 import android.app.Activity
 import android.content.*
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
@@ -42,8 +40,21 @@ class MusicPlayerViewModel @Inject constructor(
     private val _navigateToPlayListScreen = MutableSharedFlow<Boolean>()
     val navigateToPlayListScreen = _navigateToPlayListScreen.asSharedFlow()
 
+    private val _navigateToAodPlayer = MutableSharedFlow<Boolean>()
+    val navigateToAodPlayer = _navigateToAodPlayer.asSharedFlow()
+
+    private val _expandTest = MutableSharedFlow<Boolean>()
+    val expandTest = _expandTest.asSharedFlow()
+
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
+
+    private val _motionFraction = MutableStateFlow(0f)
+    val motionFraction = _motionFraction.asStateFlow()
+
+    fun fractionChanged(value: Float) {
+        _motionFraction.value = value
+    }
 
     init {
         Log.d(TAG, "musicController - ${musicController}")
@@ -120,12 +131,39 @@ class MusicPlayerViewModel @Inject constructor(
         }
     }
 
+    fun onNext() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.next()
+    }
+
+    fun onPrevious() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.previous()
+    }
+
     fun onPlayListButtonPressed() = viewModelScope.launch(Dispatchers.Main) {
         _navigateToPlayListScreen.emit(true)
     }
 
     fun onMusicBottomBarPressed(song: Entity.Song) = viewModelScope.launch(Dispatchers.Main) {
         Log.d(TAG, "onMusicBottomBarPressed")
+    }
+
+    fun onShuffleButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.changeShuffleMode()
+    }
+    fun onRepeatButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.changeRepeatMode()
+    }
+
+    fun onExpandCollapsed() = viewModelScope.launch(Dispatchers.IO) {
+
+        _expandTest.emit(!expandTest.last())
+    }
+
+    fun snapTo(duration: Long) = viewModelScope.launch(Dispatchers.Main) {
+        musicController.snapTo(
+            duration = duration,
+            fromUser = true
+        )
     }
 
     fun bindToService(context: Context): ServiceToken? {

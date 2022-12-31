@@ -12,22 +12,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 
-
-@Destination
 @Composable
 fun PlayListScreen(
-    navigator: DestinationsNavigator,
+    navigator: NavController,
     viewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
 ) {
     Box(
@@ -69,7 +65,7 @@ private fun PreviewPlayListScreen() {
     )
     PreviewTheme(false) {
         PlayListScreen(
-            navigator = EmptyDestinationsNavigator,
+            navigator = NavController(context),
             viewModel = musicPlayerViewModel,
         )
     }

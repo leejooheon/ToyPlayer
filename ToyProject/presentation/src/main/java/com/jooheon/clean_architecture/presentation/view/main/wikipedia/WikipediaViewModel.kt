@@ -1,7 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.main.wikipedia
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
@@ -9,9 +8,10 @@ import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,13 +20,20 @@ class WikipediaViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG: String = WikipediaViewModel::class.java.simpleName
 
-    private val _summaryResponse = mutableStateOf<Entity.Summary?>(null)
-    val summaryResponse = _summaryResponse
+    private val _summaryResponse = MutableStateFlow<Entity.Summary?>(null)
+    val summaryResponse = _summaryResponse.asStateFlow()
 
-    private val _relatedResponse = mutableStateOf<Entity.Related?>(null)
-    val relatedResponse = _relatedResponse
+    private val _relatedResponse = MutableStateFlow<Entity.Related?>(null)
+    val relatedResponse = _relatedResponse.asStateFlow()
+
+    private val _navigateToWikipediaDetailScreen = Channel<Entity.Related.Page>()
+    val navigateToWikipediaDetailScreen = _navigateToWikipediaDetailScreen.receiveAsFlow()
 
     val searchWord = MutableStateFlow("")
+
+    fun onRelatedItemClicked(page: Entity.Related.Page) = viewModelScope.launch(Dispatchers.Main) {
+        _navigateToWikipediaDetailScreen.send(page)
+    }
 
     fun callRelatedApi() {
         if(searchWord.value.isEmpty()) {

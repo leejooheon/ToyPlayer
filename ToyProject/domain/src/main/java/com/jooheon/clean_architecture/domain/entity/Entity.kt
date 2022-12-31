@@ -1,14 +1,16 @@
 package com.jooheon.clean_architecture.domain.entity
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
-sealed class Entity: Serializable {
+@Serializable
+sealed class Entity: java.io.Serializable {
     data class ParkingSpot(
         val lat: Double,
         val lng: Double,
         val id: Int?
     ) : Entity()
 
+    @Serializable
     data class Repository(
         val name: String,
         val id: String,
@@ -54,9 +56,11 @@ sealed class Entity: Serializable {
         val tags: Set<String> = emptySet()
     ) : Entity()
 
+    @Serializable
     data class Related(
         val pages: List<Page>
     ): Entity() {
+        @Serializable
         data class Page(
             val content_urls: ContentUrls?,
             val description: String,
@@ -80,10 +84,12 @@ sealed class Entity: Serializable {
             val type: String,
             val wikibase_item: String
         ): Entity() {
+            @Serializable
             data class ContentUrls(
                 val desktop: Desktop,
                 val mobile: Mobile
             ): Entity() {
+                @Serializable
                 data class Desktop(
                     val edit: String,
                     val page: String,
@@ -91,6 +97,7 @@ sealed class Entity: Serializable {
                     val talk: String
                 ): Entity()
 
+                @Serializable
                 data class Mobile(
                     val edit: String,
                     val page: String,
@@ -99,23 +106,27 @@ sealed class Entity: Serializable {
                 ): Entity()
             }
 
+            @Serializable
             data class Namespace(
                 val id: Int,
                 val text: String
             ): Entity()
 
+            @Serializable
             data class Originalimage(
                 val height: Int,
                 val source: String,
                 val width: Int
             ): Entity()
 
+            @Serializable
             data class Thumbnail(
                 val height: Int,
                 val source: String,
                 val width: Int
             ): Entity()
 
+            @Serializable
             data class Titles(
                 val canonical: String,
                 val display: String,

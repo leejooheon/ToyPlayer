@@ -16,6 +16,20 @@ enum class ShuffleMode {
     NONE,
 }
 
+enum class MusicBottomBarState {
+    EXPAND, COLLAPSE;
+
+    companion object {
+        fun parse(value: Int): MusicBottomBarState {
+            val state = when(value) {
+                0 -> COLLAPSE
+                1 -> EXPAND
+                else -> COLLAPSE
+            }
+            return state
+        }
+    }
+}
 
 @Parcelize
 data class MusicState(

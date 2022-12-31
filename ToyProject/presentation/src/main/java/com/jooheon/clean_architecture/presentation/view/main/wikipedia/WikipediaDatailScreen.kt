@@ -12,11 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
 import com.jooheon.clean_architecture.presentation.utils.ShowLoading
-import com.ramcosta.composedestinations.annotation.Destination
 
 const val BASE_URL = "https://en.wikipedia.org/api/rest_v1/page/html/";
 
-@Destination
 @Composable
 fun WikipediaDatailScreen(
     keyword: String

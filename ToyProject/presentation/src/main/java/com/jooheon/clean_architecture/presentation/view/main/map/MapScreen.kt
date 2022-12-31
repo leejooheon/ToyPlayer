@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
 import com.google.accompanist.permissions.*
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -28,8 +29,7 @@ import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import kotlinx.coroutines.launch
 
 private val DEFAULT_LATLNG:LatLng = LatLng(37.5033311460182, 126.94775238633156)
@@ -37,8 +37,8 @@ private val DEFAULT_LATLNG:LatLng = LatLng(37.5033311460182, 126.94775238633156)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(
-    navigator: DestinationsNavigator,
-    sharedViewModel: MainViewModel,
+    navigator: NavController,
+    sharedViewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     viewModel: MapViewModel = hiltViewModel(),
     isPreview: Boolean = false,
 ) {
@@ -198,10 +198,11 @@ private fun ObserveEvents(
 @Preview
 @Composable
 private fun PreviewMapScreen() {
+    val context = LocalContext.current
     val viewModel = MapViewModel(EmptyParkingSpotUseCase())
     PreviewTheme(true) {
         MapScreen(
-            navigator = EmptyDestinationsNavigator,
+            navigator = NavController(context),
             sharedViewModel = MainViewModel(EmptyMusicUseCase()),
             viewModel = viewModel,
             isPreview = true

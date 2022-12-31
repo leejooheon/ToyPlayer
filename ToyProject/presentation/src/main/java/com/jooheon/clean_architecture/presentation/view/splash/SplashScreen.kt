@@ -21,19 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.view.destinations.MainScreenDestination
-import com.jooheon.clean_architecture.presentation.view.destinations.SplashScreenDestination
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 
-@RootNavGraph(start = true)
-@Destination
 @Composable
 fun SplashScreen(
-    navigator: DestinationsNavigator,
+    navigator: NavController,
     viewModel: SplashViewModel = hiltViewModel(),
     scaleInitialValue: Float = 0f
 ) {
@@ -83,7 +77,7 @@ fun SplashScreen(
 
 @Composable
 internal fun PrepareRecomposableHandler(
-    navigator: DestinationsNavigator,
+    navigator: NavController,
     viewModel: SplashViewModel
 ) {
     val step = viewModel.done.value
@@ -118,9 +112,9 @@ internal fun PrepareRecomposableHandler(
         }
 
         is SplashResult.Done -> {
-            navigator.navigate(MainScreenDestination.invoke()) {
+            navigator.navigate(ScreenNavigation.Main.route) {
                 launchSingleTop = true
-                popUpTo(SplashScreenDestination.route) {
+                popUpTo(ScreenNavigation.Splash.route) {
                     inclusive = true
                 }
             }
@@ -132,5 +126,6 @@ internal fun PrepareRecomposableHandler(
 @Composable
 fun PreviewSplashScreen() {
     val viewModel = SplashViewModel()
-    SplashScreen(EmptyDestinationsNavigator, viewModel, 0.85f)
+    val context = LocalContext.current
+    SplashScreen(NavController(context), viewModel, 0.85f)
 }

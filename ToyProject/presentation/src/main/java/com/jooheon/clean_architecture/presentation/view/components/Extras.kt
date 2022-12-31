@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -19,13 +20,16 @@ fun CoilImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(0.dp),
-    contentScale: ContentScale = ContentScale.Crop
+    contentScale: ContentScale = ContentScale.Crop,
+    @DrawableRes placeholderRes: Int = R.drawable.ic_logo_github,
+    @DrawableRes errorRes: Int = placeholderRes,
 ) {
     Image(
         painter = rememberAsyncImagePainter(
             ImageRequest.Builder(LocalContext.current).data(data = url).apply(block = fun ImageRequest.Builder.() {
                 crossfade(true)
-                placeholder(drawableResId = R.drawable.ic_logo_github)
+                placeholder(drawableResId = placeholderRes)
+                error(drawableResId = errorRes)
             }).build()
         ),
         contentDescription = contentDescription,
