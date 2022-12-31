@@ -334,6 +334,14 @@ private fun ObserveEvents(
                         }
                     }
                 }
+
+                lifecycleOwner.lifecycleScope.launch {
+                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        mainViewModel.navigateToSettingScreen.collectLatest {
+                            navigator.navigate(ScreenNavigation.Setting.route)
+                        }
+                    }
+                }
             }
 
             lifecycleOwner.lifecycle.addObserver(observer)

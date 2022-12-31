@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -30,6 +31,9 @@ class MainViewModel @Inject constructor(
     private val _floatingButtonState = mutableStateOf(false)
     val floatingButtonState = _floatingButtonState
 
+    private val _navigateToSettingScreen = Channel<Unit>()
+    val navigateToSettingScreen = _navigateToSettingScreen.receiveAsFlow()
+
     fun onNavigationClicked() {
         Log.d(TAG, "onNavigationClicked")
     }
@@ -42,8 +46,8 @@ class MainViewModel @Inject constructor(
         Log.d(TAG, "onSearchClicked")
     }
 
-    fun onSettingClicked() {
-        Log.d(TAG, "onSettingClicked")
+    fun onSettingClicked() = viewModelScope.launch(Dispatchers.Main) {
+        _navigateToSettingScreen.send(Unit)
     }
 
     fun onFloatingButtonClicked() {
