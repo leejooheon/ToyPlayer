@@ -51,6 +51,14 @@ fun SettingScreen(
     val settingList = viewModel.getSettingList(context, uiState.skipForwardBackward)
 
     Box(modifier = Modifier.fillMaxSize()) {
+        if(dialogState) {
+            SkipDurationDialog(
+                currentState = uiState.skipForwardBackward,
+                onChanged = { dialogState = false },
+                onDismiss = { dialogState = false }
+            )
+        }
+
         Column(
             modifier = Modifier
                 .statusBarsPadding()
