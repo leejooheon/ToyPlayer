@@ -10,6 +10,8 @@ import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCaseImpl
+import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
+import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCase
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCaseImpl
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
@@ -56,6 +58,10 @@ class UseCaseModule {
     fun providesMusicPlayerUseCase(
         musicUseCase: MusicUseCase
     ): MusicPlayerUseCase = MusicPlayerUseCase(musicUseCase)
+
+    @Provides
+    fun provideSettingUseCase(settingRepository: SettingRepository): SettingUseCase =
+        SettingUseCaseImpl(settingRepository)
 
     @Provides
     @Singleton

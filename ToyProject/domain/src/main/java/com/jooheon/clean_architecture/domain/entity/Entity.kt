@@ -4,6 +4,45 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Entity: java.io.Serializable {
+//    private val REPEAT_MODE = Pair("REPEAT_MODE", Entity.RepeatMode.REPEAT_OFF.ordinal)
+//    private val SHUFFLE_MODE = Pair("SHUFFLE_MODE", Entity.ShuffleMode.NONE.ordinal)
+//    private val SKIP_DURATION = Pair("SKIP_DURATION", Entity.SkipForwardBackward.FIVE_SECOND.ordinal)
+//    private val LANGUAGE = Pair("LANGUAGE", Entity.SupportLaunguages.AUTO.ordinal)
+//    private val THEME = Pair("THEME", Entity.SupportThemes.AUTO.ordinal)
+    enum class RepeatMode {
+        REPEAT_ONE,
+        REPEAT_ALL,
+        REPEAT_OFF
+    }
+
+    enum class ShuffleMode {
+        SHUFFLE,
+        NONE,
+    }
+
+    enum class SkipForwardBackward {
+        FIVE_SECOND,
+        TEN_SECOND,
+        FIFTEEN_SECOND;
+
+        fun toInteger() = when(this) {
+            FIVE_SECOND -> "5"
+            TEN_SECOND -> "10"
+            FIFTEEN_SECOND -> "15"
+        }
+    }
+
+    enum class SupportLaunguages(val code: String) {
+        AUTO("Auto"),
+        ENGLISH("en"),
+        KOREAN("ko");
+    }
+    enum class SupportThemes(val code: String) {
+        AUTO("Auto"),
+        Dark("Dark"),
+        LIGHT("Light");
+    }
+
     data class ParkingSpot(
         val lat: Double,
         val lng: Double,

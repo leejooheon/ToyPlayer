@@ -17,6 +17,12 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private val USER_DATA = Pair("USER_DATA", "")
         private val FIRST_TIME = Pair("FIRST_TIME", true)
         private val FIREBASE_TOKEN = Pair("FIREBASE_TOKEN", "")
+
+        private val REPEAT_MODE = Pair("REPEAT_MODE", Entity.RepeatMode.REPEAT_OFF.ordinal)
+        private val SHUFFLE_MODE = Pair("SHUFFLE_MODE", Entity.ShuffleMode.NONE.ordinal)
+        private val SKIP_DURATION = Pair("SKIP_DURATION", Entity.SkipForwardBackward.FIVE_SECOND.ordinal)
+        private val LANGUAGE = Pair("LANGUAGE", Entity.SupportLaunguages.AUTO.ordinal)
+        private val THEME = Pair("THEME", Entity.SupportThemes.AUTO.ordinal)
     }
 
     private val appPreferences: SharedPreferences = context.getSharedPreferences(APP_PREFERENCES_NAME, MODE)
@@ -67,6 +73,51 @@ class AppPreferences @Inject constructor(private val context: Context) {
         }
         set(value) = sessionPreferences.edit {
             it.putString(FIREBASE_TOKEN.first, value)
+        }
+
+    var repeatMode: Entity.RepeatMode
+        get() {
+            val ordinal = sessionPreferences.getInt(REPEAT_MODE.first, REPEAT_MODE.second)
+            return Entity.RepeatMode.values()[ordinal]
+        }
+        set(value) = sessionPreferences.edit {
+            it.putInt(REPEAT_MODE.first, value.ordinal)
+        }
+
+    var shuffleMode: Entity.ShuffleMode
+        get() {
+            val ordinal = sessionPreferences.getInt(SHUFFLE_MODE.first, SHUFFLE_MODE.second)
+            return Entity.ShuffleMode.values()[ordinal]
+        }
+        set(value) = sessionPreferences.edit {
+            it.putInt(SHUFFLE_MODE.first, value.ordinal)
+        }
+
+    var skipForwardBackward: Entity.SkipForwardBackward
+        get() {
+            val ordinal = sessionPreferences.getInt(SKIP_DURATION.first, SKIP_DURATION.second)
+            return Entity.SkipForwardBackward.values()[ordinal]
+        }
+        set(value) = sessionPreferences.edit {
+            it.putInt(SKIP_DURATION.first, value.ordinal)
+        }
+
+    var language: Entity.SupportLaunguages
+        get() {
+            val ordinal = sessionPreferences.getInt(LANGUAGE.first, LANGUAGE.second)
+            return Entity.SupportLaunguages.values()[ordinal]
+        }
+        set(value) = sessionPreferences.edit {
+            it.putInt(LANGUAGE.first, value.ordinal)
+        }
+
+    var theme: Entity.SupportThemes
+        get() {
+            val ordinal = sessionPreferences.getInt(THEME.first, THEME.second)
+            return Entity.SupportThemes.values()[ordinal]
+        }
+        set(value) = sessionPreferences.edit {
+            it.putInt(THEME.first, value.ordinal)
         }
 
     fun clearPreferences() {

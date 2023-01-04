@@ -53,6 +53,10 @@ class RepositoryModule {
     }
 
     @Provides
+    fun provideSettingRepository(appPreferences: AppPreferences): SettingRepository =
+        SettingRepositoryImpl(appPreferences)
+
+    @Provides
     @Singleton
     fun provideMusicRepository(
         musicDataSource: MusicDataSource
