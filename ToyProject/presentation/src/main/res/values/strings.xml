@@ -1,19 +1,20 @@
 <resources>
+    <!--    -->
     <string name="app_name">ToyProject</string>
-    <string name="setting">Setting</string>
+    <string name="close">Close</string>
+
+    <!-- error -->
     <string name="some_error">Some error occurred, try again later</string>
 
-    <string name="github_title">Github</string>
-    <string name="cd_github_title">Github</string>
-
-    <string name="wikipedia_title">Wikipedia</string>
-    <string name="cd_wikipedia_title">Wikipedia</string>
-
-    <string name="map_title">Map</string>
-    <string name="cd_map_title">Map</string>
-
-    <string name="search_title">Search</string>
-    <string name="cd_search_title">Search</string>
+    <!--    -->
+    <string name="title_github">Github</string>
+    <string name="title_cd_github">Github</string>
+    <string name="title_wikipedia">Wikipedia</string>
+    <string name="title_cd_wikipedia">Wikipedia</string>
+    <string name="title_map">Map</string>
+    <string name="title_cd_map">Map</string>
+    <string name="title_search">Search</string>
+    <string name="title_cd_search">Search</string>
 
     <!-- Repository Detail -->
     <string name="see_more">SEE MORE</string>
@@ -28,17 +29,30 @@
     <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
 
     <!-- Notofication -->
-    <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
-    <string name="playing_notification_name">재생 중 알림</string>
-    <string name="action_next">다음</string>
-    <string name="action_play">재생</string>
+    <string name="playing_notification_description">The playing notification provides actions for play/pause etc.</string>
+    <string name="playing_notification_name">Playing notification</string>
+    <string name="action_next">Next</string>
+    <string name="action_play">Play</string>
     <string name="action_play_all">Play all</string>
-    <string name="action_play_next">다음 곡 재생</string>
-    <string name="action_play_pause">재생/일시정지</string>
-    <string name="action_previous">이전</string>
-    <string name="action_cancel">현재 타이머 취소</string>
+    <string name="action_play_next">Play next</string>
+    <string name="action_play_pause">Play/Pause</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_cancel">Cancel</string>
     <string name="action_toggle_favorite">Toggle favorite</string>
     <string name="action_cycle_repeat">Cycle repeat mode</string>
     <string name="action_toggle_shuffle">Toggle shuffle mode</string>
+
+    <!-- settings  -->
+    <string name="title_settings">Setting</string>
+    <string name="n_second">%1$s Seconds</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_language_desc">Select the language you use</string>
+    <string name="setting_theme">Theme</string>
+    <string name="setting_skip_duration">Forward/Backward Duration</string>
+    <string name="setting_theme_light">Light</string>
+    <string name="setting_theme_dark">Dark</string>
+    <string name="setting_follow_system">Follow System</string>
+    <string name="setting_english">English</string>
+    <string name="setting_korean">Korean</string>
 
 </resources>

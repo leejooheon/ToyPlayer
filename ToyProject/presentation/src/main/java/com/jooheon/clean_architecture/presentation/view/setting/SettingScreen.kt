@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.view.setting
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +25,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.domain.entity.Entity.SkipForwardBackward
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -33,17 +42,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingScreen(
     navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel(),
-    isPreview: Boolean = false
+    viewModel: SettingViewModel = hiltViewModel(sharedViewModel()),
+    musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
 ) {
+    val context = LocalContext.current
+    val uiState by musicPlayerViewModel.musicState.collectAsState()
+    var dialogState by remember { mutableStateOf(false) }
+    val settingList = viewModel.getSettingList(context, uiState.skipForwardBackward)
 
-    val settingString = if(!isPreview) {
-        stringResource(id = R.string.setting)
-    } else {
-        "Setting"
-    }
-
-    val settingList = SettingViewModel.dummyData
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -53,7 +59,7 @@ fun SettingScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = settingString,
+                        text = UiText.StringResource(R.string.title_settings).asString(),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 },
@@ -80,7 +86,8 @@ fun SettingScreen(
     }
     ObserveEvents(
         navigator = navigator,
-        viewModel = viewModel
+        viewModel = viewModel,
+        onDurationEvent = { dialogState = true }
     )
 }
 
@@ -99,6 +106,7 @@ private fun SettingListItem(
         Icon(
             painter = rememberVectorPainter(data.iconImageVector),
             contentDescription = data.title,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(24.dp)
                 .weight(0.12f)
@@ -138,11 +146,11 @@ private fun SettingListItem(
     }
 }
 
-
 @Composable
 private fun ObserveEvents(
     navigator: NavController,
-    viewModel: SettingViewModel
+    viewModel: SettingViewModel,
+    onDurationEvent: () -> Unit,
 ) {
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
     DisposableEffect(
@@ -152,10 +160,19 @@ private fun ObserveEvents(
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         viewModel.navigateToSettingDetailScreen.collectLatest {
-//                            navigator.navigate(it)
+                            when(it.action) {
+                                SettingAction.LAUGUAGE,
+                                SettingAction.THEME-> {
+                                    viewModel.parseRoute(it.action)?.let {
+                                        navigator.navigate(it)
+                                    }
+                                }
+                                SettingAction.SKIP_DURATION -> onDurationEvent()
+                            }
                         }
                     }
                 }
+
             }
 
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -169,10 +186,14 @@ private fun ObserveEvents(
 @Composable
 @Preview
 private fun PreviewSettingListItem() {
-    val data = SettingViewModel.dummyData.last()
+    val context = LocalContext.current
+    val data = SettingViewModel(EmptySettingUseCase()).getSettingList(
+        context = context,
+        skipForwardBackward = SkipForwardBackward.FIVE_SECOND
+    )
     PreviewTheme(false) {
         SettingListItem(
-            data = data,
+            data = data.last(),
             onClick = {}
         )
     }
@@ -182,10 +203,17 @@ private fun PreviewSettingListItem() {
 @Preview
 private fun PreviewSettingScreen() {
     val context = LocalContext.current
+    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val musicPlayerViewModel = MusicPlayerViewModel(
+        context = context,
+        dispatcher= Dispatchers.IO,
+        musicController = MusicController(context, musicPlayerUseCase, true)
+    )
     PreviewTheme(false) {
         SettingScreen(
             navigator = NavController(context),
-            isPreview = true
+            viewModel = SettingViewModel(EmptySettingUseCase()),
+            musicPlayerViewModel = musicPlayerViewModel,
         )
     }
 }

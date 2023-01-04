@@ -1,0 +1,58 @@
+<resources>
+    <!--    -->
+    <string name="app_name">ToyProject</string>
+    <string name="close">닫기</string>
+
+    <!-- error -->
+    <string name="some_error">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
+
+    <!--    -->
+    <string name="title_github">깃허브</string>
+    <string name="title_cd_github">깃허브</string>
+    <string name="title_wikipedia">위키피디아</string>
+    <string name="title_cd_wikipedia">위키피디아</string>
+    <string name="title_map">지도</string>
+    <string name="title_cd_map">지도</string>
+    <string name="title_search">탐색</string>
+    <string name="title_cd_search">탐색</string>
+
+    <!-- Repository Detail -->
+    <string name="see_more">더 보기</string>
+    <string name="see_less">접기</string>
+    <string name="branch_header">Branches</string>
+    <string name="branch_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut tempus, sem vitae convallis imperdiet, lectus nunc pharetra diam, ac rhoncus quam eros eu risus. Nulla pulvinar condimentum erat, pulvinar tempus turpis blandit ut. Etiam sed ipsum sed lacus eleifend hendrerit eu quis quam. Etiam ligula eros, finibus vestibulum tortor ac, ultrices accumsan dolor. Vivamus vel nisl a libero lobortis posuere. Aenean facilisis nibh vel ultrices bibendum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse ac est vitae lacus commodo efficitur at ut massa. Etiam vestibulum sit amet sapien sed varius. Aliquam non ipsum imperdiet, pulvinar enim nec, mollis risus. Fusce id tincidunt nisl.</string>
+    <string name="commit_header">Commits</string>
+    <string name="commit_placeholder">Vanilla, Almond Flour, Eggs, Butter, Cream, Sugar</string>
+
+    <!-- exoPlayer test   -->
+    <string name="test_mp3">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
+    <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
+
+    <!-- Notofication -->
+    <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
+    <string name="playing_notification_name">재생 중 알림</string>
+    <string name="action_next">다음</string>
+    <string name="action_play">재생</string>
+    <string name="action_play_all">Play all</string>
+    <string name="action_play_next">다음 곡 재생</string>
+    <string name="action_play_pause">재생/일시정지</string>
+    <string name="action_previous">이전</string>
+    <string name="action_cancel">현재 타이머 취소</string>
+    <string name="action_toggle_favorite">찜하기</string>
+    <string name="action_cycle_repeat">재생 모드</string>
+    <string name="action_toggle_shuffle">셔플 모드</string>
+
+    <!-- settings  -->
+    <string name="title_settings">설정</string>
+    <string name="setting_language">언어</string>
+    <string name="setting_language_desc">사용할 언어를 선택하세요</string>
+    <string name="setting_theme">테마</string>
+    <string name="n_second">%1$s 초</string>
+    <string name="setting_skip_duration">앞/뒤로가기 간격</string>
+    <string name="setting_theme_light">밝게</string>
+    <string name="setting_theme_dark">다크</string>
+    <string name="setting_follow_system">시스템 설정</string>
+    <string name="setting_english">영어</string>
+    <string name="setting_korean">한국어</string>
+
+</resources>

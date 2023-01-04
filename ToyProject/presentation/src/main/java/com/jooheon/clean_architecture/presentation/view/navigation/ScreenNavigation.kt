@@ -25,13 +25,18 @@ sealed class ScreenNavigation(open val route: String) {
 
     object Splash: ScreenNavigation("splash")
     object Main: ScreenNavigation("main")
-    object Setting: ScreenNavigation("setting")
+
 
     class Music {
         object AodPlayer: ScreenNavigation("aod_player")
         object PlayList: ScreenNavigation("playlist")
     }
 
+    class Setting {
+        object Main: ScreenNavigation("setting_main")
+        object Launguage: ScreenNavigation("setting_language")
+        object Theme: ScreenNavigation("setting_theme")
+    }
 
     class Detail {
         object GithubDetail: ScreenNavigation(route = "github_detail?id={github_id}&item={repository}") {
@@ -88,29 +93,29 @@ sealed class ScreenNavigation(open val route: String) {
             val items = listOf(
                 BottomNavigationItem.ImageVectorIcon(
                     screen = ScreenNavigation.BottomSheet.Github,
-                    labelResId = R.string.github_title,
-                    contentDescriptionResId = R.string.cd_github_title,
+                    labelResId = R.string.title_github,
+                    contentDescriptionResId = R.string.title_cd_github,
                     iconImageVector = Icons.Outlined.Category ,
                     selectedImageVector = Icons.Default.Category,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
                     screen = ScreenNavigation.BottomSheet.Wiki,
-                    labelResId = R.string.wikipedia_title,
-                    contentDescriptionResId = R.string.cd_wikipedia_title,
+                    labelResId = R.string.title_wikipedia,
+                    contentDescriptionResId = R.string.title_cd_wikipedia,
                     iconImageVector = Icons.Outlined.FavoriteBorder,
                     selectedImageVector = Icons.Default.Favorite,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
                     screen = ScreenNavigation.BottomSheet.Map,
-                    labelResId = R.string.map_title,
-                    contentDescriptionResId = R.string.cd_map_title,
+                    labelResId = R.string.title_map,
+                    contentDescriptionResId = R.string.title_cd_map,
                     iconImageVector = Icons.Outlined.Map,
                     selectedImageVector = Icons.Default.Map,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
                     screen = ScreenNavigation.BottomSheet.Search,
-                    labelResId = R.string.search_title,
-                    contentDescriptionResId = R.string.cd_search_title,
+                    labelResId = R.string.title_search,
+                    contentDescriptionResId = R.string.title_cd_search,
                     iconImageVector = Icons.Outlined.Build,
                     selectedImageVector = Icons.Default.Build,
                 ),
