@@ -19,6 +19,7 @@ import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
 
 @Composable
 internal fun MyBottomNavigation(
@@ -37,7 +38,7 @@ internal fun MyBottomNavigation(
                 icon = {
                     Icon(
                         painter = rememberVectorPainter(item.iconImageVector),
-                        contentDescription = stringResource(item.contentDescriptionResId)
+                        contentDescription = UiText.StringResource(item.contentDescriptionResId).asString()
                     )
                     BottomNavigationItemIcon(
                         item = item,
@@ -46,7 +47,7 @@ internal fun MyBottomNavigation(
                 },
                 label = {
                     Text(
-                        text = stringResource(item.labelResId),
+                        text = UiText.StringResource(item.labelResId).asString(),
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
@@ -72,13 +73,13 @@ private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boole
         Crossfade(targetState = selected) {
             Icon(
                 painter = if (it) selectedPainter else painter,
-                contentDescription = stringResource(item.contentDescriptionResId),
+                contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
             )
         }
     } else {
         Icon(
             painter = painter,
-            contentDescription = stringResource(item.contentDescriptionResId),
+            contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
         )
     }
 }

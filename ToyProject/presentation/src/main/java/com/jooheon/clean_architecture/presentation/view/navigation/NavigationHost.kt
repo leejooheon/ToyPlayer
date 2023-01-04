@@ -35,6 +35,7 @@ import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScr
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaDatailScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
+import com.jooheon.clean_architecture.presentation.view.setting.language.LanguageScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -110,8 +111,12 @@ internal fun FullScreenNavigationHost(
                     navigator = navController
                 )
             }
-            composable(ScreenNavigation.Setting.route) {
+            composable(ScreenNavigation.Setting.Main.route) {
                 SettingScreen(navigator = navController)
+            }
+
+            composable(ScreenNavigation.Setting.Launguage.route) {
+                LanguageScreen(navigator = navController)
             }
 
             composable(

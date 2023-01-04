@@ -28,7 +28,10 @@ import com.jooheon.clean_architecture.presentation.view.components.outlinedTextF
 
 @ExperimentalMaterial3Api
 @Composable
-fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: String) -> Unit) {
+fun GithubSearchDialog(
+    openDialog: MutableState<Boolean>,
+    onDismiss: (text: String) -> Unit
+) {
     Dialog(
         onDismissRequest = {
             openDialog.value = false
@@ -47,8 +50,11 @@ fun GithubSearchDialog(openDialog: MutableState<Boolean>, onDismiss: (text: Stri
 
 @ExperimentalMaterial3Api
 @Composable
-private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boolean>,
-                     onDismiss: (text:String) -> Unit) {
+private fun DialogUI(
+    modifier: Modifier = Modifier,
+    openDialog: MutableState<Boolean>,
+    onDismiss: (text:String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
 
     Card (
@@ -56,14 +62,6 @@ private fun DialogUI(modifier: Modifier = Modifier, openDialog: MutableState<Boo
         shape = RoundedCornerShape(10.dp),
 //        elevation = 8.dp
     ){
-//      val focusRequester = FocusRequester()
-//        DisposableEffect(Unit) {
-//            // automatic focus when screen appears
-//            // example: modifier = Modifier.focusRequester(focusRequester),
-//            focusRequester.requestFocus()
-//            onDispose {  }
-//        }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

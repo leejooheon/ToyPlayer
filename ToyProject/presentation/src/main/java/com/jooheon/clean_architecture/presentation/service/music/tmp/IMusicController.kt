@@ -2,10 +2,7 @@ package com.jooheon.clean_architecture.presentation.service.music.tmp
 
 import android.net.Uri
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
-import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
 import kotlinx.coroutines.CoroutineScope
-
 
 interface IMusicController {
     fun loadMusic(scope: CoroutineScope)

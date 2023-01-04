@@ -11,13 +11,12 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.extensions.uri
 import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
-import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
-import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
+import com.jooheon.clean_architecture.domain.entity.Entity.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.Entity.ShuffleMode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import java.lang.Runnable
 import javax.inject.Inject

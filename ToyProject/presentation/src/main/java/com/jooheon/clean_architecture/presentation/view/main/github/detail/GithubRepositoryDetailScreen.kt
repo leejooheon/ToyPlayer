@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +29,7 @@ import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
+import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
 import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
@@ -222,7 +222,7 @@ private fun Body(
 
                     Spacer(Modifier.height(16.dp))
                     Text(
-                        text = stringResource(id = R.string.branch_header),
+                        text = UiText.StringResource(R.string.branch_header).asString(),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = HzPadding
@@ -241,13 +241,13 @@ private fun Body(
                     )
                     
                     val textButton = if (seeMore.value) {
-                        stringResource(R.string.see_more)
+                        UiText.StringResource(R.string.see_more)
                     } else {
-                        stringResource(R.string.see_less)
+                        UiText.StringResource(R.string.see_less)
                     }
 
                     Text(
-                        text = textButton,
+                        text = textButton.asString(),
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.tertiary,
@@ -263,7 +263,7 @@ private fun Body(
                     Spacer(Modifier.height(40.dp))
 
                     Text(
-                        text = stringResource(R.string.commit_header),
+                        text = UiText.StringResource(R.string.commit_header).asString(),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = HzPadding
@@ -293,7 +293,7 @@ private fun Body(
 
 @Composable
 private fun branchReComposableHandler(viewModel: GithubRepositoryDetailViewModel): String {
-    var result = stringResource(R.string.branch_placeholder)
+    var result = UiText.StringResource(R.string.branch_placeholder).asString()
 
     viewModel.branchResponse.value?.let { response ->
         var stringBuilder = ""
@@ -307,7 +307,7 @@ private fun branchReComposableHandler(viewModel: GithubRepositoryDetailViewModel
 
 @Composable
 private fun commitReComposableHandler(viewModel: GithubRepositoryDetailViewModel): String {
-    var result = stringResource(R.string.commit_placeholder)
+    var result = UiText.StringResource(R.string.commit_placeholder).asString()
 
     viewModel.commitResponse.value?.let { response ->
         var stringBuilder = ""

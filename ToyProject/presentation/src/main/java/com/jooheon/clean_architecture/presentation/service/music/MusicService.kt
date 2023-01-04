@@ -16,11 +16,10 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.BuildConfig
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.extensions.MusicState
-import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
-import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver
 import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaSessionCallback
@@ -204,14 +203,14 @@ class MusicService: MediaBrowserServiceCompat() {
 
     private fun setCustomAction(state: MusicState, builder: PlaybackStateCompat.Builder) {
         val repeatIconResId = when(state.repeatMode) {
-            RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
-            RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
-            RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
+            Entity.RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
+            Entity.RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
+            Entity.RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
         }
 
         val shuffleIconResId = when(state.shuffleMode) {
-            ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
-            ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
+            Entity.ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
+            Entity.ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
         }
 
         builder.apply {

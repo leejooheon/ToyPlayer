@@ -35,8 +35,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.layoutId
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.service.music.extensions.RepeatMode
-import com.jooheon.clean_architecture.presentation.service.music.extensions.ShuffleMode
+import com.jooheon.clean_architecture.domain.entity.Entity.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.Entity.ShuffleMode
+import com.jooheon.clean_architecture.presentation.utils.UiText
 
 
 @Composable
@@ -96,7 +97,7 @@ internal fun MusicControlButtons(
             Icon(
                 tint = MaterialTheme.colorScheme.onSurface,
                 painter = painterResource(R.drawable.ic_skip_previous),
-                contentDescription = stringResource(R.string.action_previous)
+                contentDescription = UiText.StringResource(R.string.action_previous).asString()
             )
         }
         IconButton(onClick = onPlayPauseButtonPressed) {
@@ -106,7 +107,7 @@ internal fun MusicControlButtons(
                     id = if(isPlaying) R.drawable.ic_pause
                     else R.drawable.ic_play_arrow,
                 ),
-                contentDescription = stringResource(R.string.action_play_pause)
+                contentDescription = UiText.StringResource(R.string.action_play_pause).asString()
             )
         }
 
@@ -114,7 +115,7 @@ internal fun MusicControlButtons(
             Icon(
                 tint = MaterialTheme.colorScheme.onSurface,
                 painter = painterResource(R.drawable.ic_skip_next),
-                contentDescription = stringResource(R.string.action_next)
+                contentDescription = UiText.StringResource(R.string.action_next).asString()
             )
         }
     }
@@ -145,7 +146,7 @@ internal fun OtherButtons(
             Icon(
                 tint = MaterialTheme.colorScheme.onSurface,
                 painter = painterResource(repeatIconResId),
-                contentDescription = stringResource(R.string.action_cycle_repeat)
+                contentDescription = UiText.StringResource(R.string.action_cycle_repeat).asString()
             )
         }
 
@@ -153,7 +154,7 @@ internal fun OtherButtons(
             Icon(
                 tint = MaterialTheme.colorScheme.onSurface,
                 painter = painterResource(shuffleIconResId),
-                contentDescription = stringResource(R.string.action_toggle_shuffle)
+                contentDescription = UiText.StringResource(R.string.action_toggle_shuffle).asString()
             )
         }
     }
