@@ -16,7 +16,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
@@ -101,7 +103,7 @@ internal fun SearchView(
             )
         ) {
             Text(
-                text = "확인",
+                text = UiText.StringResource(R.string.ok).asString(),
                 color = MaterialTheme.colorScheme.onSecondary,
             )
         }

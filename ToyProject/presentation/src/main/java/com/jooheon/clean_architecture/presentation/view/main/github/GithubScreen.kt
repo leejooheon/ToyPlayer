@@ -33,6 +33,7 @@ import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -152,7 +153,7 @@ private fun HomeScreenPreview() {
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
         dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
+        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
     )
 
     val viewModel = GithubViewModel(EmptyGithubUseCase())

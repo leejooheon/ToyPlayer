@@ -18,10 +18,12 @@ import com.jooheon.clean_architecture.presentation.service.music.datasource.Musi
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.main.music.EmptySongItem
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicItem
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "PlayerScreen"
@@ -122,10 +124,10 @@ fun PreviewSearchScreen() {
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
         dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
+        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
     )
 
-    ApplicationTheme(false) {
+    PreviewTheme(false) {
         ExoPlayerScreen(musicPlayerViewModel, true)
     }
 }
