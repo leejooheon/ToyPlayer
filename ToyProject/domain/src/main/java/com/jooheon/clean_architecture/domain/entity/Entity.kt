@@ -38,9 +38,11 @@ sealed class Entity: java.io.Serializable {
         KOREAN("ko");
     }
     enum class SupportThemes(val code: String) {
-        AUTO("Auto"),
-        Dark("Dark"),
-        LIGHT("Light");
+        AUTO("auto"),
+        DARK("dark"),
+        LIGHT("light"),
+        DYNAMIC_DARK("dynamic_dark"),
+        DYNAMIC_LIGHT("dynamic_light");
     }
 
     data class ParkingSpot(

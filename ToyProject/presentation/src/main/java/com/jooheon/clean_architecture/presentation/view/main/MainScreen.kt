@@ -53,6 +53,7 @@ import com.jooheon.clean_architecture.presentation.view.navigation.MyBottomNavig
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -386,7 +387,7 @@ private fun PreviewMainScreen() {
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
         dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
+        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
     )
     PreviewTheme(false) {
         MainScreen(NavController(context), viewModel, musicPlayerViewModel)

@@ -2,10 +2,9 @@ package com.jooheon.clean_architecture.presentation.view.temp
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
-import kotlinx.coroutines.flow.Flow
 
 class EmptySettingUseCase: SettingUseCase {
-    override suspend fun getLanguage(): Flow<Entity.SupportLaunguages> {
+    override suspend fun getLanguage(): Entity.SupportLaunguages {
         TODO("Not yet implemented")
     }
 
@@ -13,7 +12,7 @@ class EmptySettingUseCase: SettingUseCase {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getTheme(): Flow<Entity.SupportThemes> {
+    override suspend fun getTheme(): Entity.SupportThemes {
         TODO("Not yet implemented")
     }
 
@@ -21,11 +20,11 @@ class EmptySettingUseCase: SettingUseCase {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSkipForwardBackward(): Flow<Entity.SkipForwardBackward> {
+    override suspend fun getSkipForwardBackward(): Entity.SkipForwardBackward {
         TODO("Not yet implemented")
     }
 
-    override suspend fun setSkipForwardBackward(theme: Entity.SkipForwardBackward) {
+    override suspend fun setSkipForwardBackward(skip: Entity.SkipForwardBackward) {
         TODO("Not yet implemented")
     }
 }

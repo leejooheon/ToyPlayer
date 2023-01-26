@@ -1,25 +1,23 @@
-package com.jooheon.clean_architecture.presentation.view.setting.language
+package com.jooheon.clean_architecture.presentation.view.setting.theme
 
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.theme.themes.getColorScheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.setting.SettingDetailItem
@@ -28,12 +26,13 @@ import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun LanguageScreen(
+internal fun ThemeScreen(
     navigator: NavController,
     viewModel: SettingViewModel = hiltViewModel(sharedViewModel())
 ) {
-    val localizeState = viewModel.localizedState.collectAsState()
-    val supportLanguages = Entity.SupportLaunguages.values()
+    val themeState = viewModel.themeState.collectAsState()
+    val supportThemes = Entity.SupportThemes.values()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -43,7 +42,7 @@ internal fun LanguageScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = UiText.StringResource(R.string.setting_language).asString(),
+                    text = UiText.StringResource(R.string.setting_theme).asString(),
                     style = MaterialTheme.typography.titleLarge,
                 )
             },
@@ -61,37 +60,39 @@ internal fun LanguageScreen(
         )
 
         val context = LocalContext.current
-        supportLanguages.forEach {
-            val selected = it == localizeState.value
-            SettingDetailItem(
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.background
-                },
-                selected = selected,
-                title = it.parse(context),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { viewModel.onLanguageItemClick(it) }
-            )
+        supportThemes.forEach {
+            if(viewModel.showableTheme(it)) {
+                val selected = it == themeState.value
+                SettingDetailItem(
+                    color = getColorScheme(it).primary,
+                    selected = selected,
+                    title = it.parse(context),
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { viewModel.onThemeItemClick(it) }
+                )
+            }
         }
     }
 }
 
-fun Entity.SupportLaunguages.parse(context: Context): String {
+private fun Entity.SupportThemes.parse(context: Context): String {
     val resId = when(this) {
-        Entity.SupportLaunguages.AUTO -> R.string.setting_follow_system
-        Entity.SupportLaunguages.ENGLISH -> R.string.setting_english
-        Entity.SupportLaunguages.KOREAN -> R.string.setting_korean
+        Entity.SupportThemes.AUTO -> R.string.setting_follow_system
+        Entity.SupportThemes.LIGHT -> R.string.setting_theme_light
+        Entity.SupportThemes.DARK -> R.string.setting_theme_dark
+        Entity.SupportThemes.DYNAMIC_LIGHT -> R.string.setting_theme_dynamic_light
+        Entity.SupportThemes.DYNAMIC_DARK -> R.string.setting_theme_dynamic_dark
     }
+
     return UiText.StringResource(resId).asString(context)
 }
+
 @Preview
 @Composable
-private fun PreviewLaunguageScreen() {
+private fun PreviewThemeScreen() {
     val context = LocalContext.current
     PreviewTheme(false) {
-        LanguageScreen(
+        ThemeScreen(
             navigator = NavController(context),
             viewModel = SettingViewModel(EmptySettingUseCase())
         )

@@ -22,7 +22,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private val SHUFFLE_MODE = Pair("SHUFFLE_MODE", Entity.ShuffleMode.NONE.ordinal)
         private val SKIP_DURATION = Pair("SKIP_DURATION", Entity.SkipForwardBackward.FIVE_SECOND.ordinal)
         private val LANGUAGE = Pair("LANGUAGE", Entity.SupportLaunguages.AUTO.ordinal)
-        private val THEME = Pair("THEME", Entity.SupportThemes.AUTO.ordinal)
+        private val THEME = Pair("THEME", Entity.SupportThemes.LIGHT.ordinal)
     }
 
     private val appPreferences: SharedPreferences = context.getSharedPreferences(APP_PREFERENCES_NAME, MODE)

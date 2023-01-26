@@ -502,7 +502,7 @@ fun PlayListButtonPreviewDark() {
 @Preview
 @Composable
 private fun PreviewEmptySong() {
-    ApplicationTheme(false) {
+    PreviewTheme(false) {
         EmptySongItem(
             modifier = Modifier
                 .fillMaxWidth()

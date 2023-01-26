@@ -25,10 +25,7 @@ internal fun SkipDurationDialog(
     currentState: SkipForwardBackward,
     onChanged: (SkipForwardBackward) -> Unit,
     onDismiss: () -> Unit,
-    isPreview: Boolean = false
 ) {
-    val closeText = UiText.StringResource(R.string.close)
-
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -135,7 +132,6 @@ private fun PreviewSkipForwardPopup() {
             currentState = SkipForwardBackward.FIFTEEN_SECOND,
             onChanged = {},
             onDismiss = {},
-            isPreview = true
         )
     }
 }

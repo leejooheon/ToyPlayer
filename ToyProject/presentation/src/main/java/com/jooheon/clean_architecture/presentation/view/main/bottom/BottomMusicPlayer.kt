@@ -30,6 +30,7 @@ import com.jooheon.clean_architecture.presentation.view.main.music.MusicProgress
 import com.jooheon.clean_architecture.presentation.view.main.music.PlayListButton
 import com.jooheon.clean_architecture.presentation.view.main.music.PlayPauseButton
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "MusicBottomBar"
@@ -207,7 +208,7 @@ private fun MotionLayoutTestPreview() {
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
         dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
+        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
     )
     PreviewTheme(false) {
         MotionLayoutTest(viewModel = musicPlayerViewModel)

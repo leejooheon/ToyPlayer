@@ -17,4 +17,5 @@ interface IMusicController {
     suspend fun next()
     suspend fun changeRepeatMode()
     suspend fun changeShuffleMode()
+    suspend fun changeSkipDuration()
 }

@@ -12,7 +12,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
 
 fun DialogTest(context: Context) {
     MaterialAlertDialogBuilder(context)
@@ -51,7 +53,7 @@ fun MyAlertDialog(
                 onConfirmButtonClicked?.let { it() }
             }) {
                 Text(
-                    text = "확인",
+                    text = UiText.StringResource(R.string.ok).asString(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSecondary
                 )

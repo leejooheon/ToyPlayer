@@ -67,6 +67,7 @@ class MusicPlayerViewModel @Inject constructor(
         collectRepeatMode()
         collectShuffleMode()
         collectTimePassed()
+        collectSkipDuration()
     }
 
     private fun commandToService() {
@@ -84,42 +85,72 @@ class MusicPlayerViewModel @Inject constructor(
     }
 
     private fun collectDuration() = viewModelScope.launch {
-        musicController.currentDuration.collectLatest { // 손으로 Swipe했을때 호출
-            _timePassed.value = it
+        // 손으로 Swipe했을때 호출
+        musicController.currentDuration.collectLatest { currentDuration ->
+            _timePassed.update { currentDuration }
         }
     }
 
     private fun collectTimePassed() = viewModelScope.launch {
-        musicController.timePassed.collectLatest {
-            _timePassed.value = it
+        musicController.timePassed.collectLatest { timePassed ->
+            _timePassed.update { timePassed }
         }
     }
-
     private fun collectSongList() = viewModelScope.launch {
-        musicController.songs.collectLatest {
-            _musicState.value = musicState.value.copy(songs = it)
+        musicController.songs.collectLatest { songs ->
+            _musicState.update {
+                it.copy(
+                    songs = songs
+                )
+            }
         }
     }
     private fun collectCurrentSong() = viewModelScope.launch {
-        musicController.currentPlayingMusic.collectLatest {
-            Log.d(TAG, "collectCurrentSong - $it")
-            _timePassed.value = 0L
-            _musicState.value = musicState.value.copy(currentPlayingMusic = it)
+        musicController.currentPlayingMusic.collectLatest { currentPlayingMusic ->
+            Log.d(TAG, "collectCurrentSong - $currentPlayingMusic")
+            _timePassed.update { 0L }
+            _musicState.update {
+                it.copy(
+                    currentPlayingMusic = currentPlayingMusic
+                )
+            }
         }
     }
     private fun collectIsPlaying() = viewModelScope.launch {
-        musicController.isPlaying.collectLatest {
-            _musicState.value = musicState.value.copy(isPlaying = it)
+        musicController.isPlaying.collectLatest { isPlaying ->
+            _musicState.update {
+                it.copy(
+                    isPlaying = isPlaying
+                )
+            }
         }
     }
     private fun collectRepeatMode() = viewModelScope.launch {
-        musicController.repeatMode.collectLatest {
-            _musicState.value = musicState.value.copy(repeatMode = it)
+        musicController.repeatMode.collectLatest { repeatMode ->
+            _musicState.update {
+                it.copy(
+                    repeatMode = repeatMode
+                )
+            }
         }
     }
     private fun collectShuffleMode() = viewModelScope.launch {
-        musicController.shuffleMode.collectLatest {
-            _musicState.value = musicState.value.copy(shuffleMode = it)
+        musicController.shuffleMode.collectLatest { shuffleMode ->
+            _musicState.update {
+                it.copy(
+                    shuffleMode = shuffleMode
+                )
+            }
+        }
+    }
+
+    private fun collectSkipDuration() = viewModelScope.launch {
+        musicController.skipState.collectLatest { skipDuration ->
+            _musicState.update {
+                it.copy(
+                    skipForwardBackward = skipDuration
+                )
+            }
         }
     }
 
@@ -153,6 +184,10 @@ class MusicPlayerViewModel @Inject constructor(
     }
     fun onRepeatButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
         musicController.changeRepeatMode()
+    }
+
+    fun onSkipDurationChanged() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.changeSkipDuration()
     }
 
     fun onExpandCollapsed() = viewModelScope.launch(Dispatchers.IO) {
