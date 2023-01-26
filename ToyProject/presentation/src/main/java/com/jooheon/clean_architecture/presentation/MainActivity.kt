@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.Lifecycle
@@ -45,7 +46,8 @@ class MainActivity : BaseComposeActivity() {
 
     @Composable
     private fun AppContent() {
-        ApplicationTheme {
+        val theme = settingViewModel.themeState.collectAsState()
+        ApplicationTheme(theme.value) {
             FullScreenNavigationHost(
                 modifier = Modifier.fillMaxSize()
             )
