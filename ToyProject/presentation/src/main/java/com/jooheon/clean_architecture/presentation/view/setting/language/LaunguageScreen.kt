@@ -22,6 +22,7 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.setting.SettingDetailItem
 import com.jooheon.clean_architecture.presentation.view.setting.SettingViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 
@@ -59,54 +60,19 @@ internal fun LanguageScreen(
             )
         )
 
+        val context = LocalContext.current
         supportLanguages.forEach {
-            LaunguageItem(
-                selected = it == localizeState.value,
-                language = it,
+            val selected = it == localizeState.value
+            SettingDetailItem(
+                color = if (selected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.background
+                },
+                selected = selected,
+                title = it.parse(context),
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { viewModel.onLanguageItemClick(it) }
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun LaunguageItem(
-    selected: Boolean,
-    language: Entity.SupportLaunguages,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = if (selected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.background
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        shape = RoundedCornerShape(4.dp),
-        modifier = modifier.padding(8.dp),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = language.parse(LocalContext.current)
-            )
-            RadioButton(
-                selected = selected,
-                onClick = onClick,
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colorScheme.onPrimary,
-                    unselectedColor = MaterialTheme.colorScheme.onBackground
-                )
             )
         }
     }
