@@ -13,10 +13,12 @@ import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.domain.entity.Entity.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.Entity.ShuffleMode
+import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import java.lang.Runnable
 import javax.inject.Inject
@@ -24,6 +26,7 @@ import javax.inject.Inject
 class MusicController @Inject constructor(
     @ApplicationContext private val context: Context,
     private val musicPlayerUseCase: MusicPlayerUseCase,
+    private val settingUseCase: SettingUseCase,
     isPreview: Boolean = false
 ) : IMusicController{
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
@@ -55,6 +58,9 @@ class MusicController @Inject constructor(
 
     private val _currentDuration = MutableStateFlow(0L)
     val currentDuration: StateFlow<Long> = _currentDuration
+
+    private val _skipState = MutableStateFlow(Entity.SkipForwardBackward.FIVE_SECOND)
+    val skipState = _skipState.asStateFlow()
 
     val timePassed = flow {
         while (true) {
@@ -198,6 +204,13 @@ class MusicController @Inject constructor(
 
         runOnUiThread {
             _shuffleMode.tryEmit(shuffleMode)
+        }
+    }
+
+    override suspend fun changeSkipDuration() {
+        val skipDuration = settingUseCase.getSkipForwardBackward()
+        runOnUiThread {
+            _skipState.tryEmit(skipDuration)
         }
     }
 

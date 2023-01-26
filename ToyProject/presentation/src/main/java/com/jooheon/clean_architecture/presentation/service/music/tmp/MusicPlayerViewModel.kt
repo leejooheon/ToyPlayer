@@ -67,6 +67,7 @@ class MusicPlayerViewModel @Inject constructor(
         collectRepeatMode()
         collectShuffleMode()
         collectTimePassed()
+        collectSkipDuration()
     }
 
     private fun commandToService() {
@@ -120,6 +121,14 @@ class MusicPlayerViewModel @Inject constructor(
     private fun collectShuffleMode() = viewModelScope.launch {
         musicController.shuffleMode.collectLatest {
             _musicState.value = musicState.value.copy(shuffleMode = it)
+
+    private fun collectSkipDuration() = viewModelScope.launch {
+        musicController.skipState.collectLatest { skipDuration ->
+            _musicState.update {
+                it.copy(
+                    skipForwardBackward = skipDuration
+                )
+            }
         }
     }
 
@@ -153,6 +162,10 @@ class MusicPlayerViewModel @Inject constructor(
     }
     fun onRepeatButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
         musicController.changeRepeatMode()
+    }
+
+    fun onSkipDurationChanged() = viewModelScope.launch(Dispatchers.IO) {
+        musicController.changeSkipDuration()
     }
 
     fun onExpandCollapsed() = viewModelScope.launch(Dispatchers.IO) {
