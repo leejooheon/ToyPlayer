@@ -1,13 +1,16 @@
 package com.jooheon.clean_architecture.presentation.view.setting
 
 
+import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,12 +30,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.domain.entity.Entity.SkipForwardBackward
+import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.setting.language.parse
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.Dispatchers
@@ -45,24 +52,28 @@ fun SettingScreen(
     viewModel: SettingViewModel = hiltViewModel(sharedViewModel()),
     musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
 ) {
-    val context = LocalContext.current
-    val uiState by musicPlayerViewModel.musicState.collectAsState()
-    var dialogState by remember { mutableStateOf(false) }
-    val settingList = viewModel.getSettingList(context, uiState.skipForwardBackward)
+    val skipDuration = viewModel.skipState.collectAsState()
+    val settingList = viewModel.getSettingList(LocalContext.current)
+    var dialogState by rememberSaveable { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         if(dialogState) {
             SkipDurationDialog(
-                currentState = uiState.skipForwardBackward,
-                onChanged = { dialogState = false },
+                currentState = skipDuration.value,
+                onChanged = {
+                    viewModel.onSkipItemClick(it)
+                    musicPlayerViewModel.onSkipDurationChanged()
+                },
                 onDismiss = { dialogState = false }
             )
         }
 
         Column(
-            modifier = Modifier
-                .statusBarsPadding()
-                .background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.statusBarsPadding()
         ) {
             TopAppBar(
                 title = {
@@ -84,10 +95,18 @@ fun SettingScreen(
                 )
             )
 
+            MyDivider(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                thickness = 1.dp
+            )
             settingList.forEach {
                 SettingListItem(
                     data = it,
                     onClick = viewModel::onSettingItemClick
+                )
+                MyDivider(
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    thickness = 1.dp
                 )
             }
         }
@@ -95,7 +114,9 @@ fun SettingScreen(
     ObserveEvents(
         navigator = navigator,
         viewModel = viewModel,
-        onDurationEvent = { dialogState = true }
+        onDurationEvent = {
+            dialogState = true
+        }
     )
 }
 
@@ -123,14 +144,16 @@ private fun SettingListItem(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .padding(horizontal = 12.dp)
-                .weight(0.68f)
+                .weight(0.64f)
         ) {
             Text(
                 text = data.title,
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
 
@@ -138,7 +161,7 @@ private fun SettingListItem(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier
                 .padding(end = 12.dp)
-                .weight(0.2f)
+                .weight(0.24f)
         ) {
             if (data.showValue) {
                 Text(
@@ -147,7 +170,9 @@ private fun SettingListItem(
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Normal,
                         color = MaterialTheme.colorScheme.primary
-                    )
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -175,12 +200,13 @@ private fun ObserveEvents(
                                         navigator.navigate(it)
                                     }
                                 }
-                                SettingAction.SKIP_DURATION -> onDurationEvent()
+                                SettingAction.SKIP_DURATION -> {
+                                    onDurationEvent()
+                                }
                             }
                         }
                     }
                 }
-
             }
 
             lifecycleOwner.lifecycle.addObserver(observer)
@@ -191,13 +217,76 @@ private fun ObserveEvents(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun SettingDetailItem(
+    @ColorRes color: Color,
+    selected: Boolean,
+    title: String,
+    modifier: Modifier,
+    onClick: () -> Unit
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = color
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.padding(8.dp),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = title
+            )
+            RadioButton(
+                selected = selected,
+                onClick = onClick,
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.onPrimary,
+                    unselectedColor = MaterialTheme.colorScheme.onBackground
+                )
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewSettingDetailItem() {
+    PreviewTheme(false) {
+        Column {
+            SettingDetailItem(
+                color = MaterialTheme.colorScheme.primary,
+                selected = true,
+                title = "ITEM - 1 selected",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { }
+            )
+            SettingDetailItem(
+                color = MaterialTheme.colorScheme.background,
+                selected = false,
+                title = "ITEM - 2",
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { }
+            )
+        }
+    }
+}
 @Composable
 @Preview
 private fun PreviewSettingListItem() {
     val context = LocalContext.current
     val data = SettingViewModel(EmptySettingUseCase()).getSettingList(
-        context = context,
-        skipForwardBackward = SkipForwardBackward.FIVE_SECOND
+        context = context
     )
     PreviewTheme(false) {
         SettingListItem(
@@ -212,10 +301,11 @@ private fun PreviewSettingListItem() {
 private fun PreviewSettingScreen() {
     val context = LocalContext.current
     val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
         dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, true)
+        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
     )
     PreviewTheme(false) {
         SettingScreen(
