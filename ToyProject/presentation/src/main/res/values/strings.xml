@@ -2,6 +2,7 @@
     <!--    -->
     <string name="app_name">ToyProject</string>
     <string name="close">Close</string>
+    <string name="ok">OK</string>
 
     <!-- error -->
     <string name="some_error">Some error occurred, try again later</string>
@@ -51,6 +52,8 @@
     <string name="setting_skip_duration">Forward/Backward Duration</string>
     <string name="setting_theme_light">Light</string>
     <string name="setting_theme_dark">Dark</string>
+    <string name="setting_theme_dynamic_dark">Dynamic Dark</string>
+    <string name="setting_theme_dynamic_light">Dynamic Light</string>
     <string name="setting_follow_system">Follow System</string>
     <string name="setting_english">English</string>
     <string name="setting_korean">Korean</string>
