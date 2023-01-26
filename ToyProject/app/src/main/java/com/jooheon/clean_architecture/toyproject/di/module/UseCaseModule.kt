@@ -60,6 +60,7 @@ class UseCaseModule {
     ): MusicPlayerUseCase = MusicPlayerUseCase(musicUseCase)
 
     @Provides
+    @Singleton
     fun provideSettingUseCase(settingRepository: SettingRepository): SettingUseCase =
         SettingUseCaseImpl(settingRepository)
 
@@ -67,6 +68,7 @@ class UseCaseModule {
     @Singleton
     fun provideMusicController(
         @ApplicationContext context: Context,
-        musicPlayerUseCase: MusicPlayerUseCase
-    ) = MusicController(context, musicPlayerUseCase)
+        musicPlayerUseCase: MusicPlayerUseCase,
+        settingUseCase: SettingUseCase
+    ) = MusicController(context, musicPlayerUseCase, settingUseCase)
 }
