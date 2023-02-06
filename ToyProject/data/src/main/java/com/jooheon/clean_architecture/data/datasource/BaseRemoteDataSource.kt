@@ -10,6 +10,7 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.net.ConnectException
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 
@@ -78,6 +79,10 @@ open class BaseRemoteDataSource @Inject constructor() {
                             }
                         }
                     }
+                }
+
+                is SocketTimeoutException -> {
+                    return Resource.Failure(FailureStatus.TIMEOUT)
                 }
 
                 is UnknownHostException -> {
