@@ -61,6 +61,7 @@ class MusicController @Inject constructor(
 
     private val _skipState = MutableStateFlow(Entity.SkipForwardBackward.FIVE_SECOND)
     val skipState = _skipState.asStateFlow()
+    fun audioSessionId() = exoPlayer.audioSessionId
 
     val timePassed = flow {
         while (true) {

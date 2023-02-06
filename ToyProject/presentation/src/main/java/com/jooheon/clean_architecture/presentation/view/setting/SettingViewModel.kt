@@ -1,9 +1,14 @@
 package com.jooheon.clean_architecture.presentation.view.setting
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.media.audiofx.AudioEffect
 import android.os.Build
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Equalizer
 import androidx.compose.material.icons.outlined.Forward5
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.WbSunny
@@ -13,6 +18,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
+import com.jooheon.clean_architecture.presentation.common.showToast
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +36,9 @@ class SettingViewModel @Inject constructor(
 
     private val _navigateToSettingScreen = Channel<SettingData>()
     val navigateToSettingDetailScreen = _navigateToSettingScreen.receiveAsFlow()
+
+    private val _navigateToSystemEqualizer = Channel<Int>()
+    val navigateToSystemEqualizer = _navigateToSystemEqualizer.receiveAsFlow()
 
     private val _localizedState = MutableStateFlow(Entity.SupportLaunguages.AUTO)
     val localizedState = _localizedState.asStateFlow()
@@ -62,12 +71,20 @@ class SettingViewModel @Inject constructor(
         settingUseCase.setSkipForwardBackward(skip)
         updateSkipState()
     }
+
+    fun onEqualizerClick(context: Context, audioSessionId: Int) = viewModelScope.launch {
+        if (audioSessionId == AudioEffect.ERROR_BAD_VALUE) {
+            val content = UiText.StringResource(R.string.no_audio_ID).asString(context)
+            context.showToast(content)
+        } else {
+            _navigateToSystemEqualizer.send(audioSessionId)
+        }
+    }
     fun parseRoute(action: SettingAction) = when(action) {
         SettingAction.LAUGUAGE -> ScreenNavigation.Setting.Launguage.route
         SettingAction.THEME -> ScreenNavigation.Setting.Theme.route
         else -> null
     }
-
     fun showableTheme(theme: Entity.SupportThemes): Boolean {
         val supportDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 12 이상일때
         if(theme.code.contains("dynamic") ) {
@@ -113,6 +130,13 @@ class SettingViewModel @Inject constructor(
                 ).asString(context),
                 showValue = true,
                 iconImageVector = Icons.Outlined.Forward5
+            ),
+            SettingData(
+                action = SettingAction.EQUALIZER,
+                title = UiText.StringResource(R.string.setting_equalizer).asString(context),
+                value = "",
+                showValue = false,
+                iconImageVector = Icons.Outlined.Equalizer
             ),
         )
     }

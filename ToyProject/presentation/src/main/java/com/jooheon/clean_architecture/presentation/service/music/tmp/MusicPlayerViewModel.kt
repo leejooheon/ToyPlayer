@@ -53,9 +53,7 @@ class MusicPlayerViewModel @Inject constructor(
     private val _motionFraction = MutableStateFlow(0f)
     val motionFraction = _motionFraction.asStateFlow()
 
-    fun fractionChanged(value: Float) {
-        _motionFraction.value = value
-    }
+    fun audioSessionId() = musicController.audioSessionId()
 
     init {
         Log.d(TAG, "musicController - ${musicController}")

@@ -49,6 +49,7 @@
     <string name="setting_language">Language</string>
     <string name="setting_language_desc">Select the language you use</string>
     <string name="setting_theme">Theme</string>
+    <string name="setting_equalizer">Equalizer</string>
     <string name="setting_skip_duration">Forward/Backward Duration</string>
     <string name="setting_theme_light">Light</string>
     <string name="setting_theme_dark">Dark</string>
@@ -57,5 +58,7 @@
     <string name="setting_follow_system">Follow System</string>
     <string name="setting_english">English</string>
     <string name="setting_korean">Korean</string>
+    <string name="no_audio_ID">"Play a song first, then try again."</string>
+    <string name="no_equalizer">No equalizer found</string>
 
 </resources>

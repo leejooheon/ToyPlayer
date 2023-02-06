@@ -1,8 +1,13 @@
 package com.jooheon.clean_architecture.presentation
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.res.Resources
+import android.media.audiofx.AudioEffect
 import android.os.Bundle
 import android.os.LocaleList
+import android.provider.Settings
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +20,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
+import com.jooheon.clean_architecture.presentation.base.extensions.BetterActivityResult
+import com.jooheon.clean_architecture.presentation.common.showToast
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
+import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.FullScreenNavigationHost
 import com.jooheon.clean_architecture.presentation.view.setting.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +37,7 @@ class MainActivity : BaseComposeActivity() {
     private val musicPlayerViewModel: MusicPlayerViewModel by viewModels()
     private val settingViewModel: SettingViewModel by viewModels()
     private var serviceToken: MusicPlayerViewModel.ServiceToken? = null
+    private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +83,26 @@ class MainActivity : BaseComposeActivity() {
 
                     resources.updateConfiguration(configuration, resources.displayMetrics)
                     createConfigurationContext(configuration)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                settingViewModel.navigateToSystemEqualizer.collectLatest { sessionId ->
+                    try {
+                        val effects = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+                            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+                            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+                        }
+                        activityLauncher.launch(
+                            input = effects,
+                            onActivityResult = { /** Nothing **/ }
+                        )
+                    } catch (notFound: ActivityNotFoundException) {
+                        val content = UiText.StringResource(R.string.no_equalizer).asString(this@MainActivity)
+                        showToast(content)
+                    }
                 }
             }
         }

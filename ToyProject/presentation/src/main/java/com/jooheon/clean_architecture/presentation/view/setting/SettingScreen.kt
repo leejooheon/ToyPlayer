@@ -29,8 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.domain.entity.Entity.SkipForwardBackward
-import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
@@ -38,7 +36,7 @@ import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-import com.jooheon.clean_architecture.presentation.view.setting.language.parse
+
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import kotlinx.coroutines.Dispatchers
@@ -52,8 +50,9 @@ fun SettingScreen(
     viewModel: SettingViewModel = hiltViewModel(sharedViewModel()),
     musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
 ) {
+    val context = LocalContext.current
     val skipDuration = viewModel.skipState.collectAsState()
-    val settingList = viewModel.getSettingList(LocalContext.current)
+    val settingList = viewModel.getSettingList(context)
     var dialogState by rememberSaveable { mutableStateOf(false) }
 
     Box(
@@ -116,6 +115,10 @@ fun SettingScreen(
         viewModel = viewModel,
         onDurationEvent = {
             dialogState = true
+        },
+        onEqualizerEvent = {
+            val sessionId = musicPlayerViewModel.audioSessionId()
+            viewModel.onEqualizerClick(context, sessionId)
         }
     )
 }
@@ -184,12 +187,15 @@ private fun ObserveEvents(
     navigator: NavController,
     viewModel: SettingViewModel,
     onDurationEvent: () -> Unit,
+    onEqualizerEvent: () -> Unit
 ) {
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
+    val context = LocalContext.current
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
             val observer = LifecycleEventObserver { lifecycleOwner, event ->
+
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                         viewModel.navigateToSettingDetailScreen.collectLatest {
@@ -199,6 +205,9 @@ private fun ObserveEvents(
                                     viewModel.parseRoute(it.action)?.let {
                                         navigator.navigate(it)
                                     }
+                                }
+                                SettingAction.EQUALIZER -> {
+                                    onEqualizerEvent()
                                 }
                                 SettingAction.SKIP_DURATION -> {
                                     onDurationEvent()
