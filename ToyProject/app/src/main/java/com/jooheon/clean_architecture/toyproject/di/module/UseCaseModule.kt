@@ -12,6 +12,8 @@ import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCaseImpl
+import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCase
+import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCase
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCaseImpl
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
@@ -29,14 +31,18 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideGithubApi(repository: GithubRepository): GithubUseCase =
+    fun provideGithubUseCase(repository: GithubRepository): GithubUseCase =
         GithubUseCaseImpl(repository)
 
     @Provides
     @Singleton
-    fun provideWikipediaApi(repository: WikipediaRepository): WikipediaUseCase =
+    fun provideWikipediaUseCase(repository: WikipediaRepository): WikipediaUseCase =
         WikipediaUseCaseImpl(repository)
 
+    @Provides
+    @Singleton
+    fun provideSubwayUseCase(repository: SubwayRepository): SubwayUseCase =
+        SubwayUseCaseImpl(repository)
 
     @Provides
     @Singleton

@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.toyproject.di.module
 
 import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
+import com.jooheon.clean_architecture.data.datasource.SubwayRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
 import com.jooheon.clean_architecture.data.datasource.WikipediaRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.local.MusicDataSource
@@ -34,6 +35,13 @@ class RepositoryModule {
         databaseSource: TempDataSource
     ): WikipediaRepository {
         return WikipediaRepositoryImpl(wikipediaRemoteDataSource, databaseSource)
+    }
+    @Provides
+    @Singleton
+    fun provideSubwayRepository(
+        subwayRemoteDataSource: SubwayRemoteDataSource,
+    ): SubwayRepository {
+        return SubwayRepositoryImpl(subwayRemoteDataSource)
     }
 
     @Provides

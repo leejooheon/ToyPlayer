@@ -2,12 +2,13 @@ package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
 import android.os.Build
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.toyproject.BuildConfig
 import com.jooheon.clean_architecture.toyproject.di.Constants
-import com.readystatesoftware.chuck.ChuckInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,37 +53,36 @@ object RetrofitModule {
 
     @Provides
     @Singleton
+    @Named(Constants.SUBWAY_RETROFIT)
+    fun providesSubwayRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.SUBWAY_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    @Singleton
     fun provideOkHttpClient(
         headersInterceptor: Interceptor,
         httpLoggingInterceptor: HttpLoggingInterceptor,
         authenticator: Authenticator,
         @ApplicationContext context: Context
-    ): OkHttpClient {
-        val okHttpClient: OkHttpClient
-        if(BuildConfig.DEBUG) {
-            val builder = OkHttpClient.Builder()
-                .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
-                .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
-                .authenticator(authenticator)
-                .addInterceptor(headersInterceptor)
-                .addNetworkInterceptor(httpLoggingInterceptor)
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                builder.addInterceptor(ChuckInterceptor(context))
-            }
-
-            okHttpClient = builder.build()
-        } else {
-            okHttpClient = OkHttpClient.Builder()
-                .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
-                .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
-                .authenticator(authenticator)
-                .addInterceptor(headersInterceptor)
+    ) = OkHttpClient.Builder()
+        .readTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
+        .connectTimeout(REQUEST_TIME_OUT, TimeUnit.SECONDS)
+        .authenticator(authenticator)
+        .addInterceptor(headersInterceptor)
+        .addNetworkInterceptor(httpLoggingInterceptor)
+        .addInterceptor(
+            ChuckerInterceptor.Builder(context)
+                .collector(ChuckerCollector(context))
+                .maxContentLength(250000L)
+                .redactHeaders(emptySet())
+                .alwaysReadResponseBody(false)
                 .build()
-        }
-
-        return okHttpClient
-    }
+        ).build()
 
     @Provides
     @Singleton

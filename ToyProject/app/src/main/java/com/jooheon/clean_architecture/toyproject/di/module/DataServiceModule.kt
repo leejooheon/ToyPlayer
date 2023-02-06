@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.toyproject.di.module
 
 import androidx.room.Room
 import com.jooheon.clean_architecture.data.api.GithubApi
+import com.jooheon.clean_architecture.data.api.SubwayApi
 import com.jooheon.clean_architecture.data.api.WikipediaApi
 import com.jooheon.clean_architecture.data.dao.parkingspot.ParkingSpotDatabase
 import com.jooheon.clean_architecture.toyproject.di.Constants
@@ -25,6 +26,10 @@ object DataServiceModule {
     @Provides
     @Singleton
     fun providesWikipediaApi(@Named(Constants.WIKI_RETROFIT) retrofit: Retrofit): WikipediaApi = retrofit.create(WikipediaApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesSubwayApi(@Named(Constants.SUBWAY_RETROFIT) retrofit: Retrofit): SubwayApi = retrofit.create(SubwayApi::class.java)
 
     @Provides
     @Singleton
