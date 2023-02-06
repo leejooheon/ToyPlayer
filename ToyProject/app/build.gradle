@@ -18,6 +18,7 @@ android {
         multiDexEnabled true
         buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
         buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
+        buildConfigField("String", "SUBWAY_URL", "\"http://swopenapi.seoul.go.kr/api/subway/\"")
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -85,7 +86,9 @@ dependencies {
     implementation(Libraries.retrofitConverter)
     implementation(Libraries.retrofitMock)
     implementation(Libraries.interceptor)
-    implementation(Libraries.chuckLogging)
+
+    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
 
     // Room
     implementation(Libraries.room)
