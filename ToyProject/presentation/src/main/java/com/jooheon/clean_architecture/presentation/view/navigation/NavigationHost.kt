@@ -37,7 +37,6 @@ import com.jooheon.clean_architecture.presentation.view.main.wikipedia.Wikipedia
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
 import com.jooheon.clean_architecture.presentation.view.setting.equalizer.EqualizerScreen
-import com.jooheon.clean_architecture.presentation.view.setting.language.LanguageScreen
 import com.jooheon.clean_architecture.presentation.view.setting.theme.ThemeScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
 import com.jooheon.clean_architecture.presentation.view.temp.TestScreen
@@ -123,7 +122,7 @@ internal fun FullScreenNavigationHost(
                 route = ScreenNavigation.Subway.route,
                 deepLinks = listOf(
                     navDeepLink {
-                        uriPattern = ScreenNavigation.Subway.route
+                        uriPattern =  ScreenNavigation.Subway.WidgetDeeplink
                     }
                 )
             ) {

@@ -36,6 +36,18 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/deeplink_prefix"
+                    android:scheme="app" />
+            </intent-filter>
         </activity>
 
         <receiver android:name="com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver"

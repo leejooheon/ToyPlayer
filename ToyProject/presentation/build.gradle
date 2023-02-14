@@ -26,6 +26,7 @@ android {
         minSdk = 24
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
+        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
     }
 
     buildTypes {

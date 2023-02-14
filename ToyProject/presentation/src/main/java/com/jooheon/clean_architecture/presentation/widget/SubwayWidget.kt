@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.presentation.widget
 
+import android.content.Intent
 import androidx.compose.material3.MaterialTheme
 import androidx.glance.text.Text
 import androidx.compose.runtime.Composable
@@ -7,20 +8,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.GlanceModifier
+import androidx.core.net.toUri
+import androidx.glance.*
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.unit.ColorProvider
-import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.glance.currentState
+import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
+import com.jooheon.clean_architecture.presentation.R
 
 internal class SubwayWidget: GlanceAppWidget() {
     override val stateDefinition: GlanceStateDefinition<List<SubWayInfo>> =
@@ -35,9 +38,33 @@ internal class SubwayWidget: GlanceAppWidget() {
                 .fillMaxSize()
                 .appWidgetBackground()
                 .background(color = MaterialTheme.colorScheme.background)
-                .padding(8.dp).clickable(actionRunCallback<SubwayInfoAction>())
+                .padding(8.dp)
+                .clickable(actionRunCallback<SubwayInfoAction>())
+//                .clickable(actionStartActivity(getSubwayIntent())),
         ) {
-
+            Row(
+                modifier = GlanceModifier
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .clickable(actionRunCallback<SubwayInfoAction>()),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    provider = ImageProvider(R.drawable.ic_logo_github),
+                    contentDescription = "",
+                    modifier = GlanceModifier
+                        .size(32.dp)
+                        .clickable(actionRunCallback<SubwayInfoAction>()),
+                )
+                Image(
+                    provider = ImageProvider(R.drawable.common_google_signin_btn_icon_dark),
+                    contentDescription = "",
+                    modifier = GlanceModifier
+                        .size(32.dp)
+                        .clickable(actionStartActivity(getSubwayIntent()))
+                )
+            }
             if(subwayInfoList.size != 2) {
                 EmptyListContent()
             } else {
@@ -58,6 +85,7 @@ internal class SubwayWidget: GlanceAppWidget() {
         LazyColumn {
             items(items = subwayInfoList) { subwayInfo ->
                 StationItem(subWayInfo = subwayInfo)
+
             }
         }
     }
@@ -142,7 +170,8 @@ internal class SubwayWidget: GlanceAppWidget() {
 //            )
         }
     }
-    
+
+    private fun getSubwayIntent(): Intent = Intent(Intent.ACTION_VIEW, ScreenNavigation.Subway.WidgetDeeplink.toUri())
     @Composable
     private fun parseColor(color: Color) = ColorProvider(color, color)
 

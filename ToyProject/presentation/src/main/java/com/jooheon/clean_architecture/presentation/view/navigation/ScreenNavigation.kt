@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.BuildConfig
 import com.jooheon.clean_architecture.presentation.R
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -25,7 +26,9 @@ sealed class ScreenNavigation(open val route: String) {
 
     object Splash: ScreenNavigation("splash")
     object Main: ScreenNavigation("main")
-    object Subway: ScreenNavigation("subway")
+    object Subway: ScreenNavigation("subway") {
+        const val WidgetDeeplink = BuildConfig.DEEPLINK_PREFIX + "/subway/widget"
+    }
 
     class Music {
         object AodPlayer: ScreenNavigation("aod_player")
