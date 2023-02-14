@@ -215,8 +215,8 @@ class MusicController @Inject constructor(
         }
     }
 
-    override fun loadMusic(scope: CoroutineScope) {
-        musicPlaylistUseCase.loadMusic(scope).whenReady { isReady ->
+    override fun loadPlaylist() {
+        musicPlaylistUseCase.loadPlaylist(applicationScope).whenReady { isReady ->
             _songs.tryEmit(musicPlaylistUseCase.allMusic)
             _currentSongQueue.tryEmit(musicPlaylistUseCase.allMusic) // FIXME: 수정!!!
         }

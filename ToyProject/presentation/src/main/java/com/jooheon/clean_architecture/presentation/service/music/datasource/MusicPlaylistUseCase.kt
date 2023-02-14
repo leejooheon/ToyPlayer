@@ -28,7 +28,7 @@ class MusicPlaylistUseCase @Inject constructor(
             } else field = value
         }
 
-    fun loadMusic(scope: CoroutineScope): MusicPlaylistUseCase {
+    fun loadPlaylist(scope: CoroutineScope): MusicPlaylistUseCase {
         state = State.STATE_INITIALIZING
 
         val uri = MusicUtil.localMusicStorageUri().toString()

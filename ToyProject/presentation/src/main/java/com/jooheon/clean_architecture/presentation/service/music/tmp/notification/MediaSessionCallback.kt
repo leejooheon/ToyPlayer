@@ -6,24 +6,25 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import com.jooheon.clean_architecture.presentation.service.music.MusicService
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MediaSessionCallback(
-    musicService: MusicService
+    private val serviceScope: CoroutineScope,
+    private val musicControllerUseCase: MusicControllerUseCase
 ) : MediaSessionCompat.Callback() {
     private val TAG = MusicService::class.java.simpleName + "@" + MediaSessionCallback::class.java.simpleName
-
-    private val scope = musicService.serviceScope
-    private val musicController = musicService.musicController
 
     override fun onCustomAction(action: String?, extras: Bundle?) {
         super.onCustomAction(action, extras)
         Log.d(TAG, "onCustomAction - $action")
 
-        scope.launch {
+        serviceScope.launch {
             when (action) {
-                CYCLE_REPEAT -> musicController.changeRepeatMode()
-                TOGGLE_SHUFFLE -> musicController.changeShuffleMode()
+                CYCLE_REPEAT -> musicControllerUseCase.onRepeatButtonPressed()
+                TOGGLE_SHUFFLE -> musicControllerUseCase.onShuffleButtonPressed()
             }
         }
     }
@@ -33,14 +34,13 @@ class MediaSessionCallback(
         Log.d(TAG, "onPlayFromMediaId - $mediaId")
         // MediaControllerTest 앱에서 Play 버튼 누를 시 호출된다.
 
-        scope.launch {
-            musicController.run {
-                songs.value.firstOrNull {
-                    it.id == mediaId?.toLongOrNull()
-                }?.also {
-                    play(it)
-                }
-            }
+        serviceScope.launch {
+            val musicState = musicControllerUseCase.musicState.value
+            val song = musicState.songs.firstOrNull {
+                it.id == mediaId?.toLongOrNull()
+            } ?: return@launch
+
+            musicControllerUseCase.onPlayPauseButtonPressed(song)
         }
     }
 
@@ -48,8 +48,8 @@ class MediaSessionCallback(
         super.onPlayFromUri(uri, extras)
         Log.d(TAG, "onPlayFromUri - ${uri}")
 
-        scope.launch {
-            musicController.play(uri)
+        serviceScope.launch {
+            musicControllerUseCase.play(uri)
         }
     }
 
@@ -59,14 +59,13 @@ class MediaSessionCallback(
 
         if(query == null) return
 
-        scope.launch {
-            musicController.run {
-                songs.value.firstOrNull {
-                    it.title.contains(query, true)
-                }?.also {
-                    play(it)
-                }
-            }
+        serviceScope.launch {
+            val musicState = musicControllerUseCase.musicState.value
+            val song = musicState.songs.firstOrNull {
+                it.title.contains(query, true)
+            } ?: return@launch
+
+            musicControllerUseCase.onPlayPauseButtonPressed(song)
         }
     }
 
@@ -79,9 +78,9 @@ class MediaSessionCallback(
         super.onPlay()
         Log.d(TAG, "onPlay")
 
-        scope.launch {
-            val currentMusic = musicController.currentPlayingMusic.value
-            musicController.play(currentMusic)
+        serviceScope.launch {
+            val musicState = musicControllerUseCase.musicState.value
+            musicControllerUseCase.onPlayPauseButtonPressed(musicState.currentPlayingMusic)
         }
     }
 
@@ -89,8 +88,8 @@ class MediaSessionCallback(
         super.onStop()
         Log.d(TAG, "onStop")
 
-        scope.launch {
-            musicController.stop()
+        serviceScope.launch {
+            musicControllerUseCase.onStop()
         }
     }
 
@@ -98,8 +97,8 @@ class MediaSessionCallback(
         super.onPause()
         Log.d(TAG, "onPause")
 
-        scope.launch {
-            musicController.pause()
+        serviceScope.launch {
+            musicControllerUseCase.onPause()
         }
     }
 
@@ -107,8 +106,8 @@ class MediaSessionCallback(
         super.onSkipToNext()
         Log.d(TAG, "onSkipToNext")
 
-        scope.launch {
-            musicController.next()
+        serviceScope.launch {
+            musicControllerUseCase.onNext()
         }
     }
 
@@ -116,8 +115,8 @@ class MediaSessionCallback(
         super.onSkipToPrevious()
         Log.d(TAG, "onSkipToPrevious")
 
-        scope.launch {
-            musicController.previous()
+        serviceScope.launch {
+            musicControllerUseCase.onPrevious()
         }
     }
 
@@ -125,10 +124,9 @@ class MediaSessionCallback(
         super.onSeekTo(pos)
         Log.d(TAG, "onSeekTo - $pos")
 
-        scope.launch {
-            musicController.snapTo(
-                duration = pos,
-                fromUser = true
+        serviceScope.launch {
+            musicControllerUseCase.snapTo(
+                duration = pos
             )
         }
     }

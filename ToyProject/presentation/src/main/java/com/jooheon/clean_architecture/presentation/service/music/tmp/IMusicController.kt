@@ -2,10 +2,9 @@ package com.jooheon.clean_architecture.presentation.service.music.tmp
 
 import android.net.Uri
 import com.jooheon.clean_architecture.domain.entity.Entity
-import kotlinx.coroutines.CoroutineScope
 
 interface IMusicController {
-    fun loadMusic(scope: CoroutineScope)
+    fun loadPlaylist()
     fun updateQueueSong(songs: List<Entity.Song>)
 
     suspend fun play(song: Entity.Song)

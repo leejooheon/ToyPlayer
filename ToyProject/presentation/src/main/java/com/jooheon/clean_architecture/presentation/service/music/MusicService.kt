@@ -20,7 +20,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.BuildConfig
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.extensions.MusicState
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver
 import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaSessionCallback
 import com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaSessionCallback.Companion.CYCLE_REPEAT
@@ -34,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,7 +42,7 @@ class MusicService: MediaBrowserServiceCompat() {
     private val TAG = MusicService::class.java.simpleName
 
     @Inject
-    lateinit var musicController: MusicController
+    lateinit var musicControllerUseCase: MusicControllerUseCase
 
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var mediaStyle: MediaStyle
@@ -60,7 +59,7 @@ class MusicService: MediaBrowserServiceCompat() {
         super.onCreate()
 
         Log.d(TAG, "onCreate")
-        Log.d(TAG, "musicController - ${musicController}")
+        Log.d(TAG, "musicControllerUseCase - ${musicControllerUseCase}")
         initialize()
     }
 
@@ -76,7 +75,9 @@ class MusicService: MediaBrowserServiceCompat() {
 
     override fun onLowMemory() {
         super.onLowMemory()
-        serviceScope.launch { musicController.stop() }
+        serviceScope.launch {
+            musicControllerUseCase.onStop()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -106,8 +107,7 @@ class MusicService: MediaBrowserServiceCompat() {
             context = this,
             notificationManager = notificationManager
         )
-
-        musicController.loadMusic(serviceScope)
+        musicControllerUseCase.onLoadPlaylist()
         setupMediaSession()
     }
 
@@ -141,7 +141,12 @@ class MusicService: MediaBrowserServiceCompat() {
             isActive = true
             setSessionActivity(activityIntent)
             setMediaButtonReceiver(mediaButtonReceiverPendingIntent)
-            setCallback(MediaSessionCallback(this@MusicService))
+            setCallback(
+                MediaSessionCallback(
+                    serviceScope = serviceScope,
+                    musicControllerUseCase = musicControllerUseCase
+                )
+            )
         }.also {
             sessionToken = it.sessionToken
             mediaStyle = MediaStyle().setMediaSession(it.sessionToken)

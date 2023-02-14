@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.presentation.service.music.tmp
 
 import android.app.Activity
 import android.content.*
+import android.net.Uri
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -32,14 +33,11 @@ class MusicControllerUseCase @Inject constructor(
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
-    private val _navigateToPlayListScreen = Channel<Unit>()
+    private val _navigateToPlayListScreen = Channel<Unit>() // FIXME: MusicPlayerViewModel로 이동하자!!!
     val navigateToPlayListScreen = _navigateToPlayListScreen.receiveAsFlow()
 
-    private val _navigateToAodPlayer = Channel<Unit>()
+    private val _navigateToAodPlayer = Channel<Unit>() // FIXME: MusicPlayerViewModel로 이동하자!!!
     val navigateToAodPlayer = _navigateToAodPlayer.receiveAsFlow()
-
-    private val _expandTest = MutableSharedFlow<Boolean>()
-    val expandTest = _expandTest.asSharedFlow()
 
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
@@ -146,6 +144,9 @@ class MusicControllerUseCase @Inject constructor(
         }
     }
 
+    fun play(uri: Uri?) = applicationScope.launch(Dispatchers.IO) {
+        musicController.play(uri)
+    }
     fun onPlayPauseButtonPressed(song: Entity.Song) = applicationScope.launch(Dispatchers.IO) {
         Log.d(TAG, "onPlayPauseButtonPressed")
         if(musicController.isPlaying.value) {
@@ -153,6 +154,17 @@ class MusicControllerUseCase @Inject constructor(
         } else {
             musicController.play(song)
         }
+    }
+
+    fun onLoadPlaylist() = applicationScope.launch(Dispatchers.IO) {
+        musicController.loadPlaylist()
+    }
+
+    fun onStop() = applicationScope.launch(Dispatchers.IO) {
+        musicController.stop()
+    }
+    fun onPause() = applicationScope.launch(Dispatchers.IO) {
+        musicController.pause()
     }
 
     fun onNext() = applicationScope.launch(Dispatchers.IO) {
@@ -165,10 +177,12 @@ class MusicControllerUseCase @Inject constructor(
 
     fun onPlayListButtonPressed() = applicationScope.launch(Dispatchers.Main) {
         _navigateToPlayListScreen.send(Unit)
+        // FIXME: MusicPlayerViewModel로 이동하자!!!
     }
 
     fun onMusicBottomBarPressed() = applicationScope.launch(Dispatchers.Main) {
         _navigateToAodPlayer.send(Unit)
+        // FIXME: MusicPlayerViewModel로 이동하자!!!
     }
 
     fun onShuffleButtonPressed() = applicationScope.launch(Dispatchers.IO) {
@@ -182,16 +196,12 @@ class MusicControllerUseCase @Inject constructor(
         musicController.changeSkipDuration()
     }
 
-    fun onExpandCollapsed() = applicationScope.launch(Dispatchers.IO) {
-
-        _expandTest.emit(!expandTest.last())
-    }
-
     fun snapTo(duration: Long) = applicationScope.launch(Dispatchers.Main) {
         musicController.snapTo(
             duration = duration,
             fromUser = true
         )
+        // FIXME: MusicPlayerViewModel로 이동하자!!!
     }
 
     fun bindToService(context: Context): ServiceToken? {
