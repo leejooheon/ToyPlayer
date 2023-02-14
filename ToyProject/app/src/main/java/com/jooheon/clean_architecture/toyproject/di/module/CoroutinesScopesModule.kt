@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
+// 참고자료: https://medium.com/androiddevelopers/create-an-application-coroutinescope-using-hilt-dd444e721528
 @Module
 @InstallIn(SingletonComponent::class)
 object CoroutinesScopesModule {

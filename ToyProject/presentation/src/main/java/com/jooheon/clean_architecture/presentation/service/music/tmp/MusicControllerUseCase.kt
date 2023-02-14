@@ -144,9 +144,14 @@ class MusicControllerUseCase @Inject constructor(
         }
     }
 
-    fun play(uri: Uri?) = applicationScope.launch(Dispatchers.IO) {
-        musicController.play(uri)
+    fun onLoadPlaylist() = applicationScope.launch(Dispatchers.IO) {
+        musicController.loadPlaylist()
     }
+
+    fun updatePlaylist(songs: List<Entity.Song>) = applicationScope.launch(Dispatchers.IO) {
+        musicController.updatePlaylist(songs)
+    }
+
     fun onPlayPauseButtonPressed(song: Entity.Song) = applicationScope.launch(Dispatchers.IO) {
         Log.d(TAG, "onPlayPauseButtonPressed")
         if(musicController.isPlaying.value) {
@@ -156,15 +161,15 @@ class MusicControllerUseCase @Inject constructor(
         }
     }
 
-    fun onLoadPlaylist() = applicationScope.launch(Dispatchers.IO) {
-        musicController.loadPlaylist()
+    fun play(uri: Uri?) = applicationScope.launch(Dispatchers.IO) {
+        musicController.play(uri)
     }
 
-    fun onStop() = applicationScope.launch(Dispatchers.IO) {
-        musicController.stop()
-    }
     fun onPause() = applicationScope.launch(Dispatchers.IO) {
         musicController.pause()
+    }
+    fun onStop() = applicationScope.launch(Dispatchers.IO) {
+        musicController.stop()
     }
 
     fun onNext() = applicationScope.launch(Dispatchers.IO) {

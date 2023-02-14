@@ -5,7 +5,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 
 interface IMusicController {
     fun loadPlaylist()
-    fun updateQueueSong(songs: List<Entity.Song>)
+    fun updatePlaylist(songs: List<Entity.Song>)
 
     suspend fun play(song: Entity.Song)
     suspend fun play(_uri: Uri?)

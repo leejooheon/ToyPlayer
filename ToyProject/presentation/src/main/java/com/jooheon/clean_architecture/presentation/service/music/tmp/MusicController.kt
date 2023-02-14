@@ -49,7 +49,6 @@ class MusicController @Inject constructor(
     private val _currentPlayingMusic = MutableStateFlow(Entity.Song.emptySong)
     val currentPlayingMusic: StateFlow<Entity.Song> = _currentPlayingMusic
 
-
     private val _repeatMode = MutableStateFlow(RepeatMode.REPEAT_OFF)
     val repeatMode: StateFlow<RepeatMode> = _repeatMode
 
@@ -80,7 +79,7 @@ class MusicController @Inject constructor(
         }
     }
 
-    override fun updateQueueSong(songs: List<Entity.Song>) {
+    override fun updatePlaylist(songs: List<Entity.Song>) {
         Log.d(TAG, "updateQueueSong")
     }
 
