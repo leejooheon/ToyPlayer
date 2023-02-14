@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface SubwayUseCase: BaseUseCase {
     fun getStationInfo(stationName: String): Flow<Resource<Entity.Station>>
+    suspend fun getStationInfoSync(stationName: String): Resource<Entity.Station>
 }

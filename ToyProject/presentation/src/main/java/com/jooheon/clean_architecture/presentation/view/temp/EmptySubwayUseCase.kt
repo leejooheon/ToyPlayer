@@ -9,4 +9,8 @@ class EmptySubwayUseCase: SubwayUseCase {
     override fun getStationInfo(stationName: String): Flow<Resource<Entity.Station>> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getStationInfoSync(stationName: String): Resource<Entity.Station> {
+        TODO("Not yet implemented")
+    }
 }

@@ -25,7 +25,7 @@ sealed class ScreenNavigation(open val route: String) {
 
     object Splash: ScreenNavigation("splash")
     object Main: ScreenNavigation("main")
-
+    object Subway: ScreenNavigation("subway")
 
     class Music {
         object AodPlayer: ScreenNavigation("aod_player")
@@ -36,6 +36,7 @@ sealed class ScreenNavigation(open val route: String) {
         object Main: ScreenNavigation("setting_main")
         object Launguage: ScreenNavigation("setting_language")
         object Theme: ScreenNavigation("setting_theme")
+        object Equalizer: ScreenNavigation("setting_equalizer")
     }
 
     class Detail {

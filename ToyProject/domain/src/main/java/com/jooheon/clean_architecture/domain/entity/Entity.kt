@@ -276,6 +276,26 @@ sealed class Entity: java.io.Serializable {
             val trainLineNm: String?,
             val updnLine: String?
         ): Entity()
+
+        companion object {
+            val DEFAULT_VALUE = Station(
+                errorMessage = ErrorMessage(
+                    code = null,
+                    developerMessage = null,
+                    link = null,
+                    message = null,
+                    status = null,
+                    total = null
+                ),
+                realtimeArrivalList = listOf(
+                    RealtimeArrival(
+                    null, null, null,null,null,null,null,null, null,
+                        null,null,null,null,null,null,null,null,
+                    null,null,null,null,null
+                    )
+                )
+            )
+        }
     }
 
     // update equals and hashcode if fields changes

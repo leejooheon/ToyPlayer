@@ -61,4 +61,8 @@
     <string name="no_audio_ID">"먼저 노래를 재생하고 다시 시도해 보십시오."</string>
     <string name="no_equalizer">이퀄라이저가 없습니다.</string>
 
+    <!-- widget -->
+    <string name="glance_widget_description">출퇴근 지하철 정보</string>
+    <string name="glance_widget_loading">Loading</string>
+
 </resources>

@@ -20,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
@@ -35,9 +36,11 @@ import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScr
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaDatailScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
+import com.jooheon.clean_architecture.presentation.view.setting.equalizer.EqualizerScreen
 import com.jooheon.clean_architecture.presentation.view.setting.language.LanguageScreen
 import com.jooheon.clean_architecture.presentation.view.setting.theme.ThemeScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
+import com.jooheon.clean_architecture.presentation.view.temp.TestScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @ExperimentalComposeUiApi
@@ -116,12 +119,27 @@ internal fun FullScreenNavigationHost(
                 SettingScreen(navigator = navController)
             }
 
-            composable(ScreenNavigation.Setting.Launguage.route) {
-                LanguageScreen(navigator = navController)
+            composable(
+                route = ScreenNavigation.Subway.route,
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern = ScreenNavigation.Subway.route
+                    }
+                )
+            ) {
+                TestScreen()
             }
 
             composable(ScreenNavigation.Setting.Theme.route) {
                 ThemeScreen(navigator = navController)
+            }
+
+            composable(ScreenNavigation.Setting.Equalizer.route) {
+                EqualizerScreen(navigator = navController)
+            }
+
+            composable(ScreenNavigation.Setting.Equalizer.route) {
+                EqualizerScreen(navigator = navController)
             }
 
             composable(

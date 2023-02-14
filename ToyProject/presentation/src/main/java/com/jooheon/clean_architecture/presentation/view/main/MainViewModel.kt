@@ -3,15 +3,20 @@ package com.jooheon.clean_architecture.presentation.view.main
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
+import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,8 +45,22 @@ class MainViewModel @Inject constructor(
         Log.d(TAG, "onNavigationClicked")
     }
 
-    fun onFavoriteClicked() {
+    fun onFavoriteClicked() = viewModelScope.launch(Dispatchers.IO) {
         Log.d(TAG, "onFavoriteClicked")
+        val stationName = "판교"
+        subwayUseCase
+            .getStationInfo(stationName)
+            .onEach { resource ->
+                if(resource is Resource.Success) {
+                    Log.d(TAG, "Success: ${resource.value}")
+                } else if(resource is Resource.Failure) {
+                    Log.d(TAG, "failure: ${resource.message}")
+                } else if(resource is Resource.Loading){
+                    Log.d(TAG, "Loading")
+                }
+                
+                handleResponse(resource)
+            }.launchIn(viewModelScope)
     }
 
     fun onSearchClicked() {
