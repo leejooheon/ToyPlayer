@@ -10,7 +10,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.extensions.uri
 import com.jooheon.clean_architecture.presentation.service.music.MusicService
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.domain.entity.Entity.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.Entity.ShuffleMode
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
@@ -19,13 +19,13 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
 import java.lang.Runnable
 import javax.inject.Inject
 
 class MusicController @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val musicPlayerUseCase: MusicPlayerUseCase,
+    private val applicationScope: CoroutineScope,
+    private val musicPlaylistUseCase: MusicPlaylistUseCase,
     private val settingUseCase: SettingUseCase,
     isPreview: Boolean = false
 ) : IMusicController{
@@ -63,13 +63,13 @@ class MusicController @Inject constructor(
     val skipState = _skipState.asStateFlow()
     fun audioSessionId() = exoPlayer.audioSessionId
 
-    val timePassed = flow {
-        while (true) {
-            val duration = if (exoPlayer.duration != -1L) exoPlayer.currentPosition else 0L
-            emit(duration)
-            delay(500L)
-        }
-    }
+//    val timePassed = flow {
+//        while (true) {
+//            val duration = if (exoPlayer.duration != -1L) exoPlayer.currentPosition else 0L
+//            emit(duration)
+//            delay(500L)
+//        }
+//    }
 
     init {
         if(isPreview) {
@@ -216,9 +216,9 @@ class MusicController @Inject constructor(
     }
 
     override fun loadMusic(scope: CoroutineScope) {
-        musicPlayerUseCase.loadMusic(scope).whenReady { isReady ->
-            _songs.tryEmit(musicPlayerUseCase.allMusic)
-            _currentSongQueue.tryEmit(musicPlayerUseCase.allMusic) // FIXME: 수정!!!
+        musicPlaylistUseCase.loadMusic(scope).whenReady { isReady ->
+            _songs.tryEmit(musicPlaylistUseCase.allMusic)
+            _currentSongQueue.tryEmit(musicPlaylistUseCase.allMusic) // FIXME: 수정!!!
         }
     }
 
@@ -250,7 +250,7 @@ class MusicController @Inject constructor(
                             }
                             ExoPlayer.STATE_ENDED -> {
                                 Log.d(TAG, "STATE_ENDED")
-                                CoroutineScope(dispatcher).launch {
+                                applicationScope.launch {
                                     this@MusicController.next()
                                 }
                             }

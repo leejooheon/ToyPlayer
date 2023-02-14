@@ -5,33 +5,27 @@ import android.content.*
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewModelScope
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.base.extensions.DiName
 import com.jooheon.clean_architecture.presentation.service.music.MusicService
 import com.jooheon.clean_architecture.presentation.service.music.extensions.*
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.presentation.service.music.MusicService.Companion.MUSIC_STATE
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import javax.inject.Singleton
 
-@HiltViewModel
+@Singleton
 class MusicPlayerViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    @Named(DiName.IO) private val dispatcher: CoroutineDispatcher,
+    private val applicationScope: CoroutineScope,
     private val musicController: MusicController
-): BaseViewModel() {
-    override val TAG = MusicService::class.java.simpleName + "@" + MusicPlayerViewModel::class.java.simpleName
-
+) {
+    private val TAG = MusicService::class.java.simpleName + "@" + MusicPlayerViewModel::class.java.simpleName
+    
     private var musicService: MusicService? = null
     private val connectionMap = WeakHashMap<Context, ServiceConnection>()
 
@@ -76,25 +70,25 @@ class MusicPlayerViewModel @Inject constructor(
         MusicService.startService(context, serviceIntent)
     }
 
-    private fun collectMusicState() = viewModelScope.launch(dispatcher) {
+    private fun collectMusicState() = applicationScope.launch(Dispatchers.IO) {
         musicState.collectLatest {
             commandToService()
         }
     }
 
-    private fun collectDuration() = viewModelScope.launch {
+    private fun collectDuration() = applicationScope.launch {
         // 손으로 Swipe했을때 호출
         musicController.currentDuration.collectLatest { currentDuration ->
             _timePassed.update { currentDuration }
         }
     }
 
-    private fun collectTimePassed() = viewModelScope.launch {
-        musicController.timePassed.collectLatest { timePassed ->
-            _timePassed.update { timePassed }
-        }
+    private fun collectTimePassed() = applicationScope.launch {
+//        musicController.timePassed.collectLatest { timePassed ->
+//            _timePassed.update { timePassed }
+//        }
     }
-    private fun collectSongList() = viewModelScope.launch {
+    private fun collectSongList() = applicationScope.launch {
         musicController.songs.collectLatest { songs ->
             _musicState.update {
                 it.copy(
@@ -103,7 +97,7 @@ class MusicPlayerViewModel @Inject constructor(
             }
         }
     }
-    private fun collectCurrentSong() = viewModelScope.launch {
+    private fun collectCurrentSong() = applicationScope.launch {
         musicController.currentPlayingMusic.collectLatest { currentPlayingMusic ->
             Log.d(TAG, "collectCurrentSong - $currentPlayingMusic")
             _timePassed.update { 0L }
@@ -114,7 +108,7 @@ class MusicPlayerViewModel @Inject constructor(
             }
         }
     }
-    private fun collectIsPlaying() = viewModelScope.launch {
+    private fun collectIsPlaying() = applicationScope.launch {
         musicController.isPlaying.collectLatest { isPlaying ->
             _musicState.update {
                 it.copy(
@@ -123,7 +117,7 @@ class MusicPlayerViewModel @Inject constructor(
             }
         }
     }
-    private fun collectRepeatMode() = viewModelScope.launch {
+    private fun collectRepeatMode() = applicationScope.launch {
         musicController.repeatMode.collectLatest { repeatMode ->
             _musicState.update {
                 it.copy(
@@ -132,7 +126,7 @@ class MusicPlayerViewModel @Inject constructor(
             }
         }
     }
-    private fun collectShuffleMode() = viewModelScope.launch {
+    private fun collectShuffleMode() = applicationScope.launch {
         musicController.shuffleMode.collectLatest { shuffleMode ->
             _musicState.update {
                 it.copy(
@@ -142,7 +136,7 @@ class MusicPlayerViewModel @Inject constructor(
         }
     }
 
-    private fun collectSkipDuration() = viewModelScope.launch {
+    private fun collectSkipDuration() = applicationScope.launch {
         musicController.skipState.collectLatest { skipDuration ->
             _musicState.update {
                 it.copy(
@@ -152,7 +146,7 @@ class MusicPlayerViewModel @Inject constructor(
         }
     }
 
-    fun onPlayPauseButtonPressed(song: Entity.Song) = viewModelScope.launch(Dispatchers.IO) {
+    fun onPlayPauseButtonPressed(song: Entity.Song) = applicationScope.launch(Dispatchers.IO) {
         Log.d(TAG, "onPlayPauseButtonPressed")
         if(musicController.isPlaying.value) {
             musicController.stop()
@@ -161,39 +155,39 @@ class MusicPlayerViewModel @Inject constructor(
         }
     }
 
-    fun onNext() = viewModelScope.launch(Dispatchers.IO) {
+    fun onNext() = applicationScope.launch(Dispatchers.IO) {
         musicController.next()
     }
 
-    fun onPrevious() = viewModelScope.launch(Dispatchers.IO) {
+    fun onPrevious() = applicationScope.launch(Dispatchers.IO) {
         musicController.previous()
     }
 
-    fun onPlayListButtonPressed() = viewModelScope.launch(Dispatchers.Main) {
+    fun onPlayListButtonPressed() = applicationScope.launch(Dispatchers.Main) {
         _navigateToPlayListScreen.send(Unit)
     }
 
-    fun onMusicBottomBarPressed() = viewModelScope.launch(Dispatchers.Main) {
+    fun onMusicBottomBarPressed() = applicationScope.launch(Dispatchers.Main) {
         _navigateToAodPlayer.send(Unit)
     }
 
-    fun onShuffleButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
+    fun onShuffleButtonPressed() = applicationScope.launch(Dispatchers.IO) {
         musicController.changeShuffleMode()
     }
-    fun onRepeatButtonPressed() = viewModelScope.launch(Dispatchers.IO) {
+    fun onRepeatButtonPressed() = applicationScope.launch(Dispatchers.IO) {
         musicController.changeRepeatMode()
     }
 
-    fun onSkipDurationChanged() = viewModelScope.launch(Dispatchers.IO) {
+    fun onSkipDurationChanged() = applicationScope.launch(Dispatchers.IO) {
         musicController.changeSkipDuration()
     }
 
-    fun onExpandCollapsed() = viewModelScope.launch(Dispatchers.IO) {
+    fun onExpandCollapsed() = applicationScope.launch(Dispatchers.IO) {
 
         _expandTest.emit(!expandTest.last())
     }
 
-    fun snapTo(duration: Long) = viewModelScope.launch(Dispatchers.Main) {
+    fun snapTo(duration: Long) = applicationScope.launch(Dispatchers.Main) {
         musicController.snapTo(
             duration = duration,
             fromUser = true
@@ -238,11 +232,6 @@ class MusicPlayerViewModel @Inject constructor(
         if (connectionMap.isEmpty()) {
             musicService = null
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-//        musicPlayerRemote.unsubscribe(MEDIA_ID_ROOT)
     }
 
     private val serviceIntent = Intent(context, MusicService::class.java)

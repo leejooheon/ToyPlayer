@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.toyproject.di.module
 
-import android.content.Context
 import com.jooheon.clean_architecture.domain.repository.*
 import com.jooheon.clean_architecture.domain.usecase.firebase.FirebaseTokenUseCase
 import com.jooheon.clean_architecture.domain.usecase.firebase.FirebaseTokenUseCaseImpl
@@ -8,20 +7,15 @@ import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCaseImpl
-import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCase
-import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCase
 import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCase
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCaseImpl
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -56,25 +50,6 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideMusicUseCase(repository: MusicRepository): MusicUseCase =
-        MusicUseCaseImpl(repository)
-
-    @Provides
-    @Singleton
-    fun providesMusicPlayerUseCase(
-        musicUseCase: MusicUseCase
-    ): MusicPlayerUseCase = MusicPlayerUseCase(musicUseCase)
-
-    @Provides
-    @Singleton
     fun provideSettingUseCase(settingRepository: SettingRepository): SettingUseCase =
         SettingUseCaseImpl(settingRepository)
-
-    @Provides
-    @Singleton
-    fun provideMusicController(
-        @ApplicationContext context: Context,
-        musicPlayerUseCase: MusicPlayerUseCase,
-        settingUseCase: SettingUseCase
-    ) = MusicController(context, musicPlayerUseCase, settingUseCase)
 }

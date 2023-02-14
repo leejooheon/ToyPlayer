@@ -31,10 +31,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
-    private val musicPlayerViewModel: MusicPlayerViewModel by viewModels()
+    @Inject lateinit var musicPlayerViewModel: MusicPlayerViewModel
+
     private val settingViewModel: SettingViewModel by viewModels()
     private var serviceToken: MusicPlayerViewModel.ServiceToken? = null
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)

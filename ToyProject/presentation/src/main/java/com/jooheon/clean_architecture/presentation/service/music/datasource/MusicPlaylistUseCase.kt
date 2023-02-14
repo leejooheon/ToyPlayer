@@ -9,14 +9,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
-class MusicPlayerUseCase @Inject constructor(
+class MusicPlaylistUseCase @Inject constructor(
     private val musicUseCase: MusicUseCase,
 ) {
     var allMusic: List<Entity.Song> = emptyList()
 
     private val onReadyListeners = mutableListOf<(Boolean) -> Unit>()
 
-    protected var state: State = State.STATE_CREATED
+    private var state: State = State.STATE_CREATED
         set(value) {
             if (value == State.STATE_INITIALIZED || value == State.STATE_ERROR) {
                 synchronized(onReadyListeners) {
@@ -28,7 +28,7 @@ class MusicPlayerUseCase @Inject constructor(
             } else field = value
         }
 
-    fun loadMusic(scope: CoroutineScope): MusicPlayerUseCase {
+    fun loadMusic(scope: CoroutineScope): MusicPlaylistUseCase {
         state = State.STATE_INITIALIZING
 
         val uri = MusicUtil.localMusicStorageUri().toString()
