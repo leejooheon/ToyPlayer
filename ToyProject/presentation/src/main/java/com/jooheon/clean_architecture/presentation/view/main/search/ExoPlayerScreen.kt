@@ -14,29 +14,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.music.EmptySongItem
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicItem
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "PlayerScreen"
 @ExperimentalPermissionsApi
 @Composable
 fun ExoPlayerScreen(
-    viewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
+    viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     isPreview: Boolean = false
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
-
-    val uiState by viewModel.musicState.collectAsState()
+    val musicPlayerViewModel = viewModel.musicPlayerViewModel
+    val uiState by musicPlayerViewModel.musicState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -82,7 +84,7 @@ fun ExoPlayerScreen(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                         .height(96.dp),
                     song = song,
-                    onItemClick = viewModel::onPlayPauseButtonPressed
+                    onItemClick = musicPlayerViewModel::onPlayPauseButtonPressed
                 )
             }
         }
@@ -120,14 +122,23 @@ private fun ObserveLifecycleEvent(
 @Composable
 fun PreviewSearchScreen() {
     val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(), 
+            isPreview = true
+        )
     )
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
 
     PreviewTheme(false) {
-        ExoPlayerScreen(musicPlayerViewModel, true)
+        ExoPlayerScreen(viewModel, true)
     }
 }

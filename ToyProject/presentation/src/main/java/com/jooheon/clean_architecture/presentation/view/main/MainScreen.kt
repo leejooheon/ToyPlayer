@@ -40,7 +40,7 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.MainActivity
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 
@@ -54,6 +54,7 @@ import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigat
 import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -75,9 +76,7 @@ fun sharedViewModel() = LocalContext.current as MainActivity
 fun MainScreen(
     navigator: NavController,
     viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
-    musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
 ) {
-    Log.d(TAG, "viewModel: ${musicPlayerViewModel}")
     val bottomNavController = rememberAnimatedNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
@@ -106,7 +105,7 @@ fun MainScreen(
 
         MusicBar(
             navigator = navigator,
-            viewModel = musicPlayerViewModel,
+            viewModel = viewModel.musicPlayerViewModel,
             modifier = Modifier
                 .padding(bottom = bottomBarPadding.value + 2.dp)
                 .align(Alignment.BottomCenter)
@@ -118,7 +117,7 @@ fun MainScreen(
     ObserveEvents(
         navigator = navigator,
         mainViewModel = viewModel,
-        musicPlayerViewModel = musicPlayerViewModel
+        musicPlayerViewModel = viewModel.musicPlayerViewModel,
     )
 }
 
@@ -267,7 +266,8 @@ fun TopBar(
                 Icon(
                     Icons.Filled.Menu,
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = null)
+                    contentDescription = null
+                )
             }
         },
         actions = {
@@ -382,14 +382,23 @@ fun RegisterBackPressedHandler (
 @Composable
 private fun PreviewMainScreen() {
     val context = LocalContext.current
-    val viewModel = MainViewModel(EmptyMusicUseCase())
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(),
+            isPreview = true
+        )
     )
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+
     PreviewTheme(false) {
-        MainScreen(NavController(context), viewModel, musicPlayerViewModel)
+        MainScreen(NavController(context), viewModel)
     }
 }

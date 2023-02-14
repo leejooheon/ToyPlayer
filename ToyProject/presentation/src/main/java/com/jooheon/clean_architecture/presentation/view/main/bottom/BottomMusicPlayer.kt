@@ -20,7 +20,7 @@ import androidx.constraintlayout.compose.MotionScene
 import androidx.constraintlayout.compose.layoutId
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
@@ -31,6 +31,7 @@ import com.jooheon.clean_architecture.presentation.view.main.music.PlayListButto
 import com.jooheon.clean_architecture.presentation.view.main.music.PlayPauseButton
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "MusicBottomBar"
@@ -204,11 +205,19 @@ private fun MusicBottomBarForMotion(
 @Composable
 private fun MotionLayoutTestPreview() {
     val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(), 
+            isPreview = true
+        )
     )
     PreviewTheme(false) {
         MotionLayoutTest(viewModel = musicPlayerViewModel)

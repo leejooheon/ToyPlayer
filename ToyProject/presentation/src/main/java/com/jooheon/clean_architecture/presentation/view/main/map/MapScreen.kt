@@ -22,6 +22,9 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
@@ -30,6 +33,10 @@ import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private val DEFAULT_LATLNG:LatLng = LatLng(37.5033311460182, 126.94775238633156)
@@ -199,11 +206,25 @@ private fun ObserveEvents(
 @Composable
 private fun PreviewMapScreen() {
     val context = LocalContext.current
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
+    val musicPlayerViewModel = MusicPlayerViewModel(
+        context = context,
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context,
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(),
+            isPreview = true
+        )
+    )
     val viewModel = MapViewModel(EmptyParkingSpotUseCase())
     PreviewTheme(true) {
         MapScreen(
             navigator = NavController(context),
-            sharedViewModel = MainViewModel(EmptyMusicUseCase()),
+            sharedViewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel),
             viewModel = viewModel,
             isPreview = true
         )

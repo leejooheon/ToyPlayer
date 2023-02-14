@@ -20,7 +20,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
@@ -28,12 +28,15 @@ import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.home.repo.GithubRepositoryItem
+import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,10 +48,10 @@ private const val TAG = "HomeScreen"
 fun HomeScreen(
     navigator: NavController,
     githubViewModel: GithubViewModel = hiltViewModel(),
-    viewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
+    viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     isPreview: Boolean = false
 ) {
-    Log.d(TAG, "MusicPlayerViewModel: ${viewModel}")
+    Log.d(TAG, "MusicPlayerViewModel: ${viewModel.musicPlayerViewModel}")
     val localFocusManager = LocalFocusManager.current
     val githubId = githubViewModel.githubId.collectAsState()
 
@@ -149,15 +152,24 @@ private fun ObserveEvents(
 @Composable
 private fun HomeScreenPreview() {
     val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(), 
+            isPreview = true
+        )
     )
+    val mainViewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
 
     val viewModel = GithubViewModel(EmptyGithubUseCase())
     PreviewTheme(true) {
-        HomeScreen(NavController(context), viewModel, musicPlayerViewModel, true)
+        HomeScreen(NavController(context), viewModel, mainViewModel, true)
     }
 }

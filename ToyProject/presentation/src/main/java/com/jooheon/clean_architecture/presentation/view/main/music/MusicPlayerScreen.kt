@@ -22,23 +22,26 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
+import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicControlButtons
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicProgress
 import com.jooheon.clean_architecture.presentation.view.main.music.OtherButtons
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun MusicPlayerScreen(
     navigator: NavController,
-    viewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
+    viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
 ) {
     Card(
         shape = RoundedCornerShape(0),
@@ -47,7 +50,7 @@ fun MusicPlayerScreen(
         ),
         modifier = Modifier.zIndex(2f)
     ) {
-        AodPlayer(viewModel = viewModel)
+        AodPlayer(viewModel = viewModel.musicPlayerViewModel)
     }
 }
 
@@ -134,15 +137,25 @@ private fun AodPlayer(viewModel: MusicPlayerViewModel) {
 @Composable
 private fun PreviewAodPlayerPreview() {
     val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(), 
+            isPreview = true
+        )
     )
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
     PreviewTheme(false) {
-        AodPlayer(
-            viewModel = musicPlayerViewModel
+        MusicPlayerScreen(
+            navigator = NavController(context),
+            viewModel = viewModel
         )
     }
 }

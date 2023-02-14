@@ -29,16 +29,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlayerUseCase
+import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
+import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -48,7 +51,7 @@ import kotlinx.coroutines.launch
 fun SettingScreen(
     navigator: NavController,
     viewModel: SettingViewModel = hiltViewModel(sharedViewModel()),
-    musicPlayerViewModel: MusicPlayerViewModel = hiltViewModel(sharedViewModel()),
+    mainViewModel: MainViewModel = hiltViewModel(sharedViewModel()),
 ) {
     val context = LocalContext.current
     val skipDuration = viewModel.skipState.collectAsState()
@@ -65,7 +68,7 @@ fun SettingScreen(
                 currentState = skipDuration.value,
                 onChanged = {
                     viewModel.onSkipItemClick(it)
-                    musicPlayerViewModel.onSkipDurationChanged()
+                    mainViewModel.musicPlayerViewModel.onSkipDurationChanged()
                 },
                 onDismiss = { dialogState = false }
             )
@@ -117,7 +120,7 @@ fun SettingScreen(
             dialogState = true
         },
         onEqualizerEvent = {
-            val sessionId = musicPlayerViewModel.audioSessionId()
+            val sessionId = mainViewModel.musicPlayerViewModel.audioSessionId()
             viewModel.onEqualizerClick(context, sessionId)
         }
     )
@@ -309,18 +312,27 @@ private fun PreviewSettingListItem() {
 @Preview
 private fun PreviewSettingScreen() {
     val context = LocalContext.current
-    val musicPlayerUseCase = MusicPlayerUseCase(EmptyMusicUseCase())
+    val scope = CoroutineScope(Dispatchers.Main)
+
+    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
 
     val musicPlayerViewModel = MusicPlayerViewModel(
         context = context,
-        dispatcher= Dispatchers.IO,
-        musicController = MusicController(context, musicPlayerUseCase, EmptySettingUseCase(), true)
+        applicationScope = scope,
+        musicController = MusicController(
+            context = context, 
+            applicationScope = scope,
+            musicPlaylistUseCase = musicPlaylistUseCase,
+            settingUseCase = EmptySettingUseCase(), 
+            isPreview = true
+        )
     )
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
     PreviewTheme(false) {
         SettingScreen(
             navigator = NavController(context),
             viewModel = SettingViewModel(EmptySettingUseCase()),
-            musicPlayerViewModel = musicPlayerViewModel,
+            mainViewModel = viewModel,
         )
     }
 }
