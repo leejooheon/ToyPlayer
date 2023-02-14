@@ -5,6 +5,9 @@ object Libraries { // 각각의 모듈에서 중복된 라이브러리 항목만
     const val hiltDaggerCompiler = "com.google.dagger:hilt-android-compiler:$hilt_version"
     const val hiltForCompose = "androidx.hilt:hilt-navigation-compose:1.0.0"  // option: hilt <-> compose
 
+    // hilt worker
+    const val hiltWorker = "androidx.hilt:hilt-work:1.0.0"
+    const val hiltCompiler = "androidx.hilt:hilt-compiler:1.0.0" // kapt
     // coroutine
     const val coroutine_version = "1.6.4"
     const val coroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"

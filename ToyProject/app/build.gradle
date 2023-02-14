@@ -74,6 +74,10 @@ dependencies {
     implementation(Libraries.hilt)
     kapt(Libraries.hiltDaggerCompiler)
 
+    // hilt_worker
+    implementation(Libraries.hiltWorker)
+    kapt(Libraries.hiltCompiler)
+
     // coroutine
     implementation(Libraries.coroutineCore)
     implementation(Libraries.coroutineAndroid)

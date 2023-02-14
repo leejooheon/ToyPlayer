@@ -64,6 +64,10 @@ dependencies {
     implementation(Libraries.hiltForCompose)
     kapt(Libraries.hiltDaggerCompiler)
 
+    // hilt_worker
+    implementation(Libraries.hiltWorker)
+    kapt(Libraries.hiltCompiler)
+
     // xml component to rx observable
     implementation(Libraries.rxConverter)
 
