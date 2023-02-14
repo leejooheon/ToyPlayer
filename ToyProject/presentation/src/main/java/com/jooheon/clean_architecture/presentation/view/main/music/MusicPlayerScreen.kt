@@ -24,7 +24,7 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
@@ -50,12 +50,12 @@ fun MusicPlayerScreen(
         ),
         modifier = Modifier.zIndex(2f)
     ) {
-        AodPlayer(viewModel = viewModel.musicPlayerViewModel)
+        AodPlayer(viewModel = viewModel.musicControllerUseCase)
     }
 }
 
 @Composable
-private fun AodPlayer(viewModel: MusicPlayerViewModel) {
+private fun AodPlayer(viewModel: MusicControllerUseCase) {
     val uiState by viewModel.musicState.collectAsState()
     val timePassed by viewModel.timePassed.collectAsState()
 
@@ -140,7 +140,7 @@ private fun PreviewAodPlayerPreview() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -151,7 +151,7 @@ private fun PreviewAodPlayerPreview() {
             isPreview = true
         )
     )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
     PreviewTheme(false) {
         MusicPlayerScreen(
             navigator = NavController(context),

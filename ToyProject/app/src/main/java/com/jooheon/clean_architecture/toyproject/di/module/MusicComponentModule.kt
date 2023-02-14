@@ -9,7 +9,7 @@ import com.jooheon.clean_architecture.domain.usecase.music.MusicUseCaseImpl
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -62,7 +62,7 @@ object MusicComponentModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicController: MusicController,
-    ) = MusicPlayerViewModel(
+    ) = MusicControllerUseCase(
         context = context,
         applicationScope = applicationScope,
         musicController = musicController

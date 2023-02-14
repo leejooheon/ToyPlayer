@@ -31,7 +31,7 @@ import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.components.MyDivider
@@ -68,7 +68,7 @@ fun SettingScreen(
                 currentState = skipDuration.value,
                 onChanged = {
                     viewModel.onSkipItemClick(it)
-                    mainViewModel.musicPlayerViewModel.onSkipDurationChanged()
+                    mainViewModel.musicControllerUseCase.onSkipDurationChanged()
                 },
                 onDismiss = { dialogState = false }
             )
@@ -120,7 +120,7 @@ fun SettingScreen(
             dialogState = true
         },
         onEqualizerEvent = {
-            val sessionId = mainViewModel.musicPlayerViewModel.audioSessionId()
+            val sessionId = mainViewModel.musicControllerUseCase.audioSessionId()
             viewModel.onEqualizerClick(context, sessionId)
         }
     )
@@ -316,7 +316,7 @@ private fun PreviewSettingScreen() {
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
 
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -327,7 +327,7 @@ private fun PreviewSettingScreen() {
             isPreview = true
         )
     )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
     PreviewTheme(false) {
         SettingScreen(
             navigator = NavController(context),

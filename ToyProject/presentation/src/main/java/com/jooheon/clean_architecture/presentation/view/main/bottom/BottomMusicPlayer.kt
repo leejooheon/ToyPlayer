@@ -22,7 +22,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.main.music.*
 import com.jooheon.clean_architecture.presentation.view.main.music.AlbumImage
@@ -98,7 +98,7 @@ internal fun BottomMusicPlayer(
 @OptIn(ExperimentalMotionApi::class)
 @Composable
 private fun MotionLayoutTest(
-    viewModel: MusicPlayerViewModel
+    viewModel: MusicControllerUseCase
 ) {
     val fraction = viewModel.motionFraction.collectAsState()
     val context = LocalContext.current
@@ -122,7 +122,7 @@ private fun MotionLayoutTest(
 }
 @Composable
 private fun MusicBottomBarForMotion(
-    viewModel: MusicPlayerViewModel,
+    viewModel: MusicControllerUseCase,
 ) {
     val uiState by viewModel.musicState.collectAsState()
     val timePassed by viewModel.timePassed.collectAsState()
@@ -208,7 +208,7 @@ private fun MotionLayoutTestPreview() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -220,7 +220,7 @@ private fun MotionLayoutTestPreview() {
         )
     )
     PreviewTheme(false) {
-        MotionLayoutTest(viewModel = musicPlayerViewModel)
+        MotionLayoutTest(viewModel = musicControllerUseCase)
     }
 }
 

@@ -42,7 +42,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.MainActivity
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
@@ -105,7 +105,7 @@ fun MainScreen(
 
         MusicBar(
             navigator = navigator,
-            viewModel = viewModel.musicPlayerViewModel,
+            viewModel = viewModel.musicControllerUseCase,
             modifier = Modifier
                 .padding(bottom = bottomBarPadding.value + 2.dp)
                 .align(Alignment.BottomCenter)
@@ -117,7 +117,7 @@ fun MainScreen(
     ObserveEvents(
         navigator = navigator,
         mainViewModel = viewModel,
-        musicPlayerViewModel = viewModel.musicPlayerViewModel,
+        musicControllerUseCase = viewModel.musicControllerUseCase,
     )
 }
 
@@ -180,7 +180,7 @@ fun DrawerContent(
 @Composable
 private fun BoxScope.MusicBar(
     navigator: NavController,
-    viewModel: MusicPlayerViewModel,
+    viewModel: MusicControllerUseCase,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.musicState.collectAsState()
@@ -314,7 +314,7 @@ fun TopBar(
 private fun ObserveEvents(
     navigator: NavController,
     mainViewModel: MainViewModel,
-    musicPlayerViewModel: MusicPlayerViewModel,
+    musicControllerUseCase: MusicControllerUseCase,
 ) {
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
     DisposableEffect(
@@ -323,14 +323,14 @@ private fun ObserveEvents(
             val observer = LifecycleEventObserver { lifecycleOwner, event ->
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        musicPlayerViewModel.navigateToPlayListScreen.collectLatest {
+                        musicControllerUseCase.navigateToPlayListScreen.collectLatest {
                             navigator.navigate(ScreenNavigation.Music.PlayList.route)
                         }
                     }
                 }
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        musicPlayerViewModel.navigateToAodPlayer.collectLatest {
+                        musicControllerUseCase.navigateToAodPlayer.collectLatest {
                             navigator.navigate(ScreenNavigation.Music.AodPlayer.route)
                         }
                     }
@@ -385,7 +385,7 @@ private fun PreviewMainScreen() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -396,7 +396,7 @@ private fun PreviewMainScreen() {
             isPreview = true
         )
     )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
 
     PreviewTheme(false) {
         MainScreen(NavController(context), viewModel)

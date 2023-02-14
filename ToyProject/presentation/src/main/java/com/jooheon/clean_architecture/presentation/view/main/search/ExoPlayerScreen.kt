@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.music.EmptySongItem
@@ -37,7 +37,7 @@ fun ExoPlayerScreen(
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
-    val musicPlayerViewModel = viewModel.musicPlayerViewModel
+    val musicPlayerViewModel = viewModel.musicControllerUseCase
     val uiState by musicPlayerViewModel.musicState.collectAsState()
 
     Column(
@@ -125,7 +125,7 @@ fun PreviewSearchScreen() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -136,7 +136,7 @@ fun PreviewSearchScreen() {
             isPreview = true
         )
     )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
 
     PreviewTheme(false) {
         ExoPlayerScreen(viewModel, true)

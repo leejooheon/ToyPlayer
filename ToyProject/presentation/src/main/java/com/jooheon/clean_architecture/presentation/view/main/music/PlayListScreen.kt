@@ -21,7 +21,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
@@ -35,7 +35,7 @@ fun PlayListScreen(
     viewModel: MainViewModel = hiltViewModel(sharedViewModel()),
     isPreview: Boolean = false
 ) {
-    val musicPlayerViewModel = viewModel.musicPlayerViewModel
+    val musicPlayerViewModel = viewModel.musicControllerUseCase
     val uiState by musicPlayerViewModel.musicState.collectAsState()
 
     Card(
@@ -94,7 +94,7 @@ private fun PreviewPlayListScreen() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -105,7 +105,7 @@ private fun PreviewPlayListScreen() {
             isPreview = true
         )
     )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel)
+    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
     PreviewTheme(false) {
         PlayListScreen(
             viewModel = viewModel,

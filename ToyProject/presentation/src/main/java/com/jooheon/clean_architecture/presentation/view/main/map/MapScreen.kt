@@ -24,7 +24,7 @@ import com.google.maps.android.compose.*
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
@@ -209,7 +209,7 @@ private fun PreviewMapScreen() {
     val scope = CoroutineScope(Dispatchers.Main)
 
     val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicPlayerViewModel = MusicPlayerViewModel(
+    val musicControllerUseCase = MusicControllerUseCase(
         context = context,
         applicationScope = scope,
         musicController = MusicController(
@@ -224,7 +224,7 @@ private fun PreviewMapScreen() {
     PreviewTheme(true) {
         MapScreen(
             navigator = NavController(context),
-            sharedViewModel = MainViewModel(EmptySubwayUseCase(), musicPlayerViewModel),
+            sharedViewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase),
             viewModel = viewModel,
             isPreview = true
         )

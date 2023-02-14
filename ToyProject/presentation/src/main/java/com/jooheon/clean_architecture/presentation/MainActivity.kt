@@ -6,8 +6,6 @@ import android.content.res.Resources
 import android.media.audiofx.AudioEffect
 import android.os.Bundle
 import android.os.LocaleList
-import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +20,7 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
 import com.jooheon.clean_architecture.presentation.base.extensions.BetterActivityResult
 import com.jooheon.clean_architecture.presentation.common.showToast
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicPlayerViewModel
+import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.FullScreenNavigationHost
@@ -35,15 +33,15 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
-    @Inject lateinit var musicPlayerViewModel: MusicPlayerViewModel
+    @Inject lateinit var musicControllerUseCase: MusicControllerUseCase
 
     private val settingViewModel: SettingViewModel by viewModels()
-    private var serviceToken: MusicPlayerViewModel.ServiceToken? = null
+    private var serviceToken: MusicControllerUseCase.ServiceToken? = null
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        serviceToken = musicPlayerViewModel.bindToService(this)
+        serviceToken = musicControllerUseCase.bindToService(this)
         observeLocaleEvent()
         setContent {
             AppContent()
@@ -52,7 +50,7 @@ class MainActivity : BaseComposeActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        musicPlayerViewModel.unbindToService(serviceToken)
+        musicControllerUseCase.unbindToService(serviceToken)
     }
 
     @Composable

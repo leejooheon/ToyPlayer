@@ -19,12 +19,12 @@ import kotlinx.coroutines.channels.Channel
 import javax.inject.Singleton
 
 @Singleton
-class MusicPlayerViewModel @Inject constructor(
+class MusicControllerUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController
 ) {
-    private val TAG = MusicService::class.java.simpleName + "@" + MusicPlayerViewModel::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUseCase::class.java.simpleName
     
     private var musicService: MusicService? = null
     private val connectionMap = WeakHashMap<Context, ServiceConnection>()
