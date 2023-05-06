@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +19,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val subwayUseCase: SubwayUseCase,
-    val musicControllerUseCase: MusicControllerUseCase
 ): BaseViewModel() {
     override val TAG: String = MainViewModel::class.java.simpleName
 

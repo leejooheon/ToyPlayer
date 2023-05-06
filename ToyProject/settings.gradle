@@ -1,5 +1,0 @@
-rootProject.name = "ToyProject"
-include ':app'
-include ':domain'
-include ':data'
-include ':presentation'

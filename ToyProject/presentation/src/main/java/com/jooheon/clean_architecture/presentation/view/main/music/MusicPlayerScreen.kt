@@ -21,10 +21,6 @@ import androidx.constraintlayout.compose.layoutId
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
@@ -32,8 +28,6 @@ import com.jooheon.clean_architecture.presentation.view.main.music.MusicControlB
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicProgress
 import com.jooheon.clean_architecture.presentation.view.main.music.OtherButtons
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,87 +44,89 @@ fun MusicPlayerScreen(
         ),
         modifier = Modifier.zIndex(2f)
     ) {
-        AodPlayer(viewModel = viewModel.musicControllerUseCase)
+//        AodPlayer(viewModel = viewModel.musicControllerUseCase)
     }
 }
 
-@Composable
-private fun AodPlayer(viewModel: MusicControllerUseCase) {
-    val uiState by viewModel.musicState.collectAsState()
-    val timePassed by viewModel.timePassed.collectAsState()
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CoilImage(
-            url = uiState.currentPlayingMusic.albumArtUri.toString(),
-            contentDescription = uiState.currentPlayingMusic.title,
-            shape = RoundedCornerShape(10.dp),
-            placeholderRes = R.drawable.ic_logo_github,
-            modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .aspectRatio(1.0f)
-        )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .layoutId("column_title_artist")
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                text = uiState.currentPlayingMusic.title,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                text = uiState.currentPlayingMusic.artistName,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.layoutId("column_music_control")
-        ) {
-            MusicProgress(
-                modifier = Modifier.fillMaxWidth(0.8f),
-                maxDuration = uiState.currentPlayingMusic.duration,
-                currentDuration = timePassed,
-                onChanged = { progress ->
-                    val duration = progress * uiState.currentPlayingMusic.duration
-                    viewModel.snapTo(duration.toLong())
-                }
-            )
-
-            MusicControlButtons(
-                isPlaying = uiState.isPlaying,
-                onNext = viewModel::onNext,
-                onPrevious = viewModel::onPrevious,
-                onPlayPauseButtonPressed = {
-                    val song = uiState.currentPlayingMusic
-                    viewModel.onPlayPauseButtonPressed(song)
-                }
-            )
-
-            OtherButtons(
-                repeatMode = uiState.repeatMode,
-                shuffleMode = uiState.shuffleMode,
-                onShuffleModePressed = viewModel::onShuffleButtonPressed,
-                onRepeatModePressed = viewModel::onRepeatButtonPressed,
-            )
-        }
-    }
-}
+//@Composable
+//private fun AodPlayer(
+//    viewModel: MusicControllerUseCase
+//) {
+//    val uiState by viewModel.musicState.collectAsState()
+//    val timePassed by viewModel.timePassed.collectAsState()
+//
+//    Column(
+//        modifier = Modifier.fillMaxSize(),
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        verticalArrangement = Arrangement.Center
+//    ) {
+//        CoilImage(
+//            url = uiState.currentPlayingMusic.albumArtUri.toString(),
+//            contentDescription = uiState.currentPlayingMusic.title,
+//            shape = RoundedCornerShape(10.dp),
+//            placeholderRes = R.drawable.ic_logo_github,
+//            modifier = Modifier
+//                .fillMaxWidth(0.8f)
+//                .aspectRatio(1.0f)
+//        )
+//        Column(
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            verticalArrangement = Arrangement.SpaceEvenly,
+//            modifier = Modifier
+//                .layoutId("column_title_artist")
+//        ) {
+//            Spacer(modifier = Modifier.height(16.dp))
+//            Text(
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//                text = uiState.currentPlayingMusic.title,
+//                textAlign = TextAlign.Center,
+//                style = MaterialTheme.typography.titleMedium,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//            Spacer(modifier = Modifier.height(4.dp))
+//            Text(
+//                maxLines = 1,
+//                overflow = TextOverflow.Ellipsis,
+//                text = uiState.currentPlayingMusic.artistName,
+//                textAlign = TextAlign.Center,
+//                style = MaterialTheme.typography.labelMedium,
+//                modifier = Modifier.fillMaxWidth()
+//            )
+//        }
+//        Column(
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//            modifier = Modifier.layoutId("column_music_control")
+//        ) {
+//            MusicProgress(
+//                modifier = Modifier.fillMaxWidth(0.8f),
+//                maxDuration = uiState.currentPlayingMusic.duration,
+//                currentDuration = timePassed,
+//                onChanged = { progress ->
+//                    val duration = progress * uiState.currentPlayingMusic.duration
+//                    viewModel.snapTo(duration.toLong())
+//                }
+//            )
+//
+//            MusicControlButtons(
+//                isPlaying = uiState.isPlaying,
+//                onNext = viewModel::onNext,
+//                onPrevious = viewModel::onPrevious,
+//                onPlayPauseButtonPressed = {
+//                    val song = uiState.currentPlayingMusic
+//                    viewModel.onPlayPauseButtonPressed(song)
+//                }
+//            )
+//
+//            OtherButtons(
+//                repeatMode = uiState.repeatMode,
+//                shuffleMode = uiState.shuffleMode,
+//                onShuffleModePressed = viewModel::onShuffleButtonPressed,
+//                onRepeatModePressed = viewModel::onRepeatButtonPressed,
+//            )
+//        }
+//    }
+//}
 
 
 @Preview
@@ -139,19 +135,7 @@ private fun PreviewAodPlayerPreview() {
     val context = LocalContext.current
     val scope = CoroutineScope(Dispatchers.Main)
 
-    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicControllerUseCase = MusicControllerUseCase(
-        context = context,
-        applicationScope = scope,
-        musicController = MusicController(
-            context = context, 
-            applicationScope = scope,
-            musicPlaylistUseCase = musicPlaylistUseCase,
-            settingUseCase = EmptySettingUseCase(), 
-            isPreview = true
-        )
-    )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
+    val viewModel = MainViewModel(EmptySubwayUseCase())
     PreviewTheme(false) {
         MusicPlayerScreen(
             navigator = NavController(context),

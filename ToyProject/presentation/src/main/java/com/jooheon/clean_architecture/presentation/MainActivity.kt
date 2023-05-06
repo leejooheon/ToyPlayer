@@ -17,10 +17,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
 import com.jooheon.clean_architecture.presentation.base.extensions.BetterActivityResult
 import com.jooheon.clean_architecture.presentation.common.showToast
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.FullScreenNavigationHost
@@ -33,10 +33,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseComposeActivity() {
-    @Inject lateinit var musicControllerUseCase: MusicControllerUseCase
+    @Inject
+    lateinit var musicControllerUseCase: MusicControllerUsecase
+    private var serviceToken: MusicControllerUsecase.ServiceToken? = null
 
     private val settingViewModel: SettingViewModel by viewModels()
-    private var serviceToken: MusicControllerUseCase.ServiceToken? = null
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {

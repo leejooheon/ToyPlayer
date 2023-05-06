@@ -1,0 +1,17 @@
+<resources>
+    <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
+    <string name="playing_notification_name">재생 중 알림</string>
+    <string name="action_quit">중단</string>
+    <string name="action_next">다음</string>
+    <string name="action_play">재생</string>
+    <string name="action_play_all">Play all</string>
+    <string name="action_play_next">다음 곡 재생</string>
+    <string name="action_play_pause">재생/일시정지</string>
+    <string name="action_previous">이전</string>
+    <string name="action_cancel">현재 타이머 취소</string>
+    <string name="action_toggle_favorite">찜하기</string>
+    <string name="action_cycle_repeat">재생 모드</string>
+    <string name="action_toggle_shuffle">셔플 모드</string>
+    <string name="action_refresh">리프레시</string>
+
+</resources>

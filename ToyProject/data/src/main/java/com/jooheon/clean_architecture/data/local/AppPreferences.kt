@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import javax.inject.Inject
 
 
@@ -18,9 +21,9 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private val FIRST_TIME = Pair("FIRST_TIME", true)
         private val FIREBASE_TOKEN = Pair("FIREBASE_TOKEN", "")
 
-        private val REPEAT_MODE = Pair("REPEAT_MODE", Entity.RepeatMode.REPEAT_OFF.ordinal)
-        private val SHUFFLE_MODE = Pair("SHUFFLE_MODE", Entity.ShuffleMode.NONE.ordinal)
-        private val SKIP_DURATION = Pair("SKIP_DURATION", Entity.SkipForwardBackward.FIVE_SECOND.ordinal)
+        private val REPEAT_MODE = Pair("REPEAT_MODE", RepeatMode.REPEAT_OFF.ordinal)
+        private val SHUFFLE_MODE = Pair("SHUFFLE_MODE", ShuffleMode.NONE.ordinal)
+        private val SKIP_DURATION = Pair("SKIP_DURATION", SkipForwardBackward.FIVE_SECOND.ordinal)
         private val LANGUAGE = Pair("LANGUAGE", Entity.SupportLaunguages.AUTO.ordinal)
         private val THEME = Pair("THEME", Entity.SupportThemes.LIGHT.ordinal)
     }
@@ -75,28 +78,28 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putString(FIREBASE_TOKEN.first, value)
         }
 
-    var repeatMode: Entity.RepeatMode
+    var repeatMode: RepeatMode
         get() {
             val ordinal = sessionPreferences.getInt(REPEAT_MODE.first, REPEAT_MODE.second)
-            return Entity.RepeatMode.values()[ordinal]
+            return RepeatMode.values()[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(REPEAT_MODE.first, value.ordinal)
         }
 
-    var shuffleMode: Entity.ShuffleMode
+    var shuffleMode: ShuffleMode
         get() {
             val ordinal = sessionPreferences.getInt(SHUFFLE_MODE.first, SHUFFLE_MODE.second)
-            return Entity.ShuffleMode.values()[ordinal]
+            return ShuffleMode.values()[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(SHUFFLE_MODE.first, value.ordinal)
         }
 
-    var skipForwardBackward: Entity.SkipForwardBackward
+    var skipForwardBackward: SkipForwardBackward
         get() {
             val ordinal = sessionPreferences.getInt(SKIP_DURATION.first, SKIP_DURATION.second)
-            return Entity.SkipForwardBackward.values()[ordinal]
+            return SkipForwardBackward.values()[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(SKIP_DURATION.first, value.ordinal)

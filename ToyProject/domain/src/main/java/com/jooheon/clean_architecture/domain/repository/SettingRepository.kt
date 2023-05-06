@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.domain.repository
 
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import kotlinx.coroutines.flow.Flow
 
 interface SettingRepository: BaseRepository {
@@ -10,6 +11,6 @@ interface SettingRepository: BaseRepository {
     fun getTheme(): Entity.SupportThemes
     fun setTheme(theme: Entity.SupportThemes)
 
-    fun getSkipForwardBackward(): Entity.SkipForwardBackward
-    fun setSkipForwardBackward(skipForwardBackward: Entity.SkipForwardBackward)
+    fun getSkipForwardBackward(): SkipForwardBackward
+    fun setSkipForwardBackward(skipForwardBackward: SkipForwardBackward)
 }

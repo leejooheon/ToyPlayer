@@ -2,10 +2,10 @@ package com.jooheon.clean_architecture.presentation.view.main.github
 
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.utils.UiText
@@ -66,8 +66,8 @@ class GithubViewModel @Inject constructor(
 
     private fun insertDummyImageUrl(resource: List<Entity.Repository>) {
         resource.forEachIndexed { index, _ ->
-            val imgIndex:Int = index % Entity.tempImages.size
-            resource.get(index).imageUrl = Entity.tempImages.get(imgIndex).imageUrl
+            val imgIndex:Int = index % TestImage.list.size
+            resource.get(index).imageUrl = TestImage.list.get(imgIndex).imageUrl
         }
     }
 }

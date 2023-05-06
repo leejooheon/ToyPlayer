@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id "dagger.hilt.android.plugin"
     id 'org.jetbrains.kotlin.plugin.serialization'
-    id 'com.google.devtools.ksp' version '1.7.20-1.0.8' // https://github.com/google/ksp/releases
+//    id 'com.google.devtools.ksp' version '1.7.20-1.0.8' // https://github.com/google/ksp/releases
 }
 
 kotlin {
@@ -23,7 +23,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
         vectorDrawables.useSupportLibrary = true
         buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
         buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
@@ -51,6 +51,8 @@ android {
 
 dependencies {
     implementation project(path: ':domain')
+    implementation project(path: ':features:common')
+    implementation project(path: ':features:musicservice')
 
     // kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

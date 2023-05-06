@@ -5,11 +5,9 @@ import android.content.Context
 import android.content.res.Resources
 import com.jooheon.clean_architecture.presentation.base.extensions.DiName
 import com.jooheon.clean_architecture.toyproject.di.MyApplication
-
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

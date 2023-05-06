@@ -14,15 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.music.EmptySongItem
 import com.jooheon.clean_architecture.presentation.view.main.music.MusicItem
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicPlayListUsecase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -37,8 +34,8 @@ fun ExoPlayerScreen(
 ) {
     // ExoPlayer 정리글
     // https://jungwoon.github.io/android/library/2020/11/06/ExoPlayer.html
-    val musicPlayerViewModel = viewModel.musicControllerUseCase
-    val uiState by musicPlayerViewModel.musicState.collectAsState()
+//    val musicPlayerViewModel = viewModel.musicControllerUseCase
+//    val uiState by musicPlayerViewModel.musicState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -66,28 +63,29 @@ fun ExoPlayerScreen(
             },
         )
 
-        if(uiState.songs.isNotEmpty()) {
-            Text(
-                modifier = Modifier.padding(10.dp),
-                text = "Local Song List",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        } else {
-            EmptySongItem()
-        }
+//        if(uiState.songs.isNotEmpty()) {
+//            Text(
+//                modifier = Modifier.padding(10.dp),
+//                text = "Local Song List",
+//                style = MaterialTheme.typography.titleSmall,
+//                color = MaterialTheme.colorScheme.onSurface
+//            )
+//        } else {
+//            EmptySongItem()
+//        }
+        EmptySongItem()
 
-        LazyColumn {
-            itemsIndexed(uiState.songs) { index, song ->
-                MusicItem(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                        .height(96.dp),
-                    song = song,
-                    onItemClick = musicPlayerViewModel::onPlayPauseButtonPressed
-                )
-            }
-        }
+//        LazyColumn {
+//            itemsIndexed(uiState.songs) { index, song ->
+//                MusicItem(
+//                    modifier = Modifier
+//                        .padding(horizontal = 8.dp, vertical = 4.dp)
+//                        .height(96.dp),
+//                    song = song,
+//                    onItemClick = musicPlayerViewModel::onPlayPauseButtonPressed
+//                )
+//            }
+//        }
     }
 
     ObserveLifecycleEvent()
@@ -124,19 +122,7 @@ fun PreviewSearchScreen() {
     val context = LocalContext.current
     val scope = CoroutineScope(Dispatchers.Main)
 
-    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicControllerUseCase = MusicControllerUseCase(
-        context = context,
-        applicationScope = scope,
-        musicController = MusicController(
-            context = context, 
-            applicationScope = scope,
-            musicPlaylistUseCase = musicPlaylistUseCase,
-            settingUseCase = EmptySettingUseCase(), 
-            isPreview = true
-        )
-    )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
+    val viewModel = MainViewModel(EmptySubwayUseCase())
 
     PreviewTheme(false) {
         ExoPlayerScreen(viewModel, true)
