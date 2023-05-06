@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.data.repository
 
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import com.jooheon.clean_architecture.domain.repository.SettingRepository
 
 class SettingRepositoryImpl(
@@ -18,7 +19,7 @@ class SettingRepositoryImpl(
     }
 
     override fun getSkipForwardBackward() = appPreferences.skipForwardBackward
-    override fun setSkipForwardBackward(skipForwardBackward: Entity.SkipForwardBackward) {
+    override fun setSkipForwardBackward(skipForwardBackward: SkipForwardBackward) {
         appPreferences.skipForwardBackward = skipForwardBackward
     }
 }

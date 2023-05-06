@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.presentation.view.temp
 
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 
 class EmptySettingUseCase: SettingUseCase {
@@ -20,11 +21,11 @@ class EmptySettingUseCase: SettingUseCase {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getSkipForwardBackward(): Entity.SkipForwardBackward {
+    override suspend fun getSkipForwardBackward(): SkipForwardBackward {
         TODO("Not yet implemented")
     }
 
-    override suspend fun setSkipForwardBackward(skip: Entity.SkipForwardBackward) {
+    override suspend fun setSkipForwardBackward(skip: SkipForwardBackward) {
         TODO("Not yet implemented")
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
@@ -46,7 +47,7 @@ class SettingViewModel @Inject constructor(
     private val _themeState = MutableStateFlow(Entity.SupportThemes.DYNAMIC_LIGHT)
     val themeState = _themeState.asStateFlow()
 
-    private val _skipState = MutableStateFlow(Entity.SkipForwardBackward.FIVE_SECOND)
+    private val _skipState = MutableStateFlow(SkipForwardBackward.FIVE_SECOND)
     val skipState = _skipState.asStateFlow()
 
     init {
@@ -67,7 +68,7 @@ class SettingViewModel @Inject constructor(
         settingUseCase.setTheme(theme)
         updateThemeState()
     }
-    fun onSkipItemClick(skip: Entity.SkipForwardBackward) = viewModelScope.launch(Dispatchers.Main) {
+    fun onSkipItemClick(skip: SkipForwardBackward) = viewModelScope.launch(Dispatchers.Main) {
         settingUseCase.setSkipForwardBackward(skip)
         updateSkipState()
     }

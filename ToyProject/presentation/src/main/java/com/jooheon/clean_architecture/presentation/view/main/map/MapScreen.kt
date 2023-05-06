@@ -22,15 +22,12 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
 import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
+import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicPlayListUsecase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
@@ -206,25 +203,12 @@ private fun ObserveEvents(
 @Composable
 private fun PreviewMapScreen() {
     val context = LocalContext.current
-    val scope = CoroutineScope(Dispatchers.Main)
-
-    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicControllerUseCase = MusicControllerUseCase(
-        context = context,
-        applicationScope = scope,
-        musicController = MusicController(
-            context = context,
-            applicationScope = scope,
-            musicPlaylistUseCase = musicPlaylistUseCase,
-            settingUseCase = EmptySettingUseCase(),
-            isPreview = true
-        )
-    )
     val viewModel = MapViewModel(EmptyParkingSpotUseCase())
+
     PreviewTheme(true) {
         MapScreen(
             navigator = NavController(context),
-            sharedViewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase),
+            sharedViewModel = MainViewModel(EmptySubwayUseCase()),
             viewModel = viewModel,
             isPreview = true
         )

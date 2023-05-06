@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 abstract class BaseViewModel : ViewModel() {
     protected abstract val TAG: String
 
-    private val _loadingState = Channel<Boolean>(0)
+    private val _loadingState = Channel<Boolean>()
     val loadingState = _loadingState.receiveAsFlow()
 
     private val _alertDialogChannel = Channel<AlertDialogResource?>(0)

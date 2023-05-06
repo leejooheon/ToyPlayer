@@ -40,9 +40,6 @@ import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.MainActivity
-import com.jooheon.clean_architecture.presentation.service.music.datasource.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicController
-import com.jooheon.clean_architecture.presentation.service.music.tmp.MusicControllerUseCase
 
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
@@ -52,11 +49,8 @@ import com.jooheon.clean_architecture.presentation.view.navigation.BottomNavigat
 import com.jooheon.clean_architecture.presentation.view.navigation.MyBottomNavigation
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -102,23 +96,9 @@ fun MainScreen(
                 )
             }
         )
-
-        MusicBar(
-            navigator = navigator,
-            viewModel = viewModel.musicControllerUseCase,
-            modifier = Modifier
-                .padding(bottom = bottomBarPadding.value + 2.dp)
-                .align(Alignment.BottomCenter)
-        )
     }
 
     RegisterBackPressedHandler(viewModel, drawerState, scope)
-
-    ObserveEvents(
-        navigator = navigator,
-        mainViewModel = viewModel,
-        musicControllerUseCase = viewModel.musicControllerUseCase,
-    )
 }
 
 @Composable
@@ -177,33 +157,33 @@ fun DrawerContent(
     }
 }
 
-@Composable
-private fun BoxScope.MusicBar(
-    navigator: NavController,
-    viewModel: MusicControllerUseCase,
-    modifier: Modifier = Modifier,
-) {
-    val uiState by viewModel.musicState.collectAsState()
-
-    AnimatedVisibility(
-        visible = uiState.isMusicBottomBarVisible,
-        enter = slideInVertically(
-            initialOffsetY = { it }
-        ),
-        exit = slideOutVertically(targetOffsetY = { it }),
-        modifier = modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)
-    ) {
-        BottomMusicPlayer(
-            song = uiState.currentPlayingMusic,
-            isPlaying = uiState.isPlaying,
-            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
-            onPlayListButtonPressed = viewModel::onPlayListButtonPressed,
-            onItemClick = viewModel::onMusicBottomBarPressed
-        )
-    }
-}
+//@Composable
+//private fun BoxScope.MusicBar(
+//    navigator: NavController,
+//    viewModel: MusicControllerUseCase,
+//    modifier: Modifier = Modifier,
+//) {
+//    val uiState by viewModel.musicState.collectAsState()
+//
+//    AnimatedVisibility(
+//        visible = uiState.isMusicBottomBarVisible,
+//        enter = slideInVertically(
+//            initialOffsetY = { it }
+//        ),
+//        exit = slideOutVertically(targetOffsetY = { it }),
+//        modifier = modifier
+//            .fillMaxWidth()
+//            .align(Alignment.BottomCenter)
+//    ) {
+//        BottomMusicPlayer(
+//            song = uiState.currentPlayingMusic,
+//            isPlaying = uiState.isPlaying,
+//            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
+//            onPlayListButtonPressed = viewModel::onPlayListButtonPressed,
+//            onItemClick = viewModel::onMusicBottomBarPressed
+//        )
+//    }
+//}
 
 @Composable
 fun BottomBar(
@@ -314,27 +294,26 @@ fun TopBar(
 private fun ObserveEvents(
     navigator: NavController,
     mainViewModel: MainViewModel,
-    musicControllerUseCase: MusicControllerUseCase,
 ) {
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
             val observer = LifecycleEventObserver { lifecycleOwner, event ->
-                lifecycleOwner.lifecycleScope.launch {
-                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        musicControllerUseCase.navigateToPlayListScreen.collectLatest {
-                            navigator.navigate(ScreenNavigation.Music.PlayList.route)
-                        }
-                    }
-                }
-                lifecycleOwner.lifecycleScope.launch {
-                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        musicControllerUseCase.navigateToAodPlayer.collectLatest {
-                            navigator.navigate(ScreenNavigation.Music.AodPlayer.route)
-                        }
-                    }
-                }
+//                lifecycleOwner.lifecycleScope.launch {
+//                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                        musicControllerUseCase.navigateToPlayListScreen.collectLatest {
+//                            navigator.navigate(ScreenNavigation.Music.PlayList.route)
+//                        }
+//                    }
+//                }
+//                lifecycleOwner.lifecycleScope.launch {
+//                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                        musicControllerUseCase.navigateToAodPlayer.collectLatest {
+//                            navigator.navigate(ScreenNavigation.Music.AodPlayer.route)
+//                        }
+//                    }
+//                }
 
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -382,21 +361,7 @@ fun RegisterBackPressedHandler (
 @Composable
 private fun PreviewMainScreen() {
     val context = LocalContext.current
-    val scope = CoroutineScope(Dispatchers.Main)
-
-    val musicPlaylistUseCase = MusicPlaylistUseCase(EmptyMusicUseCase())
-    val musicControllerUseCase = MusicControllerUseCase(
-        context = context,
-        applicationScope = scope,
-        musicController = MusicController(
-            context = context, 
-            applicationScope = scope,
-            musicPlaylistUseCase = musicPlaylistUseCase,
-            settingUseCase = EmptySettingUseCase(),
-            isPreview = true
-        )
-    )
-    val viewModel = MainViewModel(EmptySubwayUseCase(), musicControllerUseCase)
+    val viewModel = MainViewModel(EmptySubwayUseCase())
 
     PreviewTheme(false) {
         MainScreen(NavController(context), viewModel)

@@ -13,11 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.base.extensions.albumArtUri
-import com.jooheon.clean_architecture.presentation.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.utils.MusicUtil
 import com.jooheon.clean_architecture.presentation.view.components.CoilImage
 import android.content.res.Configuration
 import androidx.compose.animation.core.*
@@ -30,13 +26,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.layoutId
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.domain.entity.Entity.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.Entity.ShuffleMode
 import com.jooheon.clean_architecture.presentation.utils.UiText
 
 
@@ -164,10 +162,10 @@ internal fun OtherButtons(
 @Composable
 internal fun MusicItem(
     modifier: Modifier,
-    song: Entity.Song,
+    song: Song,
     surfaceColor: Color = MaterialTheme.colorScheme.secondary,
     textColor: Color = MaterialTheme.colorScheme.onSecondary,
-    onItemClick: (Entity.Song) -> Unit
+    onItemClick: (Song) -> Unit
 ) {
     Surface(
         onClick = { onItemClick(song) },
@@ -203,7 +201,7 @@ internal fun MusicItem(
                 )
                 Spacer(modifier = Modifier.height(0.dp))
                 Text(
-                    text = song.artistName,
+                    text = song.artist,
                     style = MaterialTheme.typography.labelSmall,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
@@ -245,7 +243,7 @@ internal fun EmptySongItem(modifier: Modifier = Modifier) {
 @Composable
 internal fun AlbumImage(
     isPlaying: Boolean,
-    song: Entity.Song,
+    song: Song,
     modifier: Modifier = Modifier
 ) {
     val borderThickness = (0.5).dp
@@ -297,7 +295,7 @@ internal fun AlbumImage(
 
             CoilImage(
                 url = song.albumArtUri.toString(),
-                contentDescription = song.albumName,
+                contentDescription = song.album,
                 shape = RoundedCornerShape(10.dp),
                 placeholderRes = R.drawable.ic_logo_github,
                 modifier = Modifier
@@ -310,10 +308,10 @@ internal fun AlbumImage(
 
 @Composable
 internal fun PlayPauseButton(
-    song: Entity.Song,
+    song: Song,
     isPlaying: Boolean,
     iconRelativeSize: Float = 0.4f,
-    onPlayPauseButtonPressed: (Entity.Song) -> Unit,
+    onPlayPauseButtonPressed: (Song) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     RoundImageButton(
@@ -376,12 +374,6 @@ internal fun RoundImageButton(
     }
 }
 
-private fun parseSongImageUrl(song: Entity.Song) = if(song.albumId == -1L) {
-    Entity.tempImages.first().imageUrl
-} else {
-    song.albumArtUri.toString()
-}
-
 private fun getPlayPauseIcon(isPlaying: Boolean) = if (isPlaying) {
     R.drawable.ic_pause
 } else {
@@ -401,7 +393,7 @@ private fun MusicItemPreviewLight() {
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .height(96.dp),
-            song = Entity.Song.emptySong,
+            song = Song.default,
             onItemClick = { }
         )
     }
@@ -415,7 +407,7 @@ private fun MusicItemPreviewDark() {
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
                 .height(96.dp),
-            song = Entity.Song.emptySong,
+            song = Song.default,
             onItemClick = { }
         )
     }
@@ -427,7 +419,7 @@ private fun AlbumImagePreview() {
     PreviewTheme(false) {
         AlbumImage(
             isPlaying = true,
-            song = Entity.Song.emptySong,
+            song = Song.default,
             modifier = Modifier.size(96.dp)
         )
 

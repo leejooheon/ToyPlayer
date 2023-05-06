@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.presentation.view.temp
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import kotlinx.coroutines.flow.Flow
 
@@ -36,7 +37,7 @@ class EmptyGithubUseCase: GithubUseCase {
                     id = "id $i",
                     created_at = "created_at",
                     html_url = "html_url",
-                    imageUrl = Entity.tempImages.get(i).imageUrl
+                    imageUrl = TestImage.list.get(i).imageUrl
                 )
 
                 items.add(item)
