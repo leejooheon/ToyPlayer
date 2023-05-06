@@ -5,7 +5,7 @@ plugins {
     id 'kotlin-parcelize'
     id "dagger.hilt.android.plugin"
     id 'org.jetbrains.kotlin.plugin.serialization'
-    id 'com.google.devtools.ksp' version '1.7.20-1.0.8' // https://github.com/google/ksp/releases
+//    id 'com.google.devtools.ksp' version '1.7.20-1.0.8' // https://github.com/google/ksp/releases
 }
 
 kotlin {
