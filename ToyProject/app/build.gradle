@@ -11,15 +11,19 @@ android {
 
     defaultConfig {
         applicationId "com.jooheon.clean_architecture.toyproject"
-        minSdk 24
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+
         buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
         buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
         buildConfigField("String", "SUBWAY_URL", "\"http://swopenapi.seoul.go.kr/api/subway/\"")
+
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+        resValue "string", "deeplink_prefix", project.findProperty("DEEPLINK_BASE") ?: ""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -66,6 +70,7 @@ dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
     implementation project(path: ':presentation')
+    implementation project(path: ':features:musicservice')
 
     // util
     implementation("androidx.multidex:multidex:2.0.1")
@@ -90,6 +95,10 @@ dependencies {
     implementation(Libraries.retrofitConverter)
     implementation(Libraries.retrofitMock)
     implementation(Libraries.interceptor)
+
+    // mediaSession
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.mediarouter)
 
     debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
