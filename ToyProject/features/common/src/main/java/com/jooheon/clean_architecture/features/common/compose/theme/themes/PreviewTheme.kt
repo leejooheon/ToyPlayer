@@ -1,10 +1,10 @@
-package com.jooheon.clean_architecture.presentation.theme.themes
+package com.jooheon.clean_architecture.features.common.compose.theme.themes
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import com.jooheon.clean_architecture.presentation.theme.Shapes
-import com.jooheon.clean_architecture.presentation.theme.Typography
-import com.jooheon.clean_architecture.presentation.view.temp.previewColorPallete
+import com.jooheon.clean_architecture.features.common.compose.theme.Shapes
+import com.jooheon.clean_architecture.features.common.compose.theme.Typography
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette.previewColorPallete
 
 
 @Composable

@@ -9,11 +9,11 @@ plugins {
 
 android {
     namespace = "com.jooheon.clean_architecture.features.musicservice"
-    compileSdk = 33
+    compileSdk = Versions.compileSdk
 
     defaultConfig {
-        minSdk = 26
-        targetSdk = 33
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -3,12 +3,13 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+@Suppress("UnstableApiUsage")
 android {
-    compileSdk = 33
+    compileSdk = Versions.compileSdk
 
     defaultConfig {
-        minSdk = 26
-        targetSdk = 33
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
     }
 
     buildTypes {
@@ -17,17 +18,24 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     namespace = "com.jooheon.clean_architecture.features.common"
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
 dependencies {
     implementation(project(path = ":domain"))
+
+    // android
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
 
     // glide
     implementation(libs.bumptech.glide)
@@ -36,12 +44,13 @@ dependencies {
     // timber
     implementation(libs.jakewharton.timber)
 
-    // lottie
-    implementation(libs.airbnb.android.lottie)
+    // compose_material3
+    implementation(libs.androidx.compose.material3)
 
-    // exoplayer
-    implementation(libs.androidx.media3.exoplayer)
+    // accompanist
+    implementation(libs.google.accompanist.systemuicontroller)
 
+    // test
     testImplementation(libs.test.junit)
     androidTestImplementation(libs.test.android.junit)
     androidTestImplementation(libs.test.android.espresso.core)

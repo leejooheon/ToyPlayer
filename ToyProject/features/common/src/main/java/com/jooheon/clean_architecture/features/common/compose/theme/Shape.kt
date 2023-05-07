@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.theme
+package com.jooheon.clean_architecture.features.common.compose.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

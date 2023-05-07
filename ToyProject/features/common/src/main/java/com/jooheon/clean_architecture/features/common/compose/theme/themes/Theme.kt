@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.theme.themes
+package com.jooheon.clean_architecture.features.common.compose.theme.themes
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,11 +13,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
-import com.jooheon.clean_architecture.presentation.theme.Shapes
-import com.jooheon.clean_architecture.presentation.theme.Typography
-import com.jooheon.clean_architecture.presentation.theme.colors.*
-import com.jooheon.clean_architecture.presentation.theme.colors.DarkColorScheme
+import com.jooheon.clean_architecture.features.common.compose.theme.Shapes
+import com.jooheon.clean_architecture.features.common.compose.theme.Typography
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.AlphaNearOpaque
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.CustomColors
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.LocalCustomColors
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette.DarkColorPalette
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette.DarkColorScheme
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette.LightColorPalette
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette.LightColorScheme
 
 @Composable
 fun ApplicationTheme(
@@ -62,7 +66,7 @@ fun ApplicationTheme(
     }
 }
 @Composable
-internal fun getColorScheme(theme: Entity.SupportThemes): ColorScheme {
+fun getColorScheme(theme: Entity.SupportThemes): ColorScheme {
     val supportDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 12 이상일때
     val colorScheme = when(theme) {
         Entity.SupportThemes.AUTO -> parseColorScheme(

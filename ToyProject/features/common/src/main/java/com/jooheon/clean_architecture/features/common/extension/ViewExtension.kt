@@ -1,7 +1,6 @@
 package com.jooheon.clean_architecture.features.common.extension
 
 import android.view.View
-import com.airbnb.lottie.LottieAnimationView
 
 object ViewExtension {
     fun View.gone() { this.visibility = View.GONE }
@@ -12,16 +11,5 @@ object ViewExtension {
          else {
             if (isGone) gone() else invisible()
         }
-    }
-
-
-    fun LottieAnimationView.playWith(
-        progress: Pair<Float, Float>,
-        speed: Float = 2f
-    ) {
-//        val currentProgress = ((getProgress() * 100.0).roundToInt() / 100.0).toFloat()
-        this.speed = speed
-        setMinAndMaxProgress(progress.first, progress.second)
-        playAnimation()
     }
 }

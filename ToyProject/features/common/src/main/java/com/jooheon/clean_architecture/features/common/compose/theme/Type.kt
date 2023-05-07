@@ -1,11 +1,11 @@
-package com.jooheon.clean_architecture.presentation.theme
+package com.jooheon.clean_architecture.features.common.compose.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.features.common.R
 
 private val Montserrat = FontFamily(
     Font(R.font.montserrat_light, FontWeight.Light),

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.theme
+package com.jooheon.clean_architecture.features.common.compose.theme.colors
 
 import androidx.compose.ui.graphics.Color
 

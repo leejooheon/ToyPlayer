@@ -1,7 +1,8 @@
-package com.jooheon.clean_architecture.presentation.theme.colors
+package com.jooheon.clean_architecture.features.common.compose.theme.colors.pallette
 
 import androidx.compose.material3.lightColorScheme
-import com.jooheon.clean_architecture.presentation.theme.*
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.CustomColors
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.*
 
 internal val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,

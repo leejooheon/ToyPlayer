@@ -6,10 +6,10 @@ include(":features:musicservice")
 include(":features:common")
 
 pluginManagement {
-    includeBuild("Plugins")
     repositories {
         gradlePluginPortal()
         mavenCentral()
         google()
+        includeBuild("Plugins")
     }
 }
