@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.data.datasource.local
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -28,10 +29,8 @@ class LocalMusicPlayListDataSource @Inject constructor(
     }
 
     private fun getSongFromCursor(cursor: Cursor): Song {
-        val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
-        val id = cursor.getLong(MediaStore.Audio.AudioColumns._ID)
-        val displayName = cursor.getStringOrNull(MediaStore.Audio.Media.DISPLAY_NAME)
+        val audioId = cursor.getLong(MediaStore.Audio.AudioColumns._ID)
+//        val displayName = cursor.getStringOrNull(MediaStore.Audio.Media.DISPLAY_NAME)
         val title = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.TITLE)
         val trackNumber = cursor.getInt(MediaStore.Audio.AudioColumns.TRACK)
         val year = cursor.getInt(MediaStore.Audio.AudioColumns.YEAR)
@@ -44,17 +43,20 @@ class LocalMusicPlayListDataSource @Inject constructor(
         val composer = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.COMPOSER)
         val albumArtist = cursor.getStringOrNull("album_artist")
 
+        val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val artworkUri = Uri.parse("content://media/external/audio/albumart")
+
         return Song(
-            audioId = id,
-            displayName = displayName.defaultEmpty(),
+            audioId = audioId,
+            displayName = "".defaultEmpty(),
             title = title.defaultEmpty(),
             artist = artistName.defaultEmpty(),
             artistId = artistId.toString(),
             album = albumName.defaultEmpty(),
             albumId = albumId.toString(),
             duration = duration,
-            path = Uri.withAppendedPath(audioUriExternal, "" + id).toString(),
-            imageUrl = "",
+            path = ContentUris.withAppendedId(audioUriExternal, audioId).toString(),
+            imageUrl = ContentUris.withAppendedId(artworkUri, albumId).toString(),
             isFavorite = false
         )
     }

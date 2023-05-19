@@ -23,7 +23,7 @@ data class Song(
             artistId = "",
             album = "-",
             albumId = "-",
-            duration = 0L,
+            duration = 1L,
             path = "-",
             imageUrl = "",
             isFavorite = false

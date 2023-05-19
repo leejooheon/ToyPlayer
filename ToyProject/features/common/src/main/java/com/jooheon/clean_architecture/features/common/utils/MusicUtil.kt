@@ -42,25 +42,35 @@ object MusicUtil {
     }
 
     // song.uri 사용하자.
-    fun getSongFileUri(audioId: Long): Uri {
-        return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, audioId)
+    fun getSongFileUri(path: String): Uri {
+        if (URLUtil.isHttpUrl(path) ||
+            URLUtil.isHttpsUrl(path) ||
+            URLUtil.isContentUrl(path)) {
+            return path.toUri()
+        } else {
+            val uri = path.toLongOrNull() ?: -1L
+            return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, uri)
+        }
+
+        return Uri.parse("")
     }
 
     // song.albumArtUri 사용하자.
     @JvmStatic
-    fun getMediaStoreAlbumCoverUri(song: Song): Uri {
-        val imageUrl = song.imageUrl
-        if (URLUtil.isHttpUrl(imageUrl) || URLUtil.isHttpsUrl(imageUrl)) {
-            return imageUrl.toUri()
-        } else {
-            val sArtworkUri = "content://media/external/audio/albumart".toUri()
-            return ContentUris.withAppendedId(sArtworkUri, song.audioId)
+    fun getMediaStoreAlbumCoverUri(imageUrl: String): Uri {
+        try {
+            if (URLUtil.isHttpUrl(imageUrl) ||
+                URLUtil.isHttpsUrl(imageUrl) ||
+                URLUtil.isContentUrl(imageUrl)) {
+                return imageUrl.toUri()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+        return defaultImgaeUri()
     }
 
-    fun testImageUri(): Uri {
-        val path = "/440/44063.jpg"
-        val updDt = 1669796869000
-        return (GlideUtil.TMP_ESSENTIAL_TITLE_URL + path + "?" + updDt).toUri()
+    fun defaultImgaeUri(): Uri {
+        return "https://upload.wikimedia.org/wikipedia/commons/2/21/Solid_black.svg".toUri()
     }
 }

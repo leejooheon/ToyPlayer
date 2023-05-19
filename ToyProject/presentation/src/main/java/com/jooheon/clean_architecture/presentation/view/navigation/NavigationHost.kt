@@ -26,6 +26,7 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.jooheon.clean_architecture.features.musicplayer.screen.MusicScreen
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
 import com.jooheon.clean_architecture.presentation.view.main.common.MusicPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
@@ -39,7 +40,6 @@ import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
 import com.jooheon.clean_architecture.presentation.view.setting.equalizer.EqualizerScreen
 import com.jooheon.clean_architecture.presentation.view.setting.theme.ThemeScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
-import com.jooheon.clean_architecture.presentation.view.temp.TestScreen
 
 @OptIn(ExperimentalPermissionsApi::class)
 @ExperimentalComposeUiApi
@@ -64,7 +64,8 @@ internal fun BottomNavigationHost(
                 MapScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
-                ExoPlayerScreen()
+                MusicScreen(navigator)
+//                ExoPlayerScreen()
             }
         }
     }
@@ -126,7 +127,7 @@ internal fun FullScreenNavigationHost(
                     }
                 )
             ) {
-                TestScreen()
+//                TestScreen()
             }
 
             composable(ScreenNavigation.Setting.Theme.route) {

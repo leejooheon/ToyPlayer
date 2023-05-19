@@ -10,8 +10,8 @@ import com.google.maps.android.compose.MapProperties
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
-import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn

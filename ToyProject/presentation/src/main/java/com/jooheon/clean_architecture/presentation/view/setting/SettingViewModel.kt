@@ -1,12 +1,8 @@
 package com.jooheon.clean_architecture.presentation.view.setting
 
-import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Intent
 import android.media.audiofx.AudioEffect
 import android.os.Build
-import android.widget.Toast
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Equalizer
 import androidx.compose.material.icons.outlined.Forward5
@@ -17,10 +13,10 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
+import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.common.showToast
-import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase
-):BaseViewModel() {
+): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
     private val _navigateToSettingScreen = Channel<SettingData>()

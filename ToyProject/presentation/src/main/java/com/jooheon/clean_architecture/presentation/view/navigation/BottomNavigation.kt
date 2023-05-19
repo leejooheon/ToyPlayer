@@ -11,15 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.clean_architecture.presentation.theme.AlphaNearOpaque
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.features.common.compose.theme.colors.AlphaNearOpaque
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.essential.base.UiText
 
 @Composable
 internal fun MyBottomNavigation(

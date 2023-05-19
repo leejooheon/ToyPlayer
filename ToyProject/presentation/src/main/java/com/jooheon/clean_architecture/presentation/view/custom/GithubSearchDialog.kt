@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.theme.themes.CustomTheme
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 
 @ExperimentalMaterial3Api

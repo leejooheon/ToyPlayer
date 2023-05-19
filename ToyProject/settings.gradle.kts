@@ -3,13 +3,14 @@ include(":domain")
 include(":data")
 include(":presentation")
 include(":features:musicservice")
+include(":features:musicplayer")
 include(":features:common")
 
 pluginManagement {
-    includeBuild("Plugins")
     repositories {
         gradlePluginPortal()
         mavenCentral()
         google()
+        includeBuild("Plugins")
     }
 }

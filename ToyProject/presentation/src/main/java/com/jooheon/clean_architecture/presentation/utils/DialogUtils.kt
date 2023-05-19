@@ -15,7 +15,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
+import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.view.custom.MyAlertDialog
 
 private const val TAG = "DialogUtils"

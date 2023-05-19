@@ -29,20 +29,6 @@
     <string name="test_mp3">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
     <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
 
-    <!-- Notofication -->
-    <string name="playing_notification_description">The playing notification provides actions for play/pause etc.</string>
-    <string name="playing_notification_name">Playing notification</string>
-    <string name="action_next">Next</string>
-    <string name="action_play">Play</string>
-    <string name="action_play_all">Play all</string>
-    <string name="action_play_next">Play next</string>
-    <string name="action_play_pause">Play/Pause</string>
-    <string name="action_previous">Previous</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="action_toggle_favorite">Toggle favorite</string>
-    <string name="action_cycle_repeat">Cycle repeat mode</string>
-    <string name="action_toggle_shuffle">Toggle shuffle mode</string>
-
     <!-- settings  -->
     <string name="title_settings">Setting</string>
     <string name="n_second">%1$s Seconds</string>

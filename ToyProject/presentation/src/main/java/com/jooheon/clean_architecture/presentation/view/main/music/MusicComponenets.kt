@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.view.components.CoilImage
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+
 import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -32,10 +32,11 @@ import androidx.constraintlayout.compose.layoutId
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.utils.UiText
 
 
 @Composable

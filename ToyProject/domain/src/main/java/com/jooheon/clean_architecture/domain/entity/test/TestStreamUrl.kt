@@ -10,7 +10,7 @@ class TestStreamUrl {
                 title = "Pop",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv30.live-streams.nl:8086/live",
                 imageUrl = "https://source.unsplash.com/pGM4sjt_BdQ",
             ),
             Song.default.copy(
@@ -18,7 +18,7 @@ class TestStreamUrl {
                 title = "Latin",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv33.live-streams.nl:8034/live",
                 imageUrl = "https://source.unsplash.com/Yc5sL-ejk6U",
             ),
             Song.default.copy(
@@ -26,7 +26,7 @@ class TestStreamUrl {
                 title = "Jazz",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv38.live-streams.nl:8006/live",
                 imageUrl = "https://source.unsplash.com/-LojFX9NfPY",
             ),
             Song.default.copy(
@@ -34,7 +34,7 @@ class TestStreamUrl {
                 title = "Lounge",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv33.live-streams.nl:8036/live",
                 imageUrl = "https://source.unsplash.com/3U2V5WqK1PQ",
             ),
             Song.default.copy(
@@ -42,15 +42,15 @@ class TestStreamUrl {
                 title = "Gold",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
-                imageUrl = "https://source.unsplash.com/Y4YR9OjdIMk",
+                path = "http://mediaserv30.live-streams.nl:8000/live",
+                imageUrl = "https://source.unsplash.com/bELvIg_KZGU",
             ),
             Song.default.copy(
                 audioId = 8088,
                 title = "Classical",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv30.live-streams.nl:8088/live",
                 imageUrl = "https://source.unsplash.com/Y4YR9OjdIMk",
             ),
             Song.default.copy(
@@ -58,7 +58,7 @@ class TestStreamUrl {
                 title = "World",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv38.live-streams.nl:8027/live",
                 imageUrl = "https://source.unsplash.com/YgYJsFDd4AU",
             ),
             Song.default.copy(
@@ -66,7 +66,7 @@ class TestStreamUrl {
                 title = "France",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
-                path = "http://mediaserv30.live-streams.nl:{port}/live",
+                path = "http://mediaserv21.live-streams.nl:8000/live",
                 imageUrl = "https://source.unsplash.com/0u_vbeOkMpk",
             ),
         )

@@ -22,18 +22,14 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ShowAlertDialog
-import com.jooheon.clean_architecture.presentation.utils.UiText
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyMusicPlayListUsecase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyParkingSpotUseCase
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private val DEFAULT_LATLNG:LatLng = LatLng(37.5033311460182, 126.94775238633156)

@@ -39,10 +39,10 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     private val _currentPlayingMusic = MutableStateFlow(Song.default)
     val currentPlayingMusic: StateFlow<Song> = _currentPlayingMusic
 
-    private val _repeatMode = MutableStateFlow(RepeatMode.REPEAT_OFF)
+    private val _repeatMode = MutableStateFlow(RepeatMode.REPEAT_ALL)
     val repeatMode: StateFlow<RepeatMode> = _repeatMode
 
-    private val _shuffleMode = MutableStateFlow(ShuffleMode.NONE)
+    private val _shuffleMode = MutableStateFlow(ShuffleMode.SHUFFLE)
     val shuffleMode: StateFlow<ShuffleMode> = _shuffleMode
 
     private val _currentDuration = MutableStateFlow(0L)
@@ -181,7 +181,12 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
         musicPlayListManager.loadPlaylist().whenReady { isReady ->
             applicationScope.launch {
                 if (isReady) {
-                    val newPlaylist = musicPlayListManager.playlist
+                    val newPlaylist = if(shuffleMode.value == ShuffleMode.SHUFFLE) {
+                        musicPlayListManager.playlist.shuffled().toMutableList()
+                    } else {
+                        musicPlayListManager.playlist
+                    }
+
                     _playlist.tryEmit(newPlaylist)
 
                     onPlayListLoaded?.invoke(newPlaylist)

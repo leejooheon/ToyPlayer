@@ -17,7 +17,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.appwidget.unit.ColorProvider
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
-import com.jooheon.clean_architecture.presentation.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 
 
 @Composable

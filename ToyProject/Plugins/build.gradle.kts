@@ -1,5 +1,4 @@
 plugins {
-    `java-gradle-plugin`
     `kotlin-dsl`
     `kotlin-dsl-precompiled-script-plugins`
 }
@@ -7,4 +6,9 @@ plugins {
 repositories {
     mavenCentral()
     google()
+}
+
+dependencies {
+    implementation(libs.android.gradle.plugin)
+    implementation(libs.kotlin.gradle.plugin)
 }

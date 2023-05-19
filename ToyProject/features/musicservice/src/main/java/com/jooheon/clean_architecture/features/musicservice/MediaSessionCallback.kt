@@ -165,7 +165,7 @@ class MediaSessionCallback @Inject constructor(
 
         const val MEDIA_SESSION_ACTIONS = (
                 PlaybackStateCompat.ACTION_PLAY_PAUSE
-//                        or PlaybackStateCompat.ACTION_SEEK_TO
+                        or PlaybackStateCompat.ACTION_SEEK_TO
                         or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                         or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                         or PlaybackStateCompat.ACTION_REWIND

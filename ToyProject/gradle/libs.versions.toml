@@ -1,10 +1,19 @@
 [versions]
 # Project
-android_gradle_plugin = "7.4.2"
+android_gradle_plugin = "7.4.1"
 kotlin = "1.7.20"
+gms = "4.3.14"
 
 # Plugins
 ksp = "1.7.22-1.0.8"
+
+# Compose
+compose = "1.4.0-alpha03"
+compose_compiler = "1.3.2"
+compose_material3 = "1.1.0-alpha03"
+compose_accompanist = "0.27.0"
+compose_activity = "1.6.1"
+compose_constraint = "1.1.0-alpha05"
 
 # AndroidX
 corektx = "1.9.0"
@@ -28,6 +37,11 @@ javax_inject = "1"
 
 # Hilt
 hilt = "2.43.2"
+hilt_compose = "1.0.0"
+hilt_worker = "1.0.0"
+
+# Room
+room = "2.4.3"
 
 # Network
 retrofit = "2.9.0"
@@ -38,6 +52,7 @@ retrofit_serialization_converter = "0.8.0"
 
 # Glide
 glide = "4.13.2"
+coil = "2.2.2"
 
 # Timber
 timber ="5.0.1"
@@ -66,11 +81,20 @@ android_test_espresso = "3.5.1"
 android_gradle_plugin = { module = "com.android.tools.build:gradle", version.ref = "android_gradle_plugin" }
 kotlin_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin_serialization_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+google_gms_plugin = { module = "com.google.gms:google-services", version.ref = "gms"}
 
 # Hilt
 hilt_gradle_plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt_android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt_android_compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt_android_compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_compose" }
+hilt_worker = { module = "androidx.hilt:hilt-work", version.ref = "hilt_worker"}
+hilt_worker_compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt_worker"}
+
+# Room
+androidx_room = { module = "androidx.room:room-runtime", version.ref = "room"}
+androidx_room_ktx = { module = "androidx.room:room-ktx", version.ref = "room"}
+androidx_room_compile = { module = "androidx.room:room-compiler", version.ref = "room"}
 
 # JavaX
 javax_inject = { module = "javax.inject:javax.inject", version.ref = "javax_inject" }
@@ -94,6 +118,32 @@ androidx_lifecycle_livedata_ktx = { module = "androidx.lifecycle:lifecycle-lived
 
 androidx_datastore_preference = {module = "androidx.datastore:datastore-preferences", version.ref ="datastore"}
 
+androidx_activity_compose = { module = "androidx.activity:activity-compose", version.ref = "compose_activity"}
+androidx_constraintlayout_compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "compose_constraint"}
+
+# Compose
+androidx_compose_ui_util = { module = "androidx.compose.ui:ui-util", version.ref = "compose"}
+androidx_compose_material = { module = "androidx.compose.material:material", version.ref = "compose"}
+androidx_compose_material_icon_extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose"}
+
+# Compose preview
+androidx_compose_ui = { module = "androidx.compose.ui:ui", version.ref = "compose_compiler"}
+androidx_compose_ui_test_manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose_compiler"}
+androidx_compose_ui_tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose_compiler"}
+androidx_compose_ui_tooling_preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose_compiler"}
+
+# Compose Material3
+androidx_compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "compose_material3" }
+androidx_compose_material3_windowsizeclass = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "compose_material3" }
+
+#Compose accompanist  version.ref = "0.25.1"
+google_accompanist_insets = { module = "com.google.accompanist:accompanist-insets", version.strictly = "0.25.1"}
+google_accompanist_insets_ui = { module = "com.google.accompanist:accompanist-insets-ui", version.strictly = "0.24.11-rc"}
+google_accompanist_systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.strictly = "0.27.0"}
+google_accompanist_navigation_animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "compose_accompanist"}
+google_accompanist_navigation_material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "compose_accompanist"}
+google_accompanist_permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "compose_accompanist"}
+
 # Media3 - ExoPlayer
 androidx_media3_exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer"}
 androidx_media3_session = { module = "androidx.media3:media3-session", version.ref = "exoplayer"}
@@ -116,6 +166,10 @@ chucker_release = { module = "com.github.chuckerteam.chucker:library-no-op", ver
 # Glide
 bumptech_glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide"}
 bumptech_glide_compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide"}
+
+# Coil
+coil = { module = "io.coil-kt:coil", version.ref = "coil"}
+coil_compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 
 # Timber
 jakewharton_timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
