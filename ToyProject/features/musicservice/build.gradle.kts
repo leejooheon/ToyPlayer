@@ -7,6 +7,7 @@ plugins {
     id("kotlin-kapt")
 }
 
+@Suppress("UnstableApiUsage")
 android {
     namespace = "com.jooheon.clean_architecture.features.musicservice"
     compileSdk = Versions.compileSdk

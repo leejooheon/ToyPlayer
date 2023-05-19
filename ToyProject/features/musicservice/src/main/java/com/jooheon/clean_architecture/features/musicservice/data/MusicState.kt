@@ -12,6 +12,6 @@ data class MusicState(
     val currentPlayingMusic: Song = Song.default,
     val isPlaying: Boolean = false,
     val isShuffled: Boolean = false,
-    val repeatMode: RepeatMode = RepeatMode.REPEAT_OFF,
-    val shuffleMode: ShuffleMode = ShuffleMode.NONE,
+    val repeatMode: RepeatMode = RepeatMode.REPEAT_ALL,
+    val shuffleMode: ShuffleMode = ShuffleMode.SHUFFLE,
 ): Parcelable

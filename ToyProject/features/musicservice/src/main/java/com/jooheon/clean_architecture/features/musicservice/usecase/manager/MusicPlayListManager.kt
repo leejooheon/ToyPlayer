@@ -40,8 +40,8 @@ class MusicPlayListManager (
         state = State.INITIALIZING
 
         applicationScope.launch {
-//            val resource = getLocalPlaylist()
-            val resource = getStreamingPlaylist()
+            val resource = getLocalPlaylist()
+//            val resource = getStreamingPlaylist()
 
             when (resource) {
                 is Resource.Success -> {
