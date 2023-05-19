@@ -64,6 +64,7 @@ dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":presentation"))
     implementation(project(path = ":features:musicservice"))
+    implementation(project(path = ":features:musicplayer"))
 
     // util
     implementation("androidx.multidex:multidex:2.0.1")

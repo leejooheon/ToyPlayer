@@ -50,15 +50,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.jooheon.clean_architecture.presentation.service.music.tmp.notification.MediaButtonIntentReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-
         <service
-            android:name="com.jooheon.clean_architecture.presentation.service.music.MusicService"
+            android:name="com.jooheon.clean_architecture.features.musicservice.MusicService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback"

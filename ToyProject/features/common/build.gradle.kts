@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-kapt")
 }
 
 @Suppress("UnstableApiUsage")
@@ -25,9 +27,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     namespace = "com.jooheon.clean_architecture.features.common"
 }
 
@@ -36,10 +35,19 @@ dependencies {
 
     // android
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // coroutine
+    implementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    // coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     // glide
     implementation(libs.bumptech.glide)
-    annotationProcessor(libs.bumptech.glide.compiler)
+    kapt(libs.bumptech.glide.compiler)
 
     // timber
     implementation(libs.jakewharton.timber)

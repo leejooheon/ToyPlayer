@@ -5,6 +5,7 @@ plugins {
     id("kotlin-kapt")
 }
 
+@Suppress("UnstableApiUsage")
 android {
     compileSdk = Versions.compileSdk
 
