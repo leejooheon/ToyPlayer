@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.view.components.outlinedTextFieldColor
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaViewModel
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase

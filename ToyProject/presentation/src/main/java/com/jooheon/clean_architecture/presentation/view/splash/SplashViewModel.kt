@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.presentation.view.splash
 import android.content.Context
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.jooheon.clean_architecture.presentation.base.BaseViewModel
+import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.presentation.utils.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

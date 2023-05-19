@@ -1,11 +1,11 @@
-package com.jooheon.clean_architecture.presentation.base
+package com.jooheon.clean_architecture.features.common.base
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
-import com.jooheon.clean_architecture.presentation.common.AlertDialogResource
-import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.features.common.compose.data.AlertDialogResource
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch

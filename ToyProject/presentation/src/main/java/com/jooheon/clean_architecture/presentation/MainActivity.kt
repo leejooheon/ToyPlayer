@@ -22,7 +22,7 @@ import com.jooheon.clean_architecture.presentation.base.BaseComposeActivity
 import com.jooheon.clean_architecture.presentation.base.extensions.BetterActivityResult
 import com.jooheon.clean_architecture.presentation.common.showToast
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.ApplicationTheme
-import com.jooheon.clean_architecture.presentation.utils.UiText
+import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.FullScreenNavigationHost
 import com.jooheon.clean_architecture.presentation.view.setting.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.components
+package com.jooheon.clean_architecture.features.common.compose.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.features.common.R
 
 @Composable
 fun CoilImage(
@@ -21,7 +21,7 @@ fun CoilImage(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(0.dp),
     contentScale: ContentScale = ContentScale.Crop,
-    @DrawableRes placeholderRes: Int = R.drawable.ic_logo_github,
+    @DrawableRes placeholderRes: Int = R.drawable.ic_placeholder,
     @DrawableRes errorRes: Int = placeholderRes,
 ) {
     Image(
@@ -33,7 +33,7 @@ fun CoilImage(
             }).build()
         ),
         contentDescription = contentDescription,
-        contentScale = ContentScale.Crop,
+        contentScale = contentScale,
         modifier = modifier.clip(shape)
     )
 }
