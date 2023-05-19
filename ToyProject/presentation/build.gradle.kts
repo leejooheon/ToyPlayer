@@ -37,9 +37,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     namespace = "com.jooheon.clean_architecture.presentation"
 }
 
@@ -47,10 +44,14 @@ dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
     implementation(project(path = ":features:musicservice"))
+    implementation(project(path = ":features:musicplayer"))
 
-    // kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.20")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.jakewharton.serialization.converter)
+
+    // android
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
 
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
@@ -64,9 +65,6 @@ dependencies {
     // hilt_worker
     implementation(libs.hilt.worker)
     kapt(libs.hilt.worker.compiler)
-
-    // xml component to rx observable
-//    implementation(Libraries.rxConverter)
 
     // Room
     implementation(libs.androidx.room)
@@ -93,7 +91,6 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx:23.1.1")
 
     // activity ui and system
-    implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.fragment:fragment-ktx:1.5.5")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03")
@@ -104,21 +101,18 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha05")
 
     // compose
-    implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material.icon.extended)
-    implementation("androidx.activity:activity-compose:1.6.1")
 
     // compose material3
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.windowsizeclass)
 
     // compose preview
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.3.2")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.3.2")
-    debugImplementation("androidx.customview:customview:1.2.0-alpha02")
-    debugImplementation("androidx.customview:customview-poolingcontainer:1.0.0")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // google map
     implementation("com.google.maps.android:maps-compose:2.5.3")
