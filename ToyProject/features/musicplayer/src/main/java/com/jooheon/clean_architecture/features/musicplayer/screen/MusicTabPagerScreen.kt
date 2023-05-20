@@ -1,0 +1,129 @@
+package com.jooheon.clean_architecture.features.musicplayer.screen
+
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.features.musicplayer.screen.components.pagerTabIndicatorOffset
+
+import kotlinx.coroutines.launch
+
+@OptIn(
+    ExperimentalFoundationApi::class
+)
+@Composable
+fun MusicTestScreen(
+    navigator: NavController,
+//    viewModel: MusicScreenViewModel = hiltViewModel(),
+) {
+    val tabPages = listOf(
+        stringResource(id = R.string.tab_name_song ),
+        stringResource(id = R.string.tab_name_album),
+        stringResource(id = R.string.tab_name_artist),
+        stringResource(id = R.string.tab_name_playlist)
+    )
+
+    val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState()
+
+    val scrollToPage: (Int) -> Unit = { page ->
+        scope.launch { pagerState.animateScrollToPage(page) }
+        Unit
+    }
+
+    BackHandler {
+        when {
+            pagerState.currentPage != 0 -> scrollToPage(0)
+            else -> navigator.popBackStack()
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxSize()
+    ) {
+        Column {
+            TabRow(
+                selectedTabIndex = pagerState.currentPage,
+                indicator = { tabPositions ->
+                    Box(
+                        modifier = Modifier
+                            .pagerTabIndicatorOffset(
+                                pagerState = pagerState,
+                                tabPositions = tabPositions
+                            )
+                            .height(4.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                    )
+                }
+            ) {
+                tabPages.forEachIndexed { i, title ->
+                    val selected = pagerState.currentPage == i
+
+                    Tab(
+                        selected = selected,
+                        text = {
+                            Text(
+                                text = title,
+                                style = LocalTextStyle.current.copy(
+                                    color = if (selected) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onTertiary
+                                )
+                            )
+                        },
+                        onClick = {
+                            scrollToPage(i)
+                        }
+                    )
+                }
+            }
+
+            HorizontalPager(
+                pageCount = 4,
+                state = pagerState
+            ) { page ->
+                when (page) {
+                    0 -> MusicScreen(navigator = navigator)
+                    1 -> MusicScreen(navigator = navigator)
+                    2 -> MusicScreen(navigator = navigator)
+                    3 -> MusicScreen(navigator = navigator)
+                }
+            }
+        }
+
+    }
+}
+@Preview
+@Composable
+private fun MediaFullDetailsPreviewDark() {
+    val context = LocalContext.current
+    PreviewTheme(true) {
+        MusicTestScreen(navigator = NavController(context),)
+    }
+}

@@ -26,6 +26,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -83,42 +84,76 @@ internal fun MusicProgress(
 @Composable
 internal fun MusicControlButtons(
     isPlaying: Boolean,
-    onPlayPauseButtonPressed: () -> Unit,
+    shuffleMode: ShuffleMode,
+    repeatMode: RepeatMode,
+    onShuffleModePressed: () -> Unit,
     onPrevious: () -> Unit,
-    onNext: () -> Unit
+    onPlayPauseButtonPressed: () -> Unit,
+    onNext: () -> Unit,
+    onRepeatModePressed: () -> Unit,
+    iconRelativeSize: Float = 0.4f,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = Modifier
-            .layoutId("music_control_buttons")
-            .fillMaxWidth(0.8f),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        IconButton(onClick = onPrevious) {
-            Icon(
-                tint = MaterialTheme.colorScheme.onSurface,
-                painter = painterResource(R.drawable.ic_skip_previous),
-                contentDescription = UiText.StringResource(R.string.action_previous).asString()
-            )
-        }
-        IconButton(onClick = onPlayPauseButtonPressed) {
-            Icon(
-                tint = MaterialTheme.colorScheme.onSurface,
-                painter = painterResource(
-                    id = if(isPlaying) R.drawable.ic_pause
-                    else R.drawable.ic_play_arrow,
-                ),
-                contentDescription = UiText.StringResource(R.string.action_play_pause).asString()
-            )
-        }
+    val shuffleIconResId = when(shuffleMode) {
+        ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
+        ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
+    }
+    val repeatIconResId = when(repeatMode) {
+        RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
+        RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
+        RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
+    }
 
-        IconButton(onClick = onNext) {
-            Icon(
-                tint = MaterialTheme.colorScheme.onSurface,
-                painter = painterResource(R.drawable.ic_skip_next),
-                contentDescription = UiText.StringResource(R.string.action_next).asString()
-            )
-        }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        RoundImageButton(
+            image = repeatIconResId,
+            iconTint = MaterialTheme.colorScheme.onBackground,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = MaterialTheme.colorScheme.background,
+            contentDescription = UiText.StringResource(R.string.action_cycle_repeat).asString(),
+            onClick = onRepeatModePressed,
+            modifier = Modifier.size(92.dp),
+        )
+
+        RoundImageButton(
+            image = R.drawable.ic_skip_previous,
+            iconTint = MaterialTheme.colorScheme.onTertiary,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            contentDescription = UiText.StringResource(R.string.action_previous).asString(),
+            onClick = onPrevious,
+        )
+        RoundImageButton(
+            image = getPlayPauseIcon(isPlaying),
+            iconTint = MaterialTheme.colorScheme.onTertiary,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            contentDescription = if (isPlaying) PAUSE_MUSIC_CD else PLAY_MUSIC_CD,
+            onClick = onPlayPauseButtonPressed,
+        )
+        RoundImageButton(
+            image = R.drawable.ic_skip_next,
+            iconTint = MaterialTheme.colorScheme.onTertiary,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            contentDescription = UiText.StringResource(R.string.action_next).asString(),
+            onClick = onNext,
+        )
+
+        RoundImageButton(
+            image = shuffleIconResId,
+            iconTint = MaterialTheme.colorScheme.onBackground,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = MaterialTheme.colorScheme.background,
+            contentDescription = UiText.StringResource(R.string.action_toggle_shuffle).asString(),
+            onClick = onShuffleModePressed,
+            modifier = Modifier.size(92.dp),
+        )
     }
 }
 
@@ -129,6 +164,7 @@ internal fun OtherButtons(
     repeatMode: RepeatMode,
     onShuffleModePressed: () -> Unit,
     onRepeatModePressed: () -> Unit,
+    iconRelativeSize: Float = 0.4f,
 ) {
     val shuffleIconResId = when(shuffleMode) {
         ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
@@ -143,21 +179,26 @@ internal fun OtherButtons(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        IconButton(onClick = onRepeatModePressed) {
-            Icon(
-                tint = MaterialTheme.colorScheme.onSurface,
-                painter = painterResource(repeatIconResId),
-                contentDescription = UiText.StringResource(R.string.action_cycle_repeat).asString()
-            )
-        }
 
-        IconButton(onClick = onShuffleModePressed) {
-            Icon(
-                tint = MaterialTheme.colorScheme.onSurface,
-                painter = painterResource(shuffleIconResId),
-                contentDescription = UiText.StringResource(R.string.action_toggle_shuffle).asString()
-            )
-        }
+        RoundImageButton(
+            image = repeatIconResId,
+            iconTint = MaterialTheme.colorScheme.onBackground,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = Color.Transparent,
+            contentDescription = UiText.StringResource(R.string.action_cycle_repeat).asString(),
+            onClick = onRepeatModePressed,
+            modifier = Modifier.size(92.dp),
+        )
+
+        RoundImageButton(
+            image = shuffleIconResId,
+            iconTint = MaterialTheme.colorScheme.onBackground,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = Color.Transparent,
+            contentDescription = UiText.StringResource(R.string.action_toggle_shuffle).asString(),
+            onClick = onShuffleModePressed,
+            modifier = Modifier.size(92.dp),
+        )
     }
 }
 
@@ -251,7 +292,7 @@ internal fun AlbumImage(
 ) {
     val borderThickness = (0.5).dp
     val borderColor = MaterialTheme.colorScheme.surface
-    val circle = RoundedCornerShape(100)
+
     val bottomMusicPlayerInfiniteTransition = rememberInfiniteTransition()
     val angle by bottomMusicPlayerInfiniteTransition.animateFloat(
         initialValue = 0f,
@@ -271,7 +312,6 @@ internal fun AlbumImage(
         }
     }
     Card(
-        shape = circle,
         border = BorderStroke(
             width = borderThickness,
             color = borderColor,
@@ -279,39 +319,25 @@ internal fun AlbumImage(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),
-        modifier = modifier.rotate(currentAngle)
+        modifier = modifier
+            .padding(12.dp)
+            .clip(CircleShape)
+            .aspectRatio(1.0f)
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .clip(circle)
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .border(
-                        width = borderThickness,
-                        color = borderColor,
-                        shape = circle
-                    )
-                    .align(Alignment.Center)
-                    .zIndex(2f)
-            )
-
-            CoilImage(
-                url = song.albumArtUri.toString(),
-                contentDescription = song.album,
-                shape = RoundedCornerShape(10.dp),
-                placeholderRes = R.drawable.ic_placeholder,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1.0f)
-            )
-        }
+        CoilImage(
+            url = song.albumArtUri.toString(),
+            contentDescription = song.album,
+            placeholderRes = R.drawable.ic_placeholder,
+            shape = RoundedCornerShape(10.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(1.0f),
+        )
     }
 }
 
 @Composable
 internal fun PlayPauseButton(
-    song: Song,
     isPlaying: Boolean,
     iconRelativeSize: Float = 0.4f,
     onPlayPauseButtonPressed: () -> Unit,

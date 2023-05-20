@@ -1,7 +1,7 @@
 {
   ConstraintSets: {
     start: {
-      videoColumn: {
+      mediaColumn: {
         width: 'spread',
         height: 'spread',
         top: ['parent', 'top'],
@@ -9,31 +9,31 @@
         start: ['parent', 'start'],
         end: ['parent', 'end']
       },
-      thumbnail: {
+      albumImage: {
         height: 60,
-        width: 140,
+        width: 80,
         bottom: ['parent', 'bottom'],
         start: ['parent', 'start'],
       },
       details: {
         width: 'spread',
         height: 'spread',
-        start: ['thumbnail', 'end'],
+        start: ['albumImage', 'end'],
         end: ['parent', 'end'],
-        top: ['thumbnail', 'top'],
-        bottom: ['thumbnail', 'bottom'],
+        top: ['albumImage', 'top'],
+        bottom: ['albumImage', 'bottom'],
       },
       content: {
         width: 'spread',
         height: 'spread',
         start: ['parent', 'start'],
         end: ['parent', 'end'],
-        top: ['thumbnail', 'bottom'],
+        top: ['albumImage', 'bottom'],
         bottom: ['parent', 'bottom'],
       }
     },
     end: {
-      videoColumn: {
+      mediaColumn: {
         width: 'spread',
         height: 'spread',
         top: ['parent', 'top'],
@@ -41,7 +41,7 @@
         start: ['parent', 'start'],
         end: ['parent', 'end'],
       },
-      thumbnail: {
+      albumImage: {
         width: 'spread',
         height: 'wrap',
         top: ['parent', 'top'],
@@ -51,15 +51,15 @@
       details: {
         height: 'spread',
         start: ['parent', 'end'],
-        top: ['thumbnail', 'top'],
-        bottom: ['thumbnail', 'bottom'],
+        top: ['albumImage', 'top'],
+        bottom: ['albumImage', 'bottom'],
       },
       content: {
         width: 'spread',
         height: 'spread',
         start: ['parent', 'start'],
         end: ['parent', 'end'],
-        top: ['thumbnail', 'bottom'],
+        top: ['albumImage', 'bottom'],
         bottom: ['parent', 'bottom']
       }
     }
