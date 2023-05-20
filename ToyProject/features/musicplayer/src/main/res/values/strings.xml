@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">musicplayer</string>
+    <string name="tab_name_song">Song</string>
+    <string name="tab_name_album">Album</string>
+    <string name="tab_name_artist">Artist</string>
+    <string name="tab_name_playlist">Playlist</string>
 </resources>

@@ -267,6 +267,7 @@ internal fun AlbumImage(
         if (isPlaying) {
             currentAngle = angle
         }
+        currentAngle = angle
     }
     Card(
         shape = circle,

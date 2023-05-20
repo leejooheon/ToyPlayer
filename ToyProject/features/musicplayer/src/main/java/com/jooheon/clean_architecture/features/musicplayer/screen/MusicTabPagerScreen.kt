@@ -6,12 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -23,9 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.screen.components.pagerTabIndicatorOffset
@@ -36,9 +40,9 @@ import kotlinx.coroutines.launch
     ExperimentalFoundationApi::class
 )
 @Composable
-fun MusicTestScreen(
+fun MusicTabPagerScreen(
     navigator: NavController,
-//    viewModel: MusicScreenViewModel = hiltViewModel(),
+    viewModel: MusicScreenViewModel = hiltViewModel(),
 ) {
     val tabPages = listOf(
         stringResource(id = R.string.tab_name_song ),
@@ -67,7 +71,11 @@ fun MusicTestScreen(
             .statusBarsPadding()
             .fillMaxSize()
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.onSecondary)
+        ) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 indicator = { tabPositions ->
@@ -79,7 +87,7 @@ fun MusicTestScreen(
                             )
                             .height(4.dp)
                             .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(MaterialTheme.colorScheme.tertiary)
                     )
                 }
             ) {
@@ -91,10 +99,13 @@ fun MusicTestScreen(
                         text = {
                             Text(
                                 text = title,
-                                style = LocalTextStyle.current.copy(
-                                    color = if (selected) MaterialTheme.colorScheme.onPrimary
-                                    else MaterialTheme.colorScheme.onTertiary
-                                )
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = if(selected) MaterialTheme.colorScheme.onBackground
+                                        else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                             )
                         },
                         onClick = {
@@ -109,7 +120,7 @@ fun MusicTestScreen(
                 state = pagerState
             ) { page ->
                 when (page) {
-                    0 -> MusicScreen(navigator = navigator)
+                    0 -> MusicScreen(navigator = navigator, viewModel = viewModel)
                     1 -> MusicScreen(navigator = navigator)
                     2 -> MusicScreen(navigator = navigator)
                     3 -> MusicScreen(navigator = navigator)
@@ -121,9 +132,9 @@ fun MusicTestScreen(
 }
 @Preview
 @Composable
-private fun MediaFullDetailsPreviewDark() {
+private fun MusicTabPagerScreenPreviewDark() {
     val context = LocalContext.current
     PreviewTheme(true) {
-        MusicTestScreen(navigator = NavController(context),)
+        MusicTabPagerScreen(navigator = NavController(context),)
     }
 }

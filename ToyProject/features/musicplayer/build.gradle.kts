@@ -76,6 +76,14 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.windowsizeclass)
 
+    // accompanist
+    implementation(libs.google.accompanist.permissions)
+    implementation(libs.google.accompanist.insets)
+    implementation(libs.google.accompanist.insets.ui)
+    implementation(libs.google.accompanist.systemuicontroller)
+    implementation(libs.google.accompanist.navigation.animation)
+    implementation(libs.google.accompanist.navigation.material)
+
     // compose preview
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">musicplayer</string>
+    <string name="tab_name_song">음악</string>
+    <string name="tab_name_album">앨범</string>
+    <string name="tab_name_artist">아티스트</string>
+    <string name="tab_name_playlist">재생목록</string>
+</resources>

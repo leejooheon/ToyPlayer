@@ -27,6 +27,7 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicScreen
+import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
 import com.jooheon.clean_architecture.presentation.view.main.common.MusicPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
@@ -64,7 +65,7 @@ internal fun BottomNavigationHost(
                 MapScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
-                MusicScreen(navigator)
+                MusicTabPagerScreen(navigator)
 //                ExoPlayerScreen()
             }
         }
