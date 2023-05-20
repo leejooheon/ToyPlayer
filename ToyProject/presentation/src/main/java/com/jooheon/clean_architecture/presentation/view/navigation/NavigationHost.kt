@@ -29,12 +29,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
-import com.jooheon.clean_architecture.presentation.view.main.common.MusicPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
 import com.jooheon.clean_architecture.presentation.view.main.github.RepositoryDetailScreen
 import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
-import com.jooheon.clean_architecture.presentation.view.main.music.PlayListScreen
-import com.jooheon.clean_architecture.presentation.view.main.search.ExoPlayerScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaDatailScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
@@ -163,14 +160,6 @@ internal fun FullScreenNavigationHost(
                 val arguments = requireNotNull(it.arguments)
                 val page = ScreenNavigation.Detail.WikipediaDetail.parsePage(arguments)
                 WikipediaDatailScreen(keyword = page.title ?: "")
-            }
-
-            bottomSheet(ScreenNavigation.Music.AodPlayer.route) {
-                MusicPlayerScreen(navigator = navController)
-            }
-
-            bottomSheet(ScreenNavigation.Music.PlayList.route) {
-                PlayListScreen()
             }
         }
     }

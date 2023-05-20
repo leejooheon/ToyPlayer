@@ -30,11 +30,6 @@ sealed class ScreenNavigation(open val route: String) {
         const val WidgetDeeplink = BuildConfig.DEEPLINK_PREFIX + "/subway/widget"
     }
 
-    class Music {
-        object AodPlayer: ScreenNavigation("aod_player")
-        object PlayList: ScreenNavigation("playlist")
-    }
-
     class Setting {
         object Main: ScreenNavigation("setting_main")
         object Launguage: ScreenNavigation("setting_language")
