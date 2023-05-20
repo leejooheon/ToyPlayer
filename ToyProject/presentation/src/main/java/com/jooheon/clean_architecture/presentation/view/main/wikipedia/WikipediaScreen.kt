@@ -36,7 +36,6 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
 import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
-import com.jooheon.clean_architecture.presentation.view.main.bottom.SearchView
 import com.jooheon.clean_architecture.presentation.view.temp.EmptyWikipediaUseCase
 
 import kotlinx.coroutines.flow.collectLatest
@@ -63,12 +62,12 @@ fun WikipediaScreen(
         }
     ) {
 
-        SearchView(
-            title = "input wiki\nKeyword",
-            content = searchWord.value,
-            onTextChanged = { viewModel.searchWord.value = it },
-            onButtonClicked = { viewModel.callRelatedApi() }
-        )
+//        SearchView(
+//            title = "input wiki\nKeyword",
+//            content = searchWord.value,
+//            onTextChanged = { viewModel.searchWord.value = it },
+//            onButtonClicked = { viewModel.callRelatedApi() }
+//        )
         WikipediaListView(viewModel, isPreview)
     }
     ObserveAlertDialogState(viewModel)
