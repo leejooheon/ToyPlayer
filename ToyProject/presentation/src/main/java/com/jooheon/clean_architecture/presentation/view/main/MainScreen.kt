@@ -42,12 +42,12 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.presentation.MainActivity
 
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.utils.showToastMessage
 import com.jooheon.clean_architecture.presentation.view.custom.GithubSearchDialog
 import com.jooheon.clean_architecture.presentation.view.main.bottom.*
 import com.jooheon.clean_architecture.presentation.view.navigation.BottomNavigationHost
 import com.jooheon.clean_architecture.presentation.view.navigation.MyBottomNavigation
-import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.view.navigation.currentBottomNavScreenAsState
 import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope

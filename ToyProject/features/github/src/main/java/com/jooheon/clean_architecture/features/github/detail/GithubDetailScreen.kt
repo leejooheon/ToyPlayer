@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.github
+package com.jooheon.clean_architecture.features.github.detail
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -24,17 +24,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
+import com.jooheon.clean_architecture.features.common.compose.components.CustomSurface
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.presentation.utils.ObserveAlertDialogState
-import com.jooheon.clean_architecture.presentation.utils.ObserveLoadingState
-import com.jooheon.clean_architecture.presentation.view.components.MyDivider
-import com.jooheon.clean_architecture.presentation.view.custom.CustomSurface
-import com.jooheon.clean_architecture.presentation.view.custom.RepositoryImage
-import com.jooheon.clean_architecture.presentation.view.main.github.detail.GithubRepositoryDetailViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptyGithubUseCase
+import com.jooheon.clean_architecture.features.github.R
+import com.jooheon.clean_architecture.features.github.main.EmptyGithubUseCase
+import com.jooheon.clean_architecture.features.github.main.components.RepositoryImage
 import kotlin.math.max
 import kotlin.math.min
 
@@ -50,10 +47,10 @@ private val CollapsedImageSize = 150.dp
 private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
 @Composable
-fun RepositoryDetailScreen(
+fun GithubDetailScreen(
     githubId: String,
     item: Entity.Repository,
-    viewModel: GithubRepositoryDetailViewModel = hiltViewModel()
+    viewModel: GithubDetailScreenViewModel = hiltViewModel()
 ) {
     val initialized = remember { mutableStateOf(false) }
 
@@ -73,13 +70,10 @@ fun RepositoryDetailScreen(
         Title(name, date, scroll.value)
         Image(item.imageUrl, scroll.value)
     }
-
-    ObserveLoadingState(viewModel)
-    ObserveAlertDialogState(viewModel)
 }
 
 private fun initialize(
-    viewModel: GithubRepositoryDetailViewModel,
+    viewModel: GithubDetailScreenViewModel,
     initialized: MutableState<Boolean>,
     githubId: String,
     repositoryName: String
@@ -159,7 +153,7 @@ private fun Title(
             modifier = HzPadding
         )
         Spacer(Modifier.height(8.dp))
-        MyDivider()
+        CustomDivider()
     }
 }
 
@@ -197,7 +191,7 @@ private fun CollapsingImageLayout(
 
 @Composable
 private fun Body(
-    viewModel: GithubRepositoryDetailViewModel,
+    viewModel: GithubDetailScreenViewModel,
     scroll: ScrollState
 ) {
     val detailContent = branchReComposableHandler(viewModel)
@@ -239,7 +233,7 @@ private fun Body(
                         overflow = TextOverflow.Ellipsis,
                         modifier = HzPadding
                     )
-                    
+
                     val textButton = if (seeMore.value) {
                         UiText.StringResource(R.string.see_more)
                     } else {
@@ -277,7 +271,7 @@ private fun Body(
                     )
 
                     Spacer(Modifier.height(4.dp))
-                    MyDivider()
+                    CustomDivider()
 
                     Spacer(
                         modifier = Modifier
@@ -292,7 +286,7 @@ private fun Body(
 }
 
 @Composable
-private fun branchReComposableHandler(viewModel: GithubRepositoryDetailViewModel): String {
+private fun branchReComposableHandler(viewModel: GithubDetailScreenViewModel): String {
     var result = UiText.StringResource(R.string.branch_placeholder).asString()
 
     viewModel.branchResponse.value?.let { response ->
@@ -306,7 +300,7 @@ private fun branchReComposableHandler(viewModel: GithubRepositoryDetailViewModel
 }
 
 @Composable
-private fun commitReComposableHandler(viewModel: GithubRepositoryDetailViewModel): String {
+private fun commitReComposableHandler(viewModel: GithubDetailScreenViewModel): String {
     var result = UiText.StringResource(R.string.commit_placeholder).asString()
 
     viewModel.commitResponse.value?.let { response ->
@@ -322,7 +316,7 @@ private fun commitReComposableHandler(viewModel: GithubRepositoryDetailViewModel
 @Preview
 @Composable
 fun RepositoryDetailScreenPreview() {
-    val viewModel = GithubRepositoryDetailViewModel(EmptyGithubUseCase())
+    val viewModel = GithubDetailScreenViewModel(EmptyGithubUseCase())
 
     val item: Entity.Repository = Entity.Repository(
         name = "name",

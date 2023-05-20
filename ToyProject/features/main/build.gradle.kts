@@ -16,6 +16,9 @@ android {
         targetSdk = Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
+        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
     }
 
 
@@ -41,6 +44,9 @@ dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
 
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.jakewharton.serialization.converter)
+
     // android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -62,6 +68,7 @@ dependencies {
     // compose
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icon.extended)
 
     // compose motionlayout
     implementation(libs.androidx.constraintlayout.compose)
@@ -69,7 +76,6 @@ dependencies {
     // compose material3
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.windowsizeclass)
-
 
     // compose preview
     implementation(libs.androidx.compose.ui)

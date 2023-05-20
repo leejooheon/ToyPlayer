@@ -1,5 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.custom
-
+package com.jooheon.clean_architecture.features.common.compose.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

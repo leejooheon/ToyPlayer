@@ -1,21 +1,16 @@
-package com.jooheon.clean_architecture.presentation.view.custom
+package com.jooheon.clean_architecture.features.github.main.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
-import com.jooheon.clean_architecture.presentation.R
+import com.jooheon.clean_architecture.features.common.compose.components.CustomSurface
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 
 @Composable

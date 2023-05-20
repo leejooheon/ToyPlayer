@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.github
+package com.jooheon.clean_architecture.features.github.main
 
 
 import android.util.Log
@@ -19,10 +19,10 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
-class GithubViewModel @Inject constructor(
+class GithubScreenViewModel @Inject constructor(
     private val githubUseCase: GithubUseCase
 ): BaseViewModel() {
-    override val TAG: String = GithubViewModel::class.java.simpleName
+    override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
     val githubId = MutableStateFlow("")
 
@@ -58,7 +58,6 @@ class GithubViewModel @Inject constructor(
     }
 
     fun onRepositoryClicked(item: Entity.Repository) = viewModelScope.launch(Dispatchers.Main) {
-
         val repository = Json.encodeToString(item)
         Log.d(TAG, "repository: $repository")
         _navigateToGithubDetailScreen.send(item)

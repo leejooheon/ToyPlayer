@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.R
-import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 
 @Composable
 fun SplashScreen(

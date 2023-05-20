@@ -24,16 +24,16 @@ import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.navigation.material.bottomSheet
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.jooheon.clean_architecture.features.musicplayer.screen.MusicScreen
+import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.features.github.main.GithubScreen
+import com.jooheon.clean_architecture.features.github.WikipediaScreen2
+import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreen
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
+import com.jooheon.clean_architecture.features.map.MapScreen2
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
-import com.jooheon.clean_architecture.presentation.view.main.github.HomeScreen
-import com.jooheon.clean_architecture.presentation.view.main.github.RepositoryDetailScreen
-import com.jooheon.clean_architecture.presentation.view.main.map.MapScreen
 import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaDatailScreen
-import com.jooheon.clean_architecture.presentation.view.main.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
 import com.jooheon.clean_architecture.presentation.view.setting.equalizer.EqualizerScreen
 import com.jooheon.clean_architecture.presentation.view.setting.theme.ThemeScreen
@@ -53,13 +53,23 @@ internal fun BottomNavigationHost(
             startDestination = ScreenNavigation.BottomSheet.Github.route
         ) {
             composable(ScreenNavigation.BottomSheet.Github.route) {
-                HomeScreen(navigator)
+                GithubScreen(navigator)
+//                GithubDetailScreen(
+//                    githubId = "leejooheon", item =  Entity.Repository(
+//                        name = "name",
+//                        id = "id",
+//                        created_at = "1234",
+//                        html_url = "html123",
+//                    )
+//                )
+//                HomeScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Wiki.route) {
-                WikipediaScreen(navigator)
+                WikipediaScreen2(navigator)
+//                WikipediaScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Map.route) {
-                MapScreen(navigator)
+                MapScreen2(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
                 MusicTabPagerScreen(navigator)
@@ -147,7 +157,7 @@ internal fun FullScreenNavigationHost(
                 val arguments = requireNotNull(it.arguments)
                 val repository = ScreenNavigation.Detail.GithubDetail.parseRepository(arguments)
                 val githubId = ScreenNavigation.Detail.GithubDetail.parseGithubId(arguments)
-                RepositoryDetailScreen(
+                GithubDetailScreen(
                     githubId = githubId,
                     item = repository
                 )

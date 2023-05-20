@@ -1,11 +1,10 @@
-package com.jooheon.clean_architecture.presentation.view.navigation
+package com.jooheon.clean_architecture.features.main
 
 import android.os.Bundle
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavType
-import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.Serializable

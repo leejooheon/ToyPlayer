@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.github.detail
+package com.jooheon.clean_architecture.features.github.detail
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class GithubRepositoryDetailViewModel @Inject constructor(
+class GithubDetailScreenViewModel @Inject constructor(
     private val githubUseCase: GithubUseCase
 ): BaseViewModel() {
-    override val TAG: String = GithubRepositoryDetailViewModel::class.java.simpleName
+    override val TAG: String = GithubDetailScreenViewModel::class.java.simpleName
 
     private val _commitResponse = mutableStateOf<List<Entity.Commit>?>(null)
     val commitResponse = _commitResponse

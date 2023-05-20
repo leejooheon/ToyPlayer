@@ -40,6 +40,9 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
+    implementation(project(path = ":features:main"))
+
+    implementation(libs.kotlinx.serialization.json)
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -70,12 +73,14 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.windowsizeclass)
 
-
     // compose preview
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // accompanist
+    implementation(libs.google.accompanist.insets)
 
     // test
     testImplementation(libs.test.junit)

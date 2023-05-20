@@ -19,6 +19,8 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.features.common.compose.theme.colors.AlphaNearOpaque
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.main.BottomNavigationItem
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
 
 @Composable
 internal fun MyBottomNavigation(

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.navigation
+package com.jooheon.clean_architecture.features.main
 
 import android.os.Bundle
 import androidx.annotation.DrawableRes
@@ -16,8 +16,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.presentation.BuildConfig
-import com.jooheon.clean_architecture.presentation.R
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

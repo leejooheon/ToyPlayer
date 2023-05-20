@@ -28,10 +28,10 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
 import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.presentation.view.components.MyDivider
 import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
 import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
 
@@ -93,7 +93,7 @@ fun SettingScreen(
                 )
             )
 
-            MyDivider(
+            CustomDivider(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 thickness = 1.dp
             )
@@ -102,7 +102,7 @@ fun SettingScreen(
                     data = it,
                     onClick = viewModel::onSettingItemClick
                 )
-                MyDivider(
+                CustomDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
                     thickness = 1.dp
                 )

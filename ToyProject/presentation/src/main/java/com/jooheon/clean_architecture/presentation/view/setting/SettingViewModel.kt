@@ -16,8 +16,8 @@ import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.common.showToast
-import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

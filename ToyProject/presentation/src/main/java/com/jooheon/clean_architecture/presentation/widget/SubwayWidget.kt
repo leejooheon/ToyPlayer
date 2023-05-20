@@ -22,7 +22,7 @@ import androidx.glance.layout.*
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.jooheon.clean_architecture.presentation.view.navigation.ScreenNavigation
+import com.jooheon.clean_architecture.features.main.ScreenNavigation
 import com.jooheon.clean_architecture.presentation.R
 
 internal class SubwayWidget: GlanceAppWidget() {

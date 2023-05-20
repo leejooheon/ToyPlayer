@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">github</string>
+
+    <!--    -->
+    <string name="title_github">Github</string>
+    <string name="title_cd_github">Github</string>
+    <string name="title_wikipedia">Wikipedia</string>
+    <string name="title_cd_wikipedia">Wikipedia</string>
+    <string name="title_map">Map</string>
+    <string name="title_cd_map">Map</string>
+    <string name="title_search">Search</string>
+    <string name="title_cd_search">Search</string>
 </resources>

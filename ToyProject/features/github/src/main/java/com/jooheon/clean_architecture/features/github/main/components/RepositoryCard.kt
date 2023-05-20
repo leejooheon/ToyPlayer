@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.custom
+package com.jooheon.clean_architecture.features.github.main.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding
@@ -11,7 +11,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.features.common.compose.components.CustomSurface
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 
 @Composable
 fun RepositoryCard(
@@ -36,13 +37,16 @@ fun RepositoryCard(
 
 @Preview
 @Composable
-fun RepositoryCardPreview() {
-    RepositoryCard(
-        modifier = Modifier.size(
-                width = 170.dp,
-                height = 250.dp
-            ).padding(bottom = 16.dp)
-    ) {
-
+private fun RepositoryCardPreview() {
+    PreviewTheme {
+        RepositoryCard(
+            modifier = Modifier
+                .size(
+                    width = 170.dp,
+                    height = 250.dp
+                )
+                .padding(bottom = 16.dp),
+            content = { }
+        )
     }
 }
