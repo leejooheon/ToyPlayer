@@ -45,6 +45,9 @@ dependencies {
     implementation(project(path = ":features:common"))
     implementation(project(path = ":features:musicservice"))
     implementation(project(path = ":features:musicplayer"))
+    implementation(project(path = ":features:github"))
+    implementation(project(path = ":features:wikipedia"))
+    implementation(project(path = ":features:map"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
