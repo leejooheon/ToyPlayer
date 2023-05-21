@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.wikipedia
+package com.jooheon.clean_architecture.features.wikipedia.detail
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -11,7 +11,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
-import com.jooheon.clean_architecture.presentation.utils.ShowLoading
 
 const val BASE_URL = "https://en.wikipedia.org/api/rest_v1/page/html/";
 
@@ -22,7 +21,6 @@ fun WikipediaDatailScreen(
     val loadingState = remember { mutableStateOf(false) }
 
     MyWebView(loadingState, keyword)
-    ObserveLoadingState(loadingState)
 }
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -64,7 +62,8 @@ private fun MyWebView(
 
 private fun MyWebViewClient(
     backEnabled: MutableState<Boolean>,
-    loadingState: MutableState<Boolean>) = object : WebViewClient() {
+    loadingState: MutableState<Boolean>
+) = object : WebViewClient() {
     override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         backEnabled.value = view.canGoBack()
@@ -75,9 +74,4 @@ private fun MyWebViewClient(
         super.onPageFinished(view, url)
         loadingState.value = false
     }
-}
-
-@Composable
-private fun ObserveLoadingState(loadingState: MutableState<Boolean>) {
-    if(loadingState.value) { ShowLoading() }
 }

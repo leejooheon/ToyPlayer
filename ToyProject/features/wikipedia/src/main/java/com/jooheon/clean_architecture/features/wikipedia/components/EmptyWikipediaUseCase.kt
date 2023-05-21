@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.temp
+package com.jooheon.clean_architecture.features.wikipedia.components
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity

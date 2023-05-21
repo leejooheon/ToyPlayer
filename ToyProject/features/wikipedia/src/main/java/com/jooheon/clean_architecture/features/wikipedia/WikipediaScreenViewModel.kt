@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.wikipedia
+package com.jooheon.clean_architecture.features.wikipedia
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
@@ -15,10 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WikipediaViewModel @Inject constructor(
+class WikipediaScreenViewModel @Inject constructor(
     private val wikipediaUseCase: WikipediaUseCase
 ): BaseViewModel() {
-    override val TAG: String = WikipediaViewModel::class.java.simpleName
+    override val TAG: String = WikipediaScreenViewModel::class.java.simpleName
 
     private val _summaryResponse = MutableStateFlow<Entity.Summary?>(null)
     val summaryResponse = _summaryResponse.asStateFlow()
