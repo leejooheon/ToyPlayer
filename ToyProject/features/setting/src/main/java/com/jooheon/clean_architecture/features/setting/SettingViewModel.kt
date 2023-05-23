@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.setting
+package com.jooheon.clean_architecture.features.setting
 
 import android.content.Context
 import android.media.audiofx.AudioEffect
@@ -12,12 +12,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
-import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.features.common.extension.showToast
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.main.ScreenNavigation
-import com.jooheon.clean_architecture.presentation.common.showToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

@@ -97,6 +97,7 @@ fun MainScreen(
     }
 
     RegisterBackPressedHandler(viewModel, drawerState, scope)
+    ObserveEvents(navigator, viewModel)
 }
 
 @Composable

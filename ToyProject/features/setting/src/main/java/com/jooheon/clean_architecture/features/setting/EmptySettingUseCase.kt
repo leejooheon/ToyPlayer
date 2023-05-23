@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.temp
+package com.jooheon.clean_architecture.features.setting
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward

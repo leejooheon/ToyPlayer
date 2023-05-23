@@ -32,9 +32,9 @@ import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerS
 import com.jooheon.clean_architecture.features.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.detail.WikipediaDatailScreen
 import com.jooheon.clean_architecture.presentation.view.main.MainScreen
-import com.jooheon.clean_architecture.presentation.view.setting.SettingScreen
-import com.jooheon.clean_architecture.presentation.view.setting.equalizer.EqualizerScreen
-import com.jooheon.clean_architecture.presentation.view.setting.theme.ThemeScreen
+import com.jooheon.clean_architecture.features.setting.SettingScreen
+import com.jooheon.clean_architecture.features.setting.equalizer.EqualizerScreen
+import com.jooheon.clean_architecture.features.setting.theme.ThemeScreen
 import com.jooheon.clean_architecture.presentation.view.splash.SplashScreen
 
 @ExperimentalComposeUiApi
@@ -126,10 +126,6 @@ internal fun FullScreenNavigationHost(
 
             composable(ScreenNavigation.Setting.Theme.route) {
                 ThemeScreen(navigator = navController)
-            }
-
-            composable(ScreenNavigation.Setting.Equalizer.route) {
-                EqualizerScreen(navigator = navController)
             }
 
             composable(ScreenNavigation.Setting.Equalizer.route) {

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.setting
+package com.jooheon.clean_architecture.features.setting
 
 
 import androidx.annotation.ColorRes
@@ -29,14 +29,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
-import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.presentation.view.main.MainViewModel
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySubwayUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -46,8 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingScreen(
     navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel(sharedViewModel()),
-    mainViewModel: MainViewModel = hiltViewModel(sharedViewModel()),
+    viewModel: SettingViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val skipDuration = viewModel.skipState.collectAsState()
@@ -200,7 +193,7 @@ private fun ObserveEvents(
                         viewModel.navigateToSettingDetailScreen.collectLatest {
                             when(it.action) {
                                 SettingAction.LAUGUAGE,
-                                SettingAction.THEME-> {
+                                SettingAction.THEME -> {
                                     viewModel.parseRoute(it.action)?.let {
                                         navigator.navigate(it)
                                     }
@@ -309,12 +302,10 @@ private fun PreviewSettingListItem() {
 private fun PreviewSettingScreen() {
     val context = LocalContext.current
     val scope = CoroutineScope(Dispatchers.Main)
-    val viewModel = MainViewModel(EmptySubwayUseCase())
     PreviewTheme(false) {
         SettingScreen(
             navigator = NavController(context),
             viewModel = SettingViewModel(EmptySettingUseCase()),
-            mainViewModel = viewModel,
         )
     }
 }

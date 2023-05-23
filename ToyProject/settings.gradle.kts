@@ -9,6 +9,7 @@ include(":features:wikipedia")
 include(":features:map")
 include(":features:common")
 include(":features:main")
+include(":features:setting")
 
 pluginManagement {
     repositories {

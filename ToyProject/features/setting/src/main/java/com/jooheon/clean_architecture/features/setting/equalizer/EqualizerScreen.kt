@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.setting.equalizer
+package com.jooheon.clean_architecture.features.setting.equalizer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,14 +10,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.presentation.view.main.sharedViewModel
-import com.jooheon.clean_architecture.presentation.view.setting.SettingViewModel
-import com.jooheon.clean_architecture.presentation.view.temp.EmptySettingUseCase
+import com.jooheon.clean_architecture.features.setting.EmptySettingUseCase
+import com.jooheon.clean_architecture.features.setting.SettingViewModel
 
 @Composable
-internal fun EqualizerScreen(
+fun EqualizerScreen(
     navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel(sharedViewModel())
+    viewModel: SettingViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier

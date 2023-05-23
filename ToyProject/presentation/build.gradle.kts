@@ -49,6 +49,7 @@ dependencies {
     implementation(project(path = ":features:wikipedia"))
     implementation(project(path = ":features:map"))
     implementation(project(path = ":features:main"))
+    implementation(project(path = ":features:setting"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)

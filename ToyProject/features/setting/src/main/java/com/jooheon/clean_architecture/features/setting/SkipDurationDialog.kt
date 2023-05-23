@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.setting
+package com.jooheon.clean_architecture.features.setting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
-import com.jooheon.clean_architecture.presentation.R
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 

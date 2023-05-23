@@ -24,7 +24,6 @@ import com.jooheon.clean_architecture.presentation.common.showToast
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.presentation.view.navigation.FullScreenNavigationHost
-import com.jooheon.clean_architecture.presentation.view.setting.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,7 +36,7 @@ class MainActivity : BaseComposeActivity() {
     lateinit var musicControllerUseCase: MusicControllerUsecase
     private var serviceToken: MusicControllerUsecase.ServiceToken? = null
 
-    private val settingViewModel: SettingViewModel by viewModels()
+//    private val settingViewModel: SettingViewModel by viewModels()
     private val activityLauncher = BetterActivityResult.registerActivityForResult(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +55,8 @@ class MainActivity : BaseComposeActivity() {
 
     @Composable
     private fun AppContent() {
-        val theme = settingViewModel.themeState.collectAsState()
-        ApplicationTheme(theme.value) {
+//        val theme = settingViewModel.themeState.collectAsState()
+        ApplicationTheme(Entity.SupportThemes.DYNAMIC_LIGHT) {
             FullScreenNavigationHost(
                 modifier = Modifier.fillMaxSize()
             )
@@ -67,44 +66,44 @@ class MainActivity : BaseComposeActivity() {
     private fun observeLocaleEvent() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingViewModel.localizedState.collectLatest {
-                    val configuration = resources.configuration
-                    val locale = if(it == Entity.SupportLaunguages.AUTO) {
-                        ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
-                    } else {
-                        Locale(it.code)
-                    }
-
-                    // setup locale
-                    Locale.setDefault(locale)
-                    LocaleList.setDefault(LocaleList(locale))
-
-                    // dd
-                    configuration.setLocales(LocaleList(locale))
-
-                    resources.updateConfiguration(configuration, resources.displayMetrics)
-                    createConfigurationContext(configuration)
-                }
+//                settingViewModel.localizedState.collectLatest {
+//                    val configuration = resources.configuration
+//                    val locale = if(it == Entity.SupportLaunguages.AUTO) {
+//                        ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
+//                    } else {
+//                        Locale(it.code)
+//                    }
+//
+//                    // setup locale
+//                    Locale.setDefault(locale)
+//                    LocaleList.setDefault(LocaleList(locale))
+//
+//                    // dd
+//                    configuration.setLocales(LocaleList(locale))
+//
+//                    resources.updateConfiguration(configuration, resources.displayMetrics)
+//                    createConfigurationContext(configuration)
+//                }
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                settingViewModel.navigateToSystemEqualizer.collectLatest { sessionId ->
-                    try {
-                        val effects = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-                            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
-                            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-                        }
-                        activityLauncher.launch(
-                            input = effects,
-                            onActivityResult = { /** Nothing **/ }
-                        )
-                    } catch (notFound: ActivityNotFoundException) {
-                        val content = UiText.StringResource(R.string.no_equalizer).asString(this@MainActivity)
-                        showToast(content)
-                    }
-                }
+//                settingViewModel.navigateToSystemEqualizer.collectLatest { sessionId ->
+//                    try {
+//                        val effects = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+//                            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, sessionId)
+//                            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+//                        }
+//                        activityLauncher.launch(
+//                            input = effects,
+//                            onActivityResult = { /** Nothing **/ }
+//                        )
+//                    } catch (notFound: ActivityNotFoundException) {
+//                        val content = UiText.StringResource(R.string.no_equalizer).asString(this@MainActivity)
+//                        showToast(content)
+//                    }
+//                }
             }
         }
     }
