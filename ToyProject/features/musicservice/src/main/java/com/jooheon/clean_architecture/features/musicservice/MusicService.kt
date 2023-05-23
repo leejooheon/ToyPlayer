@@ -220,7 +220,7 @@ class MusicService: MediaBrowserServiceCompat() {
         mediaSession.isActive = false
         mediaSession.release()
 
-//        notificationManager.cancelAll()
+        notificationManager.cancelAll()
 
         stopForeground(STOP_FOREGROUND_REMOVE).also {
             isForegroundService = false

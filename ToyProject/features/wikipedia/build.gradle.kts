@@ -40,6 +40,7 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
+    implementation(project(path = ":features:main"))
 
     // android
     implementation(libs.androidx.core.ktx)
