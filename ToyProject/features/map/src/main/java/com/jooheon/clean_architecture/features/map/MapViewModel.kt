@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.map
+package com.jooheon.clean_architecture.features.map
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +12,9 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.map.states.MapEvent
+import com.jooheon.clean_architecture.features.map.states.MapState
+import com.jooheon.clean_architecture.features.map.states.MapStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -38,6 +41,9 @@ class MapViewModel @Inject constructor(
     private val _permissionChannel = Channel<Unit?>()
     val permissionChannel = _permissionChannel.receiveAsFlow()
 
+
+    private val _floatingActionClicked = Channel<Unit>()
+    val floatingActionClicked = _floatingActionClicked.receiveAsFlow()
 
     init { updateParkingSpots() }
 
@@ -139,7 +145,7 @@ class MapViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-    
+
     private fun isAlreadyInsertedSpot(spot: LatLng): Boolean {
         mapState.parkingSpots.value?.forEach {
             val newLatitude = decimalFormat.format(spot.latitude)

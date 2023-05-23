@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.presentation.view.main.map
+package com.jooheon.clean_architecture.features.map.states
 
 object MapStyle {
     val json = """

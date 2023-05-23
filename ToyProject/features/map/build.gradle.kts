@@ -70,6 +70,12 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.windowsizeclass)
 
+    // accompanist
+    implementation(libs.google.accompanist.permissions)
+
+    // google map
+    implementation("com.google.maps.android:maps-compose:2.5.3")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
 
     // compose preview
     implementation(libs.androidx.compose.ui)

@@ -24,11 +24,10 @@ import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.features.github.main.GithubScreen
 import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreen
 import com.jooheon.clean_architecture.features.main.ScreenNavigation
-import com.jooheon.clean_architecture.features.map.MapScreen2
+import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
 import com.jooheon.clean_architecture.features.wikipedia.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.detail.WikipediaDatailScreen
@@ -57,7 +56,7 @@ internal fun BottomNavigationHost(
                 WikipediaScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Map.route) {
-                MapScreen2(navigator)
+                MapScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
                 MusicTabPagerScreen(navigator)
