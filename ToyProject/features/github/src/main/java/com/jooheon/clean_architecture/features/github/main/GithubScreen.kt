@@ -25,7 +25,7 @@ import androidx.navigation.NavController
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.github.main.components.RepositoryColumn
 import com.jooheon.clean_architecture.features.github.main.components.SearchView
-import com.jooheon.clean_architecture.features.main.ScreenNavigation
+import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

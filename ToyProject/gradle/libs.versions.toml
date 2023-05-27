@@ -40,6 +40,9 @@ hilt = "2.43.2"
 hilt_compose = "1.0.0"
 hilt_worker = "1.0.0"
 
+# work
+work = "2.7.1"
+
 # Room
 room = "2.4.3"
 
@@ -90,6 +93,10 @@ hilt_android_compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 hilt_android_compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_compose" }
 hilt_worker = { module = "androidx.hilt:hilt-work", version.ref = "hilt_worker"}
 hilt_worker_compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt_worker"}
+
+# work
+androidx_work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work"}
+androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "work" }
 
 # Room
 androidx_room = { module = "androidx.room:room-runtime", version.ref = "room"}

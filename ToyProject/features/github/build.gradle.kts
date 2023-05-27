@@ -40,7 +40,6 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
-    implementation(project(path = ":features:main"))
 
     implementation(libs.kotlinx.serialization.json)
 

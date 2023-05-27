@@ -1,4 +1,7 @@
 <resources>
+    <string name="close">닫기</string>
+    <string name="ok">확인</string>
+
     <!-- Notofication -->
     <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
     <string name="playing_notification_name">재생 중 알림</string>
@@ -13,6 +16,14 @@
     <string name="action_cycle_repeat">재생 모드</string>
     <string name="action_toggle_shuffle">셔플 모드</string>
 
-    <string name="close">닫기</string>
-    <string name="ok">확인</string>
+    <!--    -->
+    <string name="title_github">깃허브</string>
+    <string name="title_cd_github">깃허브</string>
+    <string name="title_wikipedia">위키피디아</string>
+    <string name="title_cd_wikipedia">위키피디아</string>
+    <string name="title_map">지도</string>
+    <string name="title_cd_map">지도</string>
+    <string name="title_search">탐색</string>
+    <string name="title_cd_search">탐색</string>
+
 </resources>

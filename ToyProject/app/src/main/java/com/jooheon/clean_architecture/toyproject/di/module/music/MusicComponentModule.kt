@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.presentation.MainActivity
+import com.jooheon.clean_architecture.features.main.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

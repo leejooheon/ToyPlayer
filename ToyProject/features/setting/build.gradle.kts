@@ -16,9 +16,6 @@ android {
         targetSdk = Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
-        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
     }
 
 
@@ -43,7 +40,6 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
-    implementation(project(path = ":features:main"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)

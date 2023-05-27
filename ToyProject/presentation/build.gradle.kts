@@ -16,8 +16,6 @@ android {
         targetSdk = Versions.targetSdk
 
         vectorDrawables.useSupportLibrary = true
-        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
-        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
     }
 
     buildTypes {
@@ -43,13 +41,13 @@ android {
 dependencies {
     implementation(project(path = ":domain"))
     implementation(project(path = ":features:common"))
-    implementation(project(path = ":features:musicservice"))
-    implementation(project(path = ":features:musicplayer"))
-    implementation(project(path = ":features:github"))
-    implementation(project(path = ":features:wikipedia"))
-    implementation(project(path = ":features:map"))
-    implementation(project(path = ":features:main"))
-    implementation(project(path = ":features:setting"))
+//    implementation(project(path = ":features:musicservice"))
+//    implementation(project(path = ":features:musicplayer"))
+//    implementation(project(path = ":features:github"))
+//    implementation(project(path = ":features:wikipedia"))
+//    implementation(project(path = ":features:map"))
+//    implementation(project(path = ":features:main"))
+//    implementation(project(path = ":features:setting"))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
@@ -67,7 +65,7 @@ dependencies {
     implementation(libs.hilt.android.compose)
     kapt(libs.hilt.android.compiler)
 
-    // hilt_worker
+    // hilt_work
     implementation(libs.hilt.worker)
     kapt(libs.hilt.worker.compiler)
 

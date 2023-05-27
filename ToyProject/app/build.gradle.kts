@@ -62,7 +62,7 @@ android {
 dependencies {
     implementation(project(path = ":data"))
     implementation(project(path = ":domain"))
-    implementation(project(path = ":presentation"))
+    implementation(project(path = ":features:main"))
     implementation(project(path = ":features:musicservice"))
     implementation(project(path = ":features:musicplayer"))
 
@@ -74,16 +74,18 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 
-    // hilt_worker
+    // hilt_work
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.hilt.worker)
     kapt(libs.hilt.worker.compiler)
+
 
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)
 
-    // xml component to rx observable
-//    implementation(Libraries.rxConverter)
+    // compose material3
+    implementation("com.google.android.material:material:1.8.0-beta01")
 
     // Network
     implementation(libs.squareup.retrofit)

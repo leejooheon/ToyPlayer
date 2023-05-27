@@ -1,12 +1,19 @@
 <resources>
-
     <!--    -->
-    <string name="title_github">깃허브</string>
-    <string name="title_cd_github">깃허브</string>
-    <string name="title_wikipedia">위키피디아</string>
-    <string name="title_cd_wikipedia">위키피디아</string>
-    <string name="title_map">지도</string>
-    <string name="title_cd_map">지도</string>
-    <string name="title_search">탐색</string>
-    <string name="title_cd_search">탐색</string>
+    <string name="app_name">ToyProject</string>
+    <string name="close">닫기</string>
+    <string name="ok">확인</string>
+
+    <!-- error -->
+    <string name="some_error">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
+
+
+    <!-- exoPlayer test   -->
+    <string name="test_mp3">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
+    <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
+
+    <!-- widget -->
+    <string name="glance_widget_description">출퇴근 지하철 정보</string>
+    <string name="glance_widget_loading">Loading</string>
+
 </resources>

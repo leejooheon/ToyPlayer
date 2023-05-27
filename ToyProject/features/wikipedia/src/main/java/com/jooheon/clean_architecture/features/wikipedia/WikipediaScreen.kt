@@ -33,7 +33,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.main.ScreenNavigation
+import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.wikipedia.components.EmptyWikipediaUseCase
 import com.jooheon.clean_architecture.features.wikipedia.components.SearchView
 
