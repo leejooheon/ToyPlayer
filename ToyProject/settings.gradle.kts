@@ -11,7 +11,6 @@ include(":features:common")
 include(":features:main")
 include(":features:setting")
 include(":features:splash")
-include(":presentation")
 //include(":features:widget")
 
 pluginManagement {
