@@ -41,7 +41,6 @@ class MapViewModel @Inject constructor(
     private val _permissionChannel = Channel<Unit?>()
     val permissionChannel = _permissionChannel.receiveAsFlow()
 
-
     private val _floatingActionClicked = Channel<Unit>()
     val floatingActionClicked = _floatingActionClicked.receiveAsFlow()
 

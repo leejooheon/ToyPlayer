@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.data
+package com.jooheon.clean_architecture.features.github.main.model
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 data class GithubState(

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.screen
+package com.jooheon.clean_architecture.features.github.main.presentation
 
 
 import android.util.Log
@@ -12,8 +12,8 @@ import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.github.main.data.GithubEvent
-import com.jooheon.clean_architecture.features.github.main.data.GithubState
+import com.jooheon.clean_architecture.features.github.main.model.GithubEvent
+import com.jooheon.clean_architecture.features.github.main.model.GithubState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

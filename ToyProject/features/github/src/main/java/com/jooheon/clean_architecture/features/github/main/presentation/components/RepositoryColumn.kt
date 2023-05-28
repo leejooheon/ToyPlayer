@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.components
+package com.jooheon.clean_architecture.features.github.main.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +12,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +19,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
-import com.jooheon.clean_architecture.features.github.main.data.GithubState
-import kotlinx.coroutines.flow.StateFlow
+import com.jooheon.clean_architecture.features.github.main.model.GithubState
 
 @Composable
 fun RepositoryColumn(

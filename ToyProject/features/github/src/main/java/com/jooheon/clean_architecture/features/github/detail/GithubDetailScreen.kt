@@ -30,7 +30,7 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Custo
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.github.R
-import com.jooheon.clean_architecture.features.github.main.components.RepositoryImage
+import com.jooheon.clean_architecture.features.github.main.presentation.components.RepositoryImage
 import kotlin.math.max
 import kotlin.math.min
 

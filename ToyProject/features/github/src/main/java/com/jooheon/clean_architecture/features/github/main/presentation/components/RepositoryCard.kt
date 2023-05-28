@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.components
+package com.jooheon.clean_architecture.features.github.main.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.padding

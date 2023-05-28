@@ -10,7 +10,6 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.github.main.data.GithubState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

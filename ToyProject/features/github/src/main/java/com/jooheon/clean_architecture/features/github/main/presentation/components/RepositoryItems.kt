@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.components
+package com.jooheon.clean_architecture.features.github.main.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,8 +11,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
-import com.jooheon.clean_architecture.features.github.main.screen.CardPadding
-import com.jooheon.clean_architecture.features.github.main.screen.CardWidth
+import com.jooheon.clean_architecture.features.github.main.presentation.CardPadding
+import com.jooheon.clean_architecture.features.github.main.presentation.CardWidth
 
 
 @Composable
