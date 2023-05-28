@@ -7,7 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -22,11 +25,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.github.main.components.RepositoryColumn
 import com.jooheon.clean_architecture.features.github.main.components.SearchView
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.features.github.main.data.GithubEvent
+import com.jooheon.clean_architecture.features.github.main.data.GithubState
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 
@@ -36,11 +45,13 @@ val CardPadding = 16.dp
 @Composable
 fun GithubScreen(
     navigator: NavController,
-    viewModel: GithubScreenViewModel = hiltViewModel(),
-    isPreview: Boolean = false
+    state: GithubState,
+    navigateChannel: Flow<GithubState>,
+    onEvent: (GithubEvent, GithubState) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
-    val githubId = viewModel.githubId.collectAsState()
+
+    var idState by rememberSaveable { mutableStateOf(state.id) }
 
     Column(
         modifier = Modifier
@@ -53,23 +64,24 @@ fun GithubScreen(
     ) {
         SearchView(
             title = "input your\ngithub id",
-            content = githubId.value,
-            onTextChanged = { viewModel.githubId.value = it },
-            onButtonClicked = { viewModel.callRepositoryApi() }
+            content = idState,
+            onTextChanged = { idState = it },
+            onButtonClicked = { onEvent(GithubEvent.GetGithubRepositoryData, state.copy(id = idState)) }
         )
         RepositoryColumn(
-            idState = viewModel.githubId,
-            itemsState = viewModel.repositoryList,
-            onRepositoryClick = viewModel::onRepositoryClicked,
-            isPreview = isPreview
+            state = state,
+            onRepositoryClick = {
+                onEvent(GithubEvent.GoToDetailScreen, state.copy(selectedItem = it))
+            },
         )
     }
-    ObserveEvents(navigator, viewModel)
+    ObserveEvents(navigator, state, navigateChannel)
 }
 @Composable
 private fun ObserveEvents(
     navigator: NavController,
-    viewModel: GithubScreenViewModel,
+    state: GithubState,
+    navigateChannel: Flow<GithubState>,
 ) {
     val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
     DisposableEffect(
@@ -78,11 +90,13 @@ private fun ObserveEvents(
             val observer = LifecycleEventObserver { lifecycleOwner, event ->
                 lifecycleOwner.lifecycleScope.launch {
                     lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.navigateToGithubDetailScreen.collectLatest {
+                        navigateChannel.collectLatest { state ->
+                            state.selectedItem ?: return@collectLatest
+
                             navigator.navigate(
                                 ScreenNavigation.Detail.GithubDetail.createRoute(
-                                    githubId = viewModel.githubId.value,
-                                    repository = it
+                                    githubId = state.id,
+                                    repository = state.selectedItem
                                 )
                             ) {
                                 launchSingleTop = true
@@ -104,12 +118,19 @@ private fun ObserveEvents(
 @Composable
 private fun HomeScreenPreview() {
     val context = LocalContext.current
-    val viewModel = GithubScreenViewModel(EmptyGithubUseCase())
     PreviewTheme(true) {
         GithubScreen(
-            NavController(context),
-            viewModel,
-            true
+            navigator = NavController(context),
+            state = GithubState.default.copy(
+                items = listOf(
+                    Entity.Repository.default.copy(name = "1111"),
+                    Entity.Repository.default.copy(name = "2222"),
+                    Entity.Repository.default.copy(name = "3333"),
+                    Entity.Repository.default.copy(name = "4444"),
+                )
+            ),
+            navigateChannel = Channel<GithubState>().receiveAsFlow(),
+            onEvent = { _, _ -> }
         )
     }
 }

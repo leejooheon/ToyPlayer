@@ -2,6 +2,9 @@ package com.jooheon.clean_architecture.features.github.main
 
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
@@ -9,6 +12,8 @@ import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.github.main.data.GithubEvent
+import com.jooheon.clean_architecture.features.github.main.data.GithubState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -20,47 +25,58 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GithubScreenViewModel @Inject constructor(
-    private val githubUseCase: GithubUseCase
+    private val githubUseCase: GithubUseCase,
 ): BaseViewModel() {
     override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
-    val githubId = MutableStateFlow("")
+    var githubState by mutableStateOf(GithubState.default)
 
-    private val _repositoryList = MutableStateFlow<List<Entity.Repository>>(emptyList())
-    val repositoryList = _repositoryList.asStateFlow()
-
-    private val _navigateToGithubDetailScreen = Channel<Entity.Repository>()
+    private val _navigateToGithubDetailScreen = Channel<GithubState>()
     val navigateToGithubDetailScreen = _navigateToGithubDetailScreen.receiveAsFlow()
 
-    fun callRepositoryApi() {
-        if(githubId.value.isEmpty()) {
+    fun dispatch(event: GithubEvent, state: GithubState) {
+        when(event) {
+            GithubEvent.GetGithubRepositoryData -> getRepositoryData(state.id)
+            GithubEvent.GoToDetailScreen -> goToDetailScreen(state.selectedItem)
+        }
+    }
+
+    private fun getRepositoryData(id: String?) {
+        id ?: return
+
+        if(id.isEmpty()) {
             val content = UiText.DynamicString("text is empty")
             handleAlertDialogState(content)
             return;
         }
 
-        githubUseCase.getRepository(githubId.value)
+        githubUseCase.getRepository(id)
             .onEach { resource ->
                 Log.d(TAG, "result: ${resource}")
                 handleResponse(resource)
 
                 if(resource is Resource.Success) {
                     insertDummyImageUrl(resource.value)
-                    _repositoryList.value = resource.value
+                    githubState = githubState.copy(
+                        id = id,
+                        items = resource.value
+                    )
                 }
 
                 if(resource is Resource.Failure) {
-                    _repositoryList.value = emptyList()
-                    githubId.value = ""
+                    githubState = GithubState.default.copy()
                 }
             }
             .launchIn(viewModelScope)
     }
 
-    fun onRepositoryClicked(item: Entity.Repository) = viewModelScope.launch(Dispatchers.Main) {
+    private fun goToDetailScreen(item: Entity.Repository?) = viewModelScope.launch(Dispatchers.Main) {
+        item ?: return@launch
         val repository = Json.encodeToString(item)
         Log.d(TAG, "repository: $repository")
-        _navigateToGithubDetailScreen.send(item)
+
+        githubState = githubState.copy(selectedItem = item)
+        _navigateToGithubDetailScreen.send(githubState)
     }
 
     private fun insertDummyImageUrl(resource: List<Entity.Repository>) {

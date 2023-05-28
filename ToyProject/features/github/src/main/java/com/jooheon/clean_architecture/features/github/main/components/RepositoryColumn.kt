@@ -21,18 +21,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
+import com.jooheon.clean_architecture.features.github.main.data.GithubState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun RepositoryColumn(
-    idState: StateFlow<String>,
-    itemsState: StateFlow<List<Entity.Repository>>,
+    state: GithubState,
     onRepositoryClick: (Entity.Repository) -> Unit,
-    isPreview:Boolean = false
 ) {
-    val id by idState.collectAsState()
-    val items by itemsState.collectAsState()
-
     CustomDivider(thickness = 2.dp)
 
     Column(modifier = Modifier) {
@@ -43,7 +39,7 @@ fun RepositoryColumn(
                 .padding(start = 24.dp)
         ) {
             Text(
-                text = id,
+                text = state.id,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
@@ -65,7 +61,7 @@ fun RepositoryColumn(
         }
 
         RepositoryItems(
-            items = items,
+            items = state.items,
             onRepositoryClick = onRepositoryClick
         )
     }

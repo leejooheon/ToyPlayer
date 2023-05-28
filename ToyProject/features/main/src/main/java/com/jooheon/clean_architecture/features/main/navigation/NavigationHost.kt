@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -27,6 +28,7 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.github.main.GithubScreen
 import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreen
+import com.jooheon.clean_architecture.features.github.main.GithubScreenViewModel
 import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
@@ -50,7 +52,14 @@ internal fun BottomNavigationHost(
             startDestination = ScreenNavigation.BottomSheet.Github.route
         ) {
             composable(ScreenNavigation.BottomSheet.Github.route) {
-                GithubScreen(navigator)
+
+                val viewModel = hiltViewModel<GithubScreenViewModel>()
+                GithubScreen(
+                    navigator = navigator,
+                    state = viewModel.githubState,
+                    navigateChannel = viewModel.navigateToGithubDetailScreen,
+                    onEvent = viewModel::dispatch
+                )
             }
             composable(ScreenNavigation.BottomSheet.Wiki.route) {
                 WikipediaScreen(navigator)

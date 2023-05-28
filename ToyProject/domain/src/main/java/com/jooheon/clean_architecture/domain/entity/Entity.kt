@@ -31,7 +31,17 @@ sealed class Entity: java.io.Serializable {
         val created_at: String,
         val html_url: String,
         var imageUrl: String = ""
-    ) : Entity()
+    ) : Entity() {
+        companion object {
+            val default = Repository(
+                name = "name",
+                id = "id",
+                created_at = "created_at",
+                html_url = "https://asd.com",
+                imageUrl = "image"
+            )
+        }
+    }
 
     data class Branch(
         val name: String,
