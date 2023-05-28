@@ -1,11 +1,10 @@
-package com.jooheon.clean_architecture.features.github.detail
+package com.jooheon.clean_architecture.features.github.main.presentation.detail
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.jooheon.clean_architecture.domain.entity.Entity
@@ -30,7 +28,8 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Custo
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.github.R
-import com.jooheon.clean_architecture.features.github.main.presentation.components.RepositoryImage
+import com.jooheon.clean_architecture.features.github.main.model.GithubDetailScreenState
+import com.jooheon.clean_architecture.features.github.main.presentation.main.components.RepositoryImage
 import kotlin.math.max
 import kotlin.math.min
 
@@ -47,7 +46,7 @@ private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
 @Composable
 fun GithubDetailScreen(
-    state: GithubDetailState
+    state: GithubDetailScreenState
 ) {
     Box(
         modifier = Modifier
@@ -169,7 +168,7 @@ private fun CollapsingImageLayout(
 
 @Composable
 private fun Body(
-    state: GithubDetailState,
+    state: GithubDetailScreenState,
     scroll: ScrollState
 ) {
     val detailContent = branchReComposableHandler(state.branchList)
@@ -314,7 +313,7 @@ fun RepositoryDetailScreenPreview() {
         Box(Modifier.fillMaxSize()) {
             val scroll = rememberScrollState(0)
             Header()
-            Body(GithubDetailState.default, scroll)
+            Body(GithubDetailScreenState.default, scroll)
             Title(name, date, scroll.value)
             Image(item.imageUrl, scroll.value)
         }

@@ -27,11 +27,11 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
-import com.jooheon.clean_architecture.features.github.main.presentation.GithubScreen
-import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreen
-import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreenViewModel
-import com.jooheon.clean_architecture.features.github.main.model.GithubEvent
-import com.jooheon.clean_architecture.features.github.main.presentation.GithubScreenViewModel
+import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreen
+import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreen
+import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreenViewModel
+import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEvent
+import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreenViewModel
 import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
@@ -57,7 +57,7 @@ internal fun BottomNavigationHost(
             composable(ScreenNavigation.BottomSheet.Github.route) {
                 val viewModel = hiltViewModel<GithubScreenViewModel>().apply {
                     navigateToGithubDetailScreen.observeWithLifecycle {
-                        GithubEvent.navigateToDetailScreen(navigator, it)
+                        GithubScreenEvent.navigateToDetailScreen(navigator, it)
                     }
                 }
                 GithubScreen(

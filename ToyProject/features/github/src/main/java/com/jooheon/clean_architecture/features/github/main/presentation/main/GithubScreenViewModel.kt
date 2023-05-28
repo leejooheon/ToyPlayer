@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.presentation
+package com.jooheon.clean_architecture.features.github.main.presentation.main
 
 
 import android.util.Log
@@ -12,8 +12,8 @@ import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.github.main.model.GithubEvent
-import com.jooheon.clean_architecture.features.github.main.model.GithubState
+import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEvent
+import com.jooheon.clean_architecture.features.github.main.model.GithubScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -29,15 +29,15 @@ class GithubScreenViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
-    var githubState by mutableStateOf(GithubState.default)
+    var githubState by mutableStateOf(GithubScreenState.default)
 
-    private val _navigateToGithubDetailScreen = Channel<GithubState>()
+    private val _navigateToGithubDetailScreen = Channel<GithubScreenState>()
     val navigateToGithubDetailScreen = _navigateToGithubDetailScreen.receiveAsFlow()
 
-    fun dispatch(event: GithubEvent, state: GithubState) {
+    fun dispatch(event: GithubScreenEvent, state: GithubScreenState) {
         when(event) {
-            GithubEvent.GetGithubRepositoryData -> getRepositoryData(state.id)
-            GithubEvent.GoToDetailScreen -> goToDetailScreen(state.selectedItem)
+            GithubScreenEvent.GetGithubRepositoryData -> getRepositoryData(state.id)
+            GithubScreenEvent.GoToDetailScreen -> goToDetailScreen(state.selectedItem)
         }
     }
 
@@ -64,7 +64,7 @@ class GithubScreenViewModel @Inject constructor(
                 }
 
                 if(resource is Resource.Failure) {
-                    githubState = GithubState.default.copy()
+                    githubState = GithubScreenState.default.copy()
                 }
             }
             .launchIn(viewModelScope)

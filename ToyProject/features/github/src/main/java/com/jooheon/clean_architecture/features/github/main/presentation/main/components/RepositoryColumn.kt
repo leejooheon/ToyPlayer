@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.presentation.components
+package com.jooheon.clean_architecture.features.github.main.presentation.main.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +19,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
-import com.jooheon.clean_architecture.features.github.main.model.GithubState
+import com.jooheon.clean_architecture.features.github.main.model.GithubScreenState
 
 @Composable
 fun RepositoryColumn(
-    state: GithubState,
+    state: GithubScreenState,
     onRepositoryClick: (Entity.Repository) -> Unit,
 ) {
     CustomDivider(thickness = 2.dp)

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main.presentation.components
+package com.jooheon.clean_architecture.features.github.main.presentation.main.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.github.main.presentation.CardPadding
-import com.jooheon.clean_architecture.features.github.main.presentation.CardWidth
+import com.jooheon.clean_architecture.features.github.main.presentation.main.CardPadding
+import com.jooheon.clean_architecture.features.github.main.presentation.main.CardWidth
 import com.jooheon.clean_architecture.features.github.extensions.offsetGradientBackground
 
 @Composable
