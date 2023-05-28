@@ -37,9 +37,11 @@ import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaDatailScreen
-import com.jooheon.clean_architecture.features.setting.SettingScreen
-import com.jooheon.clean_architecture.features.setting.equalizer.EqualizerScreen
-import com.jooheon.clean_architecture.features.setting.theme.ThemeScreen
+import com.jooheon.clean_architecture.features.setting.presentation.main.SettingScreen
+import com.jooheon.clean_architecture.features.setting.presentation.equalizer.EqualizerScreen
+import com.jooheon.clean_architecture.features.setting.presentation.language.LanguageScreen
+import com.jooheon.clean_architecture.features.setting.presentation.SettingViewModel
+import com.jooheon.clean_architecture.features.setting.presentation.theme.ThemeScreen
 import com.jooheon.clean_architecture.features.splash.SplashScreen
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreenViewModel
@@ -116,11 +118,21 @@ internal fun FullScreenNavigationHost(
             bottomStart = CornerSize(0),
         )
     ) {
+        val settingViewModel = hiltViewModel<SettingViewModel>().apply {
+            navigateTo.observeWithLifecycle {
+                if(it == ScreenNavigation.Back.route) {
+                    navController.popBackStack()
+                } else {
+                    navController.navigate(it)
+                }
+            }
+        }
         NavHost(
             navController = navController,
             startDestination = ScreenNavigation.Splash.route,
             modifier = Modifier.fillMaxSize()
         ) {
+
             composable(ScreenNavigation.Splash.route) {
                 SplashScreen(
                     navigator = navController
@@ -133,7 +145,11 @@ internal fun FullScreenNavigationHost(
                 )
             }
             composable(ScreenNavigation.Setting.Main.route) {
-                SettingScreen(navigator = navController)
+
+                SettingScreen(
+                    state = settingViewModel.state,
+                    onEvent = settingViewModel::dispatch
+                )
             }
 
             composable(
@@ -146,9 +162,18 @@ internal fun FullScreenNavigationHost(
             ) {
 //                TestScreen()
             }
+            composable(ScreenNavigation.Setting.Language .route) {
+                LanguageScreen(
+                    state = settingViewModel.state,
+                    onEvent = settingViewModel::dispatch
+                )
+            }
 
             composable(ScreenNavigation.Setting.Theme.route) {
-                ThemeScreen(navigator = navController)
+                ThemeScreen(
+                    state = settingViewModel.state,
+                    onEvent = settingViewModel::dispatch
+                )
             }
 
             composable(ScreenNavigation.Setting.Equalizer.route) {

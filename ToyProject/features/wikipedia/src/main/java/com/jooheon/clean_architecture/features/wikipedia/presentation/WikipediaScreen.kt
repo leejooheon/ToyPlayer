@@ -144,8 +144,6 @@ private fun WikipediaListItem(
 @Preview
 @Composable
 fun PreviewWikipediaScreen() {
-//    val context = LocalContext.current
-//    val viewModel = WikipediaScreenViewModel(EmptyWikipediaUseCase())
     PreviewTheme(false) {
         WikipediaScreen(
             state = WikipediaScreenState.default.copy(

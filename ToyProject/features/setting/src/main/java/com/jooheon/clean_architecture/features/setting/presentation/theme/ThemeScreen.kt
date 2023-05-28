@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.setting.theme
+package com.jooheon.clean_architecture.features.setting.presentation.theme
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -7,29 +7,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.getColorScheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.setting.EmptySettingUseCase
 import com.jooheon.clean_architecture.features.setting.R
-import com.jooheon.clean_architecture.features.setting.SettingDetailItem
-import com.jooheon.clean_architecture.features.setting.SettingViewModel
+import com.jooheon.clean_architecture.features.setting.presentation.main.SettingDetailItem
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeScreen(
-    navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel()
+    state: SettingScreenState,
+    onEvent: (Context, SettingScreenEvent, SettingScreenState) -> Unit
 ) {
-    val themeState = viewModel.themeState.collectAsState()
+    val context = LocalContext.current
     val supportThemes = Entity.SupportThemes.values()
 
     Column(
@@ -46,7 +43,7 @@ fun ThemeScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { navigator.popBackStack() }) {
+                IconButton(onClick = { onEvent(context, SettingScreenEvent.GoToBack, state) }) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
                         contentDescription = null
@@ -60,14 +57,14 @@ fun ThemeScreen(
 
         val context = LocalContext.current
         supportThemes.forEach {
-            if(viewModel.showableTheme(it)) {
-                val selected = it == themeState.value
+            if(SettingScreenState.showableTheme(it)) {
+                val selected = it == state.theme
                 SettingDetailItem(
                     color = getColorScheme(it).primary,
                     selected = selected,
                     title = it.parse(context),
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { viewModel.onThemeItemClick(it) }
+                    onClick = { onEvent(context, SettingScreenEvent.ThemeChanged, state.copy(theme = it)) }
                 )
             }
         }
@@ -89,11 +86,10 @@ private fun Entity.SupportThemes.parse(context: Context): String {
 @Preview
 @Composable
 private fun PreviewThemeScreen() {
-    val context = LocalContext.current
     PreviewTheme(false) {
         ThemeScreen(
-            navigator = NavController(context),
-            viewModel = SettingViewModel(EmptySettingUseCase())
+            state = SettingScreenState.default,
+            onEvent = { _, _, _ -> }
         )
     }
 }

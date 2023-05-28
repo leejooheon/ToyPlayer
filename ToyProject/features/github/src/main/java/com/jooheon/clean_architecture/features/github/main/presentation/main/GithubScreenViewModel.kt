@@ -30,6 +30,7 @@ class GithubScreenViewModel @Inject constructor(
     override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
     var githubState by mutableStateOf(GithubScreenState.default)
+        private set
 
     private val _navigateToGithubDetailScreen = Channel<GithubScreenState>()
     val navigateToGithubDetailScreen = _navigateToGithubDetailScreen.receiveAsFlow()

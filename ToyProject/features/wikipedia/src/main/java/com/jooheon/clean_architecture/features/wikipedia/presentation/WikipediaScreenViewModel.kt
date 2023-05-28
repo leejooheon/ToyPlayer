@@ -26,6 +26,7 @@ class WikipediaScreenViewModel @Inject constructor(
     override val TAG: String = WikipediaScreenViewModel::class.java.simpleName
 
     var state by mutableStateOf(WikipediaScreenState.default)
+        private set
 
     private val _navigateToWikipediaDetailScreen = Channel<WikipediaScreenState>()
     val navigateToWikipediaDetailScreen = _navigateToWikipediaDetailScreen.receiveAsFlow()

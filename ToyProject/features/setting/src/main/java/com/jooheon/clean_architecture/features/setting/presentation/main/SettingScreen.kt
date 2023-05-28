@@ -1,6 +1,7 @@
-package com.jooheon.clean_architecture.features.setting
+package com.jooheon.clean_architecture.features.setting.presentation.main
 
 
+import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,56 +11,48 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.jooheon.clean_architecture.features.setting.R
+import com.jooheon.clean_architecture.features.setting.presentation.components.SkipDurationDialog
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenItem
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
-    navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel(),
+    state: SettingScreenState,
+    onEvent: (Context, SettingScreenEvent, SettingScreenState) -> Unit,
 ) {
     val context = LocalContext.current
-    val skipDuration = viewModel.skipState.collectAsState()
-    val settingList = viewModel.getSettingList(context)
-    var dialogState by rememberSaveable { mutableStateOf(false) }
+    val settingList = SettingScreenItem.getSettingListItems(state)
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        if(dialogState) {
+        if(state.showSkipDurationDialog) {
             SkipDurationDialog(
-                currentState = skipDuration.value,
+                currentState = state.skipDuration,
                 onChanged = {
-                    viewModel.onSkipItemClick(it)
-//                    mainViewModel.musicControllerUseCase.onSkipDurationChanged()
+                    onEvent(context, SettingScreenEvent.SkipDurationChanged, state.copy(skipDuration = it))
                 },
-                onDismiss = { dialogState = false }
+                onDismiss = {
+                    onEvent(context, SettingScreenEvent.ShowSkipDurationDialog, state.copy(showSkipDurationDialog = false))
+                }
             )
         }
 
@@ -74,7 +67,7 @@ fun SettingScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigator.popBackStack() }) {
+                    IconButton(onClick = { onEvent(context, SettingScreenEvent.GoToBack, state) }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = null
@@ -92,8 +85,15 @@ fun SettingScreen(
             )
             settingList.forEach {
                 SettingListItem(
-                    data = it,
-                    onClick = viewModel::onSettingItemClick
+                    item = it,
+                    onClick = {
+                        val newState = if(it.event == SettingScreenEvent.ShowSkipDurationDialog) {
+                            state.copy(showSkipDurationDialog = true)
+                        } else {
+                            state
+                        }
+                        onEvent(context, it.event, newState)
+                    }
                 )
                 CustomDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -102,34 +102,34 @@ fun SettingScreen(
             }
         }
     }
-    ObserveEvents(
-        navigator = navigator,
-        viewModel = viewModel,
-        onDurationEvent = {
-            dialogState = true
-        },
-        onEqualizerEvent = {
-//            val sessionId = mainViewModel.musicControllerUseCase.audioSessionId()
-//            viewModel.onEqualizerClick(context, sessionId)
-        }
-    )
+//    ObserveEvents(
+//        navigator = navigator,
+//        viewModel = viewModel,
+//        onDurationEvent = {
+//            dialogState = true
+//        },
+//        onEqualizerEvent = {
+////            val sessionId = mainViewModel.musicControllerUseCase.audioSessionId()
+////            viewModel.onEqualizerClick(context, sessionId)
+//        }
+//    )
 }
 
 @Composable
 private fun SettingListItem(
-    data: SettingData,
-    onClick: (SettingData) -> Unit,
+    item: SettingScreenItem,
+    onClick: (SettingScreenItem) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .clickable { onClick(data) }
+            .clickable { onClick(item) }
     ) {
         Icon(
-            painter = rememberVectorPainter(data.iconImageVector),
-            contentDescription = data.title,
+            painter = rememberVectorPainter(item.iconImageVector),
+            contentDescription = item.title.asString(),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(24.dp)
@@ -142,7 +142,7 @@ private fun SettingListItem(
                 .weight(0.64f)
         ) {
             Text(
-                text = data.title,
+                text = item.title.asString(),
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
@@ -158,9 +158,9 @@ private fun SettingListItem(
                 .padding(end = 12.dp)
                 .weight(0.24f)
         ) {
-            if (data.showValue) {
+            if (item.showValue) {
                 Text(
-                    text = data.value,
+                    text = item.value.asString(),
                     textAlign = TextAlign.End,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Normal,
@@ -174,49 +174,6 @@ private fun SettingListItem(
     }
 }
 
-@Composable
-private fun ObserveEvents(
-    navigator: NavController,
-    viewModel: SettingViewModel,
-    onDurationEvent: () -> Unit,
-    onEqualizerEvent: () -> Unit
-) {
-    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
-    val context = LocalContext.current
-    DisposableEffect(
-        key1 = lifecycleOwner,
-        effect = {
-            val observer = LifecycleEventObserver { lifecycleOwner, event ->
-
-                lifecycleOwner.lifecycleScope.launch {
-                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.navigateToSettingDetailScreen.collectLatest {
-                            when(it.action) {
-                                SettingAction.LAUGUAGE,
-                                SettingAction.THEME -> {
-                                    viewModel.parseRoute(it.action)?.let {
-                                        navigator.navigate(it)
-                                    }
-                                }
-                                SettingAction.EQUALIZER -> {
-                                    onEqualizerEvent()
-                                }
-                                SettingAction.SKIP_DURATION -> {
-                                    onDurationEvent()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            lifecycleOwner.lifecycle.addObserver(observer)
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
-        }
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -282,30 +239,14 @@ private fun PreviewSettingDetailItem() {
         }
     }
 }
-@Composable
-@Preview
-private fun PreviewSettingListItem() {
-    val context = LocalContext.current
-    val data = SettingViewModel(EmptySettingUseCase()).getSettingList(
-        context = context
-    )
-    PreviewTheme(false) {
-        SettingListItem(
-            data = data.last(),
-            onClick = {}
-        )
-    }
-}
 
 @Composable
 @Preview
 private fun PreviewSettingScreen() {
-    val context = LocalContext.current
-    val scope = CoroutineScope(Dispatchers.Main)
     PreviewTheme(false) {
         SettingScreen(
-            navigator = NavController(context),
-            viewModel = SettingViewModel(EmptySettingUseCase()),
+            state = SettingScreenState.default,
+            onEvent = { _, _, _ -> }
         )
     }
 }

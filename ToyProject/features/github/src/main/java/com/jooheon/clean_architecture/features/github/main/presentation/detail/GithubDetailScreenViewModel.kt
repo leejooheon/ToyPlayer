@@ -23,6 +23,7 @@ class GithubDetailScreenViewModel @Inject constructor(
     override val TAG: String = GithubDetailScreenViewModel::class.java.simpleName
 
     var state by mutableStateOf(GithubDetailScreenState.default)
+        private set
 
     fun initState(id: String, item: Entity.Repository) {
         state = state.copy(
