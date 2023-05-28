@@ -26,9 +26,10 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.github.main.GithubScreen
+import com.jooheon.clean_architecture.features.github.main.screen.GithubScreen
 import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreen
-import com.jooheon.clean_architecture.features.github.main.GithubScreenViewModel
+import com.jooheon.clean_architecture.features.github.detail.GithubDetailScreenViewModel
+import com.jooheon.clean_architecture.features.github.main.screen.GithubScreenViewModel
 import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
@@ -148,9 +149,15 @@ internal fun FullScreenNavigationHost(
                 val arguments = requireNotNull(it.arguments)
                 val repository = ScreenNavigation.Detail.GithubDetail.parseRepository(arguments)
                 val githubId = ScreenNavigation.Detail.GithubDetail.parseGithubId(arguments)
+
+                val viewModel = hiltViewModel<GithubDetailScreenViewModel>().apply {
+                    initState(
+                        id = githubId,
+                        item = repository
+                    )
+                }
                 GithubDetailScreen(
-                    githubId = githubId,
-                    item = repository
+                    state = viewModel.state
                 )
             }
 

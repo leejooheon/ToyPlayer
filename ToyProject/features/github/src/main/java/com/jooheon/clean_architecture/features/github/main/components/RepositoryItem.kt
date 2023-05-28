@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.github.main.CardPadding
-import com.jooheon.clean_architecture.features.github.main.CardWidth
+import com.jooheon.clean_architecture.features.github.main.screen.CardPadding
+import com.jooheon.clean_architecture.features.github.main.screen.CardWidth
 import com.jooheon.clean_architecture.features.github.extensions.offsetGradientBackground
 
 @Composable

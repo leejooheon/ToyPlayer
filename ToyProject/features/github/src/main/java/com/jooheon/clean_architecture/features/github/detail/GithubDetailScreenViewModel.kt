@@ -1,12 +1,16 @@
 package com.jooheon.clean_architecture.features.github.detail
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.util.fastFirstOrNull
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.features.github.main.data.GithubState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,14 +22,18 @@ class GithubDetailScreenViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG: String = GithubDetailScreenViewModel::class.java.simpleName
 
-    private val _commitResponse = mutableStateOf<List<Entity.Commit>?>(null)
-    val commitResponse = _commitResponse
+    var state by mutableStateOf(GithubDetailState.default)
 
-    private val _branchResponse = mutableStateOf<List<Entity.Branch>?>(null)
-    val branchResponse = _branchResponse
+    fun initState(id: String, item: Entity.Repository) {
+        state = state.copy(
+            id = id,
+            item = item
+        )
+        callCommitAndBranchApi()
+    }
 
-    fun callCommitAndBranchApi(githubId: String, repository: String) {
-        githubUseCase.getBranchAndCommit(githubId, repository)
+    private fun callCommitAndBranchApi() {
+        githubUseCase.getBranchAndCommit(state.id, state.item.name)
             .onEach { resources ->
                 val branchResponse = resources.first
                 val commitResponse = resources.second
@@ -33,15 +41,31 @@ class GithubDetailScreenViewModel @Inject constructor(
                 handleResponse(branchResponse)
                 handleResponse(commitResponse)
 
-                if (commitResponse is Resource.Success) {
+                listOf(branchResponse, commitResponse)
+                    .fastFirstOrNull {
+                        it is Resource.Loading
+                    }?.let {
+                        return@onEach
+                    }
+
+                val commitList = if (commitResponse is Resource.Success) {
                     Log.d(TAG, "commitResponse: ${commitResponse.value}")
-                    _commitResponse.value = commitResponse.value
+                    commitResponse.value
+                } else {
+                    emptyList()
                 }
 
-                if (branchResponse is Resource.Success) {
+                val branchList = if (branchResponse is Resource.Success) {
                     Log.d(TAG, "branchResponse: ${branchResponse.value}")
-                    _branchResponse.value = branchResponse.value
+                    branchResponse.value
+                } else {
+                    emptyList()
                 }
+
+                state = state.copy(
+                    commitList = commitList,
+                    branchList = branchList
+                )
             }.launchIn(viewModelScope)
     }
 }

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.github.main
+package com.jooheon.clean_architecture.features.github.main.screen
 
 
 import android.util.Log

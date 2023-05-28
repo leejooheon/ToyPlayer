@@ -30,7 +30,6 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Custo
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.github.R
-import com.jooheon.clean_architecture.features.github.main.EmptyGithubUseCase
 import com.jooheon.clean_architecture.features.github.main.components.RepositoryImage
 import kotlin.math.max
 import kotlin.math.min
@@ -48,17 +47,8 @@ private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
 @Composable
 fun GithubDetailScreen(
-    githubId: String,
-    item: Entity.Repository,
-    viewModel: GithubDetailScreenViewModel = hiltViewModel()
+    state: GithubDetailState
 ) {
-    val initialized = remember { mutableStateOf(false) }
-
-    val name = remember(item) { item.name }
-    val date = remember(item) { item.created_at}
-
-    initialize(viewModel, initialized, githubId, item.name)
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -66,21 +56,9 @@ fun GithubDetailScreen(
     ) {
         val scroll = rememberScrollState(0)
         Header()
-        Body(viewModel, scroll)
-        Title(name, date, scroll.value)
-        Image(item.imageUrl, scroll.value)
-    }
-}
-
-private fun initialize(
-    viewModel: GithubDetailScreenViewModel,
-    initialized: MutableState<Boolean>,
-    githubId: String,
-    repositoryName: String
-) {
-    if(!initialized.value) {
-        initialized.value = true
-        viewModel.callCommitAndBranchApi(githubId, repositoryName)
+        Body(state, scroll)
+        Title(state.item.name, state.item.created_at, scroll.value)
+        Image(state.item.imageUrl, scroll.value)
     }
 }
 
@@ -191,11 +169,11 @@ private fun CollapsingImageLayout(
 
 @Composable
 private fun Body(
-    viewModel: GithubDetailScreenViewModel,
+    state: GithubDetailState,
     scroll: ScrollState
 ) {
-    val detailContent = branchReComposableHandler(viewModel)
-    val detailCommit  = commitReComposableHandler(viewModel)
+    val detailContent = branchReComposableHandler(state.branchList)
+    val detailCommit  = commitReComposableHandler(state.commitList)
     Column {
         Spacer(
             modifier = Modifier
@@ -286,38 +264,42 @@ private fun Body(
 }
 
 @Composable
-private fun branchReComposableHandler(viewModel: GithubDetailScreenViewModel): String {
-    var result = UiText.StringResource(R.string.branch_placeholder).asString()
+private fun branchReComposableHandler(items: List<Entity.Branch>): String {
+    var stringBuilder = ""
 
-    viewModel.branchResponse.value?.let { response ->
-        var stringBuilder = ""
-        response.forEachIndexed { index, branch ->
-            stringBuilder += "$index: ${branch.name}\n${branch.commit.url}\n${branch.commit.sha}\n"
-        }
-        result = stringBuilder
+    items.forEachIndexed { index, branch ->
+        stringBuilder += "$index: ${branch.name}\n${branch.commit.url}\n${branch.commit.sha}\n"
     }
+
+    val result = if(stringBuilder.isEmpty()) {
+        UiText.StringResource(R.string.branch_placeholder).asString()
+    } else {
+        stringBuilder
+    }
+
     return result
 }
 
 @Composable
-private fun commitReComposableHandler(viewModel: GithubDetailScreenViewModel): String {
-    var result = UiText.StringResource(R.string.commit_placeholder).asString()
+private fun commitReComposableHandler(items: List<Entity.Commit>): String {
+    var stringBuilder = ""
 
-    viewModel.commitResponse.value?.let { response ->
-        var stringBuilder = ""
-        response.forEachIndexed { index, data ->
-            stringBuilder += "$index: ${data.commit.message}\n"
-        }
-        result = stringBuilder
+    items.forEachIndexed { index, data ->
+        stringBuilder += "$index: ${data.commit.message}\n"
     }
+
+    val result = if(stringBuilder.isEmpty()) {
+        UiText.StringResource(R.string.commit_placeholder).asString()
+    } else {
+        stringBuilder
+    }
+
     return result
 }
 
 @Preview
 @Composable
 fun RepositoryDetailScreenPreview() {
-    val viewModel = GithubDetailScreenViewModel(EmptyGithubUseCase())
-
     val item: Entity.Repository = Entity.Repository(
         name = "name",
         id = "id",
@@ -332,7 +314,7 @@ fun RepositoryDetailScreenPreview() {
         Box(Modifier.fillMaxSize()) {
             val scroll = rememberScrollState(0)
             Header()
-            Body(viewModel, scroll)
+            Body(GithubDetailState.default, scroll)
             Title(name, date, scroll.value)
             Image(item.imageUrl, scroll.value)
         }
