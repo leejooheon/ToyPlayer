@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.wikipedia.detail
+package com.jooheon.clean_architecture.features.wikipedia.presentation
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.wikipedia
+package com.jooheon.clean_architecture.features.wikipedia.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.navigation.NavController
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -17,83 +16,64 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.wikipedia.components.EmptyWikipediaUseCase
-import com.jooheon.clean_architecture.features.wikipedia.components.SearchView
-
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.jooheon.clean_architecture.features.wikipedia.presentation.components.SearchView
+import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
+import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenState
 
 private const val TAG = "WikipediaScreen"
 
 @ExperimentalComposeUiApi
 @Composable
 fun WikipediaScreen(
-    navigator: NavController,
-    viewModel: WikipediaScreenViewModel = hiltViewModel(),
-    isPreview: Boolean = false
+    state: WikipediaScreenState,
+    onEvent: (WikipediaScreenEvent, WikipediaScreenState) -> Unit
 ) {
     val localFocusManager = LocalFocusManager.current
-    val searchWord = viewModel.searchWord.collectAsState()
+    var searchWordState by rememberSaveable { mutableStateOf(state.searchWord) }
     Column(
         modifier = Modifier
             .pointerInput(Unit) {
-                detectTapGestures(onTap = {
-                    localFocusManager.clearFocus()
-                }
-                )
+                detectTapGestures(onTap = { localFocusManager.clearFocus() })
             }
     ) {
-
         SearchView(
             title = "input wiki\nKeyword",
-            content = searchWord.value,
-            onTextChanged = { viewModel.searchWord.value = it },
-            onButtonClicked = { viewModel.callRelatedApi() }
+            content = searchWordState,
+            onTextChanged = { searchWordState = it },
+            onButtonClicked = { onEvent(WikipediaScreenEvent.GetData, state.copy(searchWord = searchWordState)) }
         )
-        WikipediaListView(viewModel, isPreview)
+        WikipediaListView(
+            state = state,
+            onEvent = onEvent
+        )
     }
-    ObserveEvents(navigator, viewModel)
 }
 
 @Composable
 private fun WikipediaListView(
-    viewModel: WikipediaScreenViewModel,
-    isPreview: Boolean
+    state: WikipediaScreenState,
+    onEvent: (WikipediaScreenEvent, WikipediaScreenState) -> Unit
 ) {
-    val relatedList by viewModel.relatedResponse.collectAsState()
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            relatedList?.pages?.let { pages ->
-                itemsIndexed(pages) { index, page ->
-                    WikipediaListItem(
-                        index = index,
-                        page = page,
-                        onClicked = viewModel::onRelatedItemClicked
-                    )
-                }
-            }
-            if(isPreview) {
-                items(10) { index ->
-                    val page = EmptyWikipediaUseCase.dummyData(index)
-                    WikipediaListItem(index, page)
-                }
+            itemsIndexed(state.relatedItems) { index, page ->
+                WikipediaListItem(
+                    index = index,
+                    page = page,
+                    onClicked = {
+                        onEvent(WikipediaScreenEvent.GoToDetailScreen, state.copy(selectedItem = it))
+                    }
+                )
             }
         }
     }
@@ -160,45 +140,23 @@ private fun WikipediaListItem(
     }
 }
 
-
-@Composable
-private fun ObserveEvents(
-    navigator: NavController,
-    viewModel: WikipediaScreenViewModel,
-) {
-    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
-    DisposableEffect(
-        key1 = lifecycleOwner,
-        effect = {
-            val observer = LifecycleEventObserver { lifecycleOwner, event ->
-                lifecycleOwner.lifecycleScope.launch {
-                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        viewModel.navigateToWikipediaDetailScreen.collectLatest {
-                            navigator.navigate(
-                                ScreenNavigation.Detail.WikipediaDetail.createRoute(it)
-                            ) {
-                                launchSingleTop = true
-                            }
-                        }
-                    }
-                }
-            }
-
-            lifecycleOwner.lifecycle.addObserver(observer)
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
-        }
-    )
-}
-
 @ExperimentalComposeUiApi
 @Preview
 @Composable
 fun PreviewWikipediaScreen() {
-    val context = LocalContext.current
-    val viewModel = WikipediaScreenViewModel(EmptyWikipediaUseCase())
+//    val context = LocalContext.current
+//    val viewModel = WikipediaScreenViewModel(EmptyWikipediaUseCase())
     PreviewTheme(false) {
-        WikipediaScreen(NavController(context), viewModel, true)
+        WikipediaScreen(
+            state = WikipediaScreenState.default.copy(
+                relatedItems = listOf(
+                    Entity.Related.Page.default.copy(displaytitle = "display_title - 1111"),
+                    Entity.Related.Page.default.copy(displaytitle = "display_title - 2222"),
+                    Entity.Related.Page.default.copy(displaytitle = "display_title - 3333"),
+                    Entity.Related.Page.default.copy(displaytitle = "display_title - 4444"),
+                )
+            ),
+            onEvent = { _, _ -> }
+        )
     }
 }

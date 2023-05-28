@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.wikipedia.components
+package com.jooheon.clean_architecture.features.wikipedia.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

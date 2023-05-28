@@ -35,12 +35,14 @@ import com.jooheon.clean_architecture.features.github.main.presentation.main.Git
 import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.map.MapScreen
 import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
-import com.jooheon.clean_architecture.features.wikipedia.WikipediaScreen
-import com.jooheon.clean_architecture.features.wikipedia.detail.WikipediaDatailScreen
+import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
+import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaDatailScreen
 import com.jooheon.clean_architecture.features.setting.SettingScreen
 import com.jooheon.clean_architecture.features.setting.equalizer.EqualizerScreen
 import com.jooheon.clean_architecture.features.setting.theme.ThemeScreen
 import com.jooheon.clean_architecture.features.splash.SplashScreen
+import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
+import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreenViewModel
 
 @ExperimentalComposeUiApi
 @Composable
@@ -66,7 +68,15 @@ internal fun BottomNavigationHost(
                 )
             }
             composable(ScreenNavigation.BottomSheet.Wiki.route) {
-                WikipediaScreen(navigator)
+                val viewModel = hiltViewModel<WikipediaScreenViewModel>().apply {
+                    navigateToWikipediaDetailScreen.observeWithLifecycle {
+                        WikipediaScreenEvent.navigateToDetailScreen(navigator, it)
+                    }
+                }
+                WikipediaScreen(
+                    state = viewModel.state,
+                    onEvent = viewModel::dispatch
+                )
             }
             composable(ScreenNavigation.BottomSheet.Map.route) {
                 MapScreen(navigator)

@@ -99,6 +99,31 @@ sealed class Entity: java.io.Serializable {
             val type: String,
             val wikibase_item: String
         ) : Entity() {
+            companion object {
+                val default = Page(
+                    content_urls = null,
+                    description = "description",
+                    dir = "dir",
+                    displaytitle = "display_title",
+                    extract = "extract",
+                    extract_html = "ext",
+                    index = 0,
+                    lang = "lang",
+                    namespace = null,
+                    normalizedtitle = "",
+                    ns = 0,
+                    originalimage = null,
+                    pageid = 0,
+                    revision = "",
+                    thumbnail = null,
+                    tid = "",
+                    timestamp = "",
+                    title = "",
+                    titles = null,
+                    type = "",
+                    wikibase_item = ""
+                )
+            }
             @Serializable
             data class ContentUrls(
                 val desktop: Desktop,
