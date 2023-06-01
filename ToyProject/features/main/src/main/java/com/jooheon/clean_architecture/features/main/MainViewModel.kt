@@ -42,12 +42,11 @@ class MainViewModel @Inject constructor(
     private val _navigateToSettingScreen = Channel<Unit>()
     val navigateToSettingScreen = _navigateToSettingScreen.receiveAsFlow()
 
-    fun dispatch(mainScreenEvent: MainScreenEvent, mainScreenState: MainScreenState) = viewModelScope.launch {
+    fun dispatch(mainScreenEvent: MainScreenEvent) = viewModelScope.launch {
         when(mainScreenEvent) {
-            MainScreenEvent.BackPressed -> onBackPressed()
-            MainScreenEvent.GoToSettingScreen -> _navigateToSettingScreen.send(Unit)
-            MainScreenEvent.GetFavoriteData -> { /** TODO **/ }
-            MainScreenEvent.ShowSearchDialog -> { /** TODO **/ }
+            is MainScreenEvent.OnSettingIconClick -> _navigateToSettingScreen.send(Unit)
+            is MainScreenEvent.OnFavoriteIconCLick -> { /** TODO **/ }
+            is MainScreenEvent.OnSearchIconClick -> { /** TODO **/ }
         }
     }
 

@@ -53,7 +53,7 @@ const val TAG = "MainScreen"
 fun MainScreen(
     navigator: NavController,
     state: MainScreenState,
-    onEvent: (MainScreenEvent, MainScreenState) -> Unit
+    onEvent: (MainScreenEvent) -> Unit
 ) {
     val bottomNavController = rememberAnimatedNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -73,9 +73,9 @@ fun MainScreen(
                 TopBar(
                     drawerState = drawerState,
                     scope = scope,
-                    onFavoriteClicked = { onEvent(MainScreenEvent.GetFavoriteData, state) },
-                    onSearchClicked = { onEvent(MainScreenEvent.ShowSearchDialog, state)},
-                    onSettingClicked = { onEvent(MainScreenEvent.GoToSettingScreen, state)},
+                    onFavoriteClicked = { onEvent(MainScreenEvent.OnFavoriteIconCLick) },
+                    onSearchClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
+                    onSettingClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
                 )
             },
             content = { paddingParent ->
@@ -278,7 +278,7 @@ private fun PreviewMainScreen() {
         MainScreen(
             navigator = NavController(context),
             state = MainScreenState.default,
-            onEvent = { _, _ -> }
+            onEvent = { _, -> }
         )
     }
 }

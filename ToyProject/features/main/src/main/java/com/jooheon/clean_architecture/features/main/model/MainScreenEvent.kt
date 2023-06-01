@@ -1,5 +1,7 @@
 package com.jooheon.clean_architecture.features.main.model
 
-enum class MainScreenEvent {
-    BackPressed, GoToSettingScreen, GetFavoriteData, ShowSearchDialog
+sealed class MainScreenEvent {
+    object OnSettingIconClick: MainScreenEvent()
+    object OnFavoriteIconCLick: MainScreenEvent()
+    object OnSearchIconClick: MainScreenEvent()
 }
