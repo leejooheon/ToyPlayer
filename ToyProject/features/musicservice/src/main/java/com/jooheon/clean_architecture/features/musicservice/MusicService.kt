@@ -215,6 +215,8 @@ class MusicService: MediaBrowserServiceCompat() {
 
     private fun quit() {
         Timber.tag(TAG).d( "quit")
+        serviceScope.cancel()
+
         mediaSessionCallback.onStop()
 
         mediaSession.isActive = false

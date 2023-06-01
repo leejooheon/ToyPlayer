@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.screen
+package com.jooheon.clean_architecture.features.musicplayer.presentation.player
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,8 +16,6 @@ import androidx.compose.material.swipeable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -32,16 +30,17 @@ import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.constraintlayout.compose.layoutId
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.screen.components.AlbumImage
-import com.jooheon.clean_architecture.features.musicplayer.screen.components.MediaBottomController
-import com.jooheon.clean_architecture.features.musicplayer.screen.components.MediaColumn
-import com.jooheon.clean_architecture.features.musicplayer.screen.components.MediaFullController
-import com.jooheon.clean_architecture.features.musicplayer.screen.components.MediaFullDetails
+import com.jooheon.clean_architecture.features.musicplayer.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.AlbumImage
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaBottomController
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaColumn
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaFullController
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaFullDetails
+import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
@@ -49,15 +48,13 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class)
 @Composable
 fun MusicScreen(
-    navigator: NavController,
-    viewModel: MusicScreenViewModel = hiltViewModel(),
+    musicPlayerScreenState: MusicPlayerScreenState,
+    onEvent: (MusicPlayerScreenEvent, MusicPlayerScreenState) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
-
-    val musicState by viewModel.musicState.collectAsState()
 
     val motionSceneContent = remember {
         context.resources
@@ -73,6 +70,8 @@ fun MusicScreen(
     val anchors = mapOf(0f to 0, -swipeAreaHeight to 1)
     val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
+
+    val musicState = musicPlayerScreenState.musicState
 
     LaunchedEffect(key1 = musicState.currentPlayingMusic) {
         if (musicState.currentPlayingMusic != Song.default && swipeableState.currentValue == 0) {
@@ -100,7 +99,12 @@ fun MusicScreen(
                 onItemClick = {
                     if (swipeableState.currentValue == 0) {
                         if (musicState.currentPlayingMusic != it) {
-                            viewModel.onPlay(it)
+                            onEvent(
+                                MusicPlayerScreenEvent.OnPlay,
+                                musicPlayerScreenState.copy(
+                                    musicState = musicState.copy(currentPlayingMusic = it)
+                                ),
+                            )
                         } else {
                             scope.launch {
                                 swipeableState.animateTo(1)
@@ -142,9 +146,12 @@ fun MusicScreen(
                 motionProgress = motionProgress,
                 song = musicState.currentPlayingMusic,
                 isPlaying = musicState.isPlaying,
-                onPlayPauseButtonClicked = viewModel::onPlayPauseButtonClicked,
+                onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPause, musicPlayerScreenState) },
                 onPlayListButtonPressed = {
-                    viewModel.onPlayPauseButtonClicked(Song.default) // FIXME
+                    onEvent(
+                        MusicPlayerScreenEvent.OnPlayPause,
+                        musicPlayerScreenState.copy(musicState = musicState.copy(currentPlayingMusic = Song.default)),
+                    )
                 },
                 modifier = Modifier
                     .clickable {
@@ -179,14 +186,13 @@ fun MusicScreen(
                         .fillMaxWidth()
                 )
                 MediaFullController(
-                    musicStateFlow = viewModel.musicState,
-                    durationStateFlow = viewModel.duration,
-                    onPlayPauseButtonClicked = { viewModel.onPlayPauseButtonClicked(musicState.currentPlayingMusic)},
-                    onNextClicked = viewModel::onNextClicked,
-                    onPreviousClicked = viewModel::onPreviousClicked,
-                    onShuffleClicked = viewModel::onShuffleClicked,
-                    onRepeatClicked = viewModel::onRepeatClicked,
-                    snapTo = viewModel::snapTo,
+                    musicPlayerScreenState = musicPlayerScreenState,
+                    onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPause, musicPlayerScreenState) },
+                    onNextClicked = { onEvent(MusicPlayerScreenEvent.OnNext, musicPlayerScreenState) }, //viewModel::onNextClicked,
+                    onPreviousClicked = { onEvent(MusicPlayerScreenEvent.OnPrevious, musicPlayerScreenState) },//viewModel::onPreviousClicked,
+                    onShuffleClicked = { onEvent(MusicPlayerScreenEvent.OnShuffle, musicPlayerScreenState)}, //viewModel::onShuffleClicked,
+                    onRepeatClicked = { onEvent(MusicPlayerScreenEvent.OnRepeat, musicPlayerScreenState) },
+                    snapTo = { onEvent(MusicPlayerScreenEvent.SnapTo, musicPlayerScreenState.copy(currentDuration = it)) } ,
                     modifier = Modifier
                         .alpha(Float.min(motionProgress, 1f))
                         .fillMaxWidth()
@@ -198,10 +204,14 @@ fun MusicScreen(
 @Preview
 @Composable
 private fun MusicScreenPreview() {
-    val context = LocalContext.current
     PreviewTheme(false) {
         MusicScreen(
-            navigator = NavController(context),
+            musicPlayerScreenState = MusicPlayerScreenState.default.copy(
+                musicState = MusicState(
+                    playlist = listOf(Song.default, Song.default,)
+                )
+            ),
+            onEvent = { _, _ -> }
         )
     }
 }

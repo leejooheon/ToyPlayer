@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.screen.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
@@ -19,7 +19,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import kotlin.math.min

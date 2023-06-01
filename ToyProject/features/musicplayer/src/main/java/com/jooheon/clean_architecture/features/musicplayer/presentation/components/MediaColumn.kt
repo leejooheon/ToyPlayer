@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.screen.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

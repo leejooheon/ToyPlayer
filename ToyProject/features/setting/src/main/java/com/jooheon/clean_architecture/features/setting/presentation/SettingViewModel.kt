@@ -1,14 +1,18 @@
 package com.jooheon.clean_architecture.features.setting.presentation
 
 import android.content.Context
+import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.ThemeStateFlow
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +27,9 @@ class SettingViewModel @Inject constructor(
     private val themeStateFlow: ThemeStateFlow
 ): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
-    var state by mutableStateOf(SettingScreenState.default)
-        private set
+
+    val _sharedState = MutableStateFlow(SettingScreenState.default)
+    val sharedState = _sharedState.asStateFlow()
 
     private val _navigateTo = Channel<String>()
     val navigateTo = _navigateTo.receiveAsFlow()
@@ -34,6 +39,7 @@ class SettingViewModel @Inject constructor(
 
     init {
         initState()
+        Log.d(TAG, "initialize ${TAG}")
     }
 
     fun dispatch(
@@ -48,25 +54,25 @@ class SettingViewModel @Inject constructor(
                 _navigateTo.send(ScreenNavigation.Setting.Theme.route)
             SettingScreenEvent.GoToLanguageScreen ->
                 _navigateTo.send(ScreenNavigation.Setting.Language.route)
-            SettingScreenEvent.ShowSkipDurationDialog -> state = newState
+            SettingScreenEvent.ShowSkipDurationDialog -> _sharedState.value = newState
             SettingScreenEvent.GoToEqualizer -> { /** it will be later **/ }
 
             SettingScreenEvent.SkipDurationChanged -> {
-                state = newState
-                settingUseCase.setSkipForwardBackward(state.skipDuration)
+                _sharedState.value = newState
+                settingUseCase.setSkipForwardBackward(sharedState.value.skipDuration)
             }
             SettingScreenEvent.LanguageChanged -> {
-                state = newState
-                settingUseCase.setLanguage(state.language)
+                _sharedState.value = newState
+                settingUseCase.setLanguage(sharedState.value.language)
 
                 SettingScreenEvent.changeLanguage(
                     context = context,
-                    language = state.language
+                    language = sharedState.value.language
                 )
             }
             SettingScreenEvent.ThemeChanged -> {
-                state = newState
-                settingUseCase.setTheme(state.theme)
+                _sharedState.value = newState
+                settingUseCase.setTheme(sharedState.value.theme)
                 themeStateFlow.update()
             }
         }
@@ -80,11 +86,29 @@ class SettingViewModel @Inject constructor(
 //        }
 //    }
     private fun initState() = viewModelScope.launch {
-
-        state = state.copy(
+        _sharedState.value = sharedState.value.copy(
             language = settingUseCase.getLanguage(),
             theme = settingUseCase.getTheme(),
             skipDuration = settingUseCase.getSkipForwardBackward()
         )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared")
+    }
+}
+
+@Composable
+fun ObserveChannels(
+    viewModel: SettingViewModel,
+    navController: NavController,
+) {
+    viewModel.navigateTo.observeWithLifecycle {
+        if(it == ScreenNavigation.Back.route) {
+            navController.popBackStack()
+        } else {
+            navController.navigate(it)
+        }
     }
 }
