@@ -109,7 +109,6 @@ class PlayingNotificationManager(
         )
     }
 
-    @RequiresApi(26)
     private fun createNotificationChannel(
         context: Context,
         notificationManager: NotificationManager

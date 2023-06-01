@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.features.main
 
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -24,44 +25,35 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.main.model.MainScreenEvent
 import com.jooheon.clean_architecture.features.main.navigation.BottomNavigationHost
 import com.jooheon.clean_architecture.features.main.navigation.MyBottomNavigation
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.features.main.model.MainScreenState
 import com.jooheon.clean_architecture.features.main.navigation.currentBottomNavScreenAsState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
 
-@Composable
-fun sharedViewModel() = LocalContext.current as MainActivity
-
-//https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
 @OptIn(
     ExperimentalAnimationApi::class,
     ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class,
 )
-
 @Composable
 fun MainScreen(
     navigator: NavController,
-    viewModel: MainViewModel = hiltViewModel(),
+    state: MainScreenState,
+    onEvent: (MainScreenEvent) -> Unit
 ) {
     val bottomNavController = rememberAnimatedNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -74,11 +66,18 @@ fun MainScreen(
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
             snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
-            topBar = { TopBar(viewModel, drawerState, scope) },
             bottomBar = { BottomBar(bottomNavController, bottomBarVisibility.value) },
-//            floatingActionButton = { MyFloatingActionButton(viewModel) },
             floatingActionButtonPosition = FabPosition.End,
             contentColor = MaterialTheme.colorScheme.surface,
+            topBar = {
+                TopBar(
+                    drawerState = drawerState,
+                    scope = scope,
+                    onFavoriteClicked = { onEvent(MainScreenEvent.OnFavoriteIconCLick) },
+                    onSearchClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
+                    onSettingClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
+                )
+            },
             content = { paddingParent ->
                 bottomBarPadding.value = paddingParent.calculateBottomPadding()
                 BottomNavigationHost(
@@ -90,8 +89,12 @@ fun MainScreen(
         )
     }
 
-    RegisterBackPressedHandler(viewModel, drawerState, scope)
-    ObserveEvents(navigator, viewModel)
+    RegisterBackPressedHandler(
+        isDoubleBackPressed = state.doubleBackPressedState,
+        drawerState = drawerState,
+        scope = scope,
+        onBackPressed = { /** EVENT **/}
+    )
 }
 
 @Composable
@@ -150,34 +153,6 @@ fun DrawerContent(
     }
 }
 
-//@Composable
-//private fun BoxScope.MusicBar(
-//    navigator: NavController,
-//    viewModel: MusicControllerUseCase,
-//    modifier: Modifier = Modifier,
-//) {
-//    val uiState by viewModel.musicState.collectAsState()
-//
-//    AnimatedVisibility(
-//        visible = uiState.isMusicBottomBarVisible,
-//        enter = slideInVertically(
-//            initialOffsetY = { it }
-//        ),
-//        exit = slideOutVertically(targetOffsetY = { it }),
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .align(Alignment.BottomCenter)
-//    ) {
-//        BottomMusicPlayer(
-//            song = uiState.currentPlayingMusic,
-//            isPlaying = uiState.isPlaying,
-//            onPlayPauseButtonPressed = viewModel::onPlayPauseButtonPressed,
-//            onPlayListButtonPressed = viewModel::onPlayListButtonPressed,
-//            onItemClick = viewModel::onMusicBottomBarPressed
-//        )
-//    }
-//}
-
 @Composable
 fun BottomBar(
     bottomNavController: NavController,
@@ -215,12 +190,12 @@ fun BottomBar(
 @ExperimentalMaterial3Api
 @Composable
 fun TopBar(
-    viewModel: MainViewModel,
     drawerState: DrawerState,
     scope: CoroutineScope,
+    onFavoriteClicked: () -> Unit,
+    onSearchClicked: () -> Unit,
+    onSettingClicked: () -> Unit,
 ) {
-
-    val openGithubSearchDialog = remember { mutableStateOf(false) }
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.primary,
         title = {
@@ -244,82 +219,25 @@ fun TopBar(
             }
         },
         actions = {
-            IconButton(onClick = {
-                viewModel.onFavoriteClicked()
-                Log.d(TAG, "Favorite IconButton")
-            }) {
+            IconButton(onClick = onFavoriteClicked) {
                 Icon(
                     Icons.Filled.Favorite,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = "first IconButton description"
                 )
             }
-            IconButton(onClick = {
-                openGithubSearchDialog.value = true
-            }) {
+            IconButton(onClick = onSearchClicked) {
                 Icon(
                     Icons.Filled.Search,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = "second IconButton description"
                 )
             }
-            IconButton(onClick = viewModel::onSettingClicked) {
+            IconButton(onClick = onSettingClicked) {
                 Icon(
                     Icons.Filled.Settings,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = null)
-            }
-        }
-    )
-
-    if(openGithubSearchDialog.value) {
-//        GithubSearchDialog(openGithubSearchDialog, onDismiss = { owner ->
-//            if (!owner.isEmpty()) {
-//                Log.d(TAG, owner)
-////                viewModel.callRepositoryApi(owner)
-//            }
-//        })
-    }
-}
-
-
-@Composable
-private fun ObserveEvents(
-    navigator: NavController,
-    mainViewModel: MainViewModel,
-) {
-    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
-    DisposableEffect(
-        key1 = lifecycleOwner,
-        effect = {
-            val observer = LifecycleEventObserver { lifecycleOwner, event ->
-//                lifecycleOwner.lifecycleScope.launch {
-//                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                        musicControllerUseCase.navigateToPlayListScreen.collectLatest {
-//                            navigator.navigate(ScreenNavigation.Music.PlayList.route)
-//                        }
-//                    }
-//                }
-//                lifecycleOwner.lifecycleScope.launch {
-//                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                        musicControllerUseCase.navigateToAodPlayer.collectLatest {
-//                            navigator.navigate(ScreenNavigation.Music.AodPlayer.route)
-//                        }
-//                    }
-//                }
-
-                lifecycleOwner.lifecycleScope.launch {
-                    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        mainViewModel.navigateToSettingScreen.collectLatest {
-                            navigator.navigate(ScreenNavigation.Setting.Main.route)
-                        }
-                    }
-                }
-            }
-
-            lifecycleOwner.lifecycle.addObserver(observer)
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
             }
         }
     )
@@ -328,22 +246,23 @@ private fun ObserveEvents(
 @ExperimentalMaterial3Api
 @Composable
 fun RegisterBackPressedHandler (
-    viewModel: MainViewModel,
+    isDoubleBackPressed: Boolean,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    onBackPressed: () -> Unit,
 ) {
     val context = LocalContext.current
     BackHandler(
-        enabled = drawerState.isOpen || viewModel.isDoubleBackPressed.value
+        enabled = drawerState.isOpen || isDoubleBackPressed
     ) {
         scope.launch {
             if(drawerState.isOpen) {
                 scope.launch { drawerState.close() }
                 return@launch
             }
-            if(viewModel.isDoubleBackPressed.value) {
-                viewModel.onBackPressed()
-//                showToastMessage(context, "Press once more to exit.")
+            if(isDoubleBackPressed) {
+                onBackPressed()
+                Toast.makeText(context, "Press once more to exit.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
         }
@@ -353,10 +272,13 @@ fun RegisterBackPressedHandler (
 @Preview
 @Composable
 private fun PreviewMainScreen() {
-//    val context = LocalContext.current
-//    val viewModel = MainViewModel(EmptySubwayUseCase())
-//
-//    PreviewTheme(false) {
-//        MainScreen(NavController(context), viewModel)
-//    }
+    val context = LocalContext.current
+
+    PreviewTheme(false) {
+        MainScreen(
+            navigator = NavController(context),
+            state = MainScreenState.default,
+            onEvent = { _, -> }
+        )
+    }
 }

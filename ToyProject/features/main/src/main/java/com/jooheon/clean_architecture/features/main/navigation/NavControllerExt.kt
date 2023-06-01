@@ -2,9 +2,15 @@ package com.jooheon.clean_architecture.features.main.navigation
 
 import android.os.Bundle
 import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -40,6 +46,18 @@ fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
     }
 
     return selectedItem
+}
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavHostController,
+    parentRoute: String? = null
+): T {
+    val navGraphRoute = parentRoute ?: destination.parent?.route ?: destination.route.defaultEmpty()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+    return hiltViewModel<T>(parentEntry)
 }
 
 // https://pluu.github.io/blog/android/2022/02/04/compose-pending-argument-part-2/
