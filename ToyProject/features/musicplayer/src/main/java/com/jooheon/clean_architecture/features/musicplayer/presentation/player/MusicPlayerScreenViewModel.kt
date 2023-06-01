@@ -31,7 +31,7 @@ class MusicPlayerScreenViewModel @Inject constructor(
         loadData()
     }
 
-    fun dispatch(event: MusicPlayerScreenEvent) {
+    fun dispatch(event: MusicPlayerScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlayerScreenEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
             is MusicPlayerScreenEvent.OnPlayClick -> onPlay(event.song)
