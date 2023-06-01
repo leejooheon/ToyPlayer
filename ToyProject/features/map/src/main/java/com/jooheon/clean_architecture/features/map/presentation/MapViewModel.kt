@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.map
+package com.jooheon.clean_architecture.features.map.presentation
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -12,16 +12,17 @@ import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.map.states.MapEvent
-import com.jooheon.clean_architecture.features.map.states.MapState
-import com.jooheon.clean_architecture.features.map.states.MapStyle
+import com.jooheon.clean_architecture.features.map.model.MapScreenEvent
+import com.jooheon.clean_architecture.features.map.model.MapScreenState
+import com.jooheon.clean_architecture.features.map.model.MapStyle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,46 +31,14 @@ class MapViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG = MapViewModel::class.java.simpleName
 
-    private val _mapState = mutableStateOf(MapState())
-    val mapState = _mapState.value
-
-    private val _insertDialogChannel = Channel<LatLng?>()
-    val insertDialogChannel = _insertDialogChannel.receiveAsFlow()
-
-    val decimalFormat = DecimalFormat("#.####")
-
-    private val _permissionChannel = Channel<Unit?>()
-    val permissionChannel = _permissionChannel.receiveAsFlow()
-
-    private val _floatingActionClicked = Channel<Unit>()
-    val floatingActionClicked = _floatingActionClicked.receiveAsFlow()
+    private val _mapState = MutableStateFlow(MapScreenState())
+    val mapState = _mapState.asStateFlow()
 
     init { updateParkingSpots() }
 
-    @ExperimentalPermissionsApi
-    fun onFindMyLocationButtonClicked(permissionState: PermissionState) {
-        Log.d(TAG, "shouldShowRationale: ${permissionState.status.shouldShowRationale}, granted: ${permissionState.status.isGranted}")
-        when(permissionState.status) {
-            is PermissionStatus.Granted -> {
-                Log.d(TAG, "isGranted")
-                handleAlertDialogState(UiText.DynamicString("Permission is already granted."))
-            }
-            is PermissionStatus.Denied -> {
-                if(permissionState.status.shouldShowRationale) {
-                    viewModelScope.launch {
-                        _permissionChannel.send(Unit)
-                    }
-                } else {
-                    permissionState.launchPermissionRequest()
-                    // https://github.com/google/accompanist/issues/1214
-                }
-            }
-        }
-    }
-
-    fun onEvent(event: MapEvent) {
+    fun dispatch(event: MapScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MapEvent.ToggleFalloutMap -> {
+            is MapScreenEvent.ToggleFalloutMap -> {
                 val state = _mapState.value
                 state.properties.value = MapProperties(
                     isMyLocationEnabled = state.properties.value.isMyLocationEnabled,
@@ -82,19 +51,13 @@ class MapViewModel @Inject constructor(
 
                 state.isFalloutMap.value = !state.isFalloutMap.value
             }
-            is MapEvent.OnMapLongClick -> {
-                viewModelScope.launch {
-                    _insertDialogChannel.send(event.latLng)
-                }
-            }
-            is MapEvent.OnInfoWindowLongClick -> {
-                viewModelScope.launch {
-                    deleteParkingSpot(event.spot)
-                }
-            }
-            is MapEvent.OnLocationPermissionChanged -> {
+
+            is MapScreenEvent.OnLocationPermissionChanged -> {
                 val isGranted = event.isGranted
                 val state = _mapState.value
+
+                if(!isGranted) return@launch
+
                 state.properties.value = MapProperties(
                     isMyLocationEnabled = isGranted,
                     mapStyleOptions = if(state.isFalloutMap.value) {
@@ -104,6 +67,9 @@ class MapViewModel @Inject constructor(
                     }
                 )
             }
+
+            is MapScreenEvent.OnInsertParkingSpot -> insertParkingSpot(event.latLng)
+            is MapScreenEvent.OnInfoWindowLongClick -> deleteParkingSpot(event.spot)
         }
     }
 
@@ -140,18 +106,18 @@ class MapViewModel @Inject constructor(
     private fun updateParkingSpots() {
         parkingSpotUseCase.getParkingSpots().onEach { resource ->
             if(resource is Resource.Success) {
-                mapState.parkingSpots.value = resource.value
+                mapState.value.parkingSpots.value = resource.value
             }
         }.launchIn(viewModelScope)
     }
 
     private fun isAlreadyInsertedSpot(spot: LatLng): Boolean {
-        mapState.parkingSpots.value?.forEach {
-            val newLatitude = decimalFormat.format(spot.latitude)
-            val newLongitude = decimalFormat.format(spot.longitude)
+        mapState.value.parkingSpots.value?.forEach {
+            val newLatitude = MapScreenState.decimalFormat.format(spot.latitude)
+            val newLongitude = MapScreenState.decimalFormat.format(spot.longitude)
 
-            val insertedLatitude = decimalFormat.format(it.lat)
-            val insertedLongitude = decimalFormat.format(it.lng)
+            val insertedLatitude = MapScreenState.decimalFormat.format(it.lat)
+            val insertedLongitude = MapScreenState.decimalFormat.format(it.lng)
 
             if(insertedLatitude == newLatitude && insertedLongitude == newLongitude) {
                 return true
@@ -162,9 +128,5 @@ class MapViewModel @Inject constructor(
 
     override fun dismissAlertDialog() {
         super.dismissAlertDialog()
-        viewModelScope.launch {
-            _insertDialogChannel.send(null)
-            _permissionChannel.send(null)
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.map.components
+package com.jooheon.clean_architecture.features.map.presentation.components
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity

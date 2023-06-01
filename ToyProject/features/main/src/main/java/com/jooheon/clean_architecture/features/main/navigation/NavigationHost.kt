@@ -35,7 +35,8 @@ import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEve
 import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreenViewModel
 import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.main.MainViewModel
-import com.jooheon.clean_architecture.features.map.MapScreen
+import com.jooheon.clean_architecture.features.map.presentation.MapScreen
+import com.jooheon.clean_architecture.features.map.presentation.MapViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.MusicTabPagerScreen
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
@@ -84,7 +85,12 @@ internal fun BottomNavigationHost(
                 )
             }
             composable(ScreenNavigation.BottomSheet.Map.route) {
-                MapScreen(navigator)
+                val viewModel = hiltViewModel<MapViewModel>()
+                val state by viewModel.mapState.collectAsStateWithLifecycle()
+                MapScreen(
+                    state = state,
+                    onEvent = viewModel::dispatch
+                )
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
                 MusicTabPagerScreen(navigator = navigator)

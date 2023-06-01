@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.map.components
+package com.jooheon.clean_architecture.features.map.presentation.components
 
 import android.util.Log
 import androidx.compose.material3.AlertDialog
@@ -17,7 +17,7 @@ fun ShowAlertDialog(
     openDialog: MutableState<Boolean>,
     content: UiText,
     viewModel: BaseViewModel,
-    onOkButtonClicked: (() -> Unit)?
+    onOkButtonClicked: (() -> Unit)?,
 ) {
     MyAlertDialog(
         openDialog,
@@ -30,6 +30,26 @@ fun ShowAlertDialog(
             openDialog.value = false
             Log.d("BaseFragment", "onConfirmButtonClicked")
             onOkButtonClicked?.invoke()
+        }
+    )
+}
+@Composable
+fun ShowAlertDialog(
+    openDialog: MutableState<Boolean>,
+    content: UiText,
+    onOkButtonClicked: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    MyAlertDialog(
+        openDialog = openDialog,
+        content = content.asString(),
+        onDismiss = {
+            openDialog.value = false
+            onDismiss()
+        },
+        onConfirmButtonClicked = {
+            openDialog.value = false
+            onOkButtonClicked()
         }
     )
 }
