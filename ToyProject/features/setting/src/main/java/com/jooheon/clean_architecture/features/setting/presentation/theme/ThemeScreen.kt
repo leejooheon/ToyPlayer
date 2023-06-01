@@ -24,7 +24,7 @@ import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 @Composable
 fun ThemeScreen(
     state: SettingScreenState,
-    onEvent: (Context, SettingScreenEvent, SettingScreenState) -> Unit
+    onEvent: (Context, SettingScreenEvent) -> Unit
 ) {
     val context = LocalContext.current
     val supportThemes = Entity.SupportThemes.values()
@@ -43,7 +43,7 @@ fun ThemeScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { onEvent(context, SettingScreenEvent.GoToBack, state) }) {
+                IconButton(onClick = { onEvent(context, SettingScreenEvent.OnBackClick) }) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
                         contentDescription = null
@@ -64,7 +64,7 @@ fun ThemeScreen(
                     selected = selected,
                     title = it.parse(context),
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { onEvent(context, SettingScreenEvent.ThemeChanged, state.copy(theme = it)) }
+                    onClick = { onEvent(context, SettingScreenEvent.OnThemeChanged(it)) }
                 )
             }
         }
@@ -89,7 +89,7 @@ private fun PreviewThemeScreen() {
     PreviewTheme(false) {
         ThemeScreen(
             state = SettingScreenState.default,
-            onEvent = { _, _, _ -> }
+            onEvent = { _, _, -> }
         )
     }
 }

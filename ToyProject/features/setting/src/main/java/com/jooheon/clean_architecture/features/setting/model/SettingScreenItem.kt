@@ -21,21 +21,21 @@ class SettingScreenItem(
         fun getSettingListItems(state: SettingScreenState): List<SettingScreenItem> {
             return listOf(
                 SettingScreenItem(
-                    event = SettingScreenEvent.GoToLanguageScreen,
+                    event = SettingScreenEvent.OnLanguageScreenClick ,
                     title = UiText.StringResource(R.string.setting_language),
                     value = UiText.StringResource(R.string.setting_language_desc),
                     showValue = false,
                     iconImageVector = Icons.Outlined.Language
                 ),
                 SettingScreenItem(
-                    event = SettingScreenEvent.GoToThemeScreen,
+                    event = SettingScreenEvent.OnThemeScreenClick,
                     title = UiText.StringResource(R.string.setting_theme),
                     value = parseThemeUiText(state.theme),
                     showValue = true,
                     iconImageVector = Icons.Outlined.WbSunny
                 ),
                 SettingScreenItem(
-                    event = SettingScreenEvent.ShowSkipDurationDialog,
+                    event = SettingScreenEvent.OnSkipDurationScreenClick(isShow = true),
                     title = UiText.StringResource(R.string.setting_skip_duration),
                     value =  UiText.StringResource(
                         resId = R.string.n_second,
@@ -45,7 +45,7 @@ class SettingScreenItem(
                     iconImageVector = Icons.Outlined.Forward5
                 ),
                 SettingScreenItem(
-                    event = SettingScreenEvent.GoToEqualizer,
+                    event = SettingScreenEvent.OnEqualizerScreenClick,
                     title = UiText.StringResource(R.string.setting_equalizer),
                     value = UiText.DynamicString(""),
                     showValue = false,

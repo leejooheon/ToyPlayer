@@ -6,12 +6,19 @@ import android.os.LocaleList
 import androidx.core.os.ConfigurationCompat
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
 import java.util.Locale
-enum class SettingScreenEvent {
-    GoToBack, GoToLanguageScreen, GoToThemeScreen, GoToEqualizer, ShowSkipDurationDialog,
-    SkipDurationChanged, LanguageChanged, ThemeChanged;
+
+sealed class SettingScreenEvent {
+    object OnBackClick: SettingScreenEvent()
+    object OnThemeScreenClick: SettingScreenEvent()
+    object OnLanguageScreenClick: SettingScreenEvent()
+    object OnEqualizerScreenClick: SettingScreenEvent()
+    data class OnSkipDurationScreenClick(val isShow: Boolean): SettingScreenEvent()
+    data class OnSkipDurationChanged(val data: SkipForwardBackward): SettingScreenEvent()
+    data class OnLanguageChanged(val language: Entity.SupportLaunguages): SettingScreenEvent()
+    data class OnThemeChanged(val theme: Entity.SupportThemes): SettingScreenEvent()
 
     companion object {
         fun changeLanguage(context: Context, language: Entity.SupportLaunguages) {

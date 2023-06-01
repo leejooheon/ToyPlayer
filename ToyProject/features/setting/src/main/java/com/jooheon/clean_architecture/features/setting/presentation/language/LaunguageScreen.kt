@@ -23,7 +23,7 @@ import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 @Composable
 fun LanguageScreen(
     state: SettingScreenState,
-    onEvent: (Context, SettingScreenEvent, SettingScreenState) -> Unit
+    onEvent: (Context, SettingScreenEvent) -> Unit
 ) {
     val context = LocalContext.current
 //    val localizeState = viewModel.localizedState.collectAsState()
@@ -42,7 +42,7 @@ fun LanguageScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { onEvent(context, SettingScreenEvent.GoToBack, state) }) {
+                IconButton(onClick = { onEvent(context, SettingScreenEvent.OnBackClick) }) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
                         contentDescription = null
@@ -66,7 +66,7 @@ fun LanguageScreen(
                 selected = selected,
                 title = it.parse(context),
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(context, SettingScreenEvent.LanguageChanged, state.copy(language = it)) }
+                onClick = { onEvent(context, SettingScreenEvent.OnLanguageChanged(it)) }
             )
         }
     }
@@ -87,7 +87,7 @@ private fun PreviewLaunguageScreen() {
     PreviewTheme(false) {
         LanguageScreen(
             state = SettingScreenState.default,
-            onEvent = { _, _, _ -> }
+            onEvent = { _, _ -> }
         )
     }
 }

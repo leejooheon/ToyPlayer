@@ -2,17 +2,11 @@ package com.jooheon.clean_architecture.features.setting.presentation
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.ThemeStateFlow
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,46 +39,35 @@ class SettingViewModel @Inject constructor(
     fun dispatch(
         context: Context,
         event: SettingScreenEvent,
-        newState: SettingScreenState
     ) = viewModelScope.launch{
         when(event) {
-            SettingScreenEvent.GoToBack ->
-                _navigateTo.send(ScreenNavigation.Back.route)
-            SettingScreenEvent.GoToThemeScreen ->
-                _navigateTo.send(ScreenNavigation.Setting.Theme.route)
-            SettingScreenEvent.GoToLanguageScreen ->
-                _navigateTo.send(ScreenNavigation.Setting.Language.route)
-            SettingScreenEvent.ShowSkipDurationDialog -> _sharedState.value = newState
-            SettingScreenEvent.GoToEqualizer -> { /** it will be later **/ }
-
-            SettingScreenEvent.SkipDurationChanged -> {
-                _sharedState.value = newState
-                settingUseCase.setSkipForwardBackward(sharedState.value.skipDuration)
+            is SettingScreenEvent.OnEqualizerScreenClick -> { /** Nothing **/ }
+            is SettingScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
+            is SettingScreenEvent.OnThemeScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Theme.route)
+            is SettingScreenEvent.OnLanguageScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Language.route)
+            is SettingScreenEvent.OnSkipDurationScreenClick -> {
+                _sharedState.update {
+                    it.copy(showSkipDurationDialog = event.isShow)
+                }
             }
-            SettingScreenEvent.LanguageChanged -> {
-                _sharedState.value = newState
-                settingUseCase.setLanguage(sharedState.value.language)
-
+            is SettingScreenEvent.OnSkipDurationChanged -> {
+                settingUseCase.setSkipForwardBackward(event.data)
+                _sharedState.update { it.copy(skipDuration = event.data) }
+            }
+            is SettingScreenEvent.OnLanguageChanged -> {
+                settingUseCase.setLanguage(event.language)
+                _sharedState.update { it.copy(language = event.language) }
                 SettingScreenEvent.changeLanguage(
                     context = context,
                     language = sharedState.value.language
                 )
             }
-            SettingScreenEvent.ThemeChanged -> {
-                _sharedState.value = newState
-                settingUseCase.setTheme(sharedState.value.theme)
-                themeStateFlow.update()
+            is SettingScreenEvent.OnThemeChanged -> {
+                settingUseCase.setTheme(event.theme)
+                _sharedState.update { it.copy(theme = event.theme) }
             }
         }
     }
-//    fun onEqualizerClick(context: Context, audioSessionId: Int) = viewModelScope.launch {
-//        if (audioSessionId == AudioEffect.ERROR_BAD_VALUE) {
-//            val content = UiText.StringResource(R.string.no_audio_ID).asString(context)
-//            context.showToast(content)
-//        } else {
-//            _navigateToSystemEqualizer.send(audioSessionId)
-//        }
-//    }
     private fun initState() = viewModelScope.launch {
         _sharedState.value = sharedState.value.copy(
             language = settingUseCase.getLanguage(),

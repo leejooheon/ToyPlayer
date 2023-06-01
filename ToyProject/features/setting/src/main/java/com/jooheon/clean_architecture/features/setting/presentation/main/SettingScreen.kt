@@ -34,7 +34,7 @@ import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 @Composable
 fun SettingScreen(
     state: SettingScreenState,
-    onEvent: (Context, SettingScreenEvent, SettingScreenState) -> Unit,
+    onEvent: (Context, SettingScreenEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val settingList = SettingScreenItem.getSettingListItems(state)
@@ -48,10 +48,10 @@ fun SettingScreen(
             SkipDurationDialog(
                 currentState = state.skipDuration,
                 onChanged = {
-                    onEvent(context, SettingScreenEvent.SkipDurationChanged, state.copy(skipDuration = it))
+                    onEvent(context, SettingScreenEvent.OnSkipDurationChanged(it))
                 },
                 onDismiss = {
-                    onEvent(context, SettingScreenEvent.ShowSkipDurationDialog, state.copy(showSkipDurationDialog = false))
+                    onEvent(context, SettingScreenEvent.OnSkipDurationScreenClick(isShow = false))
                 }
             )
         }
@@ -67,7 +67,7 @@ fun SettingScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(context, SettingScreenEvent.GoToBack, state) }) {
+                    IconButton(onClick = { onEvent(context, SettingScreenEvent.OnBackClick) }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = null
@@ -86,14 +86,7 @@ fun SettingScreen(
             settingList.forEach {
                 SettingListItem(
                     item = it,
-                    onClick = {
-                        val newState = if(it.event == SettingScreenEvent.ShowSkipDurationDialog) {
-                            state.copy(showSkipDurationDialog = true)
-                        } else {
-                            state
-                        }
-                        onEvent(context, it.event, newState)
-                    }
+                    onClick = { onEvent(context, it.event) }
                 )
                 CustomDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -102,17 +95,6 @@ fun SettingScreen(
             }
         }
     }
-//    ObserveEvents(
-//        navigator = navigator,
-//        viewModel = viewModel,
-//        onDurationEvent = {
-//            dialogState = true
-//        },
-//        onEqualizerEvent = {
-////            val sessionId = mainViewModel.musicControllerUseCase.audioSessionId()
-////            viewModel.onEqualizerClick(context, sessionId)
-//        }
-//    )
 }
 
 @Composable
@@ -246,7 +228,7 @@ private fun PreviewSettingScreen() {
     PreviewTheme(false) {
         SettingScreen(
             state = SettingScreenState.default,
-            onEvent = { _, _, _ -> }
+            onEvent = { _, _ -> }
         )
     }
 }
