@@ -21,6 +21,7 @@ appcompat = "1.6.1"
 material = "1.8.0"
 constraint = "2.1.4"
 lifecycle_viewmodel = "2.5.1"
+multidex = "2.0.1"
 navigation = "2.5.3"
 lifecycle = "2.5.1"
 exoplayer = "1.0.0-rc02"
@@ -82,6 +83,7 @@ android_test_espresso = "3.5.1"
 [libraries]
 # Plugins
 android_gradle_plugin = { module = "com.android.tools.build:gradle", version.ref = "android_gradle_plugin" }
+androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 kotlin_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin_serialization_gradle_plugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 google_gms_plugin = { module = "com.google.gms:google-services", version.ref = "gms"}

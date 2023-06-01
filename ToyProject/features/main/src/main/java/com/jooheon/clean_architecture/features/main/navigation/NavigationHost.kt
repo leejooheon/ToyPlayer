@@ -27,14 +27,17 @@ import com.google.accompanist.navigation.material.ExperimentalMaterialNavigation
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreen
 import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreen
 import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreenViewModel
 import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEvent
 import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreenViewModel
 import com.jooheon.clean_architecture.features.main.MainScreen
+import com.jooheon.clean_architecture.features.main.MainViewModel
 import com.jooheon.clean_architecture.features.map.MapScreen
-import com.jooheon.clean_architecture.features.musicplayer.screen.MusicTabPagerScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.MusicTabPagerScreen
+import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaDatailScreen
 import com.jooheon.clean_architecture.features.setting.presentation.main.SettingScreen
@@ -84,7 +87,7 @@ internal fun BottomNavigationHost(
                 MapScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
-                MusicTabPagerScreen(navigator)
+                MusicTabPagerScreen(navigator = navigator)
             }
         }
     }
@@ -118,15 +121,6 @@ internal fun FullScreenNavigationHost(
             bottomStart = CornerSize(0),
         )
     ) {
-        val settingViewModel = hiltViewModel<SettingViewModel>().apply {
-            navigateTo.observeWithLifecycle {
-                if(it == ScreenNavigation.Back.route) {
-                    navController.popBackStack()
-                } else {
-                    navController.navigate(it)
-                }
-            }
-        }
         NavHost(
             navController = navController,
             startDestination = ScreenNavigation.Splash.route,
@@ -140,14 +134,29 @@ internal fun FullScreenNavigationHost(
             }
 
             composable(ScreenNavigation.Main.route) {
+                val viewModel = hiltViewModel<MainViewModel>().apply {
+                    navigateToSettingScreen.observeWithLifecycle {
+                        navController.navigate(ScreenNavigation.Setting.Main.route)
+                    }
+                }
+                val state by viewModel.mainScreenState.collectAsStateWithLifecycle()
+
                 MainScreen(
-                    navigator = navController
+                    navigator = navController,
+                    state = state,
+                    onEvent = viewModel::dispatch
                 )
             }
             composable(ScreenNavigation.Setting.Main.route) {
+                val settingViewModel = it.sharedViewModel<SettingViewModel>(navController).apply {
+                    navigateTo.observeWithLifecycle {
+                        SettingScreenEvent.navigateTo(navController, it)
+                    }
+                }
+                val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
 
                 SettingScreen(
-                    state = settingViewModel.state,
+                    state = state,
                     onEvent = settingViewModel::dispatch
                 )
             }
@@ -163,15 +172,35 @@ internal fun FullScreenNavigationHost(
 //                TestScreen()
             }
             composable(ScreenNavigation.Setting.Language .route) {
+                val settingViewModel = it.sharedViewModel<SettingViewModel>(
+                    navController = navController,
+                    parentRoute = ScreenNavigation.Setting.Main.route,
+                ).apply {
+                    navigateTo.observeWithLifecycle {
+                        SettingScreenEvent.navigateTo(navController, it)
+                    }
+                }
+                val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
+
                 LanguageScreen(
-                    state = settingViewModel.state,
+                    state = state,
                     onEvent = settingViewModel::dispatch
                 )
             }
 
             composable(ScreenNavigation.Setting.Theme.route) {
+                val settingViewModel = it.sharedViewModel<SettingViewModel>(
+                    navController = navController,
+                    parentRoute = ScreenNavigation.Setting.Main.route,
+                ).apply {
+                    navigateTo.observeWithLifecycle {
+                        SettingScreenEvent.navigateTo(navController, it)
+                    }
+                }
+                val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
+
                 ThemeScreen(
-                    state = settingViewModel.state,
+                    state = state,
                     onEvent = settingViewModel::dispatch
                 )
             }

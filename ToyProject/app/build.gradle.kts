@@ -67,7 +67,7 @@ dependencies {
     implementation(project(path = ":features:musicplayer"))
 
     // util
-    implementation("androidx.multidex:multidex:2.0.1")
+    implementation(libs.androidx.multidex)
 
 
     // hilt

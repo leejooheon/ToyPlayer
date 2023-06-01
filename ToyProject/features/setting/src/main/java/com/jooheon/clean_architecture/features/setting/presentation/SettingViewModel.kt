@@ -98,17 +98,3 @@ class SettingViewModel @Inject constructor(
         Log.d(TAG, "onCleared")
     }
 }
-
-@Composable
-fun ObserveChannels(
-    viewModel: SettingViewModel,
-    navController: NavController,
-) {
-    viewModel.navigateTo.observeWithLifecycle {
-        if(it == ScreenNavigation.Back.route) {
-            navController.popBackStack()
-        } else {
-            navController.navigate(it)
-        }
-    }
-}
