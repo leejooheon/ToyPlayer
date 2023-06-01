@@ -49,7 +49,7 @@ import kotlin.math.max
 @Composable
 fun MusicScreen(
     musicPlayerScreenState: MusicPlayerScreenState,
-    onEvent: (MusicPlayerScreenEvent, MusicPlayerScreenState) -> Unit
+    onEvent: (MusicPlayerScreenEvent) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -99,12 +99,7 @@ fun MusicScreen(
                 onItemClick = {
                     if (swipeableState.currentValue == 0) {
                         if (musicState.currentPlayingMusic != it) {
-                            onEvent(
-                                MusicPlayerScreenEvent.OnPlay,
-                                musicPlayerScreenState.copy(
-                                    musicState = musicState.copy(currentPlayingMusic = it)
-                                ),
-                            )
+                            onEvent(MusicPlayerScreenEvent.OnPlayClick(it))
                         } else {
                             scope.launch {
                                 swipeableState.animateTo(1)
@@ -146,13 +141,8 @@ fun MusicScreen(
                 motionProgress = motionProgress,
                 song = musicState.currentPlayingMusic,
                 isPlaying = musicState.isPlaying,
-                onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPause, musicPlayerScreenState) },
-                onPlayListButtonPressed = {
-                    onEvent(
-                        MusicPlayerScreenEvent.OnPlayPause,
-                        musicPlayerScreenState.copy(musicState = musicState.copy(currentPlayingMusic = Song.default)),
-                    )
-                },
+                onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(it)) },
+                onPlayListButtonPressed = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(Song.default)) },
                 modifier = Modifier
                     .clickable {
                         scope.launch { swipeableState.animateTo(1) }
@@ -187,12 +177,12 @@ fun MusicScreen(
                 )
                 MediaFullController(
                     musicPlayerScreenState = musicPlayerScreenState,
-                    onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPause, musicPlayerScreenState) },
-                    onNextClicked = { onEvent(MusicPlayerScreenEvent.OnNext, musicPlayerScreenState) }, //viewModel::onNextClicked,
-                    onPreviousClicked = { onEvent(MusicPlayerScreenEvent.OnPrevious, musicPlayerScreenState) },//viewModel::onPreviousClicked,
-                    onShuffleClicked = { onEvent(MusicPlayerScreenEvent.OnShuffle, musicPlayerScreenState)}, //viewModel::onShuffleClicked,
-                    onRepeatClicked = { onEvent(MusicPlayerScreenEvent.OnRepeat, musicPlayerScreenState) },
-                    snapTo = { onEvent(MusicPlayerScreenEvent.SnapTo, musicPlayerScreenState.copy(currentDuration = it)) } ,
+                    onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(musicState.currentPlayingMusic)) },
+                    onNextClicked = { onEvent(MusicPlayerScreenEvent.OnNextClick) }, //viewModel::onNextClicked,
+                    onPreviousClicked = { onEvent(MusicPlayerScreenEvent.OnPreviousClick) },//viewModel::onPreviousClicked,
+                    onShuffleClicked = { onEvent(MusicPlayerScreenEvent.OnShuffleClick)}, //viewModel::onShuffleClicked,
+                    onRepeatClicked = { onEvent(MusicPlayerScreenEvent.OnRepeatClick) },
+                    snapTo = { onEvent(MusicPlayerScreenEvent.OnSnapTo(it)) } ,
                     modifier = Modifier
                         .alpha(Float.min(motionProgress, 1f))
                         .fillMaxWidth()
@@ -211,7 +201,7 @@ private fun MusicScreenPreview() {
                     playlist = listOf(Song.default, Song.default,)
                 )
             ),
-            onEvent = { _, _ -> }
+            onEvent = { _, -> }
         )
     }
 }

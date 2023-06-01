@@ -31,17 +31,16 @@ class MusicPlayerScreenViewModel @Inject constructor(
         loadData()
     }
 
-//    MusicPlayerScreenState, MusicPlayerScreenEvent
-    fun dispatch(event: MusicPlayerScreenEvent, state: MusicPlayerScreenState) {
+    fun dispatch(event: MusicPlayerScreenEvent) {
         when(event) {
-            MusicPlayerScreenEvent.OnPlayPause -> onPlayPauseButtonClicked(state.musicState.currentPlayingMusic)
-            MusicPlayerScreenEvent.OnPlay -> onPlay(state.musicState.currentPlayingMusic)
-            MusicPlayerScreenEvent.OnPause -> { /** Nothing **/}
-            MusicPlayerScreenEvent.OnNext -> onNextClicked()
-            MusicPlayerScreenEvent.OnPrevious -> onPreviousClicked()
-            MusicPlayerScreenEvent.OnShuffle -> onShuffleClicked()
-            MusicPlayerScreenEvent.OnRepeat -> onRepeatClicked()
-            MusicPlayerScreenEvent.SnapTo -> snapTo(state.currentDuration)
+            is MusicPlayerScreenEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
+            is MusicPlayerScreenEvent.OnPlayClick -> onPlay(event.song)
+            is MusicPlayerScreenEvent.OnSnapTo -> snapTo(event.duration)
+            is MusicPlayerScreenEvent.OnNextClick -> onNextClicked()
+            is MusicPlayerScreenEvent.OnPreviousClick -> onPreviousClicked()
+            is MusicPlayerScreenEvent.OnPause -> { /** Nothing **/}
+            is MusicPlayerScreenEvent.OnRepeatClick -> onRepeatClicked()
+            is MusicPlayerScreenEvent.OnShuffleClick -> onShuffleClicked()
         }
     }
 
