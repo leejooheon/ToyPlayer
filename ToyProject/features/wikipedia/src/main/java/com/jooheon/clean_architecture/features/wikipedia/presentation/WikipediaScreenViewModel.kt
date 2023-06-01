@@ -13,7 +13,6 @@ import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -28,23 +27,17 @@ class WikipediaScreenViewModel @Inject constructor(
     var state by mutableStateOf(WikipediaScreenState.default)
         private set
 
-    private val _navigateToWikipediaDetailScreen = Channel<WikipediaScreenState>()
+    private val _navigateToWikipediaDetailScreen = Channel<Entity.Related.Page>()
     val navigateToWikipediaDetailScreen = _navigateToWikipediaDetailScreen.receiveAsFlow()
 
-    fun dispatch(event: WikipediaScreenEvent, state: WikipediaScreenState) {
+    fun dispatch(event: WikipediaScreenEvent) = viewModelScope.launch {
         when(event) {
-            WikipediaScreenEvent.GetData -> {
-                getRelatedPageData(state.searchWord)
-                getSummaryData(state.searchWord)
+            is WikipediaScreenEvent.OnSearchButtonClick -> {
+                getRelatedPageData(event.searchWord)
+                getSummaryData(event.searchWord)
             }
-            WikipediaScreenEvent.GoToDetailScreen -> goToDetailScreen(state.selectedItem)
+            is WikipediaScreenEvent.OnRelatedPageItemClick -> _navigateToWikipediaDetailScreen.send(event.item)
         }
-    }
-
-    private fun goToDetailScreen(page: Entity.Related.Page?) = viewModelScope.launch(Dispatchers.Main) {
-        page ?: return@launch
-        state = state.copy(selectedItem = page)
-        _navigateToWikipediaDetailScreen.send(state)
     }
 
     private fun getRelatedPageData(searchWord: String) {

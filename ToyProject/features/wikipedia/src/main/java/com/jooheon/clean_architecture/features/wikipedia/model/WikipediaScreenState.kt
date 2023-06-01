@@ -6,14 +6,12 @@ data class WikipediaScreenState(
     val searchWord: String,
     val relatedItems: List<Entity.Related.Page>,
     val summaryItem: Entity.Summary?,
-    val selectedItem: Entity.Related.Page?
 ) {
     companion object {
         val default = WikipediaScreenState(
             searchWord = "",
             relatedItems = emptyList(),
             summaryItem = null,
-            selectedItem = null
         )
     }
 }

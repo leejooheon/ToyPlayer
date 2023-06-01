@@ -36,7 +36,7 @@ private const val TAG = "WikipediaScreen"
 @Composable
 fun WikipediaScreen(
     state: WikipediaScreenState,
-    onEvent: (WikipediaScreenEvent, WikipediaScreenState) -> Unit
+    onEvent: (WikipediaScreenEvent) -> Unit
 ) {
     val localFocusManager = LocalFocusManager.current
     var searchWordState by rememberSaveable { mutableStateOf(state.searchWord) }
@@ -50,11 +50,11 @@ fun WikipediaScreen(
             title = "input wiki\nKeyword",
             content = searchWordState,
             onTextChanged = { searchWordState = it },
-            onButtonClicked = { onEvent(WikipediaScreenEvent.GetData, state.copy(searchWord = searchWordState)) }
+            onButtonClicked = { onEvent(WikipediaScreenEvent.OnSearchButtonClick(searchWordState)) }
         )
         WikipediaListView(
             state = state,
-            onEvent = onEvent
+            onRelatedpageItemClick = { onEvent(WikipediaScreenEvent.OnRelatedPageItemClick(it)) }
         )
     }
 }
@@ -62,7 +62,7 @@ fun WikipediaScreen(
 @Composable
 private fun WikipediaListView(
     state: WikipediaScreenState,
-    onEvent: (WikipediaScreenEvent, WikipediaScreenState) -> Unit
+    onRelatedpageItemClick: (Entity.Related.Page) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -70,9 +70,7 @@ private fun WikipediaListView(
                 WikipediaListItem(
                     index = index,
                     page = page,
-                    onClicked = {
-                        onEvent(WikipediaScreenEvent.GoToDetailScreen, state.copy(selectedItem = it))
-                    }
+                    onClicked = onRelatedpageItemClick
                 )
             }
         }
@@ -154,7 +152,7 @@ fun PreviewWikipediaScreen() {
                     Entity.Related.Page.default.copy(displaytitle = "display_title - 4444"),
                 )
             ),
-            onEvent = { _, _ -> }
+            onEvent = { _, -> }
         )
     }
 }

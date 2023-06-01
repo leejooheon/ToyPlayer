@@ -1,16 +1,18 @@
 package com.jooheon.clean_architecture.features.wikipedia.model
 
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 
-enum class WikipediaScreenEvent {
-    GetData, GoToDetailScreen;
+sealed class WikipediaScreenEvent {
+    data class OnSearchButtonClick(val searchWord: String): WikipediaScreenEvent()
+    data class OnRelatedPageItemClick(val item: Entity.Related.Page): WikipediaScreenEvent()
+
     companion object {
         fun navigateToDetailScreen(
             navigator: NavController,
-            state: WikipediaScreenState
+            item: Entity.Related.Page
         ) {
-            val item = state.selectedItem ?: return
             navigator.navigate(
                 ScreenNavigation.Detail.WikipediaDetail.createRoute(item)
             ) {
