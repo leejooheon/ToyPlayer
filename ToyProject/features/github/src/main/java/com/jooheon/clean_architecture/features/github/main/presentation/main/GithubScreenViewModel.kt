@@ -35,10 +35,10 @@ class GithubScreenViewModel @Inject constructor(
     private val _navigateToGithubDetailScreen = Channel<GithubScreenState>()
     val navigateToGithubDetailScreen = _navigateToGithubDetailScreen.receiveAsFlow()
 
-    fun dispatch(event: GithubScreenEvent, state: GithubScreenState) {
+    fun dispatch(event: GithubScreenEvent) {
         when(event) {
-            GithubScreenEvent.GetGithubRepositoryData -> getRepositoryData(state.id)
-            GithubScreenEvent.GoToDetailScreen -> goToDetailScreen(state.selectedItem)
+            is GithubScreenEvent.OnSearchButtonClick -> getRepositoryData(event.githubId)
+            is GithubScreenEvent.OnRepositoryClick -> goToDetailScreen(event.repository)
         }
     }
 

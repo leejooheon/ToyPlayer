@@ -1,10 +1,12 @@
 package com.jooheon.clean_architecture.features.github.main.model
 
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 
-enum class GithubScreenEvent {
-     GetGithubRepositoryData, GoToDetailScreen;
+sealed class GithubScreenEvent {
+     data class OnSearchButtonClick(val githubId: String): GithubScreenEvent()
+     data class OnRepositoryClick(val repository: Entity.Repository?): GithubScreenEvent()
 
      companion object {
           fun navigateToDetailScreen(

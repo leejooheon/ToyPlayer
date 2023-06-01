@@ -28,7 +28,7 @@ internal val CardPadding = 16.dp
 @Composable
 fun GithubScreen(
     state: GithubScreenState,
-    onEvent: (GithubScreenEvent, GithubScreenState) -> Unit,
+    onEvent: (GithubScreenEvent) -> Unit,
 ) {
     val localFocusManager = LocalFocusManager.current
     var idState by rememberSaveable { mutableStateOf(state.id) }
@@ -46,12 +46,12 @@ fun GithubScreen(
             title = "input your\ngithub id",
             content = idState,
             onTextChanged = { idState = it },
-            onButtonClicked = { onEvent(GithubScreenEvent.GetGithubRepositoryData, state.copy(id = idState)) }
+            onButtonClicked = { onEvent(GithubScreenEvent.OnSearchButtonClick(githubId = idState)) }
         )
         RepositoryColumn(
             state = state,
             onRepositoryClick = {
-                onEvent(GithubScreenEvent.GoToDetailScreen, state.copy(selectedItem = it))
+                onEvent(GithubScreenEvent.OnRepositoryClick(repository = it))
             },
         )
     }
@@ -70,7 +70,7 @@ private fun HomeScreenPreview() {
                     Entity.Repository.default.copy(name = "4444"),
                 )
             ),
-            onEvent = { _, _ -> }
+            onEvent = { _, -> }
         )
     }
 }
