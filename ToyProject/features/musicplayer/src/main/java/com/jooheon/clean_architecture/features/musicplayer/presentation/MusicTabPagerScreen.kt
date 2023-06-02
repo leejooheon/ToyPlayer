@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -131,8 +129,10 @@ fun MusicTabPagerScreen(
                     }
                     1 -> {
                         MusicAlbumScreen(
-                            state = musicAlbumScreenState,
-                            onEvent = onMusicAlbumScreenEvent
+                            musicAlbumState = musicAlbumScreenState,
+                            musicPlayerScreenState = musicPlayerScreenState,
+                            onMusicAlbumEvent = onMusicAlbumScreenEvent,
+                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
                         )
                     }
                     2 -> { /** TODO **/}

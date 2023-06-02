@@ -8,9 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
@@ -20,18 +25,46 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaItemSmall
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaSwipeableLayout
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import java.lang.Float
+import kotlin.math.max
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MusicAlbumScreen(
-    state: MusicAlbumScreenState,
-    onEvent: (MusicAlbumScreenEvent) -> Unit,
+    musicAlbumState: MusicAlbumScreenState,
+    musicPlayerScreenState: MusicPlayerScreenState,
+    onMusicAlbumEvent: (MusicAlbumScreenEvent) -> Unit,
+    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
 ) {
+
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = with(density) { configuration.screenHeightDp.dp.toPx() }
+    val swipeAreaHeight = screenHeight - 400
+
+    val swipeableState = rememberSwipeableState(0)
     val listState = rememberLazyListState()
 
-    AlbumMediaColumn(
-        albumList = state.albums,
-        listState = listState,
-        onItemClick = { onEvent(MusicAlbumScreenEvent.OnAlbumItemClick(it)) }
+    val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
+    val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
+
+    MediaSwipeableLayout(
+        musicPlayerScreenState = musicPlayerScreenState,
+        swipeableState = swipeableState,
+        swipeAreaHeight = swipeAreaHeight,
+        motionProgress = motionProgress,
+        onEvent = onMusicPlayerScreenEvent,
+        content = {
+            AlbumMediaColumn(
+                albumList = musicAlbumState.albums,
+                listState = listState,
+                onItemClick = { onMusicAlbumEvent(MusicAlbumScreenEvent.OnAlbumItemClick(it)) }
+            )
+        }
     )
 }
 
@@ -72,8 +105,10 @@ private fun AlbumMediaColumn(
 private fun MusicAlbumScreenPreview() {
     PreviewTheme(false) {
         MusicAlbumScreen(
-            state = MusicAlbumScreenState.default,
-            onEvent = {}
+            musicAlbumState = MusicAlbumScreenState.default,
+            musicPlayerScreenState = MusicPlayerScreenState.default,
+            onMusicAlbumEvent = {},
+            onMusicPlayerScreenEvent = {},
         )
     }
 }
