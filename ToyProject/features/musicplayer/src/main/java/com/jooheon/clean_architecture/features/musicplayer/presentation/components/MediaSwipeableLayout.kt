@@ -136,6 +136,13 @@ fun MediaSwipeableLayout(
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
                 .zIndex(if (musicState.currentPlayingMusic == Song.default) -1f else 1f)
+                .swipeable(
+                    state = swipeableState,
+                    anchors = anchors,
+                    thresholds = { _, _ -> FractionalThreshold(0.3f) },
+                    orientation = Orientation.Vertical,
+                    enabled = musicState.currentPlayingMusic != Song.default,
+                )
                 .layoutId("content"),
         ) {
             MediaFullDetails(
