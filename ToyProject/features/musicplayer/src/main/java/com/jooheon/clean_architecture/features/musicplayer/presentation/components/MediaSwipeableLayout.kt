@@ -69,13 +69,7 @@ fun MediaSwipeableLayout(
     ) {
         Column(
             modifier = Modifier
-                .padding(
-                    bottom = if (
-                        swipeableState.progress.from == 0
-                        && swipeableState.progress.to == 0
-                        && musicState.currentPlayingMusic != Song.default
-                    ) 60.dp else 0.dp
-                )
+                .padding(bottom = if (musicState.currentPlayingMusic == Song.default) 0.dp else 72.dp)
                 .fillMaxWidth()
                 .layoutId("mediaColumn"),
         ) {
@@ -103,6 +97,7 @@ fun MediaSwipeableLayout(
                     orientation = Orientation.Vertical,
                     enabled = musicState.currentPlayingMusic != Song.default,
                 )
+                .padding(all = (Float.max(motionProgress * 72, 0f)).dp)
                 .layoutId("albumImage"),
         )
 

@@ -288,24 +288,6 @@ internal fun AlbumImage(
     val borderThickness = (0.5).dp
     val borderColor = MaterialTheme.colorScheme.surface
 
-    val bottomMusicPlayerInfiniteTransition = rememberInfiniteTransition()
-    val angle by bottomMusicPlayerInfiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 3500,
-                easing = FastOutSlowInEasing
-            )
-        )
-    )
-    var currentAngle by remember { mutableStateOf(0f) }
-
-    LaunchedEffect(angle, isPlaying) {
-        if (isPlaying) {
-            currentAngle = angle
-        }
-    }
     Card(
         border = BorderStroke(
             width = borderThickness,
@@ -318,6 +300,7 @@ internal fun AlbumImage(
             .padding(12.dp)
             .clip(CircleShape)
             .aspectRatio(1.0f)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         CoilImage(
             url = song.albumArtUri.toString(),
