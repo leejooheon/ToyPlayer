@@ -26,7 +26,7 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Custo
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.github.main.presentation.main.CardPadding
 import com.jooheon.clean_architecture.features.github.main.presentation.main.CardWidth
-import com.jooheon.clean_architecture.features.github.extensions.offsetGradientBackground
+import com.jooheon.clean_architecture.features.common.compose.extensions.offsetGradientBackground
 
 @Composable
 fun RepositoryItem(
