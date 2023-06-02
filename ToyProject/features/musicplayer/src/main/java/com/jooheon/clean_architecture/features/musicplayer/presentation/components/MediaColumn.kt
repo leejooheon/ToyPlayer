@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ fun MediaColumn(
     onItemClick: (song: Song) -> Unit,
     listState: LazyListState = rememberLazyListState(),
     playlist: List<Song>,
+    viewType: Boolean,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -28,12 +30,22 @@ fun MediaColumn(
         modifier = modifier
     ) {
         items(playlist) { song ->
-            MediaItemLarge(
-                onItemClick = onItemClick,
-                song = song,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(10.dp))
+            if(viewType) {
+                MediaItemLarge(
+                    onItemClick = onItemClick,
+                    song = song,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            } else {
+                MediaItemSmall(
+                    imageUrl = song.imageUrl,
+                    title = song.title,
+                    subTitle = song.artist,
+                    modifier = Modifier,
+                    onItemClick = { onItemClick(song) }
+                )
+            }
         }
     }
 }
@@ -43,10 +55,18 @@ fun MediaColumn(
 fun VideoColumnPreview() {
     PreviewTheme(false) {
         Surface(modifier = Modifier.width(400.dp)) {
-            MediaColumn(
-                onItemClick = {},
-                playlist = listOf(Song.default),
-            )
+            Column {
+                MediaColumn(
+                    viewType = true,
+                    onItemClick = {},
+                    playlist = listOf(Song.default),
+                )
+                MediaColumn(
+                    viewType = false,
+                    onItemClick = {},
+                    playlist = listOf(Song.default),
+                )
+            }
         }
     }
 }

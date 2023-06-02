@@ -1,67 +1,47 @@
-package com.jooheon.clean_architecture.features.map.presentation.components
+package com.jooheon.clean_architecture.features.common.compose.components
 
-import android.util.Log
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.jooheon.clean_architecture.features.common.R
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.map.R
-
 
 @Composable
 fun ShowAlertDialog(
-    openDialog: MutableState<Boolean>,
-    content: UiText,
-    viewModel: BaseViewModel,
-    onOkButtonClicked: (() -> Unit)?,
-) {
-    MyAlertDialog(
-        openDialog,
-        content = content.asString(),
-        onDismiss = {
-            viewModel.dismissAlertDialog()
-            Log.d("BaseFragment", "onDismiss")
-        },
-        onConfirmButtonClicked = {
-            openDialog.value = false
-            Log.d("BaseFragment", "onConfirmButtonClicked")
-            onOkButtonClicked?.invoke()
-        }
-    )
-}
-@Composable
-fun ShowAlertDialog(
-    openDialog: MutableState<Boolean>,
     content: UiText,
     onOkButtonClicked: () -> Unit,
     onDismiss: () -> Unit,
 ) {
+    var openDialog by remember { mutableStateOf(true) }
+
     MyAlertDialog(
         openDialog = openDialog,
         content = content.asString(),
         onDismiss = {
-            openDialog.value = false
+            openDialog = false
             onDismiss()
         },
         onConfirmButtonClicked = {
-            openDialog.value = false
+            openDialog = false
             onOkButtonClicked()
         }
     )
 }
 
 @Composable
-fun MyAlertDialog(
-    openDialog: MutableState<Boolean>,
+private fun MyAlertDialog(
+    openDialog: Boolean,
     content: String,
     onDismiss: (() -> Unit)? = null,
     onConfirmButtonClicked: (() -> Unit)? = null
 ) {
-    if(!openDialog.value) { return }
+    if(!openDialog) { return }
 
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.secondary,

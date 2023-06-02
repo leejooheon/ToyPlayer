@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase.manager
 
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.MusicPlayListUsecase
 import com.jooheon.clean_architecture.features.common.utils.MusicUtil
@@ -34,30 +35,45 @@ class MusicPlayListManager (
             } else field = value
         }
 
-    fun loadPlaylist(): MusicPlayListManager {
+    fun loadPlaylist(playlistType: PlaylistType): MusicPlayListManager {
         if (state == State.INITIALIZING) { return this }
 
         state = State.INITIALIZING
 
         applicationScope.launch {
-            val resource = getLocalPlaylist()
-//            val resource = getStreamingPlaylist()
-
-            when (resource) {
-                is Resource.Success -> {
-                    val newPlaylist = resource.value
-                    playlist = newPlaylist
-                    state = State.INITIALIZED
-                }
-                is Resource.Failure -> {
-                    playlist = Collections.emptyList()
-                    latestFailureResource = resource
-                    state = State.ERROR
-                }
-                is Resource.Loading -> state = State.INITIALIZING
-                is Resource.Default -> state = State.ERROR
+            val resources = when(playlistType) {
+                PlaylistType.Local -> listOf(getLocalPlaylist())
+                PlaylistType.Streaming -> listOf(getStreamingPlaylist())
+                PlaylistType.All -> listOf(getStreamingPlaylist(), getLocalPlaylist())
             }
+
+            resources.firstOrNull { it  is Resource.Loading }?.let {
+                state = State.INITIALIZING
+                return@launch
+            }
+
+            resources.firstOrNull { it is Resource.Failure }?.let {
+                playlist = Collections.emptyList()
+                latestFailureResource = it as Resource.Failure
+                state = State.ERROR
+                return@launch
+            }
+
+            resources.firstOrNull { it is Resource.Default }?.let {
+                state = State.ERROR
+                return@launch
+            }
+
+            val newPlaylist = resources
+                .filterIsInstance<Resource.Success<MutableList<Song>>>()
+                .map { it.value }
+                .flatten()
+                .toMutableList()
+
+            playlist = newPlaylist
+            state = State.INITIALIZED
         }
+
         return this
     }
 

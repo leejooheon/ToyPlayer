@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -17,7 +18,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,14 +27,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.pagerTabIndicatorOffset
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreenViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreen
+import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 
 import kotlinx.coroutines.launch
 
@@ -44,6 +48,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun MusicTabPagerScreen(
     navigator: NavController,
+    musicPlayerScreenState: MusicPlayerScreenState,
+    musicAlbumScreenState: MusicAlbumScreenState,
+
+    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
+    onMusicAlbumScreenEvent: (MusicAlbumScreenEvent) -> Unit
 ) {
     val tabPages = listOf(
         stringResource(id = R.string.tab_name_song ),
@@ -58,13 +67,6 @@ fun MusicTabPagerScreen(
     val scrollToPage: (Int) -> Unit = { page ->
         scope.launch { pagerState.animateScrollToPage(page) }
         Unit
-    }
-
-    BackHandler {
-        when {
-            pagerState.currentPage != 0 -> scrollToPage(0)
-            else -> navigator.popBackStack()
-        }
     }
 
     Box(
@@ -120,18 +122,19 @@ fun MusicTabPagerScreen(
                 pageCount = 4,
                 state = pagerState
             ) { page ->
-
                 when (page) {
                     0 -> {
-                        val viewModel = hiltViewModel<MusicPlayerScreenViewModel>()
-                        val musicPlayerScreenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
-
-                        MusicScreen(
+                        MusicPlayerScreen(
                             musicPlayerScreenState = musicPlayerScreenState,
-                            onEvent = viewModel::dispatch
+                            onEvent = onMusicPlayerScreenEvent
                         )
                     }
-                    1 -> { /** TODO **/}
+                    1 -> {
+                        MusicAlbumScreen(
+                            state = musicAlbumScreenState,
+                            onEvent = onMusicAlbumScreenEvent
+                        )
+                    }
                     2 -> { /** TODO **/}
                     3 -> { /** TODO **/}
                 }
@@ -145,6 +148,17 @@ fun MusicTabPagerScreen(
 private fun MusicTabPagerScreenPreviewDark() {
     val context = LocalContext.current
     PreviewTheme(true) {
-        MusicTabPagerScreen(navigator = NavController(context),)
+        MusicTabPagerScreen(
+            navigator = NavController(context),
+            musicPlayerScreenState = MusicPlayerScreenState.default.copy(
+                musicState = MusicState(
+                    playlist = listOf(Song.default, Song.default,)
+                )
+            ),
+            musicAlbumScreenState = MusicAlbumScreenState.default,
+
+            onMusicPlayerScreenEvent = { _ -> },
+            onMusicAlbumScreenEvent = {},
+        )
     }
 }

@@ -4,4 +4,10 @@
     <string name="tab_name_album">Album</string>
     <string name="tab_name_artist">Artist</string>
     <string name="tab_name_playlist">Playlist</string>
+
+    <string name="option_see_more">option see more</string>
+
+    <string name="option_only_local">Only Local</string>
+    <string name="option_only_streaming">Only Streaming</string>
+    <string name="option_include_all">Include All</string>
 </resources>

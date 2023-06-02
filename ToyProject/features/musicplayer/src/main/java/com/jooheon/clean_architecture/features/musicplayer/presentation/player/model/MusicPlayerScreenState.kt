@@ -1,5 +1,6 @@
-package com.jooheon.clean_architecture.features.musicplayer.model
+package com.jooheon.clean_architecture.features.musicplayer.presentation.player.model
 
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 

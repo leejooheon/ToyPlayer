@@ -38,6 +38,8 @@ import com.jooheon.clean_architecture.features.main.MainViewModel
 import com.jooheon.clean_architecture.features.map.presentation.MapScreen
 import com.jooheon.clean_architecture.features.map.presentation.MapViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.MusicTabPagerScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreenViewModel
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaDatailScreen
@@ -93,7 +95,20 @@ internal fun BottomNavigationHost(
                 )
             }
             composable(ScreenNavigation.BottomSheet.Search.route) {
-                MusicTabPagerScreen(navigator = navigator)
+                val musicPlayerScreenViewModel = hiltViewModel<MusicPlayerScreenViewModel>()
+                val musicPlayerScreenState by musicPlayerScreenViewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
+
+                val musicAlbumScreenViewModel = hiltViewModel<MusicAlbumScreenViewModel>()
+                val musicAlbumScreenState by musicAlbumScreenViewModel.musicAlbumScreenState.collectAsStateWithLifecycle()
+
+                MusicTabPagerScreen(
+                    navigator = navigator,
+                    musicPlayerScreenState = musicPlayerScreenState,
+                    musicAlbumScreenState = musicAlbumScreenState,
+
+                    onMusicPlayerScreenEvent = musicPlayerScreenViewModel::dispatch,
+                    onMusicAlbumScreenEvent = musicAlbumScreenViewModel::dispatch
+                )
             }
         }
     }

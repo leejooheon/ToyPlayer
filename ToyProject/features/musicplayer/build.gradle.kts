@@ -68,6 +68,7 @@ dependencies {
     // compose
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icon.extended)
 
     // compose motionlayout
     implementation(libs.androidx.constraintlayout.compose)

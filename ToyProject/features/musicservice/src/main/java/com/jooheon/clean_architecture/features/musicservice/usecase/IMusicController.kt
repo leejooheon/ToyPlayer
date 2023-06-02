@@ -1,10 +1,12 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 
 interface IMusicController {
     fun loadPlaylist(
+        playlistType: PlaylistType,
         onPlayListLoaded: ((MutableList<Song>) -> Unit)? = null
     )
 

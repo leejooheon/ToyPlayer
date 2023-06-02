@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
@@ -134,8 +135,11 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    fun loadPlaylist() = applicationScope.launch(Dispatchers.IO) {
-        musicController.loadPlaylist()
+    fun loadPlaylist(playlistType: PlaylistType) = applicationScope.launch(Dispatchers.IO) {
+        _musicState.update {
+            it.copy(playlistType = playlistType)
+        }
+        musicController.loadPlaylist(playlistType)
     }
 
     fun onPlay(song: Song = musicState.value.currentPlayingMusic) = applicationScope.launch(Dispatchers.IO) {

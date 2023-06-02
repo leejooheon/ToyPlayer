@@ -1,5 +1,6 @@
-package com.jooheon.clean_architecture.features.musicplayer.model
+package com.jooheon.clean_architecture.features.musicplayer.presentation.player.model
 
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 sealed class MusicPlayerScreenEvent {
@@ -12,4 +13,5 @@ sealed class MusicPlayerScreenEvent {
     data class OnPlayPauseClick(val song: Song): MusicPlayerScreenEvent()
     data class OnPlayClick(val song: Song): MusicPlayerScreenEvent()
     data class OnSnapTo(val duration: Long): MusicPlayerScreenEvent()
+    data class OnPlaylistTypeChanged(val playlistType: PlaylistType): MusicPlayerScreenEvent()
 }

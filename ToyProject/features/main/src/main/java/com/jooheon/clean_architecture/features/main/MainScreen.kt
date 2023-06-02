@@ -75,7 +75,7 @@ fun MainScreen(
                     scope = scope,
                     onFavoriteClicked = { onEvent(MainScreenEvent.OnFavoriteIconCLick) },
                     onSearchClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
-                    onSettingClicked = { onEvent(MainScreenEvent.OnSearchIconClick)},
+                    onSettingClicked = { onEvent(MainScreenEvent.OnSettingIconClick)},
                 )
             },
             content = { paddingParent ->
@@ -89,12 +89,12 @@ fun MainScreen(
         )
     }
 
-    RegisterBackPressedHandler(
-        isDoubleBackPressed = state.doubleBackPressedState,
-        drawerState = drawerState,
-        scope = scope,
-        onBackPressed = { /** EVENT **/}
-    )
+//    RegisterBackPressedHandler(
+//        isDoubleBackPressed = state.doubleBackPressedState,
+//        drawerState = drawerState,
+//        scope = scope,
+//        onBackPressed = { /** EVENT **/}
+//    )
 }
 
 @Composable

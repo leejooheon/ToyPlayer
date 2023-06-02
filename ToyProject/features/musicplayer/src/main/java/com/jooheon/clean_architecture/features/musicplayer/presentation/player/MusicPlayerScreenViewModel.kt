@@ -2,10 +2,11 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.player
 
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.musicplayer.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,7 @@ class MusicPlayerScreenViewModel @Inject constructor(
         collectMusicState()
         collectExoPlayerState()
         collectDuration()
-        loadData()
+        loadData(musicPlayerScreenState.value.musicState.playlistType)
     }
 
     fun dispatch(event: MusicPlayerScreenEvent) = viewModelScope.launch {
@@ -41,11 +42,12 @@ class MusicPlayerScreenViewModel @Inject constructor(
             is MusicPlayerScreenEvent.OnPause -> { /** Nothing **/}
             is MusicPlayerScreenEvent.OnRepeatClick -> onRepeatClicked()
             is MusicPlayerScreenEvent.OnShuffleClick -> onShuffleClicked()
+            is MusicPlayerScreenEvent.OnPlaylistTypeChanged -> onPlaylistTypeChanged(event.playlistType)
         }
     }
 
-    fun loadData() {
-        musicControllerUsecase.loadPlaylist()
+    fun loadData(playlistType: PlaylistType) {
+        musicControllerUsecase.loadPlaylist(playlistType)
     }
 
     private fun onPlay(song: Song) = viewModelScope.launch {
@@ -74,6 +76,14 @@ class MusicPlayerScreenViewModel @Inject constructor(
 
     private fun snapTo(duration: Long) {
         musicControllerUsecase.snapTo(duration)
+    }
+
+    private fun onPlaylistTypeChanged(playlistType: PlaylistType) {
+        if(musicPlayerScreenState.value.musicState.playlistType == playlistType) {
+            return
+        }
+
+        loadData(playlistType)
     }
     private fun collectMusicState() = viewModelScope.launch {
         musicControllerUsecase.musicState.collectLatest { musicState ->

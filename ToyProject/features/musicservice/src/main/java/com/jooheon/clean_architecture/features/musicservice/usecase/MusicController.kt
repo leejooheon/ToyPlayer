@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicservice.usecase
 import android.content.Context
 import androidx.media3.common.*
 import androidx.media3.exoplayer.ExoPlayer
+import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
@@ -176,9 +177,10 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     }
 
     override fun loadPlaylist(
+        playlistType: PlaylistType,
         onPlayListLoaded: ((MutableList<Song>) -> Unit)?
     ) {
-        musicPlayListManager.loadPlaylist().whenReady { isReady ->
+        musicPlayListManager.loadPlaylist(playlistType).whenReady { isReady ->
             applicationScope.launch {
                 if (isReady) {
                     val newPlaylist = if(shuffleMode.value == ShuffleMode.SHUFFLE) {

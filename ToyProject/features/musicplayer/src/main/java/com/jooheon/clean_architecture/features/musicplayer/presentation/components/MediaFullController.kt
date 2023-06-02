@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.musicplayer.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

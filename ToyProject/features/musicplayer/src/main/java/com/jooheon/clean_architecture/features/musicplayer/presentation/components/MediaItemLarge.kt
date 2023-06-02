@@ -96,7 +96,7 @@ fun MediaItemLarge(
 
 @Preview
 @Composable
-fun MediaItemLargePreview() {
+private fun MediaItemLargePreview() {
     PreviewTheme(false) {
         MediaItemLarge(
             onItemClick = {},
