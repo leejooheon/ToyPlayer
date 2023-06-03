@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.jooheon.clean_architecture.domain.entity.Entity
+import com.jooheon.clean_architecture.domain.entity.music.Album
+import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.features.common.BuildConfig
 import com.jooheon.clean_architecture.features.common.R
 import kotlinx.serialization.decodeFromString
@@ -81,6 +83,42 @@ sealed class ScreenNavigation(open val route: String) {
             fun parsePage(bundle: Bundle): Entity.Related.Page {
                 val page = bundle.getSerializable(page) as Entity.Related.Page
                 return page
+            }
+        }
+    }
+
+    class Music {
+        object ArtistDetail: ScreenNavigation("music_artist_detail?item={artist}") {
+            const val artist = "artist"
+            val arguments = listOf(
+                navArgument(artist) {
+                    type = createSerializableNavType<Artist>()
+                }
+            )
+            fun createRoute(artist: Artist): String {
+                val item = Json.encodeToString(artist)
+                return "music_artist_detail?item=${item}"
+            }
+            fun parseArtist(bundle: Bundle): Artist {
+                val artist = bundle.getSerializable(artist) as Artist
+                return artist
+            }
+        }
+
+        object AlbumDetail: ScreenNavigation("music_album_detail?item={album}") {
+            const val album = "album"
+            val arguments = listOf(
+                navArgument(album) {
+                    type = createSerializableNavType<Album>()
+                }
+            )
+            fun createRoute(album: Album): String {
+                val item = Json.encodeToString(album)
+                return "music_album_detail?item=${item}"
+            }
+            fun parseAlbum(bundle: Bundle): Album {
+                val artist = bundle.getSerializable(album) as Album
+                return artist
             }
         }
     }

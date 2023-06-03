@@ -32,8 +32,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ExperimentalMotionApi
-import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.extensions.scrollEnabled
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
@@ -48,13 +46,12 @@ import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MusicPlayerScreen(
     musicPlayerScreenState: MusicPlayerScreenState,
     onEvent: (MusicPlayerScreenEvent) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val musicState = musicPlayerScreenState.musicState
@@ -63,25 +60,14 @@ fun MusicPlayerScreen(
     val swipeAreaHeight = screenHeight - 400
 
     val swipeableState = rememberSwipeableState(0)
-    LaunchedEffect(key1 = musicState.currentPlayingMusic) {
-        if (musicState.currentPlayingMusic != Song.default && swipeableState.currentValue == 0) {
-            swipeableState.animateTo(1)
-        }
-    }
-
-    val listState = rememberLazyListState()
-    LaunchedEffect(key1 = musicState.currentPlayingMusic) {
-        musicState.playlist.indexOf(musicState.currentPlayingMusic).let { index ->
-            if (index > -1)
-                listState.scrollToItem(index)
-        }
-    }
-
     val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
 
     var openDialog by remember { mutableStateOf(false) }
     var viewType by rememberSaveable { mutableStateOf(true) }
+
+    val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
 
     MediaSwipeableLayout(
         musicPlayerScreenState = musicPlayerScreenState,
@@ -141,10 +127,9 @@ fun MusicPlayerScreen(
                     if (swipeableState.currentValue == 0) {
                         if (musicState.currentPlayingMusic != it) {
                             onEvent(MusicPlayerScreenEvent.OnPlayClick(it))
-                        } else {
-                            scope.launch {
-                                swipeableState.animateTo(1)
-                            }
+                        }
+                        scope.launch {
+                            swipeableState.animateTo(1)
                         }
                     }
                 },

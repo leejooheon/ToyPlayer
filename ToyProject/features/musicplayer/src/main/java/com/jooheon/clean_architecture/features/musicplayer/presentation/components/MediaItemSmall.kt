@@ -64,7 +64,7 @@ fun MediaItemSmall(
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .padding(horizontal = 8.dp)
                     .weight(1f)
             ) {
                 Text(
@@ -85,6 +85,54 @@ fun MediaItemSmall(
                     style = MaterialTheme.typography.labelMedium,
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MediaItemSmallWithoutImage(
+    title: String,
+    subTitle: String,
+    onItemClick: () -> Unit,
+) {
+    Card(
+        onClick = { onItemClick() },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
+        modifier = Modifier.padding(
+            top = 12.dp,
+            start = 12.dp,
+            end = 12.dp,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(all = 12.dp)
+        ) {
+            Text(
+                text = title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+            )
+
+            Text(
+                text = subTitle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelMedium,
+            )
         }
     }
 }

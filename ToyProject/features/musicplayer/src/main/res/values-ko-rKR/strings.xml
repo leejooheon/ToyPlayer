@@ -5,6 +5,9 @@
     <string name="tab_name_artist">아티스트</string>
     <string name="tab_name_playlist">재생목록</string>
 
+    <string name="song">%1$d 곡</string>
+    <string name="song_list">음악 목록</string>
+
     <string name="option_see_more">옵션 더보기</string>
     <string name="option_only_local">로컬 음악</string>
     <string name="option_only_streaming">스트리밍 채널</string>

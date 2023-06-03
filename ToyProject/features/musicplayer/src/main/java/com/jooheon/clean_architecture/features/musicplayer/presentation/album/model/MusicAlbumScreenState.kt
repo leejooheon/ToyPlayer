@@ -4,12 +4,10 @@ import com.jooheon.clean_architecture.domain.entity.music.Album
 
 data class MusicAlbumScreenState(
     val albums: List<Album>,
-    val selectedAlbum: Album
 ) {
     companion object {
         val default = MusicAlbumScreenState(
             albums = listOf(Album.default.copy(id = "selected"), Album.default),
-            selectedAlbum = Album.default.copy(id = "selected")
         )
     }
 }

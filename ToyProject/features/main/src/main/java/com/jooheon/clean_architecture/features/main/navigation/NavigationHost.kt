@@ -39,6 +39,11 @@ import com.jooheon.clean_architecture.features.map.presentation.MapScreen
 import com.jooheon.clean_architecture.features.map.presentation.MapViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.MusicTabPagerScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreenViewModel
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
@@ -98,16 +103,28 @@ internal fun BottomNavigationHost(
                 val musicPlayerScreenViewModel = hiltViewModel<MusicPlayerScreenViewModel>()
                 val musicPlayerScreenState by musicPlayerScreenViewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
 
-                val musicAlbumScreenViewModel = hiltViewModel<MusicAlbumScreenViewModel>()
+                val musicAlbumScreenViewModel = hiltViewModel<MusicAlbumScreenViewModel>().apply {
+                    navigateToDetailScreen.observeWithLifecycle {
+                        navigator.navigate(ScreenNavigation.Music.AlbumDetail.createRoute(it))
+                    }
+                }
                 val musicAlbumScreenState by musicAlbumScreenViewModel.musicAlbumScreenState.collectAsStateWithLifecycle()
 
+                val musicArtistScreenViewModel = hiltViewModel<MusicArtistScreenViewModel>().apply {
+                    navigateToDetailScreen.observeWithLifecycle {
+                        navigator.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
+                    }
+                }
+                val musicArtistScreenState by musicArtistScreenViewModel.musicArtistScreenState.collectAsStateWithLifecycle()
+
                 MusicTabPagerScreen(
-                    navigator = navigator,
                     musicPlayerScreenState = musicPlayerScreenState,
                     musicAlbumScreenState = musicAlbumScreenState,
+                    musicArtistScreenState = musicArtistScreenState,
 
                     onMusicPlayerScreenEvent = musicPlayerScreenViewModel::dispatch,
-                    onMusicAlbumScreenEvent = musicAlbumScreenViewModel::dispatch
+                    onMusicAlbumScreenEvent = musicAlbumScreenViewModel::dispatch,
+                    onMusicArtistScreenEvent = musicArtistScreenViewModel::dispatch
                 )
             }
         }
@@ -256,6 +273,66 @@ internal fun FullScreenNavigationHost(
                 val arguments = requireNotNull(it.arguments)
                 val page = ScreenNavigation.Detail.WikipediaDetail.parsePage(arguments)
                 WikipediaDatailScreen(keyword = page.title ?: "")
+            }
+
+            composable(
+                route = ScreenNavigation.Music.ArtistDetail.route,
+                arguments = ScreenNavigation.Music.ArtistDetail.arguments
+            ) {
+                val arguments = requireNotNull(it.arguments)
+                val artist = ScreenNavigation.Music.ArtistDetail.parseArtist(arguments)
+
+                val musicPlayerScreenViewModel = hiltViewModel<MusicPlayerScreenViewModel>()
+                val musicPlayerScreenState by musicPlayerScreenViewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
+
+                val viewModel = hiltViewModel<MusicArtistDetailScreenViewModel>().apply {
+                    init(artist)
+                    navigateTo.observeWithLifecycle { route ->
+                        if(route == ScreenNavigation.Back.route) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(route)
+                        }
+                    }
+                }
+                val state by viewModel.musicArtistDetailScreenState.collectAsStateWithLifecycle()
+
+                MusicArtistDetailScreen(
+                    musicArtistDetailScreenState = state,
+                    musicPlayerScreenState = musicPlayerScreenState,
+                    onMusicArtistDetailScreenEvent = viewModel::dispatch,
+                    onMusicPlayerScreenEvent = musicPlayerScreenViewModel::dispatch,
+                )
+            }
+
+            composable(
+                route = ScreenNavigation.Music.AlbumDetail.route,
+                arguments = ScreenNavigation.Music.AlbumDetail.arguments
+            ) {
+                val arguments = requireNotNull(it.arguments)
+                val album = ScreenNavigation.Music.AlbumDetail.parseAlbum(arguments)
+
+                val musicPlayerScreenViewModel = hiltViewModel<MusicPlayerScreenViewModel>()
+                val musicPlayerScreenState by musicPlayerScreenViewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
+
+                val viewModel = hiltViewModel<MusicAlbumDetailScreenViewModel>().apply {
+                    init(album)
+                    navigateTo.observeWithLifecycle { route ->
+                        if(route == ScreenNavigation.Back.route) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(route)
+                        }
+                    }
+                }
+                val state by viewModel.musicAlbumDetailScreenState.collectAsStateWithLifecycle()
+
+                MusicAlbumDetailScreen(
+                    musicAlbumDetailScreenState = state,
+                    musicPlayerScreenState = musicPlayerScreenState,
+                    onMusicAlbumDetailScreenEvent = viewModel::dispatch,
+                    onMusicPlayerScreenEvent = musicPlayerScreenViewModel::dispatch,
+                )
             }
         }
     }

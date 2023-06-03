@@ -5,9 +5,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +29,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import kotlin.math.min
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaBottomController(
     motionProgress: Float,
@@ -32,40 +39,54 @@ fun MediaBottomController(
     onPlayListButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp
+        ),
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
-                .alpha(1f - min(motionProgress * 2, 1f))
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(horizontal = 8.dp)
         ) {
-            Text(
-                text = song.title,
-                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .alpha(1f - min(motionProgress * 2, 1f))
+            ) {
+                Text(
+                    text = song.title,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(0.dp))
+                Text(
+                    text = song.artist,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            PlayPauseButton(
+                isPlaying = isPlaying,
+                onPlayPauseButtonPressed = { onPlayPauseButtonClicked(song)} ,
+                modifier = Modifier.alpha(1f - min(motionProgress * 2, 1f)),
             )
-            Spacer(modifier = Modifier.height(0.dp))
-            Text(
-                text = song.artist,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                overflow = TextOverflow.Ellipsis
+            PlayListButton(
+                onPlayListButtonPressed = onPlayListButtonPressed,
+                modifier = Modifier.alpha(1f - min(motionProgress * 2, 1f)),
             )
         }
-        PlayPauseButton(
-            isPlaying = isPlaying,
-            onPlayPauseButtonPressed = { onPlayPauseButtonClicked(song)} ,
-            modifier = Modifier.alpha(1f - min(motionProgress * 2, 1f)),
-        )
-        PlayListButton(
-            onPlayListButtonPressed = onPlayListButtonPressed,
-            modifier = Modifier.alpha(1f - min(motionProgress * 2, 1f)),
-        )
     }
 }
 @Preview
@@ -83,7 +104,7 @@ private fun MediaBottomControllerPreview() {
                 isPlaying = true,
                 onPlayPauseButtonClicked = {},
                 onPlayListButtonPressed = {},
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().height(64.dp)
             )
         }
     }

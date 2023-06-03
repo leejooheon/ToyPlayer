@@ -25,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
@@ -34,6 +33,9 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.player.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.pagerTabIndicatorOffset
 import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreen
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
@@ -45,12 +47,13 @@ import kotlinx.coroutines.launch
 )
 @Composable
 fun MusicTabPagerScreen(
-    navigator: NavController,
     musicPlayerScreenState: MusicPlayerScreenState,
     musicAlbumScreenState: MusicAlbumScreenState,
+    musicArtistScreenState: MusicArtistScreenState,
 
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
-    onMusicAlbumScreenEvent: (MusicAlbumScreenEvent) -> Unit
+    onMusicAlbumScreenEvent: (MusicAlbumScreenEvent) -> Unit,
+    onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
 ) {
     val tabPages = listOf(
         stringResource(id = R.string.tab_name_song ),
@@ -135,7 +138,14 @@ fun MusicTabPagerScreen(
                             onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
                         )
                     }
-                    2 -> { /** TODO **/}
+                    2 -> {
+                        MusicArtistScreen(
+                            musicArtistState = musicArtistScreenState,
+                            musicPlayerScreenState = musicPlayerScreenState,
+                            onMusicArtistScreenEvent = onMusicArtistScreenEvent,
+                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
+                        )
+                    }
                     3 -> { /** TODO **/}
                 }
             }
@@ -149,16 +159,17 @@ private fun MusicTabPagerScreenPreviewDark() {
     val context = LocalContext.current
     PreviewTheme(true) {
         MusicTabPagerScreen(
-            navigator = NavController(context),
             musicPlayerScreenState = MusicPlayerScreenState.default.copy(
                 musicState = MusicState(
                     playlist = listOf(Song.default, Song.default,)
                 )
             ),
             musicAlbumScreenState = MusicAlbumScreenState.default,
+            musicArtistScreenState = MusicArtistScreenState.default,
 
-            onMusicPlayerScreenEvent = { _ -> },
+            onMusicPlayerScreenEvent = {},
             onMusicAlbumScreenEvent = {},
+            onMusicArtistScreenEvent = {}
         )
     }
 }

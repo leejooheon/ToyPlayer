@@ -1,5 +1,8 @@
 package com.jooheon.clean_architecture.domain.entity.music
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Song(
     val audioId: Long,
     val displayName: String,

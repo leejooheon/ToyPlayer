@@ -69,7 +69,7 @@ fun MediaSwipeableLayout(
     ) {
         Column(
             modifier = Modifier
-                .padding(bottom = if (musicState.currentPlayingMusic == Song.default) 0.dp else 72.dp)
+                .padding(bottom = if (musicState.currentPlayingMusic == Song.default) 0.dp else 60.dp)
                 .fillMaxWidth()
                 .layoutId("mediaColumn"),
         ) {
@@ -122,7 +122,6 @@ fun MediaSwipeableLayout(
                     enabled = true
                 )
                 .background(MaterialTheme.colorScheme.background)
-                .padding(all = 10.dp)
                 .layoutId("details")
         )
 

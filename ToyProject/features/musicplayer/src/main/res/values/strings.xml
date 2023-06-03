@@ -5,6 +5,10 @@
     <string name="tab_name_artist">Artist</string>
     <string name="tab_name_playlist">Playlist</string>
 
+    <string name="song">%1$d Song</string>
+    <string name="song_list">Song List</string>
+
+
     <string name="option_see_more">option see more</string>
 
     <string name="option_only_local">Only Local</string>
