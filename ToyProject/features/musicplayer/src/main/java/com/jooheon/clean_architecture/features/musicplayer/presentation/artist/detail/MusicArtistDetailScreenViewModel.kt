@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail
 
 import androidx.lifecycle.viewModelScope
+import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
@@ -36,8 +37,10 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     fun dispatch(event: MusicArtistDetailScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
-            is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlay(event.song)
+            is MusicArtistDetailScreenEvent.OnSongClick -> musicControllerUsecase.onPlay(event.song)
+            is MusicArtistDetailScreenEvent.OnAlbumClick -> {
+                val route = ScreenNavigation.Music.AlbumDetail.createRoute(event.album)
+                _navigateTo.send(route)
             }
         }
     }

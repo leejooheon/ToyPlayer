@@ -73,7 +73,8 @@ class MusicArtistScreenViewModel @Inject constructor(
                 name = songs.firstOrNull()?.album.defaultEmpty(),
                 artist = songs.firstOrNull()?.artist.defaultEmpty(),
                 artistId = songs.firstOrNull()?.artistId.defaultEmpty(),
-                songs = songs
+                imageUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
+                songs = songs.sortedBy { it.trackNumber }
             )
         }.groupBy {
             it.artistId

@@ -33,17 +33,19 @@ fun MediaDetailHeader(
     ) {
         Icon(
             imageVector = Icons.Default.MusicNote,
+            tint = MaterialTheme.colorScheme.onBackground,
             contentDescription = null,
         )
         Text(
             text = UiText.StringResource(R.string.song_list).asString(),
+            color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold
             )
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = UiText.StringResource(R.string.song, count).asString(),
+            text = UiText.StringResource(R.string.n_song, count).asString(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground.copy(
                 alpha = 0.7f

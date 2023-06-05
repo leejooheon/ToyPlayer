@@ -7,7 +7,7 @@ data class MusicArtistScreenState(
 ) {
     companion object {
         val default = MusicArtistScreenState(
-            artists = listOf(Artist.default, Artist.default),
+            artists = listOf(Artist.default),
         )
     }
 }
