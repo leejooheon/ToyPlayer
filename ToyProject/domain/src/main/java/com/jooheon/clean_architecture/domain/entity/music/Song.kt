@@ -13,8 +13,10 @@ data class Song(
     val albumId: String,
     val duration: Long,
     val path: String,
+    val trackNumber: Int,
     val imageUrl: String,
     var isFavorite: Boolean = false,
+    var data: String? = null,
 ): java.io.Serializable {
 
     companion object {
@@ -28,8 +30,10 @@ data class Song(
             albumId = "-",
             duration = 1L,
             path = "-",
+            trackNumber = 1,
             imageUrl = "",
-            isFavorite = false
+            isFavorite = false,
+            data = null,
         )
     }
 }

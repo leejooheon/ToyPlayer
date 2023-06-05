@@ -8,6 +8,7 @@ data class Album(
     val name: String,
     val artist: String,
     val artistId: String,
+    val imageUrl: String,
     val songs: List<Song>
 ): java.io.Serializable {
     companion object {
@@ -16,7 +17,8 @@ data class Album(
             name = "album-name",
             artist = "artist-name",
             artistId = "artist-id",
-            songs = listOf(Song.default, Song.default)
+            imageUrl = "",
+            songs = listOf(Song.default)
         )
     }
 }

@@ -14,7 +14,6 @@ data class Artist(
             name = "-",
             albums = listOf(
                 Album.default,
-                Album.default
             )
         )
     }
