@@ -1,6 +1,10 @@
 <resources>
     <string name="close">Close</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="lorem" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut tempus, sem vitae convallis imperdiet, lectus nunc pharetra diam, ac rhoncus quam eros eu risus. Nulla pulvinar condimentum erat, pulvinar tempus turpis blandit ut. Etiam sed ipsum sed lacus eleifend hendrerit eu quis quam. Etiam ligula eros, finibus vestibulum tortor ac, ultrices accumsan dolor. Vivamus vel nisl a libero lobortis posuere. Aenean facilisis nibh vel ultrices bibendum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse ac est vitae lacus commodo efficitur at ut massa. Etiam vestibulum sit amet sapien sed varius. Aliquam non ipsum imperdiet, pulvinar enim nec, mollis risus. Fusce id tincidunt nisl.</string>
+    <string name="dessert" translatable="false">Vanilla, Almond Flour, Eggs, Butter, Cream, Sugar</string>
 
     <string name="playing_notification_description">The playing notification provides actions for play/pause etc.</string>
     <string name="playing_notification_name">Playing notification</string>
@@ -22,6 +26,6 @@
     <string name="title_cd_wikipedia">Wikipedia</string>
     <string name="title_map">Map</string>
     <string name="title_cd_map">Map</string>
-    <string name="title_search">Search</string>
-    <string name="title_cd_search">Search</string>
+    <string name="title_music">Music</string>
+    <string name="title_cd_music">Music</string>
 </resources>
