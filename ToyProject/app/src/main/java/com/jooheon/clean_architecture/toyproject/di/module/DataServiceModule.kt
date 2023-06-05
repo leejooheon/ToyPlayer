@@ -5,6 +5,7 @@ import com.jooheon.clean_architecture.data.api.GithubApi
 import com.jooheon.clean_architecture.data.api.SubwayApi
 import com.jooheon.clean_architecture.data.api.WikipediaApi
 import com.jooheon.clean_architecture.data.dao.parkingspot.ParkingSpotDatabase
+import com.jooheon.clean_architecture.data.dao.parkingspot.ParkingSpotMapper
 import com.jooheon.clean_architecture.toyproject.di.Constants
 import com.jooheon.clean_architecture.toyproject.di.MyApplication
 import dagger.Module
@@ -33,9 +34,14 @@ object DataServiceModule {
 
     @Provides
     @Singleton
-    fun provideParkingSpotDatabase(myApplication: MyApplication) = Room.databaseBuilder(myApplication, ParkingSpotDatabase::class.java, Constants.PARKING_SPOT_DB).build()
+    fun provideParkingSpotDatabase(myApplication: MyApplication) =
+        Room.databaseBuilder(myApplication, ParkingSpotDatabase::class.java, Constants.PARKING_SPOT_DB).build()
 
     @Provides
     @Singleton
-    fun provideParkingSpotDao(parkingSpotDatabase: ParkingSpotDatabase) = parkingSpotDatabase.dao
+    fun provideParkingSpotDao(parkingSpotDatabase: ParkingSpotDatabase) =
+        parkingSpotDatabase.dao
+
+    @Provides
+    fun provideParkingSpotMapper():ParkingSpotMapper = ParkingSpotMapper()
 }
