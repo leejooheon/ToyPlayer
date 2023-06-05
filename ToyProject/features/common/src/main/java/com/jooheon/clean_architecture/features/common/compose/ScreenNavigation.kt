@@ -4,20 +4,21 @@ import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.outlined.Build
+import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Map
+import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
+import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.features.common.BuildConfig
 import com.jooheon.clean_architecture.features.common.R
 import kotlinx.serialization.decodeFromString
@@ -127,15 +128,15 @@ sealed class ScreenNavigation(open val route: String) {
         object Github : ScreenNavigation("github")
         object Wiki : ScreenNavigation("wiki")
         object Map : ScreenNavigation("map")
-        object Search : ScreenNavigation("search")
+        object Music : ScreenNavigation("music")
         companion object {
             val items = listOf(
                 BottomNavigationItem.ImageVectorIcon(
-                    screen = Github,
-                    labelResId = R.string.title_github,
-                    contentDescriptionResId = R.string.title_cd_github,
-                    iconImageVector = Icons.Outlined.Category,
-                    selectedImageVector = Icons.Default.Category,
+                    screen = Music,
+                    labelResId = R.string.title_music,
+                    contentDescriptionResId = R.string.title_cd_music,
+                    iconImageVector = Icons.Outlined.MusicNote,
+                    selectedImageVector = Icons.Default.MusicNote,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
                     screen = Wiki,
@@ -145,18 +146,18 @@ sealed class ScreenNavigation(open val route: String) {
                     selectedImageVector = Icons.Default.Favorite,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
+                    screen = Github,
+                    labelResId = R.string.title_github,
+                    contentDescriptionResId = R.string.title_cd_github,
+                    iconImageVector = Icons.Outlined.Category,
+                    selectedImageVector = Icons.Default.Category,
+                ),
+                BottomNavigationItem.ImageVectorIcon(
                     screen = Map,
                     labelResId = R.string.title_map,
                     contentDescriptionResId = R.string.title_cd_map,
                     iconImageVector = Icons.Outlined.Map,
                     selectedImageVector = Icons.Default.Map,
-                ),
-                BottomNavigationItem.ImageVectorIcon(
-                    screen = Search,
-                    labelResId = R.string.title_search,
-                    contentDescriptionResId = R.string.title_cd_search,
-                    iconImageVector = Icons.Outlined.Build,
-                    selectedImageVector = Icons.Default.Build,
                 ),
             )
         }

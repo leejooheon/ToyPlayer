@@ -67,7 +67,7 @@ internal fun BottomNavigationHost(
     Box(modifier = modifier) {
         NavHost(
             navController = navController,
-            startDestination = ScreenNavigation.BottomSheet.Github.route
+            startDestination = ScreenNavigation.BottomSheet.Music.route
         ) {
             composable(ScreenNavigation.BottomSheet.Github.route) {
                 val viewModel = hiltViewModel<GithubScreenViewModel>().apply {
@@ -99,7 +99,7 @@ internal fun BottomNavigationHost(
                     onEvent = viewModel::dispatch
                 )
             }
-            composable(ScreenNavigation.BottomSheet.Search.route) {
+            composable(ScreenNavigation.BottomSheet.Music.route) {
                 val musicPlayerScreenViewModel = hiltViewModel<MusicPlayerScreenViewModel>()
                 val musicPlayerScreenState by musicPlayerScreenViewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
 
