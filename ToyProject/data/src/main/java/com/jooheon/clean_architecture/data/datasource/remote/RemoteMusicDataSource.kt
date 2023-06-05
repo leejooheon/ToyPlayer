@@ -9,10 +9,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class RemoteMusicPlayListDataSource @Inject constructor(
+class RemoteMusicDataSource @Inject constructor(
     private val applicationContext: Context,
 ): BaseRemoteDataSource() {
-
 
     suspend fun getStreamingUrlList(): List<Song> {
         val list = withContext(Dispatchers.IO) {
