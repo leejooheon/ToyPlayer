@@ -4,11 +4,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,29 +25,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
-import com.jooheon.clean_architecture.features.common.R
+import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
+import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.MusicDropDownMenuState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.MusicDropDownMenu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaItemLarge(
-    onItemClick: (song: Song) -> Unit,
-    song: Song,
+    title: String,
+    subTitle: String,
+    imageUrl: String,
+    onItemClick: () -> Unit,
+    onDropDownMenuClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val albumArtImage = song.albumArtUri.toString()
-    val artistImage = albumArtImage // FIXME
-
+    var dropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Surface(
-        onClick = { onItemClick(song) },
+        onClick = { onItemClick() },
         tonalElevation = 4.dp,
         shadowElevation = 4.dp,
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier.clickable { onItemClick(song) },
+        modifier = modifier.clickable { onItemClick() },
         color = MaterialTheme.colorScheme.background
     ) {
 
@@ -47,8 +57,8 @@ fun MediaItemLarge(
             modifier = Modifier
         ) {
             CoilImage(
-                url = albumArtImage,
-                contentDescription = song.title,
+                url = imageUrl,
+                contentDescription = title,
                 contentScale = ContentScale.Crop,
                 placeholderRes = R.drawable.ic_placeholder,
                 modifier = Modifier
@@ -57,25 +67,28 @@ fun MediaItemLarge(
             )
 
             Row(
-                verticalAlignment = Alignment.Top,
-                modifier = modifier.padding(all = 8.dp)
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 8.dp)
             ) {
                 CoilImage(
-                    url = artistImage,
-                    contentDescription = song.artist,
+                    url = imageUrl,
+                    contentDescription = subTitle,
                     placeholderRes = R.drawable.test_2,
                     modifier = Modifier
-                        .size(42.dp)
+                        .weight(0.2f)
+                        .aspectRatio(1f)
                         .clip(CircleShape),
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
 
                 Column(
-                    modifier = Modifier
+                    modifier = Modifier.weight(0.7f)
                 ) {
                     Text(
-                        text = song.title,
+                        text = title,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Bold
@@ -87,11 +100,30 @@ fun MediaItemLarge(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = song.artist,
+                        text = subTitle,
                         color = MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.labelMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                Spacer(modifier = Modifier.weight(0.1f))
+                IconButton(
+                    onClick = { dropDownMenuExpanded = true },
+                    modifier = Modifier
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "more" // TODO
+                    )
+                    MusicDropDownMenu(
+                        expanded = dropDownMenuExpanded,
+                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
+                        onDismissRequest = { dropDownMenuExpanded = false },
+                        onClick = {
+                            onDropDownMenuClick(it)
+                            dropDownMenuExpanded = false
+                        }
                     )
                 }
             }
@@ -99,17 +131,18 @@ fun MediaItemLarge(
     }
 }
 
+
 @Preview
 @Composable
 private fun MediaItemLargePreview() {
     PreviewTheme(false) {
         MediaItemLarge(
+            title = UiText.StringResource(R.string.lorem).asString(),
+            subTitle = UiText.StringResource(R.string.dessert).asString(),
+            imageUrl = "image",
             onItemClick = {},
-            song = Song.default.copy(
-                title = "song title - 123",
-                artist = "song artist name - 456"
-            ),
-            modifier = Modifier.width(400.dp)
+            onDropDownMenuClick = {},
+            modifier = Modifier.width(400.dp),
         )
     }
 }

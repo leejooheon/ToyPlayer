@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,10 +37,10 @@ import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
-
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaColumn
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaSwipeableLayout
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MusicOptionDialog
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.MediaDropDownMenuEvent
 import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
@@ -50,7 +49,9 @@ import kotlin.math.max
 @Composable
 fun MusicPlayerScreen(
     musicPlayerScreenState: MusicPlayerScreenState,
-    onEvent: (MusicPlayerScreenEvent) -> Unit
+
+    onEvent: (MusicPlayerScreenEvent) -> Unit,
+    onDropDownMenuEvent: (MediaDropDownMenuEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -133,6 +134,10 @@ fun MusicPlayerScreen(
                         }
                     }
                 },
+                onDropDownMenuClick = { index, song ->
+                    val event = MediaDropDownMenuEvent.fromIndex(index, song)
+                    onDropDownMenuEvent(event)
+                },
                 modifier = Modifier
                     .alpha(max(1f - Float.min(motionProgress * 2, 1f), 0.7f))
                     .fillMaxWidth()
@@ -159,7 +164,8 @@ private fun MusicScreenPreview() {
     PreviewTheme(false) {
         MusicPlayerScreen(
             musicPlayerScreenState = MusicPlayerScreenState.default,
-            onEvent = { _, -> }
+            onEvent = { _, -> },
+            onDropDownMenuEvent = { }
         )
     }
 }
