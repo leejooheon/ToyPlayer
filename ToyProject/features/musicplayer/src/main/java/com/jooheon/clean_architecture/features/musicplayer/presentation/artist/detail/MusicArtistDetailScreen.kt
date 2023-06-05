@@ -33,10 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
-import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaDetailHeader
@@ -139,17 +137,22 @@ private fun ArtistDetailMediaColumn(
                     imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),
                     title = album.name,
                     subTitle = album.artist,
+                    showContextualMenu = false,
+                    onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnAlbumClick(album)) },
+                    onDropDownMenuClick = { /** Nothing **/ },
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    onItemClick = { /** Nothing **/ },
                 )
 
                 MediaDetailHeader(count = album.songs.size)
 
                 album.songs.forEach { song ->
                     MediaItemSmallWithoutImage(
+                        trackNumber = song.trackNumber,
                         title = song.title,
                         subTitle = "${song.artist} • ${song.album}",
-                        onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) }
+                        duration = MusicUtil.toReadableDurationString(song.duration),
+                        onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) },
+                        onDropDownMenuClick = {}
                     )
                 }
                 Spacer(Modifier.height(16.dp))
