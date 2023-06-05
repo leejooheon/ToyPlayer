@@ -122,6 +122,23 @@ sealed class ScreenNavigation(open val route: String) {
                 return artist
             }
         }
+
+        object PlaylistDetail: ScreenNavigation("music_playlist_detail?item={playlist}") {
+            const val playlist = "playlist"
+            val arguments = listOf(
+                navArgument(playlist) {
+                    type = createSerializableNavType<Playlist>()
+                }
+            )
+            fun createRoute(playlist: Playlist): String {
+                val item = Json.encodeToString(playlist)
+                return "music_playlist_detail?item=${item}"
+            }
+            fun parsePlaylist(bundle: Bundle): Playlist {
+                val playlist = bundle.getSerializable(PlaylistDetail.playlist) as Playlist
+                return playlist
+            }
+        }
     }
 
     class BottomSheet {

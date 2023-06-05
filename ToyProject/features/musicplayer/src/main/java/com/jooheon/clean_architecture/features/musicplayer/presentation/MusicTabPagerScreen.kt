@@ -36,8 +36,13 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.album.mo
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.MediaDropDownMenuEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.PlaylistDropDownMenuEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.components.pagerTabIndicatorOffset
 import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 
 import kotlinx.coroutines.launch
@@ -50,10 +55,15 @@ fun MusicTabPagerScreen(
     musicPlayerScreenState: MusicPlayerScreenState,
     musicAlbumScreenState: MusicAlbumScreenState,
     musicArtistScreenState: MusicArtistScreenState,
+    musicPlaylistScreenState: MusicPlaylistScreenState,
 
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
     onMusicAlbumScreenEvent: (MusicAlbumScreenEvent) -> Unit,
     onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
+    onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
+
+    onPlaylistDropDownMenuEvent: (PlaylistDropDownMenuEvent) -> Unit,
+    onMediaDropDownMenuEvent: (MediaDropDownMenuEvent) -> Unit,
 ) {
     val tabPages = listOf(
         stringResource(id = R.string.tab_name_song ),
@@ -127,7 +137,8 @@ fun MusicTabPagerScreen(
                     0 -> {
                         MusicPlayerScreen(
                             musicPlayerScreenState = musicPlayerScreenState,
-                            onEvent = onMusicPlayerScreenEvent
+                            onEvent = onMusicPlayerScreenEvent,
+                            onDropDownMenuEvent = { /** TODO **/}
                         )
                     }
                     1 -> {
@@ -146,7 +157,15 @@ fun MusicTabPagerScreen(
                             onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
                         )
                     }
-                    3 -> { /** TODO **/}
+                    3 -> {
+                        MusicPlaylistScreen(
+                            musicPlaylistScreenState = musicPlaylistScreenState,
+                            musicPlayerScreenState = musicPlayerScreenState,
+                            onMusicPlaylistScreenEvent = onMusicPlaylistScreenEvent,
+                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
+                            onPlaylistDropDownMenuEvent = onPlaylistDropDownMenuEvent
+                        )
+                    }
                 }
             }
         }
@@ -166,10 +185,15 @@ private fun MusicTabPagerScreenPreviewDark() {
             ),
             musicAlbumScreenState = MusicAlbumScreenState.default,
             musicArtistScreenState = MusicArtistScreenState.default,
+            musicPlaylistScreenState = MusicPlaylistScreenState.default,
 
             onMusicPlayerScreenEvent = {},
             onMusicAlbumScreenEvent = {},
-            onMusicArtistScreenEvent = {}
+            onMusicArtistScreenEvent = {},
+            onMusicPlaylistScreenEvent = {},
+
+            onPlaylistDropDownMenuEvent = {},
+            onMediaDropDownMenuEvent = {},
         )
     }
 }
