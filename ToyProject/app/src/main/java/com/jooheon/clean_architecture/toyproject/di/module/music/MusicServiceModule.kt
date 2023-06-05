@@ -2,8 +2,8 @@ package com.jooheon.clean_architecture.toyproject.di.module.music
 
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.data.datasource.local.LocalMusicPlayListDataSource
-import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicPlayListDataSource
+import com.jooheon.clean_architecture.data.datasource.local.LocalMusicDataSource
+import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicDataSource
 import com.jooheon.clean_architecture.data.repository.music.MusicPlayListRepositoryImpl
 import com.jooheon.clean_architecture.domain.repository.MusicPlayListRepository
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
@@ -24,12 +24,12 @@ object MusicServiceModule {
 
     @Provides
     fun provideMusicPlayListRepository(
-        localMusicPlayListDataSource: LocalMusicPlayListDataSource,
-        remoteMusicPlayListDataSource: RemoteMusicPlayListDataSource
+        localMusicDataSource: LocalMusicDataSource,
+        remoteMusicDataSource: RemoteMusicDataSource
     ): MusicPlayListRepository {
         return MusicPlayListRepositoryImpl(
-            localMusicPlayListDataSource = localMusicPlayListDataSource,
-            remoteMusicPlayListDataSource = remoteMusicPlayListDataSource
+            localMusicDataSource = localMusicDataSource,
+            remoteMusicDataSource = remoteMusicDataSource
         )
     }
     @Provides

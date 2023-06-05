@@ -12,7 +12,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import java.io.File
 import javax.inject.Inject
 
-class LocalMusicPlayListDataSource @Inject constructor(
+class LocalMusicDataSource @Inject constructor(
     private val applicationContext: Context
 ): BaseLocalDataSource {
 
@@ -42,6 +42,7 @@ class LocalMusicPlayListDataSource @Inject constructor(
         val artistName = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.ARTIST)
         val composer = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.COMPOSER)
         val albumArtist = cursor.getStringOrNull("album_artist")
+        val data = cursor.getStringOrNull("_data")
 
         val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val artworkUri = Uri.parse("content://media/external/audio/albumart")
@@ -56,8 +57,10 @@ class LocalMusicPlayListDataSource @Inject constructor(
             albumId = albumId.toString(),
             duration = duration,
             path = ContentUris.withAppendedId(audioUriExternal, audioId).toString(),
+            trackNumber = trackNumber % 1000,
             imageUrl = ContentUris.withAppendedId(artworkUri, albumId).toString(),
-            isFavorite = false
+            isFavorite = false,
+            data = data
         )
     }
 
