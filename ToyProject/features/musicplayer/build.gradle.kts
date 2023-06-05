@@ -91,6 +91,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // AudioFileIO
+    implementation(libs.jaudiotagger)
+
     // test
     testImplementation(libs.test.junit)
     androidTestImplementation(libs.test.android.junit)

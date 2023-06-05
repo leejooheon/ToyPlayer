@@ -27,6 +27,9 @@ dependencies {
 
     implementation(libs.javax.inject)
 
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.jakewharton.serialization.converter)
+
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)
