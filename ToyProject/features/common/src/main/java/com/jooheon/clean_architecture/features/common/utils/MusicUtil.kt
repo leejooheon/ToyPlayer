@@ -5,6 +5,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.URLUtil
 import androidx.core.net.toUri
+import java.text.SimpleDateFormat
 import java.util.*
 
 object MusicUtil {
@@ -38,6 +39,13 @@ object MusicUtil {
                 seconds
             )
         }
+    }
+    fun getDateModifiedString(date: Long): String {
+        val calendar: Calendar = Calendar.getInstance()
+        val pattern = "yyyy/MM/dd hh:mm:ss"
+        calendar.timeInMillis = date
+        val formatter = SimpleDateFormat(pattern, Locale.ENGLISH)
+        return formatter.format(calendar.time)
     }
 
     // song.uri 사용하자.

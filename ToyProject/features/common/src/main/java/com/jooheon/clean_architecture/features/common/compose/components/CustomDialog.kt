@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.AnnotatedString
 import com.jooheon.clean_architecture.features.common.R
 import com.jooheon.clean_architecture.features.essential.base.UiText
 
@@ -33,7 +34,64 @@ fun ShowAlertDialog(
         }
     )
 }
+@Composable
+fun ShowAlertDialog(
+    content: AnnotatedString,
+    onOkButtonClicked: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var openDialog by remember { mutableStateOf(true) }
 
+    MyAlertDialog(
+        openDialog = openDialog,
+        content = content,
+        onDismiss = {
+            openDialog = false
+            onDismiss()
+        },
+        onConfirmButtonClicked = {
+            openDialog = false
+            onOkButtonClicked()
+        }
+    )
+}
+
+
+@Composable
+private fun MyAlertDialog(
+    openDialog: Boolean,
+    content: AnnotatedString,
+    onDismiss: (() -> Unit)? = null,
+    onConfirmButtonClicked: (() -> Unit)? = null
+) {
+    if(!openDialog) { return }
+
+    AlertDialog(
+        containerColor = MaterialTheme.colorScheme.secondary,
+        textContentColor = MaterialTheme.colorScheme.onSecondary,
+        onDismissRequest = {
+            onDismiss?.let { it() }
+        },
+        text = {
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onDismiss?.let { it() }
+                onConfirmButtonClicked?.let { it() }
+            }) {
+                Text(
+                    text = UiText.StringResource(R.string.ok).asString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            }
+        }
+    )
+}
 @Composable
 private fun MyAlertDialog(
     openDialog: Boolean,

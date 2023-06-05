@@ -36,7 +36,7 @@ fun SplashScreen(
         scale.animateTo(
             targetValue = 0.85f,
             animationSpec = tween(
-                durationMillis = 800,
+                durationMillis = 500,
                 easing = {
                     OvershootInterpolator(4f).getInterpolation(it)
                 }

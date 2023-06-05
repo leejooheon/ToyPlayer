@@ -28,7 +28,7 @@ class SplashViewModel @Inject constructor(
                 // call dialog
             }
 
-            delay(2000L)
+            delay(500L)
 
             _done.value = SplashResult.Done
         }
