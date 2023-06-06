@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background

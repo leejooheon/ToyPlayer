@@ -3,13 +3,10 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.playlis
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultZero
-import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-import com.jooheon.clean_architecture.domain.usecase.music.MusicPlayListUsecase
 import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.PlaylistDropDownMenuEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,21 +54,22 @@ class MusicPlaylistScreenViewModel @Inject constructor(
 
     fun dispatch(event: MusicPlaylistScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicPlaylistScreenEvent.onPlaylistClick -> _navigateToDetailScreen.send(event.playlist)
-            is MusicPlaylistScreenEvent.onAddPlaylist -> insertPlaylist(event)
+            is MusicPlaylistScreenEvent.Refresh -> loadData()
+            is MusicPlaylistScreenEvent.OnPlaylistClick -> _navigateToDetailScreen.send(event.playlist)
+            is MusicPlaylistScreenEvent.OnAddPlaylist -> insertPlaylist(event)
         }
     }
 
-    fun dispatch(event: PlaylistDropDownMenuEvent) = viewModelScope.launch {
+    fun dispatch(event: MusicPlaylistItemEvent) = viewModelScope.launch {
         when(event) {
-            is PlaylistDropDownMenuEvent.OnPlaylistDelete -> deletePlaylist(event)
-            is PlaylistDropDownMenuEvent.OnPlaylistNameChange -> updatePlaylist(event)
-            is PlaylistDropDownMenuEvent.OnPlaylistSaveAsFile -> playlistSaveAsFile(event)
+            is MusicPlaylistItemEvent.OnDelete -> deletePlaylist(event.playlist)
+            is MusicPlaylistItemEvent.OnChangeName -> updatePlaylist(event.playlist)
+            is MusicPlaylistItemEvent.OnSaveAsFile -> playlistSaveAsFile(event.playlist)
             else -> { /** Nothing **/ }
         }
     }
 
-    private fun insertPlaylist(event: MusicPlaylistScreenEvent.onAddPlaylist) = viewModelScope.launch {
+    private fun insertPlaylist(event: MusicPlaylistScreenEvent.OnAddPlaylist) = viewModelScope.launch {
         val title = event.title
         val nextId = musicPlaylistScreenState.value.playlists.maxByOrNull { it.id }?.id.defaultZero() + 1
 
@@ -88,21 +86,21 @@ class MusicPlaylistScreenViewModel @Inject constructor(
         loadData()
     }
 
-    private fun deletePlaylist(event: PlaylistDropDownMenuEvent.OnPlaylistDelete) = viewModelScope.launch {
+    private fun deletePlaylist(playlist: Playlist) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            playlistUseCase.deletePlaylists(event.playlist)
+            playlistUseCase.deletePlaylists(playlist)
         }
         loadData()
     }
 
-    private fun updatePlaylist(event: PlaylistDropDownMenuEvent.OnPlaylistNameChange) = viewModelScope.launch {
+    private fun updatePlaylist(playlist: Playlist) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
-            playlistUseCase.updatePlaylists(event.playlist)
+            playlistUseCase.updatePlaylists(playlist)
         }
         loadData()
     }
 
-    private fun playlistSaveAsFile(event: PlaylistDropDownMenuEvent.OnPlaylistSaveAsFile) = viewModelScope.launch {
+    private fun playlistSaveAsFile(playlist: Playlist) = viewModelScope.launch {
         /** TODO **/
         withContext(Dispatchers.IO) {
             delay(300)

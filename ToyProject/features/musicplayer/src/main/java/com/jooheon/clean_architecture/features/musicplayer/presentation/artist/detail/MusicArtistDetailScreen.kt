@@ -1,17 +1,8 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
@@ -30,19 +21,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
-import com.jooheon.clean_architecture.domain.entity.music.Album
-import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.components.ArtistDetailMediaColumn
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaItemSmall
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaItemSmallWithoutImage
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaSwipeableLayout
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import java.lang.Float
 import kotlin.math.max
 
@@ -54,6 +40,8 @@ fun MusicArtistDetailScreen(
 
     onMusicArtistDetailScreenEvent: (MusicArtistDetailScreenEvent) -> Unit,
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
+
+    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -99,9 +87,10 @@ fun MusicArtistDetailScreen(
             onEvent = onMusicPlayerScreenEvent,
             content = {
                 ArtistDetailMediaColumn(
-                    artist = musicArtistDetailScreenState.artist,
+                    musicArtistDetailScreenState = musicArtistDetailScreenState,
                     listState = listState,
-                    onEvent = onMusicArtistDetailScreenEvent
+                    onEvent = onMusicArtistDetailScreenEvent,
+                    onMediaItemEvent = onMusicMediaItemEvent
                 )
             }
         )
@@ -109,55 +98,6 @@ fun MusicArtistDetailScreen(
 
     BackHandler {
         onMusicArtistDetailScreenEvent(MusicArtistDetailScreenEvent.OnBackClick)
-    }
-}
-
-@Composable
-private fun ArtistDetailMediaColumn(
-    artist: Artist,
-    listState: LazyListState = rememberLazyListState(),
-    onEvent: (MusicArtistDetailScreenEvent) -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxSize()
-    ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            items(
-                items = artist.albums,
-                key = { album: Album -> album.hashCode() }
-            ) { album ->
-                MediaItemSmall(
-                    imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),
-                    title = album.name,
-                    subTitle = album.artist,
-                    showContextualMenu = false,
-                    onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnAlbumClick(album)) },
-                    onDropDownMenuClick = { /** Nothing **/ },
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                )
-
-                MediaDetailHeader(count = album.songs.size)
-
-                album.songs.forEach { song ->
-                    MediaItemSmallWithoutImage(
-                        trackNumber = song.trackNumber,
-                        title = song.title,
-                        subTitle = "${song.artist} • ${song.album}",
-                        duration = MusicUtil.toReadableDurationString(song.duration),
-                        onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) },
-                        onDropDownMenuClick = {}
-                    )
-                }
-                Spacer(Modifier.height(16.dp))
-            }
-        }
     }
 }
 
@@ -170,6 +110,7 @@ private fun MusicArtistDetailScreenPreview() {
             musicPlayerScreenState = MusicPlayerScreenState.default,
             onMusicArtistDetailScreenEvent = {},
             onMusicPlayerScreenEvent = {},
+            onMusicMediaItemEvent = {},
         )
     }
 }

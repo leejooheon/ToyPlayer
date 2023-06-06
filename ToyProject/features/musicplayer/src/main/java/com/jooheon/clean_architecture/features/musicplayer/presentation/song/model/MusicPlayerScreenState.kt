@@ -1,20 +1,22 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.player.model
+package com.jooheon.clean_architecture.features.musicplayer.presentation.song.model
 
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
+import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 
 data class MusicPlayerScreenState(
     val musicState: MusicState,
+    val playlists: List<Playlist>,
     val currentDuration: Long,
     val progressBarVisibility: Boolean,
 ) {
     companion object {
         val default = MusicPlayerScreenState(
             musicState = MusicState(
-                playlist = listOf(Song.default, Song.default,),
+                playlist = listOf(Song.default, Song.default.copy(audioId = 123),),
                 currentPlayingMusic = Song.default.copy(albumId = "1234")
             ),
+            playlists = listOf(Playlist.default),
             currentDuration = 0L,
             progressBarVisibility = true,
         )

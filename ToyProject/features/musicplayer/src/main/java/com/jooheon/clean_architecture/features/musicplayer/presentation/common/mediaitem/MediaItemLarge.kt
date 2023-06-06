@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,8 +29,8 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem.dropdown.MusicDropDownMenu
-import com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem.dropdown.MusicDropDownMenuState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

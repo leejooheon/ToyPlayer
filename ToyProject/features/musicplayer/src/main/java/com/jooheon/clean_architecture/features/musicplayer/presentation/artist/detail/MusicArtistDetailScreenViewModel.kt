@@ -1,17 +1,19 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail
 
 import androidx.lifecycle.viewModelScope
-import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase
+    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): BaseViewModel() {
     override val TAG = MusicArtistDetailScreenViewModel::class.java.simpleName
 
@@ -29,7 +32,11 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     private val _navigateTo = Channel<String>()
     val navigateTo = _navigateTo.receiveAsFlow()
 
-    fun init(artist: Artist) = viewModelScope.launch {
+    init {
+        collectPlaylistState()
+    }
+
+    fun initialize(artist: Artist) = viewModelScope.launch {
         _musicArtistDetailScreenState.update {
             it.copy(artist = artist)
         }
@@ -41,6 +48,17 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
             is MusicArtistDetailScreenEvent.OnAlbumClick -> {
                 val route = ScreenNavigation.Music.AlbumDetail.createRoute(event.album)
                 _navigateTo.send(route)
+            }
+        }
+    }
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
+        musicMediaItemEventUseCase.dispatch(event)
+    }
+
+    private fun collectPlaylistState() = viewModelScope.launch{
+        musicMediaItemEventUseCase.playlistState.collectLatest { playlists ->
+            _musicArtistDetailScreenState.update {
+                it.copy(playlists = playlists)
             }
         }
     }

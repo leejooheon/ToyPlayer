@@ -1,12 +1,14 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.player
+package com.jooheon.clean_architecture.features.musicplayer.presentation.song
 
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MusicMediaItemEventUseCase
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicSongScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase
+    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): BaseViewModel() {
     override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
 
@@ -29,6 +32,7 @@ class MusicSongScreenViewModel @Inject constructor(
         collectMusicState()
         collectExoPlayerState()
         collectDuration()
+        collectPlaylist()
         loadData(musicPlayerScreenState.value.musicState.playlistType)
     }
 
@@ -44,6 +48,10 @@ class MusicSongScreenViewModel @Inject constructor(
             is MusicPlayerScreenEvent.OnShuffleClick -> onShuffleClicked()
             is MusicPlayerScreenEvent.OnPlaylistTypeChanged -> onPlaylistTypeChanged(event.playlistType)
         }
+    }
+
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
+        musicMediaItemEventUseCase.dispatch(event)
     }
 
     fun loadData(playlistType: PlaylistType) {
@@ -110,6 +118,16 @@ class MusicSongScreenViewModel @Inject constructor(
             _musicPlayerScreenState.update {
                 it.copy(
                     currentDuration = duration
+                )
+            }
+        }
+    }
+
+    private fun collectPlaylist() = viewModelScope.launch {
+        musicMediaItemEventUseCase.playlistState.collectLatest { playlists ->
+            _musicPlayerScreenState.update {
+                it.copy(
+                    playlists = playlists
                 )
             }
         }

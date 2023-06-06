@@ -2,8 +2,6 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.album.d
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +28,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
@@ -45,19 +43,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
 import com.jooheon.clean_architecture.domain.entity.music.Album
-import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.components.MusicAlbumDetailMediaColumn
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaItemSmallWithoutImage
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaSwipeableLayout
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import java.lang.Float
 import kotlin.math.max
 
@@ -69,6 +66,7 @@ fun MusicAlbumDetailScreen(
 
     onMusicAlbumDetailScreenEvent: (MusicAlbumDetailScreenEvent) -> Unit,
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
+    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -81,6 +79,10 @@ fun MusicAlbumDetailScreen(
 
     val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
+
+    var musicMediaItemEventState by remember {
+        mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -115,10 +117,11 @@ fun MusicAlbumDetailScreen(
             motionProgress = motionProgress,
             onEvent = onMusicPlayerScreenEvent,
             content = {
-                AlbumDetailMediaColumn(
-                    album = musicAlbumDetailScreenState.album,
+                MusicAlbumDetailMediaColumn(
+                    musicAlbumDetailScreenState = musicAlbumDetailScreenState,
                     listState = listState,
-                    onEvent = onMusicAlbumDetailScreenEvent
+                    onEvent = onMusicAlbumDetailScreenEvent,
+                    onMediaItemEvent = onMusicMediaItemEvent,
                 )
             }
         )
@@ -126,52 +129,6 @@ fun MusicAlbumDetailScreen(
 
     BackHandler {
         onMusicAlbumDetailScreenEvent(MusicAlbumDetailScreenEvent.OnBackClick)
-    }
-}
-
-@Composable
-private fun AlbumDetailMediaColumn(
-    album: Album,
-    listState: LazyListState = rememberLazyListState(),
-    onEvent: (MusicAlbumDetailScreenEvent) -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxSize()
-    ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            item {
-                MediaAlbumHeader(album)
-                MediaDetailHeader(
-                    count = album.songs.size
-                )
-            }
-
-            items(
-                items = album.songs,
-                key = { song: Song -> song.hashCode() }
-            ) {song ->
-                MediaItemSmallWithoutImage(
-                    trackNumber = song.trackNumber,
-                    title = song.title,
-                    subTitle = "${song.artist} • ${song.album}",
-                    duration = MusicUtil.toReadableDurationString(song.duration),
-                    onItemClick = { onEvent(MusicAlbumDetailScreenEvent.OnSongClick(song)) },
-                    onDropDownMenuClick = {
-
-                    }
-                )
-            }
-            item {
-                Spacer(Modifier.height(16.dp))
-            }
-        }
     }
 }
 
@@ -279,6 +236,7 @@ private fun MusicAlbumDetailScreenPreview() {
             musicPlayerScreenState = MusicPlayerScreenState.default,
             onMusicAlbumDetailScreenEvent = {},
             onMusicPlayerScreenEvent = {},
+            onMusicMediaItemEvent = {}
         )
     }
 }

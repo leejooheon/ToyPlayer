@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.playlis
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 
 sealed class MusicPlaylistScreenEvent {
-    data class onPlaylistClick(val playlist: Playlist): MusicPlaylistScreenEvent()
-    data class onAddPlaylist(val title: String): MusicPlaylistScreenEvent()
+    object Refresh: MusicPlaylistScreenEvent()
+    data class OnPlaylistClick(val playlist: Playlist): MusicPlaylistScreenEvent()
+    data class OnAddPlaylist(val title: String): MusicPlaylistScreenEvent()
 }

@@ -1,16 +1,16 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem
+package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,81 +27,90 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastSumBy
+import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dialog.MusicPlaylistDialog
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MediaItemSmall(
-    title: String,
-    imageUrl: String,
-    subTitle: String,
+internal fun MusicPlaylistColumnItem(
+    playlist: Playlist,
     showContextualMenu: Boolean,
     onItemClick: () -> Unit,
-    onDropDownMenuClick: (index: Int) -> Unit,
-    modifier: Modifier = Modifier,
+    onDropDownMenuClick: ((index: Int, playlist: Playlist) -> Unit)? = null,
 ) {
+    val playlistNameEditIndex = 1
+    var dropDownMenuExpanded by remember { mutableStateOf(false) }
+    var playlistDialogState by remember { mutableStateOf(false) }
+
     Card(
-        onClick = { onItemClick() },
+        onClick = onItemClick,
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 0.dp
         ),
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier.padding(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .height(72.dp)
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            CoilImage(
-                url = imageUrl,
-                contentScale = ContentScale.Crop,
-                contentDescription = title,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(0.2f)
-                    .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.medium)
+            Icon(
+                imageVector = Icons.Filled.PlaylistPlay,
+                tint = MaterialTheme.colorScheme.onBackground,
+                contentDescription = null,
+                modifier = Modifier.weight(0.1f)
             )
-            Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
+            Spacer(modifier = Modifier.width(4.dp))
+            CoilImage(
+                url = playlist.thumbnailUrl,
+                contentDescription = playlist.name,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .weight(0.7f)
+                    .weight(0.1f)
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(25))
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(
+                modifier = Modifier.weight(0.7f)
             ) {
+                val subTitle = UiText.StringResource(R.string.n_song, playlist.songs.size).asString() + " • " +
+                        MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
                 Text(
-                    text = title,
+                    text = playlist.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
 
                 Text(
                     text = subTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.7f
+                    ),
                 )
             }
 
             if(showContextualMenu) {
-                var dropDownMenuExpanded by remember { mutableStateOf(false) }
-
                 IconButton(
                     onClick = { dropDownMenuExpanded = true },
                     modifier = Modifier.weight(0.1f)
@@ -112,28 +121,41 @@ fun MediaItemSmall(
                     )
                     MusicDropDownMenu(
                         expanded = dropDownMenuExpanded,
-                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
+                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistItems),
                         onDismissRequest = { dropDownMenuExpanded = false },
-                        onClick = onDropDownMenuClick
+                        onClick = {
+                            if (it == playlistNameEditIndex) {
+                                playlistDialogState = true
+                            } else {
+                                onDropDownMenuClick?.invoke(it, playlist)
+                            }
+                        }
                     )
                 }
             }
         }
     }
+
+    MusicPlaylistDialog(
+        openDialog = playlistDialogState,
+        title = UiText.StringResource(R.string.dialog_edit_playlist_name).asString(),
+        name = playlist.name,
+        onConfirmButtonClicked = {
+            onDropDownMenuClick?.invoke(playlistNameEditIndex, playlist.copy(name = it))
+        },
+        onDismiss = { playlistDialogState = false }
+    )
 }
 
 @Preview
 @Composable
-private fun MediaItemSmallPreview() {
-    PreviewTheme(false) {
-        MediaItemSmall(
-            imageUrl = "",
-            title = UiText.StringResource(R.string.lorem).asString(),
-            subTitle = UiText.StringResource(R.string.dessert).asString(),
+private fun MusicPlaylistColumnItemPreview() {
+    PreviewTheme(true) {
+        MusicPlaylistColumnItem(
+            playlist = Playlist.default,
             showContextualMenu = true,
             onItemClick = {},
-            onDropDownMenuClick = {},
-            modifier = Modifier.width(400.dp),
+            onDropDownMenuClick = { _, _ -> }
         )
     }
 }

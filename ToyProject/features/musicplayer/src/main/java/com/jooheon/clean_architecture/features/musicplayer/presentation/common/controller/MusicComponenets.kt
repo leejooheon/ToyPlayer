@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

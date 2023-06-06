@@ -46,12 +46,14 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 import com.jooheon.clean_architecture.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaItemSmallWithoutImage
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.MediaSwipeableLayout
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.MediaDropDownMenuEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaDetailHeader
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.components.MusicPlaylistDetailHeader
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenState
 
@@ -67,7 +69,7 @@ fun MusicPlaylistDetailScreen(
     onMusicPlaylistScreenEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
 
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
-    onMediaDropDownMenuEvent: (MediaDropDownMenuEvent) -> Unit,
+    onMediaDropDownMenuEvent: (MusicMediaItemEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -129,7 +131,7 @@ private fun PlaylistDetailMediaColumn(
     listState: LazyListState,
     playlist: Playlist,
     onEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
-    onDropDownEvent: (MediaDropDownMenuEvent) -> Unit,
+    onDropDownEvent: (MusicMediaItemEvent) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -154,14 +156,14 @@ private fun PlaylistDetailMediaColumn(
             itemsIndexed(
                 items = playlist.songs,
             ) { index, song ->
-                MediaItemSmallWithoutImage(
-                    trackNumber = index,
+                MediaItemSmallNoImage(
+                    trackNumber = index + 1,
                     title = song.title,
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
                     onItemClick = { onEvent(MusicPlaylistDetailScreenEvent.OnSongClick(song)) },
                     onDropDownMenuClick = {
-                        val event = MediaDropDownMenuEvent.fromIndex(it, song)
+                        val event = MusicDropDownMenuState.indexToEvent(index, song)
                         onDropDownEvent(event)
                     }
                 )
@@ -172,89 +174,6 @@ private fun PlaylistDetailMediaColumn(
             }
         }
     )
-}
-
-@Composable
-private fun MusicPlaylistDetailHeader(
-    playlist: Playlist,
-    onPlayAllClick: () -> Unit,
-    onPlayAllWithShuffleClick: () -> Unit,
-) {
-    val allDuration = MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
-    val songCount = UiText.StringResource(R.string.n_song, playlist.songs.size).asString()
-
-    Row(modifier = Modifier.fillMaxSize()) {
-        CoilImage(
-            url = playlist.thumbnailUrl,
-            contentDescription = playlist.name,
-            placeholderRes = R.drawable.default_album_art,
-            modifier = Modifier
-                .padding(12.dp)
-                .aspectRatio(1f)
-                .clip(RoundedCornerShape(15))
-                .weight(0.3f)
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.7f)
-                .padding(horizontal = 12.dp)
-        ) {
-            Text(
-                text = playlist.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineLarge .copy(
-                    fontWeight = FontWeight.Bold
-                ),
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "$songCount • $allDuration",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.labelSmall
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-            ) {
-                TextButton(
-                    onClick = onPlayAllClick,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(25))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
-                        .weight(0.75f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
-                    )
-                }
-                Spacer(modifier = Modifier.width(18.dp))
-                TextButton(
-                    onClick = onPlayAllWithShuffleClick,
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                        .weight(0.25f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Shuffle,
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        contentDescription = null,
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Preview

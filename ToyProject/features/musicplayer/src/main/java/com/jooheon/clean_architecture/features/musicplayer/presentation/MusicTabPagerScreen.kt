@@ -26,20 +26,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.features.common.compose.extensions.pagerTabIndicatorOffset
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.MediaDropDownMenuEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.events.PlaylistDropDownMenuEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.pagerTabIndicatorOffset
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.MusicPlayerScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
@@ -47,9 +46,7 @@ import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 
 import kotlinx.coroutines.launch
 
-@OptIn(
-    ExperimentalFoundationApi::class
-)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MusicTabPagerScreen(
     musicPlayerScreenState: MusicPlayerScreenState,
@@ -62,9 +59,9 @@ fun MusicTabPagerScreen(
     onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
     onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
 
-    onPlaylistDropDownMenuEvent: (PlaylistDropDownMenuEvent) -> Unit,
-    onMediaDropDownMenuEvent: (MediaDropDownMenuEvent) -> Unit,
+    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
 ) {
+
     val tabPages = listOf(
         stringResource(id = R.string.tab_name_song ),
         stringResource(id = R.string.tab_name_album),
@@ -135,10 +132,10 @@ fun MusicTabPagerScreen(
             ) { page ->
                 when (page) {
                     0 -> {
-                        MusicPlayerScreen(
+                        MusicSongScreen(
                             musicPlayerScreenState = musicPlayerScreenState,
                             onEvent = onMusicPlayerScreenEvent,
-                            onDropDownMenuEvent = { /** TODO **/}
+                            onMusicMediaItemEvent = onMusicMediaItemEvent
                         )
                     }
                     1 -> {
@@ -163,15 +160,15 @@ fun MusicTabPagerScreen(
                             musicPlayerScreenState = musicPlayerScreenState,
                             onMusicPlaylistScreenEvent = onMusicPlaylistScreenEvent,
                             onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
-                            onPlaylistDropDownMenuEvent = onPlaylistDropDownMenuEvent
                         )
                     }
                 }
+
             }
         }
-
     }
 }
+
 @Preview
 @Composable
 private fun MusicTabPagerScreenPreviewDark() {
@@ -192,8 +189,7 @@ private fun MusicTabPagerScreenPreviewDark() {
             onMusicArtistScreenEvent = {},
             onMusicPlaylistScreenEvent = {},
 
-            onPlaylistDropDownMenuEvent = {},
-            onMediaDropDownMenuEvent = {},
+            onMusicMediaItemEvent = {},
         )
     }
 }

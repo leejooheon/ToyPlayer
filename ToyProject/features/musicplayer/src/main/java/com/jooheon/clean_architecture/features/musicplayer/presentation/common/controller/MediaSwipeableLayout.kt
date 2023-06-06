@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,10 +31,6 @@ import androidx.constraintlayout.compose.layoutId
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.AlbumImage
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaBottomController
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaFullController
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaFullDetails
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState

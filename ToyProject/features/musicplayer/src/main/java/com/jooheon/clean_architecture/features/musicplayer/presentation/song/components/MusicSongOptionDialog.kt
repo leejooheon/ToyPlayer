@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.song.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.RadioButton
@@ -11,12 +11,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
 
 @Composable
-fun MusicSongOptionDialog(
+internal fun MusicSongOptionDialog(
     playlistType: PlaylistType,
     openDialog: Boolean,
     onDismiss: (() -> Unit)? = null,
@@ -89,4 +91,14 @@ fun MusicSongOptionDialog(
             }
         }
     )
+}
+@Preview
+@Composable
+private fun MusicSongOptionDialogPreview() {
+    PreviewTheme(true) {
+        MusicSongOptionDialog(
+            playlistType = PlaylistType.All,
+            openDialog = true
+        )
+    }
 }

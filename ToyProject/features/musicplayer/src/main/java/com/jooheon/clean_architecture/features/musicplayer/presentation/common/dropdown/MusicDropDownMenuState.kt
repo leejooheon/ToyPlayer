@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.dropdown
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown
 
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.entity.music.Song
