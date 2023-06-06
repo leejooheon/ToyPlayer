@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +17,6 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 
 import android.content.res.Configuration
 import android.util.Log
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape

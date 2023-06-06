@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.dropdown
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.DropdownMenu

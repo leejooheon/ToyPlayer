@@ -1,21 +1,18 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.musicplayer.presentation.player.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MediaFullController(
@@ -84,8 +81,6 @@ private fun MediaFullControllerPreviewDark() {
 @Preview
 @Composable
 private fun MediaFullControllerPreviewLight() {
-    val musicStateFlow = MutableStateFlow(MusicState())
-    val durationStateFlow = MutableStateFlow(320000L)
     PreviewTheme(false) {
         Surface(modifier = Modifier.width(400.dp)) {
 

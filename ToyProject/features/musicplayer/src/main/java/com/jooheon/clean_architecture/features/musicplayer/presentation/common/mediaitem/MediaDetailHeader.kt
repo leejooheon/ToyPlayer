@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
 
 @Composable
-fun MediaDetailHeader(
+internal fun MediaDetailHeader(
     count: Int
 ) {
     Row(
@@ -60,4 +62,12 @@ fun MediaDetailHeader(
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
     )
+}
+
+@Preview
+@Composable
+private fun MediaDetailHeaderPreview() {
+    PreviewTheme(true) {
+        MediaDetailHeader(100)
+    }
 }

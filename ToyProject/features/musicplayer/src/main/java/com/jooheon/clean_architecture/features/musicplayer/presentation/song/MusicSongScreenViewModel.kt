@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicPlayerScreenViewModel @Inject constructor(
+class MusicSongScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUsecase
 ): BaseViewModel() {
-    override val TAG: String = MusicPlayerScreenViewModel::class.java.simpleName
+    override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
 
     private val _musicPlayerScreenState = MutableStateFlow(MusicPlayerScreenState.default)
     val musicPlayerScreenState = _musicPlayerScreenState.asStateFlow()

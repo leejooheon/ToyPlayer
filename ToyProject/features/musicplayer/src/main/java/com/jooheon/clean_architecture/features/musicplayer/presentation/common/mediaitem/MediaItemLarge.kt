@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,15 +29,15 @@ import com.jooheon.clean_architecture.features.common.compose.theme.themes.Previ
 import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.MusicDropDownMenuState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.components.dropdown.MusicDropDownMenu
+import com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem.dropdown.MusicDropDownMenu
+import com.jooheon.clean_architecture.features.musicplayer.presentation.mediaitem.dropdown.MusicDropDownMenuState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaItemLarge(
     title: String,
-    subTitle: String,
     imageUrl: String,
+    subTitle: String,
     onItemClick: () -> Unit,
     onDropDownMenuClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier
@@ -52,10 +52,7 @@ fun MediaItemLarge(
         modifier = modifier.clickable { onItemClick() },
         color = MaterialTheme.colorScheme.background
     ) {
-
-        Column(
-            modifier = Modifier
-        ) {
+        Column {
             CoilImage(
                 url = imageUrl,
                 contentDescription = title,
