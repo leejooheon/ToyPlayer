@@ -21,7 +21,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
+import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
@@ -88,7 +90,10 @@ internal fun ArtistMediaColumnItem(
 private fun ArtistMediaColumnItemPreview() {
     PreviewTheme(true) {
         ArtistMediaColumnItem(
-            artist = Artist.default,
+            artist = Artist.default.copy(
+                name = Resource.longStringPlaceholder,
+                albums = Album.defaultList,
+            ),
             onItemClick = {}
         )
     }

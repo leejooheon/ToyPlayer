@@ -4,8 +4,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MusicMediaItemEventUseCase
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicSongScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUsecase,
+    private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): BaseViewModel() {
     override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
@@ -124,7 +126,7 @@ class MusicSongScreenViewModel @Inject constructor(
     }
 
     private fun collectPlaylist() = viewModelScope.launch {
-        musicMediaItemEventUseCase.playlistState.collectLatest { playlists ->
+        playlistUseCase.playlistState.collectLatest { playlists ->
             _musicPlayerScreenState.update {
                 it.copy(
                     playlists = playlists

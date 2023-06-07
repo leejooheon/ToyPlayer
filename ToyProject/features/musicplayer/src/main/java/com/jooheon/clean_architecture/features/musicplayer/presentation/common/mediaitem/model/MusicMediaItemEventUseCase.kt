@@ -1,39 +1,20 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem
+package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model
 
-import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MusicMediaItemEventUseCase @Inject constructor(
     private val applicationScope: CoroutineScope,
     private val playlistUseCase: PlaylistUseCase,
 ) {
-
-    private val _playlistState = MutableStateFlow<List<Playlist>>(emptyList())
-    val playlistState = _playlistState.asStateFlow()
-
-    init {
-        loadData()
-    }
-    private fun loadData() {
-        playlistUseCase.getAllPlaylist()
-            .onEach { resource ->
-                if(resource is Resource.Success) {
-                    _playlistState.tryEmit(resource.value)
-                }
-            }.launchIn(applicationScope)
-    }
-
     fun dispatch(event: MusicMediaItemEvent) = applicationScope.launch {
         when(event) {
             is MusicMediaItemEvent.OnAddPlaylistClick -> {
@@ -50,11 +31,32 @@ class MusicMediaItemEventUseCase @Inject constructor(
                 withContext(Dispatchers.IO) {
                     playlistUseCase.updatePlaylists(updatedPlaylist)
                 }
-                loadData()
             }
             is MusicMediaItemEvent.OnAddToPlayingQueueClick -> {}
             is MusicMediaItemEvent.OnTagEditorClick -> {}
             else -> { /** Nothing **/}
         }
+    }
+
+    fun dispatch(event: MusicPlaylistItemEvent) = applicationScope.launch {
+        when(event) {
+            is MusicPlaylistItemEvent.OnDelete -> deletePlaylist(event.playlist)
+            is MusicPlaylistItemEvent.OnChangeName -> updatePlaylist(event.playlist)
+            is MusicPlaylistItemEvent.OnSaveAsFile -> playlistSaveAsFile(event.playlist)
+            else -> { /** Nothing **/ }
+        }
+    }
+
+    private suspend fun deletePlaylist(playlist: Playlist) = withContext(Dispatchers.IO) {
+        playlistUseCase.deletePlaylists(playlist)
+    }
+
+    private suspend fun updatePlaylist(playlist: Playlist) = withContext(Dispatchers.IO) {
+        playlistUseCase.updatePlaylists(playlist)
+    }
+
+    private suspend fun playlistSaveAsFile(playlist: Playlist) = withContext(Dispatchers.IO) {
+        /** TODO **/
+        delay(300)
     }
 }

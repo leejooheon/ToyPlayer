@@ -180,7 +180,7 @@ private fun MediaSwipeableLayoutPreview() {
         MediaSwipeableLayout(
             musicPlayerScreenState = MusicPlayerScreenState.default.copy(
                 musicState = MusicState(
-                    playlist = listOf(Song.default, Song.default,),
+                    playlist = Song.defaultList,
                     currentPlayingMusic = Song.default.copy(albumId = "1234")
                 )
             ),

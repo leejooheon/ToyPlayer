@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation
+package com.jooheon.clean_architecture.features.musicplayer.presentation.main
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -175,7 +175,6 @@ fun MusicTabPagerScreen(
 @Preview
 @Composable
 private fun MusicTabPagerScreenPreviewDark() {
-    val context = LocalContext.current
     PreviewTheme(true) {
         MusicTabPagerScreen(
             musicPlayerScreenState = MusicPlayerScreenState.default.copy(

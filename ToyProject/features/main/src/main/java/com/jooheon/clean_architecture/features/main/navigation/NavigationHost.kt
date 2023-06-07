@@ -37,7 +37,7 @@ import com.jooheon.clean_architecture.features.main.MainScreen
 import com.jooheon.clean_architecture.features.main.MainViewModel
 import com.jooheon.clean_architecture.features.map.presentation.MapScreen
 import com.jooheon.clean_architecture.features.map.presentation.MapViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.MusicTabPagerScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.main.MusicTabPagerScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreenViewModel
@@ -138,7 +138,7 @@ internal fun BottomNavigationHost(
                     onMusicArtistScreenEvent = musicArtistScreenViewModel::dispatch,
                     onMusicPlaylistScreenEvent = musicPlaylistScreenViewModel::dispatch,
 
-//                    onPlaylistDropDownMenuEvent = musicPlaylistScreenViewModel::dispatch,
+                    onMusicPlaylistItemEvent = musicPlaylistScreenViewModel::onMusicMediaItemEvent,
                     onMusicMediaItemEvent = musicSongScreenViewModel::onMusicMediaItemEvent
                 )
             }

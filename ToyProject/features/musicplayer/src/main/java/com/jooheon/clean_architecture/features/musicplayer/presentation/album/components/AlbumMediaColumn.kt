@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
 
 
 @Composable
@@ -52,7 +53,7 @@ internal fun AlbumMediaColumn(
 private fun AlbumMediaColumnPreview() {
     PreviewTheme(true) {
         AlbumMediaColumn(
-            albumList = listOf(Album.default),
+            albumList = MusicAlbumScreenState.default.albums,
             listState = rememberLazyGridState(),
             onItemClick = {},
         )

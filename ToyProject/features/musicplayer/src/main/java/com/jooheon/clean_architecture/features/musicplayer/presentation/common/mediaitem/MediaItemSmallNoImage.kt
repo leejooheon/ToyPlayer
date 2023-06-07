@@ -132,8 +132,8 @@ private fun MediaItemSmallWithoutImagePreview() {
     PreviewTheme(false) {
         MediaItemSmallNoImage(
             trackNumber = 1,
-            title = UiText.StringResource(R.string.lorem).asString(),
-            subTitle = UiText.StringResource(R.string.dessert).asString(),
+            title = UiText.StringResource(R.string.placeholder_long).asString(),
+            subTitle = UiText.StringResource(R.string.placeholder_medium).asString(),
             duration = "00:12",
             onItemClick = {},
             onDropDownMenuClick = {},

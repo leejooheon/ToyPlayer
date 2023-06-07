@@ -2,9 +2,10 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.album.d
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Album
+import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
 import com.jooheon.clean_architecture.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MusicMediaItemEventUseCase
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicAlbumDetailScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUsecase,
+    private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): BaseViewModel() {
     override val TAG = MusicAlbumDetailScreenViewModel::class.java.simpleName
@@ -53,10 +55,13 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
     fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
         musicMediaItemEventUseCase.dispatch(event)
     }
-    private fun collectPlaylistState() = viewModelScope.launch{
-        musicMediaItemEventUseCase.playlistState.collectLatest { playlists ->
+
+    private fun collectPlaylistState() = viewModelScope.launch {
+        playlistUseCase.playlistState.collectLatest { playlists ->
             _musicAlbumDetailScreenState.update {
-                it.copy(playlists = playlists)
+                it.copy(
+                    playlists = playlists
+                )
             }
         }
     }

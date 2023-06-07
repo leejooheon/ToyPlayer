@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.domain.entity.music
 
+import com.jooheon.clean_architecture.domain.common.Resource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,12 +14,18 @@ data class Album(
 ): java.io.Serializable {
     companion object {
         val default = Album(
-            id = "album-id",
-            name = "album-name",
-            artist = "artist-name",
-            artistId = "artist-id",
+            id = "-1",
+            name = "-",
+            artist = "<unknown>",
+            artistId = "-1",
             imageUrl = "",
-            songs = listOf(Song.default)
+            songs = emptyList()
+        )
+
+        val defaultList = listOf(
+            default.copy(name = Resource.longStringPlaceholder),
+            default.copy(name = Resource.mediumStringPlaceholder),
+            default.copy(name = Resource.shortStringPlaceholder),
         )
     }
 }

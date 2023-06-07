@@ -128,8 +128,8 @@ private fun MediaItemSmallPreview() {
     PreviewTheme(false) {
         MediaItemSmall(
             imageUrl = "",
-            title = UiText.StringResource(R.string.lorem).asString(),
-            subTitle = UiText.StringResource(R.string.dessert).asString(),
+            title = UiText.StringResource(R.string.placeholder_long).asString(),
+            subTitle = UiText.StringResource(R.string.placeholder_medium).asString(),
             showContextualMenu = true,
             onItemClick = {},
             onDropDownMenuClick = {},

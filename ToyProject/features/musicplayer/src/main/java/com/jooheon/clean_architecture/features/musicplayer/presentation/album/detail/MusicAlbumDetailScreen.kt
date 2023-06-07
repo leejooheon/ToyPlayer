@@ -229,8 +229,8 @@ private fun MusicAlbumDetailScreenPreview() {
         MusicAlbumDetailScreen(
             musicAlbumDetailScreenState = MusicAlbumDetailScreenState.default.copy(
                 album = Album.default.copy(
-                    name = UiText.StringResource(R.string.lorem).asString(),
-                    artist = UiText.StringResource(R.string.dessert).asString(),
+                    name = UiText.StringResource(R.string.placeholder_long).asString(),
+                    artist = UiText.StringResource(R.string.placeholder_medium).asString(),
                 )
             ),
             musicPlayerScreenState = MusicPlayerScreenState.default,

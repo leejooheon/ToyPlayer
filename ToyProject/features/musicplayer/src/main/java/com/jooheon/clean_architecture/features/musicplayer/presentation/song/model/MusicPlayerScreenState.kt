@@ -13,7 +13,7 @@ data class MusicPlayerScreenState(
     companion object {
         val default = MusicPlayerScreenState(
             musicState = MusicState(
-                playlist = listOf(Song.default, Song.default.copy(audioId = 123),),
+                playlist = Song.defaultList,
                 currentPlayingMusic = Song.default.copy(albumId = "1234")
             ),
             playlists = listOf(Playlist.default),

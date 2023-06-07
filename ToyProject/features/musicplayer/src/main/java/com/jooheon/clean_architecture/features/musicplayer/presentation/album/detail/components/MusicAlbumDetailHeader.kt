@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
@@ -133,7 +134,10 @@ internal fun MusicAlbumDetailHeader(album: Album) {
 private fun MusicAlbumDetailHeaderPreview() {
     PreviewTheme(true) {
         MusicAlbumDetailHeader(
-            album = Album.default
+            album = Album.default.copy(
+                name = Resource.longStringPlaceholder,
+                artist = Resource.mediumStringPlaceholder
+            )
         )
     }
 }

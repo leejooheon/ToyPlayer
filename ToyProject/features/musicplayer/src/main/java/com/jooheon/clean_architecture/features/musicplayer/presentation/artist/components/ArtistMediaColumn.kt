@@ -50,7 +50,7 @@ internal fun ArtistMediaColumn(
 private fun ArtistMediaColumnPreview() {
     PreviewTheme(true) {
         ArtistMediaColumn(
-            artists = listOf(Artist.default),
+            artists = Artist.defaultList,
             listState = rememberLazyGridState(),
             onItemClick = {},
         )
