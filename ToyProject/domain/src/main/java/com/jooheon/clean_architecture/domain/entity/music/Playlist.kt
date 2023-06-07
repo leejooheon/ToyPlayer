@@ -11,10 +11,10 @@ data class Playlist(
 ): java.io.Serializable {
     companion object {
         val default = Playlist(
-            id = 0,
-            name = "playlist - name",
+            id = -1,
+            name = "-",
             thumbnailUrl = "",
-            songs = listOf(Song.default)
+            songs = emptyList()
         )
     }
 }

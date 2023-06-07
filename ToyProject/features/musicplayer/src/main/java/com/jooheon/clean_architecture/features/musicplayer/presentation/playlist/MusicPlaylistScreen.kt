@@ -17,6 +17,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.components.PlaylistMediaColumn
@@ -31,10 +33,9 @@ fun MusicPlaylistScreen(
     musicPlaylistScreenState: MusicPlaylistScreenState,
     musicPlayerScreenState: MusicPlayerScreenState,
 
-//    onPlaylistDropDownMenuEvent: (PlaylistDropDownMenuEvent) -> Unit,
-    onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
-
     onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
+    onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
+    onMusicPlaylistItemEvent: (MusicPlaylistItemEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -60,42 +61,13 @@ fun MusicPlaylistScreen(
                 onItemClick = { onMusicPlaylistScreenEvent(MusicPlaylistScreenEvent.OnPlaylistClick(it)) },
                 onAddPlaylistClick = { onMusicPlaylistScreenEvent(MusicPlaylistScreenEvent.OnAddPlaylist(it)) },
                 onDropDownMenuClick = { index, playlist ->
-//                    val event = MusicPlaylistItemEvent.fromIndex(index, playlist)
-//                    onPlaylistDropDownMenuEvent(event)
+                    val event = MusicDropDownMenuState.indexToEvent(index, playlist)
+                    onMusicPlaylistItemEvent(event)
                 }
             )
         }
     )
 
-    ObserveLifecycleEvent(
-        onStart = {
-            onMusicPlaylistScreenEvent(MusicPlaylistScreenEvent.Refresh)
-        }
-    )
-}
-
-@ExperimentalPermissionsApi
-@Composable
-private fun ObserveLifecycleEvent(
-    onStart: () -> Unit
-) {
-    val lifecycleOwner by rememberUpdatedState(LocalLifecycleOwner.current)
-    DisposableEffect(
-        key1 = lifecycleOwner,
-        effect = {
-            val observer = LifecycleEventObserver { lifecycleOwner, event ->
-                if(event == Lifecycle.Event.ON_START) {
-                    onStart()
-                }
-            }
-
-            lifecycleOwner.lifecycle.addObserver(observer)
-
-            onDispose {
-                lifecycleOwner.lifecycle.removeObserver(observer)
-            }
-        }
-    )
 }
 
 @Preview
@@ -108,8 +80,7 @@ private fun MusicPlaylistScreenPreview() {
 
             onMusicPlaylistScreenEvent = {},
             onMusicPlayerScreenEvent = {},
-
-//            onPlaylistDropDownMenuEvent = {},
+            onMusicPlaylistItemEvent = {},
         )
     }
 }

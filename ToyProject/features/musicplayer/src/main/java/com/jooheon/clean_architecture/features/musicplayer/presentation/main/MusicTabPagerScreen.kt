@@ -38,6 +38,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.M
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
@@ -59,6 +60,7 @@ fun MusicTabPagerScreen(
     onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
     onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
 
+    onMusicPlaylistItemEvent: (MusicPlaylistItemEvent) -> Unit,
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
 ) {
 
@@ -158,8 +160,9 @@ fun MusicTabPagerScreen(
                         MusicPlaylistScreen(
                             musicPlaylistScreenState = musicPlaylistScreenState,
                             musicPlayerScreenState = musicPlayerScreenState,
-                            onMusicPlaylistScreenEvent = onMusicPlaylistScreenEvent,
                             onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
+                            onMusicPlaylistScreenEvent = onMusicPlaylistScreenEvent,
+                            onMusicPlaylistItemEvent = onMusicPlaylistItemEvent
                         )
                     }
                 }
@@ -177,7 +180,7 @@ private fun MusicTabPagerScreenPreviewDark() {
         MusicTabPagerScreen(
             musicPlayerScreenState = MusicPlayerScreenState.default.copy(
                 musicState = MusicState(
-                    playlist = listOf(Song.default, Song.default,)
+                    playlist = Song.defaultList
                 )
             ),
             musicAlbumScreenState = MusicAlbumScreenState.default,
@@ -189,6 +192,7 @@ private fun MusicTabPagerScreenPreviewDark() {
             onMusicArtistScreenEvent = {},
             onMusicPlaylistScreenEvent = {},
 
+            onMusicPlaylistItemEvent = {},
             onMusicMediaItemEvent = {},
         )
     }

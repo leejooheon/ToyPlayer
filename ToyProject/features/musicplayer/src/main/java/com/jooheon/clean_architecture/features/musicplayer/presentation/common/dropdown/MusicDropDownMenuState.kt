@@ -5,6 +5,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 
 data class MusicDropDownMenuState(
     val items: List<UiText>,
@@ -34,6 +35,18 @@ data class MusicDropDownMenuState(
                 2 -> MusicMediaItemEvent.OnTagEditorClick(song)
                 3 -> MusicMediaItemEvent.OnDetailsClick(song)
                 else -> MusicMediaItemEvent.Placeholder
+            }
+        }
+
+        fun indexToEvent(
+            index: Int,
+            playlist: Playlist,
+        ): MusicPlaylistItemEvent{
+            return when(index) {
+                0 -> MusicPlaylistItemEvent.OnDelete(playlist)
+                1 -> MusicPlaylistItemEvent.OnChangeName(playlist)
+                2 -> MusicPlaylistItemEvent.OnSaveAsFile(playlist)
+                else -> MusicPlaylistItemEvent.Placeholder
             }
         }
     }

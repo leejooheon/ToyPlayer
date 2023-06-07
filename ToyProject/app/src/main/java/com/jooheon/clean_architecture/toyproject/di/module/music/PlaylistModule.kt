@@ -7,13 +7,13 @@ import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSou
 import com.jooheon.clean_architecture.data.repository.PlaylistRepositoryImpl
 import com.jooheon.clean_architecture.domain.repository.PlaylistRepository
 import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
-import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCaseImpl
 import com.jooheon.clean_architecture.toyproject.di.Constants
 import com.jooheon.clean_architecture.toyproject.di.MyApplication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -35,7 +35,12 @@ object PlaylistModule {
     ): PlaylistRepository = PlaylistRepositoryImpl(localPlaylistDataSource)
 
     @Provides
+    @Singleton
     fun providePlaylistUseCase(
+        applicationScope: CoroutineScope,
         playlistRepository: PlaylistRepository
-    ): PlaylistUseCase = PlaylistUseCaseImpl(playlistRepository)
+    ): PlaylistUseCase = PlaylistUseCase(
+        applicationScope = applicationScope,
+        playlistRepository = playlistRepository
+    )
 }
