@@ -10,13 +10,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
 fun MediaFullController(
-    musicPlayerScreenState: MusicPlayerScreenState,
+    musicPlayerState: MusicPlayerState,
     onPlayPauseButtonClicked: () -> Unit,
     onNextClicked: () -> Unit,
     onPreviousClicked: () -> Unit,
@@ -25,8 +27,8 @@ fun MediaFullController(
     snapTo: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val musicState = musicPlayerScreenState.musicState
-    val duration = musicPlayerScreenState.currentDuration
+    val musicState = musicPlayerState.musicState
+    val duration = musicPlayerState.duration
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,13 +62,11 @@ fun MediaFullController(
 @Preview
 @Composable
 private fun MediaFullControllerPreviewDark() {
-    val musicStateFlow = MutableStateFlow(MusicState())
-    val durationStateFlow = MutableStateFlow(320000L)
     PreviewTheme(true) {
         Surface(modifier = Modifier.width(400.dp)) {
 
             MediaFullController(
-                musicPlayerScreenState = MusicPlayerScreenState.default,
+                musicPlayerState = MusicPlayerState.default,
                 onPlayPauseButtonClicked = { },
                 onNextClicked = {},
                 onPreviousClicked = {},
@@ -85,7 +85,7 @@ private fun MediaFullControllerPreviewLight() {
         Surface(modifier = Modifier.width(400.dp)) {
 
             MediaFullController(
-                musicPlayerScreenState = MusicPlayerScreenState.default,
+                musicPlayerState = MusicPlayerState.default,
                 onPlayPauseButtonClicked = { },
                 onNextClicked = {},
                 onPreviousClicked = {},

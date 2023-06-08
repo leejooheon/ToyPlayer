@@ -13,7 +13,7 @@ class RemoteMusicDataSource @Inject constructor(
     private val applicationContext: Context,
 ): BaseRemoteDataSource() {
 
-    suspend fun getStreamingUrlList(): List<Song> {
+    suspend fun getStreamingMusicList(): List<Song> {
         val list = withContext(Dispatchers.IO) {
             delay(1000)
             TestStreamUrl.list

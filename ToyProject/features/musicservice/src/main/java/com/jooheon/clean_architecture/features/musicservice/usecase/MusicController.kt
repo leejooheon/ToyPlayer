@@ -1,16 +1,17 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
 import android.content.Context
+import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.data.exoPlayerStateAsString
 import com.jooheon.clean_architecture.features.musicservice.data.uri
-import com.jooheon.clean_architecture.features.musicservice.usecase.manager.MusicPlayListManager
 import com.jooheon.clean_architecture.features.common.extension.showToast
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
@@ -27,15 +28,15 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
-    private val musicPlayListManager: MusicPlayListManager,
+    private val musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
 ) : IMusicController {
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying
 
-    private val _playlist = MutableStateFlow(emptyList<Song>())
-    val playlist: StateFlow<List<Song>> = _playlist
+    private val _playingQueue = MutableStateFlow(emptyList<Song>())
+    val playingQueue: StateFlow<List<Song>> = _playingQueue
 
     private val _currentPlayingMusic = MutableStateFlow(Song.default)
     val currentPlayingMusic: StateFlow<Song> = _currentPlayingMusic
@@ -56,6 +57,7 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 
     init {
         initExoPlayer()
+        collectPlayingQueue()
     }
 
     private fun playWithMediaItem(mediaItem: MediaItem) {
@@ -101,7 +103,7 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 
     override suspend fun previous() {
         Timber.tag(TAG).d( "previous")
-        val playlist = playlist.value
+        val playlist = playingQueue.value
         val currentIndex = playlist.indexOfFirst {
             it.hashCode() == currentPlayingMusic.value.hashCode()
         }
@@ -118,7 +120,7 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     }
 
     override suspend fun next() {
-        val playlist = playlist.value
+        val playlist = playingQueue.value
         val currentIndex = playlist.indexOfFirst {
             it.hashCode() == currentPlayingMusic.value.hashCode()
         }
@@ -176,30 +178,45 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 //        }
     }
 
-    override fun loadPlaylist(
-        playlistType: PlaylistType,
-        onPlayListLoaded: ((MutableList<Song>) -> Unit)?
-    ) {
-        musicPlayListManager.loadPlaylist(playlistType).whenReady { isReady ->
-            applicationScope.launch {
-                if (isReady) {
-                    val newPlaylist = if(shuffleMode.value == ShuffleMode.SHUFFLE) {
-                        musicPlayListManager.playlist.shuffled().toMutableList()
-                    } else {
-                        musicPlayListManager.playlist
-                    }
-
-                    _playlist.tryEmit(newPlaylist)
-
-                    onPlayListLoaded?.invoke(newPlaylist)
-                } else {
-                    val failureResource = musicPlayListManager.latestFailureResource ?: return@launch
-                    emitExoPlayerState(ExoPlayer.STATE_IDLE)
+//    override fun loadPlaylist(
+//        playlistType: PlaylistType,
+//        onPlayListLoaded: ((MutableList<Song>) -> Unit)?
+//    ) {
+//        musicListManager.loadPlaylist(playlistType).whenReady { isReady ->
+//            applicationScope.launch {
+//                if (isReady) {
+//                    val newPlaylist = if(shuffleMode.value == ShuffleMode.SHUFFLE) {
+//                        musicListManager.songList.shuffled().toMutableList()
+//                    } else {
+//                        musicListManager.songList
+//                    }
+//
+//                    _playlist.tryEmit(newPlaylist)
+//
+//                    onPlayListLoaded?.invoke(newPlaylist)
+//                } else {
+//                    val failureResource = musicListManager.latestFailureResource ?: return@launch
+//                    emitExoPlayerState(ExoPlayer.STATE_IDLE)
+//                }
+//            }
+//        }
+//    }
+    private fun collectPlayingQueue() = applicationScope.launch {
+        musicPlayingQueueUseCase.playingQueueState.collectLatest {
+            if(it is Resource.Success) {
+                val playlist = it.value
+                val songs = playlist.songs
+                _playingQueue.tryEmit(songs)
+                songs.firstOrNull{
+                    it == currentPlayingMusic.value
+                } ?: run {
+                    Log.d("Jooheon", "stop!!: ${currentPlayingMusic.value}")
+                    stop()
+                    return@collectLatest
                 }
             }
         }
     }
-
     fun collectDurationFromPlayer() {
         durationFromPlayerJob?.cancel()
         durationFromPlayerJob = applicationScope.launch(Dispatchers.IO) {

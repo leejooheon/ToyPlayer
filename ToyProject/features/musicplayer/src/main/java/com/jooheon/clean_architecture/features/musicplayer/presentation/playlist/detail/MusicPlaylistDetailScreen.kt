@@ -38,9 +38,11 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.components.MusicPlaylistDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenState
 
@@ -51,12 +53,11 @@ import kotlin.math.max
 @Composable
 fun MusicPlaylistDetailScreen(
     musicPlaylistDetailScreenState: MusicPlaylistDetailScreenState,
-    musicPlayerScreenState: MusicPlayerScreenState,
-
     onMusicPlaylistScreenEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
-
-    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
     onMediaDropDownMenuEvent: (MusicMediaItemEvent) -> Unit,
+
+    musicPlayerState: MusicPlayerState,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -96,11 +97,11 @@ fun MusicPlaylistDetailScreen(
             }
         )
         MediaSwipeableLayout(
-            musicPlayerScreenState = musicPlayerScreenState,
+            musicPlayerState = musicPlayerState,
             swipeableState = swipeableState,
             swipeAreaHeight = swipeAreaHeight,
             motionProgress = motionProgress,
-            onEvent = onMusicPlayerScreenEvent,
+            onEvent = onMusicPlayerEvent,
             content = {
                 PlaylistDetailMediaColumn(
                     listState = rememberLazyListState(),
@@ -173,11 +174,11 @@ private fun MusicPlaylistDetailScreenPreview() {
                     name = UiText.StringResource(R.string.placeholder_long).asString()
                 )
             ),
-            musicPlayerScreenState = MusicPlayerScreenState.default,
-
             onMusicPlaylistScreenEvent = {},
-            onMusicPlayerScreenEvent = {},
             onMediaDropDownMenuEvent = {},
+
+            musicPlayerState = MusicPlayerState.default,
+            onMusicPlayerEvent = {},
         )
     }
 }

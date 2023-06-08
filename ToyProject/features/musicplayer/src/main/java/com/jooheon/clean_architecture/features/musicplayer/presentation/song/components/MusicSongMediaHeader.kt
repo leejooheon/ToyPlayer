@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.song.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -72,7 +73,6 @@ internal fun MusicSongMediaHeader(
             }
         )
     }
-
 }
 @Preview
 @Composable
@@ -82,7 +82,7 @@ private fun MusicSongMediaHeaderPreview() {
             viewType = true,
             onSeeMoreButtonClick = {},
             onViewTypeClick = {},
-            modifier = Modifier.width(300.dp)
+            modifier = Modifier.width(300.dp).background(MaterialTheme.colorScheme.background)
         )
     }
 }

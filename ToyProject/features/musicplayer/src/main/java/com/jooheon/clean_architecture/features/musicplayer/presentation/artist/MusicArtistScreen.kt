@@ -13,8 +13,8 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.c
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import java.lang.Float
 import kotlin.math.max
 
@@ -22,9 +22,10 @@ import kotlin.math.max
 @Composable
 fun MusicArtistScreen(
     musicArtistState: MusicArtistScreenState,
-    musicPlayerScreenState: MusicPlayerScreenState,
     onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
-    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
+
+    musicPlayerState: MusicPlayerState,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
 
     val density = LocalDensity.current
@@ -39,11 +40,11 @@ fun MusicArtistScreen(
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
 
     MediaSwipeableLayout(
-        musicPlayerScreenState = musicPlayerScreenState,
+        musicPlayerState = musicPlayerState,
         swipeableState = swipeableState,
         swipeAreaHeight = swipeAreaHeight,
         motionProgress = motionProgress,
-        onEvent = onMusicPlayerScreenEvent,
+        onEvent = onMusicPlayerEvent,
         content = {
             ArtistMediaColumn(
                 artists = musicArtistState.artists,
@@ -62,9 +63,9 @@ private fun MusicArtistScreenPreview() {
     PreviewTheme(false) {
         MusicArtistScreen(
             musicArtistState = MusicArtistScreenState.default,
-            musicPlayerScreenState = MusicPlayerScreenState.default,
+            musicPlayerState = MusicPlayerState.default,
             onMusicArtistScreenEvent = {},
-            onMusicPlayerScreenEvent = {},
+            onMusicPlayerEvent = {},
         )
     }
 }

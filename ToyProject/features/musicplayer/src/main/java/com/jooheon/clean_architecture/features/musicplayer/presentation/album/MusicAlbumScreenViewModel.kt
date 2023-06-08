@@ -3,20 +3,19 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.album
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Album
-import com.jooheon.clean_architecture.domain.entity.music.Artist
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
+import com.jooheon.clean_architecture.domain.entity.music.MusicListType
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
-import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,8 +24,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicAlbumScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase
-): BaseViewModel() {
+    musicControllerUsecase: MusicControllerUsecase,
+    private val musicListUseCase: MusicListUseCase,
+): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG = MusicAlbumScreenViewModel::class.java.simpleName
 
     private val _musicAlbumScreenState = MutableStateFlow(MusicAlbumScreenState.default)
@@ -35,11 +35,8 @@ class MusicAlbumScreenViewModel @Inject constructor(
     private val _navigateToDetailScreen = Channel<Album>()
     val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
 
-    private val _playlistState = MutableStateFlow<List<Song>>(emptyList())
-    private val playlistState = _playlistState.asStateFlow()
-
     init {
-        collectMusicState()
+        collectMusicList()
         loadData()
     }
 
@@ -49,23 +46,12 @@ class MusicAlbumScreenViewModel @Inject constructor(
         }
     }
     fun loadData() = viewModelScope.launch {
-        val playlistType = musicControllerUsecase.musicState.value.playlistType
-        musicControllerUsecase.loadPlaylist(playlistType)
+//        val playlistType = musicControllerUsecase.musicState.value.playlistType
+//        musicControllerUsecase.loadPlaylist(playlistType)
     }
 
-    private fun collectMusicState() = viewModelScope.launch {
-        musicControllerUsecase.musicState.collectLatest {
-            _playlistState.tryEmit(it.playlist)
-
-
-            updateAlbums()
-        }
-    }
-
-    private suspend fun updateAlbums() = withContext(Dispatchers.IO) {
-        val playlist = playlistState.value
-
-        val groupByAlbum = playlist.groupBy {
+    private suspend fun updateAlbums(musicList: List<Song>) = withContext(Dispatchers.IO) {
+        val groupByAlbum = musicList.groupBy {
             it.albumId
         }.map { (albumId, songs) ->
             Album(
@@ -85,4 +71,21 @@ class MusicAlbumScreenViewModel @Inject constructor(
         }
     }
 
+    private fun collectMusicList() = viewModelScope.launch {
+        combine(
+            musicListUseCase.localSongList,
+            musicListUseCase.streamingSongList,
+            musicListUseCase.musicListType,
+        ) { localSongList, streamingSongList, musicListType ->
+            Triple(localSongList, streamingSongList, musicListType)
+        }.collect { (localSongList, streamingSongList, musicListType) ->
+
+            val songList = when(musicListType) {
+                MusicListType.All -> localSongList + streamingSongList
+                MusicListType.Local -> localSongList
+                MusicListType.Streaming -> streamingSongList
+            }
+            updateAlbums(songList)
+        }
+    }
 }

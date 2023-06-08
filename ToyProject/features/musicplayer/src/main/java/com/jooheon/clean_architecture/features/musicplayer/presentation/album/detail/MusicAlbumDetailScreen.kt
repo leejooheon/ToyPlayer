@@ -53,8 +53,10 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.album.de
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import java.lang.Float
 import kotlin.math.max
 
@@ -62,11 +64,11 @@ import kotlin.math.max
 @Composable
 fun MusicAlbumDetailScreen(
     musicAlbumDetailScreenState: MusicAlbumDetailScreenState,
-    musicPlayerScreenState: MusicPlayerScreenState,
-
     onMusicAlbumDetailScreenEvent: (MusicAlbumDetailScreenEvent) -> Unit,
-    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+
+    musicPlayerState: MusicPlayerState,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -111,11 +113,11 @@ fun MusicAlbumDetailScreen(
             }
         )
         MediaSwipeableLayout(
-            musicPlayerScreenState = musicPlayerScreenState,
+            musicPlayerState = musicPlayerState,
             swipeableState = swipeableState,
             swipeAreaHeight = swipeAreaHeight,
             motionProgress = motionProgress,
-            onEvent = onMusicPlayerScreenEvent,
+            onEvent = onMusicPlayerEvent,
             content = {
                 MusicAlbumDetailMediaColumn(
                     musicAlbumDetailScreenState = musicAlbumDetailScreenState,
@@ -233,10 +235,10 @@ private fun MusicAlbumDetailScreenPreview() {
                     artist = UiText.StringResource(R.string.placeholder_medium).asString(),
                 )
             ),
-            musicPlayerScreenState = MusicPlayerScreenState.default,
             onMusicAlbumDetailScreenEvent = {},
-            onMusicPlayerScreenEvent = {},
-            onMusicMediaItemEvent = {}
+            onMusicMediaItemEvent = {},
+            musicPlayerState = MusicPlayerState.default,
+            onMusicPlayerEvent = {},
         )
     }
 }

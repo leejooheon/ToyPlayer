@@ -12,21 +12,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
+import com.jooheon.clean_architecture.domain.entity.music.MusicListType
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.R
 
 @Composable
 internal fun MusicSongOptionDialog(
-    playlistType: PlaylistType,
+    musicListType: MusicListType,
     openDialog: Boolean,
     onDismiss: (() -> Unit)? = null,
-    onOkButtonClicked: ((PlaylistType) -> Unit)? = null
+    onOkButtonClicked: ((MusicListType) -> Unit)? = null
 ) {
     if(!openDialog) { return }
 
-    var playlistTypeState by remember { mutableStateOf(playlistType) }
+    var playlistTypeState by remember { mutableStateOf(musicListType) }
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.secondary,
         textContentColor = MaterialTheme.colorScheme.onSecondary,
@@ -34,12 +34,12 @@ internal fun MusicSongOptionDialog(
         text = {
             Column {
                 TextButton(
-                    onClick = { playlistTypeState = PlaylistType.Local },
+                    onClick = { playlistTypeState = MusicListType.Local },
                     content = {
 
                         RadioButton(
-                            selected = playlistTypeState == PlaylistType.Local,
-                            onClick = { playlistTypeState = PlaylistType.Local },
+                            selected = playlistTypeState == MusicListType.Local,
+                            onClick = { playlistTypeState = MusicListType.Local },
                         )
                         Text(
                             text = UiText.StringResource(R.string.option_only_local).asString(),
@@ -49,11 +49,11 @@ internal fun MusicSongOptionDialog(
                     }
                 )
                 TextButton(
-                    onClick = { playlistTypeState = PlaylistType.Streaming },
+                    onClick = { playlistTypeState = MusicListType.Streaming },
                     content = {
                         RadioButton(
-                            selected = playlistTypeState == PlaylistType.Streaming,
-                            onClick = { playlistTypeState = PlaylistType.Streaming },
+                            selected = playlistTypeState == MusicListType.Streaming,
+                            onClick = { playlistTypeState = MusicListType.Streaming },
                         )
                         Text(
                             text = UiText.StringResource(R.string.option_only_streaming).asString(),
@@ -63,11 +63,11 @@ internal fun MusicSongOptionDialog(
                     }
                 )
                 TextButton(
-                    onClick = { playlistTypeState = PlaylistType.All },
+                    onClick = { playlistTypeState = MusicListType.All },
                     content = {
                         RadioButton(
-                            selected = playlistTypeState == PlaylistType.All,
-                            onClick = { playlistTypeState = PlaylistType.All },
+                            selected = playlistTypeState == MusicListType.All,
+                            onClick = { playlistTypeState = MusicListType.All },
                         )
                         Text(
                             text = UiText.StringResource(R.string.option_include_all).asString(),
@@ -97,7 +97,7 @@ internal fun MusicSongOptionDialog(
 private fun MusicSongOptionDialogPreview() {
     PreviewTheme(true) {
         MusicSongOptionDialog(
-            playlistType = PlaylistType.All,
+            musicListType = MusicListType.All,
             openDialog = true
         )
     }

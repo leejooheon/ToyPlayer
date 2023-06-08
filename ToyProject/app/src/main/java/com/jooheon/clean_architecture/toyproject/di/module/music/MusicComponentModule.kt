@@ -6,12 +6,15 @@ import android.content.Intent
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
+import com.jooheon.clean_architecture.domain.repository.MusicListRepository
+import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.clean_architecture.features.main.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @Module
@@ -43,4 +46,15 @@ object MusicComponentModule {
 
         return exoPlayer
     }
+
+    @Provides
+    @Singleton
+    fun providesMusicListUseCase(
+        applicationScope: CoroutineScope,
+        musicListRepository: MusicListRepository,
+    ): MusicListUseCase =
+        MusicListUseCase(
+            applicationScope = applicationScope,
+            musicListRepository = musicListRepository,
+        )
 }

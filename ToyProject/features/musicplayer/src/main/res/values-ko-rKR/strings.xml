@@ -7,6 +7,7 @@
 
     <string name="n_song">%1$d 곡</string>
     <string name="song_list">음악 목록</string>
+    <string name="current_playing_queue">현재 재생중인 음악</string>
 
     <string name="dialog_new_playlist">새 재생목록</string>
     <string name="dialog_new_playlist_label">재생목록</string>

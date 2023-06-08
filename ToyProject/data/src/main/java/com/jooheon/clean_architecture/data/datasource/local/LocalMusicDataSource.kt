@@ -16,7 +16,7 @@ class LocalMusicDataSource @Inject constructor(
     private val applicationContext: Context
 ): BaseLocalDataSource {
 
-    fun getLocalSongList(uri: Uri): MutableList<Song> {
+    fun getLocalMusicList(uri: Uri): MutableList<Song> {
         val cursor = makeSongCursor(applicationContext, uri)
         val songs = mutableListOf<Song>()
         if (cursor != null && cursor.moveToFirst()) {

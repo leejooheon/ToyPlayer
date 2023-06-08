@@ -31,8 +31,10 @@ import androidx.constraintlayout.compose.layoutId
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.launch
 import java.lang.Float
@@ -41,11 +43,11 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMotionApi::class)
 @Composable
 fun MediaSwipeableLayout(
-    musicPlayerScreenState: MusicPlayerScreenState,
+    musicPlayerState: MusicPlayerState,
     swipeableState: SwipeableState<Int>,
     swipeAreaHeight: kotlin.Float,
     motionProgress: kotlin.Float,
-    onEvent: (MusicPlayerScreenEvent) -> Unit,
+    onEvent: (MusicPlayerEvent) -> Unit,
     content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -60,7 +62,7 @@ fun MediaSwipeableLayout(
             .decodeToString()
     }
 
-    val musicState = musicPlayerScreenState.musicState
+    val musicState = musicPlayerState.musicState
 
     MotionLayout(
         motionScene = MotionScene(content = motionSceneContent),
@@ -105,8 +107,8 @@ fun MediaSwipeableLayout(
             motionProgress = motionProgress,
             song = musicState.currentPlayingMusic,
             isPlaying = musicState.isPlaying,
-            onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(it)) },
-            onPlayListButtonPressed = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(Song.default)) },
+            onPlayPauseButtonClicked = { onEvent(MusicPlayerEvent.OnPlayPauseClick(it)) },
+            onPlayListButtonPressed = { onEvent(MusicPlayerEvent.OnPlayPauseClick(Song.default)) },
             modifier = Modifier
                 .clickable {
                     scope.launch { swipeableState.animateTo(1) }
@@ -146,13 +148,13 @@ fun MediaSwipeableLayout(
                     .fillMaxWidth()
             )
             MediaFullController(
-                musicPlayerScreenState = musicPlayerScreenState,
-                onPlayPauseButtonClicked = { onEvent(MusicPlayerScreenEvent.OnPlayPauseClick(musicState.currentPlayingMusic)) },
-                onNextClicked = { onEvent(MusicPlayerScreenEvent.OnNextClick) }, //viewModel::onNextClicked,
-                onPreviousClicked = { onEvent(MusicPlayerScreenEvent.OnPreviousClick) },//viewModel::onPreviousClicked,
-                onShuffleClicked = { onEvent(MusicPlayerScreenEvent.OnShuffleClick)}, //viewModel::onShuffleClicked,
-                onRepeatClicked = { onEvent(MusicPlayerScreenEvent.OnRepeatClick) },
-                snapTo = { onEvent(MusicPlayerScreenEvent.OnSnapTo(it)) } ,
+                musicPlayerState = musicPlayerState,
+                onPlayPauseButtonClicked = { onEvent(MusicPlayerEvent.OnPlayPauseClick(musicState.currentPlayingMusic)) },
+                onNextClicked = { onEvent(MusicPlayerEvent.OnNextClick) }, //viewModel::onNextClicked,
+                onPreviousClicked = { onEvent(MusicPlayerEvent.OnPreviousClick) },//viewModel::onPreviousClicked,
+                onShuffleClicked = { onEvent(MusicPlayerEvent.OnShuffleClick)}, //viewModel::onShuffleClicked,
+                onRepeatClicked = { onEvent(MusicPlayerEvent.OnRepeatClick) },
+                snapTo = { onEvent(MusicPlayerEvent.OnSnapTo(it)) } ,
                 modifier = Modifier
                     .alpha(Float.min(motionProgress, 1f))
                     .fillMaxWidth()
@@ -178,9 +180,9 @@ private fun MediaSwipeableLayoutPreview() {
 
     PreviewTheme(false) {
         MediaSwipeableLayout(
-            musicPlayerScreenState = MusicPlayerScreenState.default.copy(
+            musicPlayerState = MusicPlayerState.default.copy(
                 musicState = MusicState(
-                    playlist = Song.defaultList,
+                    playingQueue = Song.defaultList,
                     currentPlayingMusic = Song.default.copy(albumId = "1234")
                 )
             ),

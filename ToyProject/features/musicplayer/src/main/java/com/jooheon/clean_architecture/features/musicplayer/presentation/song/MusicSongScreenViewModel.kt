@@ -1,54 +1,48 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.song
 
 import androidx.lifecycle.viewModelScope
-import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
-import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.domain.entity.music.MusicListType
+import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
+import com.jooheon.clean_architecture.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MusicSongScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase,
-    private val playlistUseCase: PlaylistUseCase,
+    musicControllerUsecase: MusicControllerUsecase,
+    private val musicListUseCase: MusicListUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-): BaseViewModel() {
+    private val musicPlaylistUseCase: MusicPlaylistUseCase,
+): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
 
-    private val _musicPlayerScreenState = MutableStateFlow(MusicPlayerScreenState.default)
-    val musicPlayerScreenState = _musicPlayerScreenState.asStateFlow()
+    private val _musicSongScreenState = MutableStateFlow(MusicSongScreenState.default)
+    val musicPlayerScreenState = _musicSongScreenState.asStateFlow()
 
     init {
-        collectMusicState()
-        collectExoPlayerState()
-        collectDuration()
         collectPlaylist()
-        loadData(musicPlayerScreenState.value.musicState.playlistType)
+        collectMusicList()
+
+        musicListUseCase.loadSongList(MusicUtil.localMusicStorageUri().toString())
     }
 
-    fun dispatch(event: MusicPlayerScreenEvent) = viewModelScope.launch {
+    fun dispatch(event: MusicSongScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicPlayerScreenEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
-            is MusicPlayerScreenEvent.OnPlayClick -> onPlay(event.song)
-            is MusicPlayerScreenEvent.OnSnapTo -> snapTo(event.duration)
-            is MusicPlayerScreenEvent.OnNextClick -> onNextClicked()
-            is MusicPlayerScreenEvent.OnPreviousClick -> onPreviousClicked()
-            is MusicPlayerScreenEvent.OnPause -> { /** Nothing **/}
-            is MusicPlayerScreenEvent.OnRepeatClick -> onRepeatClicked()
-            is MusicPlayerScreenEvent.OnShuffleClick -> onShuffleClicked()
-            is MusicPlayerScreenEvent.OnPlaylistTypeChanged -> onPlaylistTypeChanged(event.playlistType)
+            is MusicSongScreenEvent.OnMusicListTypeChanged -> onPlaylistTypeChanged(event.musicListType)
+            is MusicSongScreenEvent.OnItemViewTypeChanged -> {}
         }
     }
 
@@ -56,80 +50,38 @@ class MusicSongScreenViewModel @Inject constructor(
         musicMediaItemEventUseCase.dispatch(event)
     }
 
-    fun loadData(playlistType: PlaylistType) {
-        musicControllerUsecase.loadPlaylist(playlistType)
+    private fun onPlaylistTypeChanged(musicListType: MusicListType) {
+        musicListUseCase.setMusicListType(musicListType)
     }
-
-    private fun onPlay(song: Song) = viewModelScope.launch {
-        musicControllerUsecase.onPlay(song)
-    }
-    private fun onNextClicked() = viewModelScope.launch {
-        musicControllerUsecase.onNext()
-    }
-    private fun onPreviousClicked() = viewModelScope.launch {
-        musicControllerUsecase.onPrevious()
-    }
-    private fun onPlayPauseButtonClicked(song: Song) = viewModelScope.launch {
-        if(musicPlayerScreenState.value.musicState.isPlaying) {
-            musicControllerUsecase.onPause()
-        } else {
-            musicControllerUsecase.onPlay(song)
-        }
-    }
-    private fun onShuffleClicked() = viewModelScope.launch {
-        musicControllerUsecase.onShuffleButtonPressed()
-    }
-
-    private fun onRepeatClicked() = viewModelScope.launch {
-        musicControllerUsecase.onRepeatButtonPressed()
-    }
-
-    private fun snapTo(duration: Long) {
-        musicControllerUsecase.snapTo(duration)
-    }
-
-    private fun onPlaylistTypeChanged(playlistType: PlaylistType) {
-        if(musicPlayerScreenState.value.musicState.playlistType == playlistType) {
-            return
-        }
-
-        loadData(playlistType)
-    }
-    private fun collectMusicState() = viewModelScope.launch {
-        musicControllerUsecase.musicState.collectLatest { musicState ->
-            _musicPlayerScreenState.update {
-                it.copy(
-                    musicState = musicState
-                )
-            }
-        }
-    }
-
-    private fun collectExoPlayerState() = viewModelScope.launch {
-        musicControllerUsecase.exoPlayerState.collectLatest { progress ->
-            _musicPlayerScreenState.update {
-                it.copy(
-                    progressBarVisibility = progress == ExoPlayer.STATE_BUFFERING
-                )
-            }
-        }
-    }
-
-    private fun collectDuration() = viewModelScope.launch {
-        musicControllerUsecase.timePassed.collectLatest { duration ->
-            _musicPlayerScreenState.update {
-                it.copy(
-                    currentDuration = duration
-                )
-            }
-        }
-    }
-
     private fun collectPlaylist() = viewModelScope.launch {
-        playlistUseCase.playlistState.collectLatest { playlists ->
-            _musicPlayerScreenState.update {
+        musicPlaylistUseCase.playlistState.collectLatest { playlists ->
+            _musicSongScreenState.update {
                 it.copy(
                     playlists = playlists
+                )
+            }
+        }
+    }
+
+    private fun collectMusicList() = viewModelScope.launch {
+        combine(
+            musicListUseCase.localSongList,
+            musicListUseCase.streamingSongList,
+            musicListUseCase.musicListType,
+        ) { localSongList, streamingSongList, musicListType ->
+            Triple(localSongList, streamingSongList, musicListType)
+        }.collect { (localSongList, streamingSongList, musicListType) ->
+
+            val songList = when(musicListType) {
+                MusicListType.All -> localSongList + streamingSongList
+                MusicListType.Local -> localSongList
+                MusicListType.Streaming -> streamingSongList
+            }
+
+            _musicSongScreenState.update {
+                it.copy(
+                    songList = songList,
+                    musicListType = musicListType
                 )
             }
         }

@@ -1,7 +1,7 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model
 
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class MusicMediaItemEventUseCase @Inject constructor(
     private val applicationScope: CoroutineScope,
-    private val playlistUseCase: PlaylistUseCase,
+    private val musicPlaylistUseCase: MusicPlaylistUseCase,
 ) {
     fun dispatch(event: MusicMediaItemEvent) = applicationScope.launch {
         when(event) {
@@ -29,7 +29,7 @@ class MusicMediaItemEventUseCase @Inject constructor(
                 )
 
                 withContext(Dispatchers.IO) {
-                    playlistUseCase.updatePlaylists(updatedPlaylist)
+                    musicPlaylistUseCase.updatePlaylists(updatedPlaylist)
                 }
             }
             is MusicMediaItemEvent.OnAddToPlayingQueueClick -> {}
@@ -48,11 +48,11 @@ class MusicMediaItemEventUseCase @Inject constructor(
     }
 
     private suspend fun deletePlaylist(playlist: Playlist) = withContext(Dispatchers.IO) {
-        playlistUseCase.deletePlaylists(playlist)
+        musicPlaylistUseCase.deletePlaylists(playlist)
     }
 
     private suspend fun updatePlaylist(playlist: Playlist) = withContext(Dispatchers.IO) {
-        playlistUseCase.updatePlaylists(playlist)
+        musicPlaylistUseCase.updatePlaylists(playlist)
     }
 
     private suspend fun playlistSaveAsFile(playlist: Playlist) = withContext(Dispatchers.IO) {

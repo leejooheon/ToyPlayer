@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import com.jooheon.clean_architecture.domain.entity.music.PlaylistType
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
@@ -23,6 +23,7 @@ class MusicControllerUsecase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
+    private val musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
 
@@ -73,11 +74,11 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun collectPlayList() = applicationScope.launch {
-        musicController.playlist.collectLatest { playlist ->
+        musicController.playingQueue.collectLatest { playlist ->
             Timber.tag(TAG).d( "collectSongList - ${playlist.size}")
             _musicState.update {
                 it.copy(
-                    playlist = playlist
+                    playingQueue = playlist
                 )
             }
         }
@@ -135,17 +136,13 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    fun loadPlaylist(playlistType: PlaylistType) = applicationScope.launch(Dispatchers.IO) {
-        _musicState.update {
-            it.copy(playlistType = playlistType)
-        }
-        musicController.loadPlaylist(playlistType)
-    }
-
-    fun onPlay(song: Song = musicState.value.currentPlayingMusic) = applicationScope.launch(Dispatchers.IO) {
+    fun onPlay(
+        song: Song = musicState.value.currentPlayingMusic,
+        addToPlayingQueue: Boolean,
+    ) = applicationScope.launch(Dispatchers.IO) {
         val state = musicState.value
         if(isFirstPlay(song)) { // 최초 실행시
-            val firstSong = state.playlist.firstOrNull() ?: song
+            val firstSong = state.playingQueue.firstOrNull() ?: song
             musicController.play(firstSong)
             return@launch
         }
@@ -153,6 +150,10 @@ class MusicControllerUsecase @Inject constructor(
         if(state.currentPlayingMusic == song) { // pause -> play 한 경우
             musicController.resume()
             return@launch
+        }
+
+        if(addToPlayingQueue) {
+            musicPlayingQueueUseCase.addToPlayingQueue(song)
         }
 
         musicController.play(song)

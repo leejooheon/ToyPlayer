@@ -18,12 +18,12 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 
 
 @Composable
 internal fun MusicSongMediaColumn(
-    musicPlayerScreenState: MusicPlayerScreenState,
+    musicSongScreenState: MusicSongScreenState,
     listState: LazyListState,
     songMediaColumnItemType: Boolean,
 
@@ -32,8 +32,7 @@ internal fun MusicSongMediaColumn(
 
     modifier: Modifier,
 ) {
-    val musicState = musicPlayerScreenState.musicState
-    val playlists = musicPlayerScreenState.playlists
+    val playlists = musicSongScreenState.playlists
 
     var musicMediaItemEventState by remember {
         mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
@@ -44,7 +43,7 @@ internal fun MusicSongMediaColumn(
         modifier = modifier
     ) {
         items(
-            items = musicState.playlist,
+            items = musicSongScreenState.songList,
             key = { song: Song -> song.hashCode() }
         ) { song ->
             MusicSongMediaColumnItem(
@@ -72,7 +71,7 @@ private fun MusicSongMediaColumnPreview() {
         ) {
 
             MusicSongMediaColumn(
-                musicPlayerScreenState = MusicPlayerScreenState.default,
+                musicSongScreenState = MusicSongScreenState.default,
                 listState = rememberLazyListState(),
                 songMediaColumnItemType = true,
                 onSongClick = {},
@@ -90,7 +89,7 @@ private fun MusicSongMediaColumnPreview2() {
             modifier = Modifier.width(400.dp)
         ) {
             MusicSongMediaColumn(
-                musicPlayerScreenState = MusicPlayerScreenState.default,
+                musicSongScreenState = MusicSongScreenState.default,
                 listState = rememberLazyListState(),
                 songMediaColumnItemType = false,
                 onSongClick = {},

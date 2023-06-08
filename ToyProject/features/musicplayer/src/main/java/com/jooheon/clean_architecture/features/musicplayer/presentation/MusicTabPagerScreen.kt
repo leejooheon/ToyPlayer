@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.main
+package com.jooheon.clean_architecture.features.musicplayer.presentation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -16,52 +16,38 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.domain.entity.music.Song
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.common.compose.extensions.pagerTabIndicatorOffset
+import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
 import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.clean_architecture.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
-import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreenViewModel
 
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MusicTabPagerScreen(
-    musicPlayerScreenState: MusicPlayerScreenState,
-    musicAlbumScreenState: MusicAlbumScreenState,
-    musicArtistScreenState: MusicArtistScreenState,
-    musicPlaylistScreenState: MusicPlaylistScreenState,
-
-    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
-    onMusicAlbumScreenEvent: (MusicAlbumScreenEvent) -> Unit,
-    onMusicArtistScreenEvent: (MusicArtistScreenEvent) -> Unit,
-    onMusicPlaylistScreenEvent: (MusicPlaylistScreenEvent) -> Unit,
-
-    onMusicPlaylistItemEvent: (MusicPlaylistItemEvent) -> Unit,
-    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    navController: NavController,
 ) {
 
     val tabPages = listOf(
@@ -134,39 +120,72 @@ fun MusicTabPagerScreen(
             ) { page ->
                 when (page) {
                     0 -> {
+                        val viewModel = hiltViewModel<MusicSongScreenViewModel>()
+                        val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
+                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
                         MusicSongScreen(
-                            musicPlayerScreenState = musicPlayerScreenState,
-                            onEvent = onMusicPlayerScreenEvent,
-                            onMusicMediaItemEvent = onMusicMediaItemEvent
+                            musicSongState = screenState,
+                            onMusicSongEvent = viewModel::dispatch,
+                            onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+
+                            musicPlayerState = musicPlayerState,
+                            onMusicPlayerEvent = viewModel::dispatch,
                         )
                     }
                     1 -> {
+                        val viewModel = hiltViewModel<MusicAlbumScreenViewModel>().apply {
+                            navigateToDetailScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.AlbumDetail.createRoute(it))
+                            }
+                        }
+                        val screenState by viewModel.musicAlbumScreenState.collectAsStateWithLifecycle()
+                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
                         MusicAlbumScreen(
-                            musicAlbumState = musicAlbumScreenState,
-                            musicPlayerScreenState = musicPlayerScreenState,
-                            onMusicAlbumEvent = onMusicAlbumScreenEvent,
-                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
+                            musicAlbumState = screenState,
+                            onMusicAlbumEvent = viewModel::dispatch,
+
+                            musicPlayerState = musicPlayerState,
+                            onMusicPlayerEvent = viewModel::dispatch,
                         )
                     }
                     2 -> {
+                        val viewModel = hiltViewModel<MusicArtistScreenViewModel>().apply {
+                            navigateToDetailScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
+                            }
+                        }
+                        val screenState by viewModel.musicArtistScreenState.collectAsStateWithLifecycle()
+                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
                         MusicArtistScreen(
-                            musicArtistState = musicArtistScreenState,
-                            musicPlayerScreenState = musicPlayerScreenState,
-                            onMusicArtistScreenEvent = onMusicArtistScreenEvent,
-                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
+                            musicArtistState = screenState,
+                            onMusicArtistScreenEvent = viewModel::dispatch,
+
+                            musicPlayerState = musicPlayerState,
+                            onMusicPlayerEvent = viewModel::dispatch,
                         )
                     }
                     3 -> {
+                        val viewModel = hiltViewModel<MusicPlaylistScreenViewModel>().apply {
+                            navigateToDetailScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.PlaylistDetail.createRoute(it))
+                            }
+                        }
+                        val state by viewModel.musicPlaylistScreenState.collectAsStateWithLifecycle()
+                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
                         MusicPlaylistScreen(
-                            musicPlaylistScreenState = musicPlaylistScreenState,
-                            musicPlayerScreenState = musicPlayerScreenState,
-                            onMusicPlayerScreenEvent = onMusicPlayerScreenEvent,
-                            onMusicPlaylistScreenEvent = onMusicPlaylistScreenEvent,
-                            onMusicPlaylistItemEvent = onMusicPlaylistItemEvent
+                            musicPlaylistScreenState = state,
+                            onMusicPlaylistScreenEvent = viewModel::dispatch,
+                            onMusicPlaylistItemEvent = viewModel::onMusicMediaItemEvent,
+
+                            musicPlayerState = musicPlayerState,
+                            onMusicPlayerEvent = viewModel::dispatch,
                         )
                     }
                 }
-
             }
         }
     }
@@ -176,23 +195,8 @@ fun MusicTabPagerScreen(
 @Composable
 private fun MusicTabPagerScreenPreviewDark() {
     PreviewTheme(true) {
-        MusicTabPagerScreen(
-            musicPlayerScreenState = MusicPlayerScreenState.default.copy(
-                musicState = MusicState(
-                    playlist = Song.defaultList
-                )
-            ),
-            musicAlbumScreenState = MusicAlbumScreenState.default,
-            musicArtistScreenState = MusicArtistScreenState.default,
-            musicPlaylistScreenState = MusicPlaylistScreenState.default,
-
-            onMusicPlayerScreenEvent = {},
-            onMusicAlbumScreenEvent = {},
-            onMusicArtistScreenEvent = {},
-            onMusicPlaylistScreenEvent = {},
-
-            onMusicPlaylistItemEvent = {},
-            onMusicMediaItemEvent = {},
-        )
+//        MusicTabPagerScreen(
+//            navController = NavController(LocalContext.current),
+//        )
     }
 }

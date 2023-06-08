@@ -44,15 +44,18 @@ class MediaSessionCallback @Inject constructor(
             Timber.tag(TAG).d( "onPlayFromMediaId: $mediaId")
 
             val musicState = musicControllerUsecase.musicState.value
-            val song = musicState.playlist.firstOrNull {
+            val song = musicState.playingQueue.firstOrNull {
                 it.audioId.toString() == mediaId.defaultEmpty()
             } ?: run {
-                Timber.tag(TAG).d( "onPlayFromMediaId: not found - ${musicState.playlist}")
+                Timber.tag(TAG).d( "onPlayFromMediaId: not found - ${musicState.playingQueue}")
                 return@launch
             }
 
             if(musicState.isPlaying) {
-                musicControllerUsecase.onPlay(song)
+                musicControllerUsecase.onPlay(
+                    song = song,
+                    addToPlayingQueue = false
+                )
             } else {
                 musicControllerUsecase.onPause()
             }
@@ -65,8 +68,11 @@ class MediaSessionCallback @Inject constructor(
         applicationScope.launch {
             Timber.tag(TAG).d( "onPlayFromUri - ${uri}")
             val musicState = musicControllerUsecase.musicState.value
-            val song = musicState.playlist.firstOrNull { uri == it.uri } ?: return@launch
-            musicControllerUsecase.onPlay(song)
+            val song = musicState.playingQueue.firstOrNull { uri == it.uri } ?: return@launch
+            musicControllerUsecase.onPlay(
+                song = song,
+                addToPlayingQueue = false
+            )
         }
     }
 
@@ -78,12 +84,15 @@ class MediaSessionCallback @Inject constructor(
 
         applicationScope.launch {
             val musicState = musicControllerUsecase.musicState.value
-            val song = musicState.playlist.firstOrNull {
+            val song = musicState.playingQueue.firstOrNull {
                 it.title.contains(query, true)
             } ?: return@launch
 
             if(musicState.isPlaying) {
-                musicControllerUsecase.onPlay(song)
+                musicControllerUsecase.onPlay(
+                    song = song,
+                    addToPlayingQueue = false,
+                )
             } else {
                 musicControllerUsecase.onPause()
             }
@@ -104,7 +113,9 @@ class MediaSessionCallback @Inject constructor(
         super.onPlay()
         applicationScope.launch {
             Timber.tag(TAG).d( "onPlay")
-            musicControllerUsecase.onPlay()
+            musicControllerUsecase.onPlay(
+                addToPlayingQueue = false
+            )
         }
     }
 

@@ -4,11 +4,11 @@ import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSou
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-import com.jooheon.clean_architecture.domain.repository.PlaylistRepository
+import com.jooheon.clean_architecture.domain.repository.MusicPlaylistRepository
 
-class PlaylistRepositoryImpl(
+class MusicPlaylistRepositoryImpl(
     private val localPlaylistDataSource: LocalPlaylistDataSource,
-): PlaylistRepository {
+): MusicPlaylistRepository {
     override suspend fun getAllPlaylist(): Resource<List<Playlist>> {
         val list = localPlaylistDataSource.getAllPlaylist()
         return Resource.Success(list)

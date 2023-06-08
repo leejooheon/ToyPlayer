@@ -1,11 +1,11 @@
-package com.jooheon.clean_architecture.domain.usecase.playlist
+package com.jooheon.clean_architecture.domain.usecase.music.playlist
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.usecase.BaseUseCase
 import kotlinx.coroutines.flow.Flow
 
-interface IPlaylistUseCase: BaseUseCase {
+interface IMusicPlaylistUseCase: BaseUseCase {
     fun update()
 
     fun getAllPlaylist(): Flow<Resource<List<Playlist>>>

@@ -27,8 +27,10 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.d
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicPlayerScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import java.lang.Float
 import kotlin.math.max
 
@@ -36,12 +38,11 @@ import kotlin.math.max
 @Composable
 fun MusicArtistDetailScreen(
     musicArtistDetailScreenState: MusicArtistDetailScreenState,
-    musicPlayerScreenState: MusicPlayerScreenState,
-
     onMusicArtistDetailScreenEvent: (MusicArtistDetailScreenEvent) -> Unit,
-    onMusicPlayerScreenEvent: (MusicPlayerScreenEvent) -> Unit,
-
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+
+    musicPlayerState: MusicPlayerState,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -80,11 +81,11 @@ fun MusicArtistDetailScreen(
         )
 
         MediaSwipeableLayout(
-            musicPlayerScreenState = musicPlayerScreenState,
+            musicPlayerState = musicPlayerState,
             swipeableState = swipeableState,
             swipeAreaHeight = swipeAreaHeight,
             motionProgress = motionProgress,
-            onEvent = onMusicPlayerScreenEvent,
+            onEvent = onMusicPlayerEvent,
             content = {
                 ArtistDetailMediaColumn(
                     musicArtistDetailScreenState = musicArtistDetailScreenState,
@@ -107,10 +108,11 @@ private fun MusicArtistDetailScreenPreview() {
     PreviewTheme(false) {
         MusicArtistDetailScreen(
             musicArtistDetailScreenState = MusicArtistDetailScreenState.default,
-            musicPlayerScreenState = MusicPlayerScreenState.default,
             onMusicArtistDetailScreenEvent = {},
-            onMusicPlayerScreenEvent = {},
             onMusicMediaItemEvent = {},
+
+            musicPlayerState = MusicPlayerState.default,
+            onMusicPlayerEvent = {},
         )
     }
 }

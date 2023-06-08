@@ -4,9 +4,9 @@ import androidx.room.Room
 import com.jooheon.clean_architecture.data.dao.playlist.PlaylistDatabase
 import com.jooheon.clean_architecture.data.dao.playlist.data.PlaylistMapper
 import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSource
-import com.jooheon.clean_architecture.data.repository.PlaylistRepositoryImpl
-import com.jooheon.clean_architecture.domain.repository.PlaylistRepository
-import com.jooheon.clean_architecture.domain.usecase.playlist.PlaylistUseCase
+import com.jooheon.clean_architecture.data.repository.MusicPlaylistRepositoryImpl
+import com.jooheon.clean_architecture.domain.repository.MusicPlaylistRepository
+import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.toyproject.di.Constants
 import com.jooheon.clean_architecture.toyproject.di.MyApplication
 import dagger.Module
@@ -18,29 +18,29 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PlaylistModule {
+object MusicPlaylistModule {
     @Provides
     @Singleton
     fun providePlaylistDatabase(myApplication: MyApplication) =
         Room.databaseBuilder(myApplication, PlaylistDatabase::class.java, Constants.PLAYLIST_DB).build()
     @Provides
     @Singleton
-    fun providePlaylistDao(playlistDatabase: PlaylistDatabase) =
+    fun provideMusicPlaylistDao(playlistDatabase: PlaylistDatabase) =
         playlistDatabase.dao
     @Provides
-    fun providePlaylistMapper(): PlaylistMapper = PlaylistMapper()
+    fun provideMusicPlaylistMapper(): PlaylistMapper = PlaylistMapper()
     @Provides
-    fun providePlaylistRepository(
+    fun provideMusicPlaylistRepository(
         localPlaylistDataSource: LocalPlaylistDataSource
-    ): PlaylistRepository = PlaylistRepositoryImpl(localPlaylistDataSource)
+    ): MusicPlaylistRepository = MusicPlaylistRepositoryImpl(localPlaylistDataSource)
 
     @Provides
     @Singleton
-    fun providePlaylistUseCase(
+    fun provideMusicPlaylistUseCase(
         applicationScope: CoroutineScope,
-        playlistRepository: PlaylistRepository
-    ): PlaylistUseCase = PlaylistUseCase(
+        musicPlaylistRepository: MusicPlaylistRepository
+    ): MusicPlaylistUseCase = MusicPlaylistUseCase(
         applicationScope = applicationScope,
-        playlistRepository = playlistRepository
+        musicPlaylistRepository = musicPlaylistRepository
     )
 }
