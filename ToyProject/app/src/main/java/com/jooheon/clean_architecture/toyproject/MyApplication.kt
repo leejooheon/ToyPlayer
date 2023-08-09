@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.toyproject.di
+package com.jooheon.clean_architecture.toyproject
 
 import android.app.Application
 import android.content.Context

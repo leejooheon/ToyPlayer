@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.toyproject.di.module
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
-import com.jooheon.clean_architecture.toyproject.di.MyApplication
+import com.jooheon.clean_architecture.toyproject.MyApplication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

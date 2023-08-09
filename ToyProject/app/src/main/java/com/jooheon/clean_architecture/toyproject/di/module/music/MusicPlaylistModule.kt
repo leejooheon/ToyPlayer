@@ -8,7 +8,7 @@ import com.jooheon.clean_architecture.data.repository.MusicPlaylistRepositoryImp
 import com.jooheon.clean_architecture.domain.repository.MusicPlaylistRepository
 import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
 import com.jooheon.clean_architecture.toyproject.di.Constants
-import com.jooheon.clean_architecture.toyproject.di.MyApplication
+import com.jooheon.clean_architecture.toyproject.MyApplication
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
