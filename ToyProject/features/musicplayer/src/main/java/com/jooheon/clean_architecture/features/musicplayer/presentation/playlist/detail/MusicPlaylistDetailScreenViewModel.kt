@@ -2,7 +2,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.playlis
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenState

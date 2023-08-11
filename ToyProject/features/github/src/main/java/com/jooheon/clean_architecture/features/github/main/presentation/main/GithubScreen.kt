@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.github.main.presentation.main.components.RepositoryColumn
 import com.jooheon.clean_architecture.features.github.main.presentation.main.components.SearchView
 import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEvent

@@ -33,7 +33,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.main.model.MainScreenEvent
 import com.jooheon.clean_architecture.features.main.navigation.BottomNavigationHost
 import com.jooheon.clean_architecture.features.main.navigation.MyBottomNavigation

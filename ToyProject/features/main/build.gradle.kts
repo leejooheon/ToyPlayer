@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
@@ -7,14 +9,13 @@ plugins {
     id("kotlin-kapt")
 }
 
-@Suppress("UnstableApiUsage")
 android {
-    namespace = "com.jooheon.clean_architecture.features.main"
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".main"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -34,21 +35,28 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
     }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
-    implementation(project(path = ":features:splash"))
-    implementation(project(path = ":features:github"))
-    implementation(project(path = ":features:wikipedia"))
-    implementation(project(path = ":features:map"))
-    implementation(project(path = ":features:musicplayer"))
-    implementation(project(path = ":features:musicservice"))
-    implementation(project(path = ":features:setting"))
-    implementation(project(path = ":features:splash"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
+    implementation(project(App.Module.Features.splash))
+    implementation(project(App.Module.Features.github))
+    implementation(project(App.Module.Features.wikipedia))
+    implementation(project(App.Module.Features.map))
+    implementation(project(App.Module.Features.musicPlayer))
+    implementation(project(App.Module.Features.musicService))
+    implementation(project(App.Module.Features.setting))
+    implementation(project(App.Module.Features.splash))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
@@ -91,19 +99,19 @@ dependencies {
     implementation(libs.bumptech.glide)
     kapt(libs.bumptech.glide.compiler)
 
-    // compose
-    implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.material.icon.extended)
+    // compose BOM
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
-    // compose material3
+    // compose
+    implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
+    implementation(libs.androidx.compose.materialWindow)
 
     // compose preview
-    implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // test
     testImplementation(libs.test.junit)

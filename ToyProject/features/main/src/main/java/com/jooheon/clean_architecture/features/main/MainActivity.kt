@@ -17,7 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.ThemeStateFlow
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.ApplicationTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.features.main.navigation.FullScreenNavigationHost
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent

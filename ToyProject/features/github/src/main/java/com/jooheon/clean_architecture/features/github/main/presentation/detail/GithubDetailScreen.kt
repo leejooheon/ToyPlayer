@@ -22,14 +22,14 @@ import androidx.compose.ui.util.lerp
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
-import com.jooheon.clean_architecture.features.common.compose.components.CustomSurface
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.CustomTheme
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CustomDivider
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CustomSurface
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.CustomTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.github.R
 import com.jooheon.clean_architecture.features.github.main.model.GithubDetailScreenState
 import com.jooheon.clean_architecture.features.github.main.presentation.main.components.RepositoryImage
+import com.jooheon.clean_architecture.toyproject.features.github.R
 import kotlin.math.max
 import kotlin.math.min
 

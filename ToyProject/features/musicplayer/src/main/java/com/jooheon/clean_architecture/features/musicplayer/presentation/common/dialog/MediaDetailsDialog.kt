@@ -9,10 +9,10 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.compose.components.ShowAlertDialog
-import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.ShowAlertDialog
+import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 

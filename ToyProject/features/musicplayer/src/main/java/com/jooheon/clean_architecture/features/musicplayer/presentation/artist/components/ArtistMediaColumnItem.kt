@@ -25,10 +25,10 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Artist
-import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)

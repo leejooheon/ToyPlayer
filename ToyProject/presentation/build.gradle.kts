@@ -9,11 +9,11 @@ plugins {
 
 @Suppress("UnstableApiUsage")
 android {
-    compileSdk = Versions.compileSdk
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -33,14 +33,14 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
     namespace = "com.jooheon.clean_architecture.presentation"
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
 //    implementation(project(path = ":features:musicservice"))
 //    implementation(project(path = ":features:musicplayer"))
 //    implementation(project(path = ":features:github"))
@@ -105,11 +105,11 @@ dependencies {
 
     // compose
     implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.material.icon.extended)
+    implementation(libs.androidx.compose.material.iconsExtended)
 
     // compose material3
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
+    implementation(libs.androidx.compose.materialWindow)
 
     // compose preview
     implementation(libs.androidx.compose.ui)

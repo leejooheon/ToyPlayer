@@ -16,8 +16,8 @@ package com.jooheon.clean_architecture.presentation.view.navigation
 //import com.google.accompanist.insets.rememberInsetsPaddingValues
 //import com.google.accompanist.insets.ui.BottomNavigation
 //import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-//import com.jooheon.clean_architecture.features.common.compose.theme.colors.AlphaNearOpaque
-//import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+//import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.colors.AlphaNearOpaque
+//import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 //import com.jooheon.clean_architecture.features.essential.base.UiText
 //
 //@Composable

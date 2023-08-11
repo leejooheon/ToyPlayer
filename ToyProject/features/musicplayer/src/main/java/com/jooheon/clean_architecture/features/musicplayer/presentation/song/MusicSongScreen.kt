@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.compose.extensions.scrollEnabled
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.extensions.scrollEnabled
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout

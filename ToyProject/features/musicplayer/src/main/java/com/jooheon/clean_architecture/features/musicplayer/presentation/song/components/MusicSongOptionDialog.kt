@@ -13,9 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.clean_architecture.domain.entity.music.MusicListType
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 
 @Composable
 internal fun MusicSongOptionDialog(

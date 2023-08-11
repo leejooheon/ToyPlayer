@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.album.d
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState

@@ -10,7 +10,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.Serializable

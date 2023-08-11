@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.MusicListType
 import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
-import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel

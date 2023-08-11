@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
-import com.jooheon.clean_architecture.features.common.compose.components.CustomSurface
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CustomSurface
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 
 @Composable
 fun RepositoryImage(

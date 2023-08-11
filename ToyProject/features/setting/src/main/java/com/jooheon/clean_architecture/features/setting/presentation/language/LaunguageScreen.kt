@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.setting.R
 import com.jooheon.clean_architecture.features.setting.presentation.main.SettingDetailItem
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
+import com.jooheon.clean_architecture.toyproject.features.setting.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

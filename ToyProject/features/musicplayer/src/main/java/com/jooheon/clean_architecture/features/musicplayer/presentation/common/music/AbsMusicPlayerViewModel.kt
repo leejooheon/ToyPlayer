@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
     private val musicControllerUsecase: MusicControllerUsecase,
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
 
     private val _musicPlayerState = MutableStateFlow(MusicPlayerState.default)

@@ -20,7 +20,7 @@ import androidx.media.app.NotificationCompat
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.utils.GlideUtil
+import com.jooheon.clean_architecture.toyproject.features.common.utils.GlideUtil
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_NEXT
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_PLAY_PAUSE
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_PREVIOUS
@@ -31,6 +31,7 @@ import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.TOGGLE_SHUFFLE
 import com.jooheon.clean_architecture.features.musicservice.data.*
 import com.jooheon.clean_architecture.features.musicservice.notification.PlayingNotificationManager
+import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber

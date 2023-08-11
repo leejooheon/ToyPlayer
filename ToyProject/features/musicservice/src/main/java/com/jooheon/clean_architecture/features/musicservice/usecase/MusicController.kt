@@ -12,7 +12,7 @@ import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPla
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.data.exoPlayerStateAsString
 import com.jooheon.clean_architecture.features.musicservice.data.uri
-import com.jooheon.clean_architecture.features.common.extension.showToast
+import com.jooheon.clean_architecture.toyproject.features.common.extension.showToast
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

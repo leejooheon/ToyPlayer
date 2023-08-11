@@ -29,10 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicplayer.R
+import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaDetailHeader
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout

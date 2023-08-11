@@ -25,9 +25,9 @@ import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.common.compose.observeWithLifecycle
-import com.jooheon.clean_architecture.features.common.extension.collectAsStateWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.clean_architecture.features.github.main.presentation.main.GithubScreen
 import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreen
 import com.jooheon.clean_architecture.features.github.main.presentation.detail.GithubDetailScreenViewModel
@@ -52,9 +52,9 @@ import com.jooheon.clean_architecture.features.setting.presentation.equalizer.Eq
 import com.jooheon.clean_architecture.features.setting.presentation.language.LanguageScreen
 import com.jooheon.clean_architecture.features.setting.presentation.SettingViewModel
 import com.jooheon.clean_architecture.features.setting.presentation.theme.ThemeScreen
-import com.jooheon.clean_architecture.features.splash.SplashScreen
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreenViewModel
+import com.jooheon.clean_architecture.toyproject.features.splash.SplashScreen
 
 @ExperimentalComposeUiApi
 @Composable

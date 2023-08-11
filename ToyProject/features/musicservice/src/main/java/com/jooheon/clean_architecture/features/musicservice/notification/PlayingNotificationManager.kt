@@ -14,9 +14,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.MusicService
-import com.jooheon.clean_architecture.features.musicservice.R
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
-import com.jooheon.clean_architecture.features.common.utils.VersionUtil
+import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
+import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 
 class PlayingNotificationManager(
     private val context: Context,
@@ -41,7 +41,7 @@ class PlayingNotificationManager(
         val actions = notificationActions(state)
         val largeIcon = bitmap ?: run {
             context.getDrawable(
-                com.jooheon.clean_architecture.features.common.R.drawable.ic_placeholder
+                com.jooheon.clean_architecture.toyproject.features.common.R.drawable.ic_placeholder
             )?.toBitmap()
         }
 

@@ -10,7 +10,7 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.test.TestImage
 import com.jooheon.clean_architecture.domain.usecase.github.GithubUseCase
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.github.main.model.GithubScreenEvent
 import com.jooheon.clean_architecture.features.github.main.model.GithubScreenState
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GithubScreenViewModel @Inject constructor(
     private val githubUseCase: GithubUseCase,
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
     var githubState by mutableStateOf(GithubScreenState.default)

@@ -2,7 +2,7 @@ package com.jooheon.clean_architecture.features.wikipedia.model
 
 import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 
 sealed class WikipediaScreenEvent {
     data class OnSearchButtonClick(val searchWord: String): WikipediaScreenEvent()
