@@ -36,6 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class MusicService: MediaBrowserServiceCompat() {
@@ -101,39 +102,27 @@ class MusicService: MediaBrowserServiceCompat() {
         updateMediaSession(musicState, duration)
 
         notifyJob?.cancel()
-        notifyJob = serviceScope.launch(Dispatchers.IO) {
-            notify(
-                musicState = musicState,
-                albumArtBitmap = null
-            )
-
-            val albumArtBitmap = async {
-                val albumArtUri = musicState.currentPlayingMusic.albumArtUri
-                GlideUtil.asBitmap(applicationContext, albumArtUri)
-            }.await()
-
-            notify(
-                musicState = musicState,
-                albumArtBitmap = albumArtBitmap
-            )
-        }
-    }
-
-    private fun notify(
-        musicState: MusicState,
-        albumArtBitmap: Bitmap?
-    ) {
-        notificationManager.notify(
-            PlayingNotificationManager.NOTIFICATION_ID,
-            playingNotificationManager.notificationMediaPlayer(
+        notifyJob = serviceScope.launch {
+            val notification = playingNotificationManager.notificationMediaPlayer(
                 context = applicationContext,
+                scope = this@launch,
                 mediaStyle = mediaStyle,
                 state = musicState,
-                bitmap = albumArtBitmap,
-            ).also {
+            )
+
+            if(!isForegroundService) {
                 isForegroundService = true
+                startForeground(
+                    PlayingNotificationManager.NOTIFICATION_ID,
+                    notification
+                )
+            } else {
+                notificationManager.notify(
+                    PlayingNotificationManager.NOTIFICATION_ID,
+                    notification
+                )
             }
-        )
+        }
     }
 
     override fun onCreate() {
@@ -163,6 +152,10 @@ class MusicService: MediaBrowserServiceCompat() {
             context = this,
             rootActivityIntent = rootActivityIntent,
             notificationManager = notificationManager,
+            bitmapProvider = BitmapProvider(
+                context = this,
+                bitmapSize = (256 * resources.displayMetrics.density).roundToInt(),
+            )
         )
 
         setupMediaSession()
