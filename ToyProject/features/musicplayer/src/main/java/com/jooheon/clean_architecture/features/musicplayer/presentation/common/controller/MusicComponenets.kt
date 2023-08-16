@@ -22,6 +22,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -33,6 +34,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
 import com.jooheon.clean_architecture.toyproject.features.common.R
+import kotlin.math.min
 
 
 @Composable
@@ -316,21 +318,34 @@ internal fun AlbumImage(
 @Composable
 internal fun PlayPauseButton(
     isPlaying: Boolean,
+    isBuffering: Boolean,
     iconRelativeSize: Float = 0.4f,
     onPlayPauseButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    RoundImageButton(
-        image = getPlayPauseIcon(isPlaying),
-        iconTint = MaterialTheme.colorScheme.tertiary,
-        iconRelativeSize = iconRelativeSize,
-        backgroundColor = Color.Transparent,
-        contentDescription = if (isPlaying) PAUSE_MUSIC_CD else PLAY_MUSIC_CD,
-        onClick = {
-            onPlayPauseButtonPressed()
-        },
-        modifier = modifier
-    )
+    if(isBuffering) {
+        Box(
+            modifier = modifier
+                .padding(all = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        }
+    } else {
+        RoundImageButton(
+            image = getPlayPauseIcon(isPlaying),
+            iconTint = MaterialTheme.colorScheme.tertiary,
+            iconRelativeSize = iconRelativeSize,
+            backgroundColor = Color.Transparent,
+            contentDescription = if (isPlaying) PAUSE_MUSIC_CD else PLAY_MUSIC_CD,
+            onClick = {
+                onPlayPauseButtonPressed()
+            },
+            modifier = modifier
+        )
+    }
 }
 
 @Composable
@@ -439,14 +454,12 @@ private fun AlbumImagePreview() {
 @Composable
 fun PlayButtonPreviewLight() {
     PreviewTheme(false) {
-        RoundImageButton(
-            image = R.drawable.ic_pause,
-            iconTint = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-            contentDescription = "Play Music",
-            iconRelativeSize = 0.4f,
+        PlayPauseButton(
+            isPlaying = true,
+            isBuffering = true,
+            onPlayPauseButtonPressed = { },
             modifier = Modifier.size(72.dp),
-        ) {}
+        )
     }
 }
 

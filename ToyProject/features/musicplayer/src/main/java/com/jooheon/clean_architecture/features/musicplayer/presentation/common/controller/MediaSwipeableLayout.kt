@@ -33,8 +33,6 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.t
 import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.launch
 import java.lang.Float
@@ -107,6 +105,7 @@ fun MediaSwipeableLayout(
             motionProgress = motionProgress,
             song = musicState.currentPlayingMusic,
             isPlaying = musicState.isPlaying,
+            isBuffering = musicState.isBuffering,
             onPlayPauseButtonClicked = { onEvent(MusicPlayerEvent.OnPlayPauseClick(it)) },
             onPlayListButtonPressed = { onEvent(MusicPlayerEvent.OnPlayPauseClick(Song.default)) },
             modifier = Modifier

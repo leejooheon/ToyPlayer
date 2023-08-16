@@ -3,7 +3,6 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import androidx.lifecycle.viewModelScope
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
@@ -24,7 +23,6 @@ open class AbsMusicPlayerViewModel (
     init {
         collectMusicState()
         collectDuration()
-        collectExoPlayerState()
     }
 
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {
@@ -76,16 +74,6 @@ open class AbsMusicPlayerViewModel (
 
     private fun snapTo(duration: Long) {
         musicControllerUsecase.snapTo(duration)
-    }
-
-    private fun collectExoPlayerState() = viewModelScope.launch {
-        musicControllerUsecase.exoPlayerState.collectLatest { progress ->
-            _musicPlayerState.update {
-                it.copy(
-                    progressBarVisibility = progress == ExoPlayer.STATE_BUFFERING
-                )
-            }
-        }
     }
 
     private fun collectDuration() = viewModelScope.launch {

@@ -270,10 +270,16 @@ class MusicService: MediaBrowserServiceCompat() {
         }
     }
 
-    private fun playbackState(state: MusicState) = if(state.isPlaying) {
-        PlaybackState.STATE_PLAYING
-    } else {
-        PlaybackState.STATE_PAUSED
+    private fun playbackState(state: MusicState): Int {
+        if(state.isBuffering) {
+            return PlaybackState.STATE_BUFFERING
+        }
+
+        return if(state.isPlaying) {
+            PlaybackState.STATE_PLAYING
+        } else {
+            PlaybackState.STATE_PAUSED
+        }
     }
 
     private fun toMediaMetadataCompat(song: Song) = MediaMetadataCompat.Builder().apply {

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
@@ -131,8 +132,14 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun collectExoPlayerState() = applicationScope.launch {
-        musicController.exoPlayerState.collectLatest {
-            _exoPlayerState.tryEmit(it)
+        musicController.exoPlayerState.collectLatest { state ->
+            _exoPlayerState.tryEmit(state)
+
+            _musicState.update {
+                it.copy(
+                    isBuffering = state == ExoPlayer.STATE_BUFFERING
+                )
+            }
         }
     }
 
