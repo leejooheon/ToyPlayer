@@ -30,8 +30,8 @@ activityCompose = "1.7.2"
 constraintLayout = "1.0.1"
 
 # KotlinX
-kotlinxCoroutines = "1.7.1"
-kotlinxSerialization = "1.5.0"
+kotlinxCoroutines = "1.7.3"
+kotlinxSerialization = "1.5.1"
 
 # JavaX
 javaxInject = "1"
