@@ -4,7 +4,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.pm.ServiceInfo
 import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.Bundle
@@ -20,17 +20,16 @@ import androidx.media.app.NotificationCompat
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.toyproject.features.common.utils.GlideUtil
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_NEXT
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_PLAY_PAUSE
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_PREVIOUS
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_QUIT
-import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.ACTION_REFRESH
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.CYCLE_REPEAT
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.MEDIA_SESSION_ACTIONS
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback.Companion.TOGGLE_SHUFFLE
 import com.jooheon.clean_architecture.features.musicservice.data.*
 import com.jooheon.clean_architecture.features.musicservice.notification.PlayingNotificationManager
+import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -59,7 +58,7 @@ class MusicService: MediaBrowserServiceCompat() {
     private val musicBind: IBinder = MediaPlayerServiceBinder()
     private var isForegroundService = false
 
-    private var notifyJob: Job? = null
+    private val metadataBuilder = MediaMetadataCompat.Builder()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent == null) {
@@ -81,7 +80,7 @@ class MusicService: MediaBrowserServiceCompat() {
             return START_NOT_STICKY
         }
 
-        update(musicState, duration)
+        notify(musicState, duration)
 
         return START_NOT_STICKY
     }
@@ -94,15 +93,14 @@ class MusicService: MediaBrowserServiceCompat() {
             ACTION_PREVIOUS -> mediaSessionCallback.onSkipToPrevious()
         }
     }
-    private fun update(
+    private fun notify(
         musicState: MusicState,
         duration: Long
     ) {
-        Timber.tag(TAG).d( "update mediaSession & notification")
+        Timber.d( "update mediaSession & notification")
         updateMediaSession(musicState, duration)
 
-        notifyJob?.cancel()
-        notifyJob = serviceScope.launch {
+        serviceScope.launch {
             val notification = playingNotificationManager.notificationMediaPlayer(
                 context = applicationContext,
                 scope = this@launch,
@@ -110,17 +108,25 @@ class MusicService: MediaBrowserServiceCompat() {
                 state = musicState,
             )
 
-            if(!isForegroundService) {
-                isForegroundService = true
-                startForeground(
-                    PlayingNotificationManager.NOTIFICATION_ID,
-                    notification
-                )
-            } else {
+            if(isForegroundService) {
                 notificationManager.notify(
                     PlayingNotificationManager.NOTIFICATION_ID,
                     notification
                 )
+            } else {
+                isForegroundService = true
+                if (VersionUtil.hasQ()) {
+                    startForeground(
+                        PlayingNotificationManager.NOTIFICATION_ID,
+                        notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                    )
+                } else {
+                    startForeground(
+                        PlayingNotificationManager.NOTIFICATION_ID,
+                        notification
+                    )
+                }
             }
         }
     }
@@ -146,7 +152,11 @@ class MusicService: MediaBrowserServiceCompat() {
         }
     }
     private fun initialize() {
-        Timber.tag(TAG).d( "initialize")
+        setupNotification()
+        setupMediaSession()
+    }
+
+    private fun setupNotification() {
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         playingNotificationManager = PlayingNotificationManager(
             context = this,
@@ -155,10 +165,18 @@ class MusicService: MediaBrowserServiceCompat() {
             bitmapProvider = BitmapProvider(
                 context = this,
                 bitmapSize = (256 * resources.displayMetrics.density).roundToInt(),
+                listener = { bitmap ->
+                    serviceScope.launch {
+                        if(bitmap == null) return@launch
+                        mediaSession.apply {
+                            metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
+                        }.run {
+                            setMetadata(metadataBuilder.build())
+                        }
+                    }
+                }
             )
         )
-
-        setupMediaSession()
     }
 
     private fun setupMediaSession() {
@@ -238,7 +256,7 @@ class MusicService: MediaBrowserServiceCompat() {
 
         mediaSession.apply {
             setPlaybackState(playbackStateBuilder.build())
-            setMetadata(toMediaMetadataCompat(state.currentPlayingMusic))
+            setMetadata(parseMediaMetadataCompat(state.currentPlayingMusic))
         }
     }
 
@@ -282,12 +300,12 @@ class MusicService: MediaBrowserServiceCompat() {
         }
     }
 
-    private fun toMediaMetadataCompat(song: Song) = MediaMetadataCompat.Builder().apply {
+    private fun parseMediaMetadataCompat(song: Song) = metadataBuilder.apply {
         title = song.title
         album = song.album
-        albumArtUri = song.albumArtUri.toString()
         artist = song.artist
         duration = song.duration
+        albumArtUri = song.albumArtUri.toString()
     }.build()
 
     private fun parseMediaMetadataCompat(state: MusicState): MediaMetadataCompat = MediaMetadataCompat.Builder().apply {

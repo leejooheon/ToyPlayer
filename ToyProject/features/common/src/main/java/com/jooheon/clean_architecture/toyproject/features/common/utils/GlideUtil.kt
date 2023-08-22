@@ -8,18 +8,12 @@ import android.net.Uri
 import android.util.Size
 import android.webkit.URLUtil
 import android.widget.ImageView
-import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.HttpException
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.jooheon.clean_architecture.toyproject.features.common.R
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.util.concurrent.ExecutionException
 
 object GlideUtil {
     fun ImageView.loadWithGlide(
@@ -35,31 +29,31 @@ object GlideUtil {
             .into(this)
     }
 
-    suspend fun loadBitmapSync(
+    @SuppressLint("CheckResult")
+    fun loadBitmap(
         context: Context,
         uri: Uri,
         size: Size,
-    ): Bitmap? {
-        val bitmap = withContext(Dispatchers.IO) {
-            try {
-                val futureTarget = Glide.with(context)
-                    .asBitmap()
-                    .customLoad(uri)
-                    .submit(size.width, size.height)
-                val bitmap = futureTarget.get()
+        onDone: (Bitmap?) -> Unit,
+    ) {
+        Glide.with(context)
+            .asBitmap()
+            .customLoad(uri)
+            .into(object : CustomTarget<Bitmap>(size.width, size.height) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    onDone.invoke(resource)
+                }
 
-                Glide.with(context).clear(futureTarget)
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                    super.onLoadFailed(errorDrawable)
+                    onDone.invoke(null)
+                }
 
-                bitmap
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
-        }
-
-        return bitmap
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    onDone.invoke(null)
+                }
+            })
     }
-
 
     private fun RequestManager.customLoad(uri: Uri): RequestBuilder<Drawable> {
         val url = uri.toString()

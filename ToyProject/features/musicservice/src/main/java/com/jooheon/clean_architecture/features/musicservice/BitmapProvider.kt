@@ -8,75 +8,64 @@ import android.net.Uri
 import android.util.Size
 import androidx.core.graphics.applyCanvas
 import com.jooheon.clean_architecture.toyproject.features.common.utils.GlideUtil
+import com.jooheon.clean_architecture.toyproject.features.musicservice.R
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 class BitmapProvider(
     context: Context,
     private val bitmapSize: Int,
+    private val listener: (Bitmap?) -> Unit,
 ) {
+    private val TAG = MusicService::class.java.simpleName + "@" + BitmapProvider::class.java.simpleName
+
+    private var lastUri: Uri? = null
+    private var lastBitmap: Bitmap? = null
+    private lateinit var defaultBitmap: Bitmap
+    val bitmap: Bitmap
+        get() = lastBitmap ?: defaultBitmap
+
     init {
         initDefaultBitmap(context)
     }
 
-    private lateinit var defaultBitmap: Bitmap
-
-    private var lastBitmap: Bitmap? = null
-
-    var lastUri: Uri? = null
-        private set
-
     private fun initDefaultBitmap(context: Context) {
-        val isSystemInDarkMode = context.resources.configuration.uiMode and
-                Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
         if(::defaultBitmap.isInitialized) return
-
         defaultBitmap = Bitmap.createBitmap(
             bitmapSize,
             bitmapSize,
             Bitmap.Config.ARGB_8888
         ).applyCanvas {
-//            val color = if(isSystemInDarkMode) {
-//                md_theme_light_primary
-//            } else {
-//                md_theme_dark_primary
-//            }
             drawColor(Color.BLACK) // FIXME
         }
     }
 
-    suspend fun load(context: Context, uri: Uri, onDone: (Bitmap) -> Unit) {
-        val bitmap = GlideUtil.loadBitmapSync(
-            context = context,
-            uri = uri,
-            size = Size(bitmapSize, bitmapSize)
-        ) ?: defaultBitmap
+    fun requireLoadBitmap(uri: Uri) = lastUri != uri
 
-        if(bitmap != defaultBitmap) {
-            lastUri = uri
-            lastBitmap = bitmap
+    suspend fun load(
+        context: Context,
+        uri: Uri,
+    ): Bitmap {
+        if(lastUri == uri) return bitmap
+        lastUri = uri
+
+        val result = suspendCancellableCoroutine<Bitmap?> { continuation ->
+            val bigNotificationImageSize = context.resources.getDimensionPixelSize(R.dimen.notification_big_image_size)
+            GlideUtil.loadBitmap(
+                context = context,
+                uri = uri,
+                size = Size(bigNotificationImageSize, bigNotificationImageSize),
+                onDone = {
+                    val bitmap = it ?: defaultBitmap
+                    continuation.resume(bitmap)
+                }
+            )
         }
 
-        onDone.invoke(bitmap)
-    }
+        val newBitmap = result ?: defaultBitmap
+        lastBitmap = newBitmap
+        listener.invoke(bitmap)
 
-    fun bitmap(uri: Uri): Bitmap {
-        val bitmap = lastBitmap ?: defaultBitmap
-
-        return if(uri == lastUri) {
-            bitmap
-        } else {
-            defaultBitmap
-        }
-    }
-
-    fun requireLoadImage(
-        uri: Uri
-    ): Boolean {
-        if(uri == lastUri) {
-            if(lastBitmap != defaultBitmap)
-                return false
-        }
-
-        return true
+        return bitmap
     }
 }

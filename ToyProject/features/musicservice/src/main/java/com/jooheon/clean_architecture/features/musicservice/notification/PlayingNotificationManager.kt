@@ -20,6 +20,8 @@ import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
 import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -30,6 +32,8 @@ class PlayingNotificationManager(
     private val bitmapProvider: BitmapProvider,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + PlayingNotificationManager::class.java.simpleName
+    private var bitmapJob: Job? = null
+
     companion object {
         const val NOTIFICATION_ID = 123
         const val NOTIFICATION_CHANNEL_ID = "bugs_lite_player_notification"
@@ -44,8 +48,6 @@ class PlayingNotificationManager(
         mediaStyle: androidx.media.app.NotificationCompat.MediaStyle,
         state: MusicState,
     ): Notification {
-        val albumArtUri = state.currentPlayingMusic.albumArtUri
-
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID).apply {
             setStyle(mediaStyle)
 
@@ -56,7 +58,10 @@ class PlayingNotificationManager(
             setDeleteIntent(retrievePlaybackAction(MediaSessionCallback.ACTION_QUIT))
             setContentIntent(getClickIntent())
 
-            setLargeIcon(bitmapProvider.bitmap(albumArtUri))
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+
+            setLargeIcon(bitmapProvider.bitmap)
             setSmallIcon(R.drawable.ic_notification)
 
             setOnlyAlertOnce(true)
@@ -64,23 +69,19 @@ class PlayingNotificationManager(
             notificationActions(state).forEach { addAction(it) }
         }
 
-        scope.launch {
-            if(!bitmapProvider.requireLoadImage(albumArtUri)) {
-                return@launch
+        val albumArtUri = state.currentPlayingMusic.albumArtUri
+        if(bitmapProvider.requireLoadBitmap(albumArtUri)) {
+            bitmapJob?.cancel()
+            bitmapJob = scope.launch(Dispatchers.IO) {
+                val bitmap = bitmapProvider.load(
+                    context = context,
+                    uri = albumArtUri,
+                )
+                notificationManager.notify(
+                    NOTIFICATION_ID,
+                    builder.setLargeIcon(bitmap).build()
+                )
             }
-
-            bitmapProvider.load(
-                context = context,
-                uri = albumArtUri,
-                onDone = {
-                    if(!isActive) return@load
-
-                    notificationManager.notify(
-                        NOTIFICATION_ID,
-                        builder.setLargeIcon(it).build()
-                    )
-                }
-            )
         }
 
         return builder.build()
