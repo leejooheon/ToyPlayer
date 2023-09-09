@@ -8,7 +8,8 @@ import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCaseImpl
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.data.exoPlayerStateAsString
 import com.jooheon.clean_architecture.features.musicservice.data.uri
@@ -28,7 +29,7 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
-    private val musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
+    private val playingQueueUseCase: PlayingQueueUseCase,
 ) : IMusicController {
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
 
@@ -69,7 +70,7 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
             play()
         }
     }
-    override fun play(song: Song) {
+    override fun play(song: Song) { // TODO: suspend로 다 바꾸자
         applicationScope.launch(Dispatchers.Main) {
             val musicStreamUri = song.uri
             Timber.tag(TAG).d("play musicStreamUri - ${musicStreamUri}, seekTo: ${song.duration}")
@@ -178,45 +179,14 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 //        }
     }
 
-//    override fun loadPlaylist(
-//        playlistType: PlaylistType,
-//        onPlayListLoaded: ((MutableList<Song>) -> Unit)?
-//    ) {
-//        musicListManager.loadPlaylist(playlistType).whenReady { isReady ->
-//            applicationScope.launch {
-//                if (isReady) {
-//                    val newPlaylist = if(shuffleMode.value == ShuffleMode.SHUFFLE) {
-//                        musicListManager.songList.shuffled().toMutableList()
-//                    } else {
-//                        musicListManager.songList
-//                    }
-//
-//                    _playlist.tryEmit(newPlaylist)
-//
-//                    onPlayListLoaded?.invoke(newPlaylist)
-//                } else {
-//                    val failureResource = musicListManager.latestFailureResource ?: return@launch
-//                    emitExoPlayerState(ExoPlayer.STATE_IDLE)
-//                }
-//            }
-//        }
-//    }
     private fun collectPlayingQueue() = applicationScope.launch {
-        musicPlayingQueueUseCase.playingQueueState.collectLatest {
-            if(it is Resource.Success) {
-                val playlist = it.value
-                val songs = playlist.songs
-                _playingQueue.tryEmit(songs)
-                songs.firstOrNull{
-                    it == currentPlayingMusic.value
-                } ?: run {
-                    Log.d("Jooheon", "stop!!: ${currentPlayingMusic.value}")
-                    stop()
-                    return@collectLatest
-                }
-            }
+        playingQueueUseCase.playingQueue().collectLatest {
+            _playingQueue.tryEmit(it)
+
+            if(it.isEmpty()) return@collectLatest
         }
     }
+
     fun collectDurationFromPlayer() {
         durationFromPlayerJob?.cancel()
         durationFromPlayerJob = applicationScope.launch(Dispatchers.IO) {

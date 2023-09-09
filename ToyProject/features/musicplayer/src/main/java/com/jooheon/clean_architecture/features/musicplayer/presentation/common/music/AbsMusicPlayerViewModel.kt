@@ -1,11 +1,11 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.common.music
 
 import androidx.lifecycle.viewModelScope
-import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
     private val musicControllerUsecase: MusicControllerUsecase,
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
 
     private val _musicPlayerState = MutableStateFlow(MusicPlayerState.default)
@@ -39,10 +39,7 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onPlay(song: Song) = viewModelScope.launch {
-        musicControllerUsecase.onPlay(
-            song = song,
-            addToPlayingQueue = true
-        )
+        musicControllerUsecase.onPlay(song = song)
     }
 
     private fun onNextClicked() = viewModelScope.launch {
@@ -57,10 +54,7 @@ open class AbsMusicPlayerViewModel (
         if(musicPlayerState.value.musicState.isPlaying) {
             musicControllerUsecase.onPause()
         } else {
-            musicControllerUsecase.onPlay(
-                song = song,
-                addToPlayingQueue = false,
-            )
+            musicControllerUsecase.onPlay(song = song)
         }
     }
 

@@ -57,7 +57,17 @@ internal fun MusicAlbumDetailMediaColumn(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             item {
-                MusicAlbumDetailHeader(album)
+                MusicAlbumDetailHeader(
+                    album = album,
+                    onActionPlayAll = {
+                        onEvent(
+                            MusicAlbumDetailScreenEvent.OnActionPlayAll(
+                                album = album,
+                                shuffle = it
+                            )
+                        )
+                    }
+                )
                 MediaDetailHeader(
                     count = album.songs.size
                 )

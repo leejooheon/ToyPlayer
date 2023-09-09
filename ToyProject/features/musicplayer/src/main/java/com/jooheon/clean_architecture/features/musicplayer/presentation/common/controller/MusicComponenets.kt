@@ -44,7 +44,6 @@ internal fun MusicProgress(
     currentDuration: Long,
     onChanged: (progress: Float) -> Unit
 ) {
-    Log.d("Jooheon", "currentDuration: ${currentDuration}, max: ${maxDuration}")
     val progress = remember(maxDuration, currentDuration) {
         currentDuration.toFloat() / maxDuration.toFloat()
     }

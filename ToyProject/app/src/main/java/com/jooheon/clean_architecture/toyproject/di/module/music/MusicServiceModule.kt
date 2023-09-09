@@ -7,7 +7,7 @@ import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicDataSour
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.data.repository.music.MusicListRepositoryImpl
 import com.jooheon.clean_architecture.domain.repository.MusicListRepository
-import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicController
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
@@ -41,12 +41,12 @@ object MusicServiceModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         exoPlayer: ExoPlayer,
-        musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
+        playingQueueUseCase: PlayingQueueUseCase,
     ): MusicController = MusicController(
         context = context,
         applicationScope = applicationScope,
         exoPlayer = exoPlayer,
-        musicPlayingQueueUseCase = musicPlayingQueueUseCase,
+        playingQueueUseCase = playingQueueUseCase,
     )
 
     @Provides
@@ -55,12 +55,12 @@ object MusicServiceModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicController: MusicController,
-        musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
+        playingQueueUseCase: PlayingQueueUseCase,
     ): MusicControllerUsecase = MusicControllerUsecase(
         context = context,
         applicationScope = applicationScope,
         musicController = musicController,
-        musicPlayingQueueUseCase = musicPlayingQueueUseCase,
+        playingQueueUseCase = playingQueueUseCase,
     )
 
     @Provides

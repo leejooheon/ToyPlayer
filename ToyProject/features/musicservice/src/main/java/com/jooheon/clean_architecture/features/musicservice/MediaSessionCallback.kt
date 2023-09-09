@@ -53,10 +53,7 @@ class MediaSessionCallback @Inject constructor(
             }
 
             if(musicState.isPlaying) {
-                musicControllerUsecase.onPlay(
-                    song = song,
-                    addToPlayingQueue = false
-                )
+                musicControllerUsecase.onPlay(song = song)
             } else {
                 musicControllerUsecase.onPause()
             }
@@ -70,10 +67,7 @@ class MediaSessionCallback @Inject constructor(
             Timber.tag(TAG).d( "onPlayFromUri - ${uri}")
             val musicState = musicControllerUsecase.musicState.value
             val song = musicState.playingQueue.firstOrNull { uri == it.uri } ?: return@launch
-            musicControllerUsecase.onPlay(
-                song = song,
-                addToPlayingQueue = false
-            )
+            musicControllerUsecase.onPlay(song = song)
         }
     }
 
@@ -90,10 +84,7 @@ class MediaSessionCallback @Inject constructor(
             } ?: return@launch
 
             if(musicState.isPlaying) {
-                musicControllerUsecase.onPlay(
-                    song = song,
-                    addToPlayingQueue = false,
-                )
+                musicControllerUsecase.onPlay(song = song,)
             } else {
                 musicControllerUsecase.onPause()
             }
@@ -114,9 +105,7 @@ class MediaSessionCallback @Inject constructor(
         super.onPlay()
         applicationScope.launch {
             Timber.tag(TAG).d( "onPlay")
-            musicControllerUsecase.onPlay(
-                addToPlayingQueue = false
-            )
+            musicControllerUsecase.onPlay()
         }
     }
 

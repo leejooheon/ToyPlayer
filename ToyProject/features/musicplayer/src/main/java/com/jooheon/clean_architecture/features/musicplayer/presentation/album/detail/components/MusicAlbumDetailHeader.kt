@@ -31,15 +31,17 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.compone
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 
 
 @Composable
-internal fun MusicAlbumDetailHeader(album: Album) {
+internal fun MusicAlbumDetailHeader(
+    album: Album,
+    onActionPlayAll: (shuffle: Boolean) -> Unit,
+) {
     val albumDuration = album.songs.fastSumBy { it.duration.toInt() }.toLong()
-    /** TODO **/
 
-    /** TODO **/
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -93,7 +95,7 @@ internal fun MusicAlbumDetailHeader(album: Album) {
                 .padding(12.dp)
         ) {
             OutlinedButton(
-                onClick = { /** TODO **/},
+                onClick = { onActionPlayAll(false) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
@@ -107,12 +109,9 @@ internal fun MusicAlbumDetailHeader(album: Album) {
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
-            /** TODO **/
-            /** TODO **/
-            /** TODO **/
-            /** TODO **/
+
             OutlinedButton(
-                onClick = { /** TODO **/},
+                onClick = { onActionPlayAll(true) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ),
@@ -137,7 +136,8 @@ private fun MusicAlbumDetailHeaderPreview() {
             album = Album.default.copy(
                 name = Resource.longStringPlaceholder,
                 artist = Resource.mediumStringPlaceholder
-            )
+            ),
+            onActionPlayAll = {},
         )
     }
 }

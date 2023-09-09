@@ -1,10 +1,10 @@
-package com.jooheon.clean_architecture.domain.repository
+package com.jooheon.clean_architecture.domain.repository.library
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
-interface MusicPlaylistRepository: BaseRepository {
+
+interface PlaylistRepository {
     suspend fun getAllPlaylist(): Resource<List<Playlist>>
-    suspend fun getPlaylist(id: Int): Resource<Playlist>
     suspend fun updatePlaylists(vararg playlist: Playlist)
     suspend fun insertPlaylists(vararg playlist: Playlist)
     suspend fun deletePlaylists(vararg playlist: Playlist)

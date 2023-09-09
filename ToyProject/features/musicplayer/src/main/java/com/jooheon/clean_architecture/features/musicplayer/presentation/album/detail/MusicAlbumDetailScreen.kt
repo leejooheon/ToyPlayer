@@ -55,8 +55,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.c
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
 import java.lang.Float
 import kotlin.math.max
 
@@ -192,7 +190,7 @@ private fun MediaAlbumHeader(album: Album) {
                 .padding(12.dp)
         ) {
             OutlinedButton(
-                onClick = { /** TODO **/},
+                onClick = { /** TODO **/ },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),

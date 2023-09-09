@@ -2,7 +2,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.artist.
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Artist
-import com.jooheon.clean_architecture.domain.usecase.music.playlist.MusicPlaylistUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUsecase,
-    private val musicPlaylistUseCase: MusicPlaylistUseCase,
+    private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG = MusicArtistDetailScreenViewModel::class.java.simpleName
@@ -47,10 +47,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlay(
-                    song = event.song,
-                    addToPlayingQueue = true,
-                )
+                musicControllerUsecase.onPlay(song = event.song)
             }
             is MusicArtistDetailScreenEvent.OnAlbumClick -> {
                 val route = ScreenNavigation.Music.AlbumDetail.createRoute(event.album)
@@ -63,7 +60,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     }
 
     private fun collectPlaylistState() = viewModelScope.launch{
-        musicPlaylistUseCase.playlistState.collectLatest { playlists ->
+        playlistUseCase.allPlaylist().collectLatest { playlists ->
             _musicArtistDetailScreenState.update {
                 it.copy(
                     playlists = playlists

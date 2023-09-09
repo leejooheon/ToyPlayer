@@ -100,6 +100,9 @@ dependencies {
     // AudioFileIO
     implementation(libs.jaudiotagger)
 
+    // Log
+    implementation(libs.jakewharton.timber)
+
     // test
     testImplementation(libs.test.junit)
     androidTestImplementation(libs.test.android.junit)

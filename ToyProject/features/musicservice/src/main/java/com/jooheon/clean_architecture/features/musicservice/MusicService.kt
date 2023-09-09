@@ -76,7 +76,7 @@ class MusicService: MediaBrowserServiceCompat() {
         val duration = intent.getLongExtra(MUSIC_DURATION, 0L)
 
         if(musicState.currentPlayingMusic == Song.default) {
-            Log.w(TAG, "received music_state is empty")
+            Timber.tag(TAG).w( "received music_state is empty")
             return START_NOT_STICKY
         }
 
@@ -97,7 +97,7 @@ class MusicService: MediaBrowserServiceCompat() {
         musicState: MusicState,
         duration: Long
     ) {
-        Timber.d( "update mediaSession & notification")
+        Timber.tag(TAG).d( "update mediaSession & notification")
         updateMediaSession(musicState, duration)
 
         serviceScope.launch {
@@ -114,7 +114,6 @@ class MusicService: MediaBrowserServiceCompat() {
                     notification
                 )
             } else {
-                isForegroundService = true
                 if (VersionUtil.hasQ()) {
                     startForeground(
                         PlayingNotificationManager.NOTIFICATION_ID,
@@ -127,6 +126,7 @@ class MusicService: MediaBrowserServiceCompat() {
                         notification
                     )
                 }
+                isForegroundService = true
             }
         }
     }
@@ -168,6 +168,8 @@ class MusicService: MediaBrowserServiceCompat() {
                 listener = { bitmap ->
                     serviceScope.launch {
                         if(bitmap == null) return@launch
+                        if(!isForegroundService) return@launch
+
                         mediaSession.apply {
                             metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, bitmap)
                         }.run {

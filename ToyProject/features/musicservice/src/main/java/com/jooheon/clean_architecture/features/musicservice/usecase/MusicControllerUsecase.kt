@@ -6,7 +6,7 @@ import android.os.IBinder
 import androidx.core.content.ContextCompat
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.domain.usecase.music.playingqueue.MusicPlayingQueueUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
@@ -24,7 +24,7 @@ class MusicControllerUsecase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
-    private val musicPlayingQueueUseCase: MusicPlayingQueueUseCase,
+    private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
 
@@ -145,7 +145,6 @@ class MusicControllerUsecase @Inject constructor(
 
     fun onPlay(
         song: Song = musicState.value.currentPlayingMusic,
-        addToPlayingQueue: Boolean,
     ) = applicationScope.launch(Dispatchers.IO) {
         val state = musicState.value
         if(isFirstPlay(song)) { // 최초 실행시
@@ -157,10 +156,6 @@ class MusicControllerUsecase @Inject constructor(
         if(state.currentPlayingMusic == song) { // pause -> play 한 경우
             musicController.resume()
             return@launch
-        }
-
-        if(addToPlayingQueue) {
-            musicPlayingQueueUseCase.addToPlayingQueue(song)
         }
 
         musicController.play(song)
@@ -199,6 +194,17 @@ class MusicControllerUsecase @Inject constructor(
             duration = duration,
             fromUser = true
         )
+    }
+
+    fun onOpenQueue(
+        songs: List<Song>,
+        addToPlayingQueue: Boolean
+    ) = applicationScope.launch(Dispatchers.IO){
+        if(addToPlayingQueue) {
+            playingQueueUseCase.addToPlayingQueue(*(songs.toTypedArray()))
+        } else {
+            playingQueueUseCase.openQueue(*(songs.toTypedArray()))
+        }
     }
 
     fun bindToService(context: Context): ServiceToken? {
