@@ -2,14 +2,15 @@ package com.jooheon.clean_architecture.toyproject.di.module.music
 
 import android.content.Context
 import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.data.datasource.local.LocalMusicPlayListDataSource
-import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicPlayListDataSource
-import com.jooheon.clean_architecture.data.repository.music.MusicPlayListRepositoryImpl
-import com.jooheon.clean_architecture.domain.repository.MusicPlayListRepository
+import com.jooheon.clean_architecture.data.datasource.local.LocalMusicDataSource
+import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicDataSource
+import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.repository.music.MusicListRepositoryImpl
+import com.jooheon.clean_architecture.domain.repository.MusicListRepository
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicController
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
-import com.jooheon.clean_architecture.features.musicservice.usecase.manager.MusicPlayListManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,12 +25,14 @@ object MusicServiceModule {
 
     @Provides
     fun provideMusicPlayListRepository(
-        localMusicPlayListDataSource: LocalMusicPlayListDataSource,
-        remoteMusicPlayListDataSource: RemoteMusicPlayListDataSource
-    ): MusicPlayListRepository {
-        return MusicPlayListRepositoryImpl(
-            localMusicPlayListDataSource = localMusicPlayListDataSource,
-            remoteMusicPlayListDataSource = remoteMusicPlayListDataSource
+        localMusicDataSource: LocalMusicDataSource,
+        remoteMusicDataSource: RemoteMusicDataSource,
+        appPreferences: AppPreferences,
+    ): MusicListRepository {
+        return MusicListRepositoryImpl(
+            localMusicDataSource = localMusicDataSource,
+            remoteMusicDataSource = remoteMusicDataSource,
+            appPreferences = appPreferences,
         )
     }
     @Provides
@@ -38,12 +41,10 @@ object MusicServiceModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         exoPlayer: ExoPlayer,
-        musicPlayListManager: MusicPlayListManager,
     ): MusicController = MusicController(
         context = context,
         applicationScope = applicationScope,
         exoPlayer = exoPlayer,
-        musicPlayListManager = musicPlayListManager,
     )
 
     @Provides
@@ -52,10 +53,12 @@ object MusicServiceModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicController: MusicController,
+        playingQueueUseCase: PlayingQueueUseCase,
     ): MusicControllerUsecase = MusicControllerUsecase(
         context = context,
         applicationScope = applicationScope,
         musicController = musicController,
+        playingQueueUseCase = playingQueueUseCase,
     )
 
     @Provides

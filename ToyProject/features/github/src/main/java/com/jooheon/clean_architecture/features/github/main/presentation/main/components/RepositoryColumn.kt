@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.components.CustomDivider
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CustomDivider
 import com.jooheon.clean_architecture.features.github.main.model.GithubScreenState
 
 @Composable

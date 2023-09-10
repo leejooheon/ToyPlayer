@@ -24,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.Entity
-import com.jooheon.clean_architecture.features.common.compose.components.CoilImage
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.wikipedia.presentation.components.SearchView
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenState

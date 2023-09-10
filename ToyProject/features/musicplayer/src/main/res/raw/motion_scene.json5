@@ -43,7 +43,7 @@
       },
       albumImage: {
         width: 'spread',
-        height: 'wrap',
+        height: 250,
         top: ['parent', 'top'],
         start: ['parent', 'start'],
         end: ['parent', 'end']

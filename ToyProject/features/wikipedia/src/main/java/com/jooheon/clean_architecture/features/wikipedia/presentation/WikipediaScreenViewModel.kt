@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.wikipedia.WikipediaUseCase
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.model.WikipediaScreenState
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WikipediaScreenViewModel @Inject constructor(
     private val wikipediaUseCase: WikipediaUseCase
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG: String = WikipediaScreenViewModel::class.java.simpleName
 
     var state by mutableStateOf(WikipediaScreenState.default)

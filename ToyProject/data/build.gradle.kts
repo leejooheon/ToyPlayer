@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("kotlin-android")
@@ -5,34 +7,39 @@ plugins {
     id("kotlin-kapt")
 }
 
-@Suppress("UnstableApiUsage")
 android {
-    compileSdk = Versions.compileSdk
+    namespace = App.nameSpace + ".data"
+
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
     }
-
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
+    }
     buildTypes {
         getByName("release") {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    namespace = "com.jooheon.clean_architecture.data"
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
+    implementation(project(App.Module.domain))
 
     implementation(libs.javax.inject)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.jakewharton.serialization.converter)
 
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)
-
-    // xml component to rx observable
-//    implementation(Libraries.rxConverter)
 
     // Network
     implementation(libs.squareup.retrofit)

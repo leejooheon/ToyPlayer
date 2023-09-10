@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
@@ -8,12 +10,12 @@ plugins {
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.features.github"
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".github"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,17 +35,24 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
     }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
 
     implementation(libs.kotlinx.serialization.json)
 
-    // android
+    // androidx
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
@@ -61,22 +70,21 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
-    // compose
-    implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.material)
+    // compose BOM
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
-    // compose motionlayout
+    // compose
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.ui.util)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.constraintlayout.compose)
 
-    // compose material3
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
-
     // compose preview
-    implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // accompanist
     implementation(libs.google.accompanist.insets)

@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
@@ -7,15 +9,13 @@ plugins {
     id("kotlin-kapt")
 }
 
-
-@Suppress("UnstableApiUsage")
 android {
-    namespace = "com.jooheon.clean_architecture.features.musicplayer"
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".musicplayer"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,14 +35,21 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
     }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
-    implementation(project(path = ":features:musicservice"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
+    implementation(project(App.Module.Features.musicService))
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -65,16 +72,22 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
+    // compose BOM
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
     // compose
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.material)
-
-    // compose motionlayout
+    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.constraintlayout.compose)
 
-    // compose material3
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
+    // compose preview
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // accompanist
     implementation(libs.google.accompanist.permissions)
@@ -84,11 +97,11 @@ dependencies {
     implementation(libs.google.accompanist.navigation.animation)
     implementation(libs.google.accompanist.navigation.material)
 
-    // compose preview
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    // AudioFileIO
+    implementation(libs.jaudiotagger)
+
+    // Log
+    implementation(libs.jakewharton.timber)
 
     // test
     testImplementation(libs.test.junit)

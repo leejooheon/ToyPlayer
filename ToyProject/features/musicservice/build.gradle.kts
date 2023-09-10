@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
@@ -7,14 +9,13 @@ plugins {
     id("kotlin-kapt")
 }
 
-@Suppress("UnstableApiUsage")
 android {
-    namespace = "com.jooheon.clean_architecture.features.musicservice"
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".musicservice"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,11 +30,18 @@ android {
             proguardFiles("proguard-android.txt", "proguard-rules.pro")
         }
     }
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
+    }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
 
     implementation(libs.androidx.core.ktx)
 

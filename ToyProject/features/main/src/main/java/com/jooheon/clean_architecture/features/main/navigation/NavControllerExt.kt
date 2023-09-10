@@ -4,14 +4,13 @@ import android.os.Bundle
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.Serializable
@@ -19,7 +18,7 @@ import java.io.Serializable
 @Stable
 @Composable
 fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
-    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Github) }
+    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Music) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -33,8 +32,8 @@ fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
                 destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Map.route } -> {
                     selectedItem.value = ScreenNavigation.BottomSheet.Map
                 }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Search.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Search
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Music.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Music
                 }
             }
         }

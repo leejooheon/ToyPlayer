@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("dagger.hilt.android.plugin")
@@ -8,12 +10,12 @@ plugins {
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.features.map"
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".map"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,13 +35,20 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
     }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
 
     // android
     implementation(libs.androidx.core.ktx)
@@ -59,16 +68,20 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
-    // compose
-    implementation(libs.androidx.compose.ui.util)
-    implementation(libs.androidx.compose.material)
+    // compose BOM
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
-    // compose motionlayout
+    // compose
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.constraintlayout.compose)
 
-    // compose material3
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
+    // compose preview
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // accompanist
     implementation(libs.google.accompanist.permissions)
@@ -76,12 +89,6 @@ dependencies {
     // google map
     implementation("com.google.maps.android:maps-compose:2.5.3")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
-
-    // compose preview
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // test
     testImplementation(libs.test.junit)

@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.features.musicservice.data
 import android.support.v4.media.MediaMetadataCompat
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
-import com.jooheon.clean_architecture.features.common.utils.MusicUtil
+import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 
 val Song.uri get() = MusicUtil.getSongFileUri(path)
 val Song.albumArtUri get() = MusicUtil.getMediaStoreAlbumCoverUri(this.imageUrl)

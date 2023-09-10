@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -5,13 +7,13 @@ plugins {
     id("kotlin-kapt")
 }
 
-@Suppress("UnstableApiUsage")
 android {
-    compileSdk = Versions.compileSdk
+    namespace = App.Module.Features.nameSpace + ".common"
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
         buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
@@ -28,13 +30,19 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
-    namespace = "com.jooheon.clean_architecture.features.common"
+    compileOptions {
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
+    }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
+    implementation(project(App.Module.domain))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
@@ -58,8 +66,13 @@ dependencies {
     // timber
     implementation(libs.jakewharton.timber)
 
-    // compose_material3
-    implementation(libs.androidx.compose.material.icon.extended)
+    // compose BOM
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // compose-material
+    implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.compose.material3)
 
     // accompanist

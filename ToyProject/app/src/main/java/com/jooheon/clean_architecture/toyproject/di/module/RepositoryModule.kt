@@ -4,7 +4,7 @@ import com.jooheon.clean_architecture.data.datasource.GithubRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.SubwayRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
 import com.jooheon.clean_architecture.data.datasource.WikipediaRemoteDataSource
-import com.jooheon.clean_architecture.data.datasource.local.ParkingSpotDataSource
+import com.jooheon.clean_architecture.data.datasource.local.LocalParkingSpotDataSource
 import com.jooheon.clean_architecture.data.local.AppPreferences
 import com.jooheon.clean_architecture.data.repository.*
 import com.jooheon.clean_architecture.domain.repository.*
@@ -54,9 +54,9 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideParkingSpotRepository(
-        parkingSpotDataSource: ParkingSpotDataSource
+        localParkingSpotDataSource: LocalParkingSpotDataSource
     ): ParkingSpotRepository {
-        return ParkingSpotRepositoryImpl(parkingSpotDataSource)
+        return ParkingSpotRepositoryImpl(localParkingSpotDataSource)
     }
 
     @Provides

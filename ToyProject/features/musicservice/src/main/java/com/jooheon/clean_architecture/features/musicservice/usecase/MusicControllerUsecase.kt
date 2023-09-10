@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
@@ -22,6 +24,7 @@ class MusicControllerUsecase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
+    private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
 
@@ -40,13 +43,14 @@ class MusicControllerUsecase @Inject constructor(
     init {
         Timber.tag(TAG).d( "musicController - ${musicController}")
         collectMusicState()
-        collectPlayList()
+        collectPlayingQueue()
         collectCurrentSong()
         collectIsPlaying()
         collectDuration()
         collectRepeatMode()
         collectShuffleMode()
         collectExoPlayerState()
+        collectPlayingQueueFromProvider()
     }
 
     private fun commandToService() {
@@ -71,12 +75,12 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    private fun collectPlayList() = applicationScope.launch {
-        musicController.playlist.collectLatest { playlist ->
-            Timber.tag(TAG).d( "collectSongList - ${playlist.size}")
+    private fun collectPlayingQueue() = applicationScope.launch {
+        musicController.playingQueue.collectLatest { playlist ->
+            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playlist.size}")
             _musicState.update {
                 it.copy(
-                    playlist = playlist
+                    playingQueue = playlist
                 )
             }
         }
@@ -129,19 +133,23 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun collectExoPlayerState() = applicationScope.launch {
-        musicController.exoPlayerState.collectLatest {
-            _exoPlayerState.tryEmit(it)
+        musicController.exoPlayerState.collectLatest { state ->
+            _exoPlayerState.tryEmit(state)
+
+            _musicState.update {
+                it.copy(
+                    isBuffering = state == ExoPlayer.STATE_BUFFERING
+                )
+            }
         }
     }
 
-    fun loadPlaylist() = applicationScope.launch(Dispatchers.IO) {
-        musicController.loadPlaylist()
-    }
-
-    fun onPlay(song: Song = musicState.value.currentPlayingMusic) = applicationScope.launch(Dispatchers.IO) {
+    fun onPlay(
+        song: Song = musicState.value.currentPlayingMusic,
+    ) = applicationScope.launch(Dispatchers.IO) {
         val state = musicState.value
         if(isFirstPlay(song)) { // 최초 실행시
-            val firstSong = state.playlist.firstOrNull() ?: song
+            val firstSong = state.playingQueue.firstOrNull() ?: song
             musicController.play(firstSong)
             return@launch
         }
@@ -187,6 +195,45 @@ class MusicControllerUsecase @Inject constructor(
             duration = duration,
             fromUser = true
         )
+    }
+
+    fun onOpenQueue(
+        songs: List<Song>,
+        addToPlayingQueue: Boolean,
+        autoPlay: Boolean
+    ) = applicationScope.launch(Dispatchers.IO){
+        if(addToPlayingQueue) { // TabToSelect
+            playingQueueUseCase.addToPlayingQueue(
+                song = songs.toTypedArray(),
+                autoPlayWhenQueueChanged = autoPlay
+            )
+        } else { // TabToPlay
+            if(songs == musicState.value.playingQueue) {
+                if(songs.isEmpty()) return@launch
+                if(!autoPlay) return@launch
+                musicController.play(songs.first())
+            } else {
+                playingQueueUseCase.openQueue(
+                    song = songs.toTypedArray(),
+                    autoPlayWhenQueueChanged = autoPlay
+                )
+            }
+        }
+    }
+
+    private fun collectPlayingQueueFromProvider() = applicationScope.launch {
+        playingQueueUseCase.playingQueue().collectLatest {
+            val autoPlayModel = playingQueueUseCase.getAutoPlayWhenQueueChanged()
+            Timber.d("collectPlayingQueueFromProvider: ${it.size}, ${autoPlayModel}")
+            musicController.updatePlayingQueue(it)
+
+            val model = autoPlayModel ?: return@collectLatest
+            val autoPlay = model.first
+            val song = model.second
+
+            musicController.play(song)
+            if(!autoPlay) musicController.pause()
+        }
     }
 
     fun bindToService(context: Context): ServiceToken? {

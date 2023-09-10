@@ -10,7 +10,7 @@ import com.google.maps.android.compose.MapProperties
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.usecase.map.ParkingSpotUseCase
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.map.model.MapScreenEvent
 import com.jooheon.clean_architecture.features.map.model.MapScreenState
@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val parkingSpotUseCase: ParkingSpotUseCase
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG = MapViewModel::class.java.simpleName
 
     private val _mapState = MutableStateFlow(MapScreenState())

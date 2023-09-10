@@ -15,9 +15,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.setting.R
+import com.jooheon.clean_architecture.toyproject.features.setting.R
 
 
 @Composable

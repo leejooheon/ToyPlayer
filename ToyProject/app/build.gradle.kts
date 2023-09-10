@@ -1,25 +1,25 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-kapt")
-//    id("com.jooheon.kotlin-quality")
     id("com.google.gms.google-services")
     id("dagger.hilt.android.plugin")
 }
 
-@Suppress("UnstableApiUsage")
 android {
-    namespace = Releases.applicationId
+    namespace = App.nameSpace
 
-    compileSdk = Versions.compileSdk
+    compileSdk = App.Versions.compileSdk
     defaultConfig {
-        applicationId = Releases.applicationId
+        applicationId = App.applicationId
 
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
-        versionCode = Releases.versionCode
-        versionName = Releases.versionName
+        versionCode = App.Releases.versionCode
+        versionName = App.Releases.versionName
 
         multiDexEnabled = true
         vectorDrawables.useSupportLibrary = true
@@ -49,8 +49,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = Versions.javaCompileVersion
-        targetCompatibility = Versions.javaCompileVersion
+        sourceCompatibility = App.Versions.javaCompileVersion
+        targetCompatibility = App.Versions.javaCompileVersion
+    }
+    kotlinOptions {
+        jvmTarget = App.Versions.javaLanguageVersion
     }
     packagingOptions {
         resources.excludes += "META-INF/AL2.0"
@@ -60,15 +63,15 @@ android {
 }
 
 dependencies {
-    implementation(project(path = ":data"))
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:main"))
-    implementation(project(path = ":features:musicservice"))
-    implementation(project(path = ":features:musicplayer"))
+    implementation(project(App.Module.data))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.main))
+    implementation(project(App.Module.Features.musicService))
+    implementation(project(App.Module.Features.musicPlayer))
 
-    // util
+    // androidx
     implementation(libs.androidx.multidex)
-
+    implementation(libs.androidx.material)
 
     // hilt
     implementation(libs.hilt.android)
@@ -79,13 +82,9 @@ dependencies {
     implementation(libs.hilt.worker)
     kapt(libs.hilt.worker.compiler)
 
-
     // coroutine
     implementation(libs.kotlinx.coroutines.core)
     testImplementation(libs.kotlinx.coroutines.test)
-
-    // compose material3
-    implementation("com.google.android.material:material:1.8.0-beta01")
 
     // Network
     implementation(libs.squareup.retrofit)

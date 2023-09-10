@@ -18,7 +18,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private const val MODE = Context.MODE_PRIVATE
 
         private val USER_DATA = Pair("USER_DATA", "")
-        private val FIRST_TIME = Pair("FIRST_TIME", true)
+        private val MUSIC_LIST_TYPE = Pair("MUSIC_LIST_TYPE", 0)
         private val FIREBASE_TOKEN = Pair("FIREBASE_TOKEN", "")
 
         private val REPEAT_MODE = Pair("REPEAT_MODE", RepeatMode.REPEAT_OFF.ordinal)
@@ -62,12 +62,12 @@ class AppPreferences @Inject constructor(private val context: Context) {
             }
         }
 
-    var isFirstTime: Boolean
+    var musicListType: Int
         get() {
-            return appPreferences.getBoolean(FIRST_TIME.first, FIRST_TIME.second)
+            return appPreferences.getInt(MUSIC_LIST_TYPE.first, MUSIC_LIST_TYPE.second)
         }
         set(value) = appPreferences.edit {
-            it.putBoolean(FIRST_TIME.first, value)
+            it.putInt(MUSIC_LIST_TYPE.first, value)
         }
 
     var firebaseToken: String?

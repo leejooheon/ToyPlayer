@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.setting.presentation.SettingViewModel
 
 @Composable

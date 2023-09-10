@@ -1,5 +1,10 @@
 package com.jooheon.clean_architecture.domain.entity.music
 
+import com.jooheon.clean_architecture.domain.common.Resource
+import kotlinx.serialization.Serializable
+import java.util.UUID
+
+@Serializable
 data class Song(
     val audioId: Long,
     val displayName: String,
@@ -10,8 +15,11 @@ data class Song(
     val albumId: String,
     val duration: Long,
     val path: String,
+    val trackNumber: Int,
     val imageUrl: String,
     var isFavorite: Boolean = false,
+    var data: String? = null,
+    private val uniqueId: String = UUID.randomUUID().toString(),
 ): java.io.Serializable {
 
     companion object {
@@ -25,8 +33,16 @@ data class Song(
             albumId = "-",
             duration = 1L,
             path = "-",
+            trackNumber = 1,
             imageUrl = "",
-            isFavorite = false
+            isFavorite = false,
+            data = null,
+        )
+
+        val defaultList = listOf(
+            default.copy(title = Resource.longStringPlaceholder),
+            default.copy(title = Resource.mediumStringPlaceholder),
+            default.copy(title = Resource.shortStringPlaceholder),
         )
     }
 }

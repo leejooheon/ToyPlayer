@@ -1,6 +1,7 @@
 <resources>
     <string name="close">닫기</string>
     <string name="ok">확인</string>
+    <string name="cancel">취소</string>
 
     <!-- Notofication -->
     <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
@@ -23,7 +24,7 @@
     <string name="title_cd_wikipedia">위키피디아</string>
     <string name="title_map">지도</string>
     <string name="title_cd_map">지도</string>
-    <string name="title_search">탐색</string>
-    <string name="title_cd_search">탐색</string>
+    <string name="title_music">음악</string>
+    <string name="title_cd_music">음악</string>
 
 </resources>

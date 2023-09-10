@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.usecase.subway.SubwayUseCase
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import com.jooheon.clean_architecture.features.main.model.MainScreenEvent
 import com.jooheon.clean_architecture.features.main.model.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val subwayUseCase: SubwayUseCase,
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG: String = MainViewModel::class.java.simpleName
 
     private val _mainScreenState = MutableStateFlow(MainScreenState.default)

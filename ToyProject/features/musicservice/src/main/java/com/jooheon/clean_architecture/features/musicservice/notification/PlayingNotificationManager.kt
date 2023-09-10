@@ -12,18 +12,28 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
+import com.jooheon.clean_architecture.features.musicservice.BitmapProvider
 import com.jooheon.clean_architecture.features.musicservice.MediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.MusicService
-import com.jooheon.clean_architecture.features.musicservice.R
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
-import com.jooheon.clean_architecture.features.common.utils.VersionUtil
+import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
+import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
+import com.jooheon.clean_architecture.toyproject.features.musicservice.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class PlayingNotificationManager(
     private val context: Context,
     private val rootActivityIntent: Intent,
     private val notificationManager: NotificationManager,
+    private val bitmapProvider: BitmapProvider,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + PlayingNotificationManager::class.java.simpleName
+    private var bitmapJob: Job? = null
+
     companion object {
         const val NOTIFICATION_ID = 123
         const val NOTIFICATION_CHANNEL_ID = "bugs_lite_player_notification"
@@ -32,20 +42,13 @@ class PlayingNotificationManager(
         createNotificationChannel(context, notificationManager)
     }
 
-    fun notificationMediaPlayer(
+    suspend fun notificationMediaPlayer(
         context: Context,
+        scope: CoroutineScope,
         mediaStyle: androidx.media.app.NotificationCompat.MediaStyle,
         state: MusicState,
-        bitmap: Bitmap? = null
     ): Notification {
-        val actions = notificationActions(state)
-        val largeIcon = bitmap ?: run {
-            context.getDrawable(
-                com.jooheon.clean_architecture.features.common.R.drawable.ic_placeholder
-            )?.toBitmap()
-        }
-
-        return NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID).apply {
+        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID).apply {
             setStyle(mediaStyle)
 
             setContentTitle(state.currentPlayingMusic.title)
@@ -55,13 +58,33 @@ class PlayingNotificationManager(
             setDeleteIntent(retrievePlaybackAction(MediaSessionCallback.ACTION_QUIT))
             setContentIntent(getClickIntent())
 
-            setLargeIcon(largeIcon)
+            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            setCategory(NotificationCompat.CATEGORY_TRANSPORT)
+
+            setLargeIcon(bitmapProvider.bitmap)
             setSmallIcon(R.drawable.ic_notification)
 
             setOnlyAlertOnce(true)
 
-            actions.forEach { addAction(it) }
-        }.build()
+            notificationActions(state).forEach { addAction(it) }
+        }
+
+        val albumArtUri = state.currentPlayingMusic.albumArtUri
+        if(bitmapProvider.requireLoadBitmap(albumArtUri)) {
+            bitmapJob?.cancel()
+            bitmapJob = scope.launch(Dispatchers.IO) {
+                val bitmap = bitmapProvider.load(
+                    context = context,
+                    uri = albumArtUri,
+                )
+                notificationManager.notify(
+                    NOTIFICATION_ID,
+                    builder.setLargeIcon(bitmap).build()
+                )
+            }
+        }
+
+        return builder.build()
     }
 
     private fun notificationActions(state: MusicState): List<NotificationCompat.Action> {

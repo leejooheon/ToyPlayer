@@ -16,10 +16,10 @@ import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.clean_architecture.features.common.compose.BottomNavigationItem
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.features.common.compose.theme.colors.AlphaNearOpaque
-import com.jooheon.clean_architecture.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.clean_architecture.toyproject.features.common.compose.BottomNavigationItem
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.colors.AlphaNearOpaque
+import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 
 @Composable

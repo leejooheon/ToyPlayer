@@ -9,11 +9,11 @@ plugins {
 
 android {
     namespace = "com.jooheon.clean_architecture.features.widget"
-    compileSdk = Versions.compileSdk
+    compileSdk = App.Versions.compileSdk
 
     defaultConfig {
-        minSdk = Versions.minSdk
-        targetSdk = Versions.targetSdk
+        minSdk = App.Versions.minSdk
+        targetSdk = App.Versions.targetSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,13 +33,13 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
 dependencies {
-    implementation(project(path = ":domain"))
-    implementation(project(path = ":features:common"))
+    implementation(project(App.Module.domain))
+    implementation(project(App.Module.Features.common))
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
@@ -65,14 +65,14 @@ dependencies {
     // compose
     implementation(libs.androidx.compose.ui.util)
     implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icon.extended)
+    implementation(libs.androidx.compose.material.iconsExtended)
 
     // compose motionlayout
     implementation(libs.androidx.constraintlayout.compose)
 
     // compose material3
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material3.windowsizeclass)
+    implementation(libs.androidx.compose.materialWindow)
 
     // compose preview
     implementation(libs.androidx.compose.ui)

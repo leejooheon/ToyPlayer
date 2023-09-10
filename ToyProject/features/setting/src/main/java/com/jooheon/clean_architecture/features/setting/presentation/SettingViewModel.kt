@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.ThemeStateFlow
-import com.jooheon.clean_architecture.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase,
     private val themeStateFlow: ThemeStateFlow
-): BaseViewModel() {
+): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
     val _sharedState = MutableStateFlow(SettingScreenState.default)

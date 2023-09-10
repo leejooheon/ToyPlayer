@@ -8,9 +8,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MusicState(
-    val playlist: List<Song> = emptyList(),
     val currentPlayingMusic: Song = Song.default,
+    val playingQueue: List<Song> = emptyList(),
     val isPlaying: Boolean = false,
+    val isBuffering: Boolean = false,
     val isShuffled: Boolean = false,
     val repeatMode: RepeatMode = RepeatMode.REPEAT_ALL,
     val shuffleMode: ShuffleMode = ShuffleMode.SHUFFLE,

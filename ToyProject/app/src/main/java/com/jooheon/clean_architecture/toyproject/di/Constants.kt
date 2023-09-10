@@ -10,4 +10,5 @@ internal object Constants {
     const val TOKEN_URL = "/oauth/token"
 
     const val PARKING_SPOT_DB = "parking_spots.db"
+    const val PLAYLIST_DB = "playlist.db"
 }
