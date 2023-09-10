@@ -53,6 +53,7 @@ class PlayingQueueUseCaseImpl(
         val songs = playingQueue().value
 
         val newSongs = songs.toMutableList().apply {
+            removeAll(song) // 중복 허용X
             addAll(song)
         }
         playingQueueRepository.updatePlayingQueue(newSongs)
