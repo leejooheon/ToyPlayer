@@ -41,12 +41,10 @@ object MusicServiceModule {
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         exoPlayer: ExoPlayer,
-        playingQueueUseCase: PlayingQueueUseCase,
     ): MusicController = MusicController(
         context = context,
         applicationScope = applicationScope,
         exoPlayer = exoPlayer,
-        playingQueueUseCase = playingQueueUseCase,
     )
 
     @Provides

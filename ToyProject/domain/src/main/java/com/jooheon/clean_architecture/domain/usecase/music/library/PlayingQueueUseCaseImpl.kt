@@ -15,6 +15,7 @@ class PlayingQueueUseCaseImpl(
     private val playingQueueRepository: PlayingQueueRepository,
 ): PlayingQueueUseCase {
     private val _currentPlayingQueue = MutableStateFlow<List<Song>>(emptyList())
+    private var autoPlayModel: Pair<Boolean, Song>? = null
 
     init {
         applicationScope.launch {
@@ -22,26 +23,49 @@ class PlayingQueueUseCaseImpl(
         }
     }
     override fun playingQueue() = _currentPlayingQueue.asStateFlow()
+    override suspend fun getAutoPlayWhenQueueChanged(): Pair<Boolean, Song>? {
+        val model = autoPlayModel
+        autoPlayModel = null
 
-    override suspend fun openQueue(vararg song: Song) {
+        return model
+    }
+
+    override suspend fun openQueue(
+        vararg song: Song,
+        autoPlayWhenQueueChanged: Boolean
+    ) {
         val songs = mutableListOf<Song>().apply {
             addAll(song)
         }
         playingQueueRepository.updatePlayingQueue(songs)
+
+        song.firstOrNull()?.let {
+            autoPlayModel = Pair(autoPlayWhenQueueChanged, it)
+        }
+
         update()
     }
 
-    override suspend fun addToPlayingQueue(vararg song: Song) {
+    override suspend fun addToPlayingQueue(
+        vararg song: Song,
+        autoPlayWhenQueueChanged: Boolean
+    ) {
         val songs = playingQueue().value
 
         val newSongs = songs.toMutableList().apply {
             addAll(song)
         }
         playingQueueRepository.updatePlayingQueue(newSongs)
+
+        song.firstOrNull()?.let {
+            autoPlayModel = Pair(autoPlayWhenQueueChanged, it)
+        }
+
         update()
     }
 
     override suspend fun deletePlayingQueue(vararg song: Song) {
+        autoPlayModel = null
         val songs = playingQueue().value
 
         val newSongs = songs.toMutableList().apply {

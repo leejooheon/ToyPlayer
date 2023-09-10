@@ -29,7 +29,6 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
     @ApplicationContext private val context: Context,
     private val applicationScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
-    private val playingQueueUseCase: PlayingQueueUseCase,
 ) : IMusicController {
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
 
@@ -58,10 +57,9 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 
     init {
         initExoPlayer()
-        collectPlayingQueue()
     }
 
-    private fun playWithMediaItem(mediaItem: MediaItem) {
+    private suspend fun playWithMediaItem(mediaItem: MediaItem) = withContext(Dispatchers.Main) {
         exoPlayer.run {
             playWhenReady = true
             setMediaItem(mediaItem)
@@ -70,14 +68,17 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
             play()
         }
     }
-    override fun play(song: Song) { // TODO: suspend로 다 바꾸자
-        applicationScope.launch(Dispatchers.Main) {
-            val musicStreamUri = song.uri
-            Timber.tag(TAG).d("play musicStreamUri - ${musicStreamUri}, seekTo: ${song.duration}")
 
-            _currentPlayingMusic.tryEmit(song)
-            playWithMediaItem(MediaItem.fromUri(musicStreamUri))
-        }
+    override suspend fun updatePlayingQueue(songs: List<Song>) {
+        _playingQueue.tryEmit(songs)
+    }
+
+    override suspend fun play(song: Song) {
+        val musicStreamUri = song.uri
+        Timber.tag(TAG).d("play musicStreamUri - ${musicStreamUri}, seekTo: ${song.duration}")
+
+        _currentPlayingMusic.tryEmit(song)
+        playWithMediaItem(MediaItem.fromUri(musicStreamUri))
     }
 
     override suspend fun resume() = withContext(Dispatchers.Main) {
@@ -177,14 +178,6 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
 //        runOnUiThread {
 //            _skipState.tryEmit(skipDuration)
 //        }
-    }
-
-    private fun collectPlayingQueue() = applicationScope.launch {
-        playingQueueUseCase.playingQueue().collectLatest {
-            _playingQueue.tryEmit(it)
-
-            if(it.isEmpty()) return@collectLatest
-        }
     }
 
     fun collectDurationFromPlayer() {

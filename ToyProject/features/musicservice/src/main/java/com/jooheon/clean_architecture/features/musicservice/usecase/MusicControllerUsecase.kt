@@ -43,13 +43,14 @@ class MusicControllerUsecase @Inject constructor(
     init {
         Timber.tag(TAG).d( "musicController - ${musicController}")
         collectMusicState()
-        collectPlayList()
+        collectPlayingQueue()
         collectCurrentSong()
         collectIsPlaying()
         collectDuration()
         collectRepeatMode()
         collectShuffleMode()
         collectExoPlayerState()
+        collectPlayingQueueFromProvider()
     }
 
     private fun commandToService() {
@@ -74,9 +75,9 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    private fun collectPlayList() = applicationScope.launch {
+    private fun collectPlayingQueue() = applicationScope.launch {
         musicController.playingQueue.collectLatest { playlist ->
-            Timber.tag(TAG).d( "collectSongList - ${playlist.size}")
+            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playlist.size}")
             _musicState.update {
                 it.copy(
                     playingQueue = playlist
@@ -198,12 +199,34 @@ class MusicControllerUsecase @Inject constructor(
 
     fun onOpenQueue(
         songs: List<Song>,
-        addToPlayingQueue: Boolean
+        addToPlayingQueue: Boolean,
+        autoPlay: Boolean
     ) = applicationScope.launch(Dispatchers.IO){
-        if(addToPlayingQueue) {
-            playingQueueUseCase.addToPlayingQueue(*(songs.toTypedArray()))
-        } else {
-            playingQueueUseCase.openQueue(*(songs.toTypedArray()))
+        if(addToPlayingQueue) { // TabToSelect
+            playingQueueUseCase.addToPlayingQueue(
+                song = songs.toTypedArray(),
+                autoPlayWhenQueueChanged = autoPlay
+            )
+        } else { // TabToPlay
+            playingQueueUseCase.openQueue(
+                song = songs.toTypedArray(),
+                autoPlayWhenQueueChanged = autoPlay
+            )
+        }
+    }
+
+    private fun collectPlayingQueueFromProvider() = applicationScope.launch {
+        playingQueueUseCase.playingQueue().collectLatest {
+            val autoPlayModel = playingQueueUseCase.getAutoPlayWhenQueueChanged()
+            Timber.d("collectPlayingQueueFromProvider: ${it.size}, ${autoPlayModel}")
+            musicController.updatePlayingQueue(it)
+
+            val model = autoPlayModel ?: return@collectLatest
+            val autoPlay = model.first
+            val song = model.second
+
+            musicController.play(song)
+            if(!autoPlay) musicController.pause()
         }
     }
 

@@ -4,9 +4,8 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 
 
 interface IMusicController {
-//    fun updatePlayingQueue(songs: List<Song>)
-
-    fun play(song: Song)
+    suspend fun updatePlayingQueue(songs: List<Song>)
+    suspend fun play(song: Song)
     suspend fun resume()
     suspend fun stop()
     suspend fun pause()

@@ -2,7 +2,6 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.album.d
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Album
-import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
@@ -10,7 +9,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.album.de
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -27,7 +25,6 @@ import javax.inject.Inject
 class MusicAlbumDetailScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUsecase,
     private val playlistUseCase: PlaylistUseCase,
-    private val playingQueueUseCase: PlayingQueueUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG = MusicAlbumDetailScreenViewModel::class.java.simpleName
@@ -38,11 +35,8 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
     private val _navigateTo = Channel<String>()
     val navigateTo = _navigateTo.receiveAsFlow()
 
-    private var requirePlay = false
-
     init {
         collectPlaylistState()
-        collectPlayingQueue()
     }
     fun initialize(album: Album) = viewModelScope.launch {
         _musicAlbumDetailScreenState.update {
@@ -58,10 +52,14 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
             }
             is MusicAlbumDetailScreenEvent.OnActionPlayAll -> {
                 Timber.d("OnActionPlayAll: ${event.album.name}, ${event.shuffle}")
-                requirePlay = true
+
+                val songs = if(event.shuffle) event.album.songs.shuffled()
+                            else event.album.songs
+
                 musicControllerUsecase.onOpenQueue(
-                    songs = event.album.songs,
-                    addToPlayingQueue = false
+                    songs = songs,
+                    addToPlayingQueue = false,
+                    autoPlay = true
                 )
             }
         }
@@ -78,15 +76,6 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                     playlists = playlists
                 )
             }
-        }
-    }
-
-    private fun collectPlayingQueue() = viewModelScope.launch {
-        playingQueueUseCase.playingQueue().collectLatest {
-            if(!requirePlay) return@collectLatest
-            if(it.isEmpty()) return@collectLatest
-
-            musicControllerUsecase.onPlay(it.first())
         }
     }
 }
