@@ -38,8 +38,8 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.album.Mu
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.MusicPlaylistScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.MusicPlaylistScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.MusicPlaylistScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreenViewModel
 
 import kotlinx.coroutines.launch
@@ -120,7 +120,11 @@ fun MusicTabPagerScreen(
             ) { page ->
                 when (page) {
                     0 -> {
-                        val viewModel = hiltViewModel<MusicSongScreenViewModel>()
+                        val viewModel = hiltViewModel<MusicSongScreenViewModel>().apply {
+                            navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
+                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+                            }
+                        }
                         val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
                         val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
 
@@ -137,6 +141,9 @@ fun MusicTabPagerScreen(
                         val viewModel = hiltViewModel<MusicAlbumScreenViewModel>().apply {
                             navigateToDetailScreen.observeWithLifecycle {
                                 navController.navigate(ScreenNavigation.Music.AlbumDetail.createRoute(it))
+                            }
+                            navigateToPlayingQueueScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
                             }
                         }
                         val screenState by viewModel.musicAlbumScreenState.collectAsStateWithLifecycle()
@@ -155,6 +162,9 @@ fun MusicTabPagerScreen(
                             navigateToDetailScreen.observeWithLifecycle {
                                 navController.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
                             }
+                            navigateToPlayingQueueScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+                            }
                         }
                         val screenState by viewModel.musicArtistScreenState.collectAsStateWithLifecycle()
                         val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
@@ -171,6 +181,9 @@ fun MusicTabPagerScreen(
                         val viewModel = hiltViewModel<MusicPlaylistScreenViewModel>().apply {
                             navigateToDetailScreen.observeWithLifecycle {
                                 navController.navigate(ScreenNavigation.Music.PlaylistDetail.createRoute(it))
+                            }
+                            navigateToPlayingQueueScreen.observeWithLifecycle {
+                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
                             }
                         }
                         val state by viewModel.musicPlaylistScreenState.collectAsStateWithLifecycle()

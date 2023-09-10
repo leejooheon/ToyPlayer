@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist
+package com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist
 
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -8,20 +8,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.components.PlaylistMediaColumn
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.components.PlaylistMediaColumn
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenState
 import java.lang.Float
 import kotlin.math.max
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MusicPlaylistScreen(
     musicPlaylistScreenState: MusicPlaylistScreenState,

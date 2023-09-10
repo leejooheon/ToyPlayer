@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

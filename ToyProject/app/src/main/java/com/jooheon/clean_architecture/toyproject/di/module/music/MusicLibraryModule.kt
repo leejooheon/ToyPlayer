@@ -41,8 +41,9 @@ object MusicLibraryModule {
     ): PlaylistRepository = PlaylistRepositoryImpl(localPlaylistDataSource)
     @Provides
     fun providePlaylistUseCase(
+        applicationScope: CoroutineScope,
         playlistRepository: PlaylistRepository
-    ): PlaylistUseCase = PlaylistUseCaseImpl(playlistRepository)
+    ): PlaylistUseCase = PlaylistUseCaseImpl(applicationScope, playlistRepository)
 
     @Singleton
     @Provides

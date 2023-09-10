@@ -107,7 +107,7 @@ fun MediaSwipeableLayout(
             isPlaying = musicState.isPlaying,
             isBuffering = musicState.isBuffering,
             onPlayPauseButtonClicked = { onEvent(MusicPlayerEvent.OnPlayPauseClick(it)) },
-            onPlayListButtonPressed = { onEvent(MusicPlayerEvent.OnPlayPauseClick(Song.default)) },
+            onPlayingQueueButtonPressed = { onEvent(MusicPlayerEvent.OnPlayingQueueClick) },
             modifier = Modifier
                 .clickable {
                     scope.launch { swipeableState.animateTo(1) }

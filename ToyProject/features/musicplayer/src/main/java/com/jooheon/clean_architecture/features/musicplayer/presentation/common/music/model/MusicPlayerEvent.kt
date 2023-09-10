@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 sealed class MusicPlayerEvent {
+    object OnPlayingQueueClick: MusicPlayerEvent()
     object OnPause: MusicPlayerEvent()
     object OnNextClick: MusicPlayerEvent()
     object OnPreviousClick: MusicPlayerEvent()

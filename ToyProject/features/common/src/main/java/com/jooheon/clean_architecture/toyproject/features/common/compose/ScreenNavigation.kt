@@ -123,6 +123,8 @@ sealed class ScreenNavigation(open val route: String) {
             }
         }
 
+        object PlayingQueue: ScreenNavigation("music_playing_queue_detail")
+
         object PlaylistDetail: ScreenNavigation("music_playlist_detail?item={playlist}") {
             const val playlist = "playlist"
             val arguments = listOf(

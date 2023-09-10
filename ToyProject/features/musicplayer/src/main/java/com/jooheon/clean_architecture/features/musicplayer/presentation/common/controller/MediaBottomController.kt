@@ -9,13 +9,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,7 +29,6 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import kotlin.math.min
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaBottomController(
     motionProgress: Float,
@@ -39,7 +36,7 @@ fun MediaBottomController(
     isPlaying: Boolean,
     isBuffering: Boolean,
     onPlayPauseButtonClicked: (Song) -> Unit,
-    onPlayListButtonPressed: () -> Unit,
+    onPlayingQueueButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
 
@@ -91,7 +88,7 @@ fun MediaBottomController(
                     .alpha(1f - min(motionProgress * 2, 1f)),
             )
             PlayListButton(
-                onPlayListButtonPressed = onPlayListButtonPressed,
+                onPlayingQueueClick = onPlayingQueueButtonPressed,
                 modifier = Modifier
                     .wrapContentHeight()
                     .aspectRatio(1f)
@@ -115,7 +112,7 @@ private fun MediaBottomControllerPreview() {
                 isPlaying = true,
                 isBuffering = true,
                 onPlayPauseButtonClicked = {},
-                onPlayListButtonPressed = {},
+                onPlayingQueueButtonPressed = {},
                 modifier = Modifier.fillMaxWidth().height(64.dp)
             )
         }

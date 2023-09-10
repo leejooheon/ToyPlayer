@@ -208,10 +208,16 @@ class MusicControllerUsecase @Inject constructor(
                 autoPlayWhenQueueChanged = autoPlay
             )
         } else { // TabToPlay
-            playingQueueUseCase.openQueue(
-                song = songs.toTypedArray(),
-                autoPlayWhenQueueChanged = autoPlay
-            )
+            if(songs == musicState.value.playingQueue) {
+                if(songs.isEmpty()) return@launch
+                if(!autoPlay) return@launch
+                musicController.play(songs.first())
+            } else {
+                playingQueueUseCase.openQueue(
+                    song = songs.toTypedArray(),
+                    autoPlayWhenQueueChanged = autoPlay
+                )
+            }
         }
     }
 

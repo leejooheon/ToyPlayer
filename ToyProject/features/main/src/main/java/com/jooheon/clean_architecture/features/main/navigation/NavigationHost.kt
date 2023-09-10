@@ -42,8 +42,10 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.album.de
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreenViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.MusicPlaylistDetailScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.MusicPlaylistDetailScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.MusicPlayingQueueScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.MusicPlayingQueueScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.MusicPlaylistDetailScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.MusicPlaylistDetailScreenViewModel
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaScreen
 import com.jooheon.clean_architecture.features.wikipedia.presentation.WikipediaDatailScreen
@@ -185,7 +187,7 @@ internal fun FullScreenNavigationHost(
             ) {
 //                TestScreen()
             }
-            composable(ScreenNavigation.Setting.Language .route) {
+            composable(ScreenNavigation.Setting.Language.route) {
                 val settingViewModel = it.sharedViewModel<SettingViewModel>(
                     navController = navController,
                     parentRoute = ScreenNavigation.Setting.Main.route,
@@ -267,6 +269,9 @@ internal fun FullScreenNavigationHost(
                             navController.navigate(route)
                         }
                     }
+                    navigateToPlayingQueueScreen.observeWithLifecycle {
+                        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+                    }
                 }
                 val state by viewModel.musicArtistDetailScreenState.collectAsStateWithLifecycle()
                 val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
@@ -297,6 +302,9 @@ internal fun FullScreenNavigationHost(
                             navController.navigate(route)
                         }
                     }
+                    navigateToPlayingQueueScreen.observeWithLifecycle {
+                        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+                    }
                 }
                 val state by viewModel.musicAlbumDetailScreenState.collectAsStateWithLifecycle()
                 val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
@@ -306,6 +314,28 @@ internal fun FullScreenNavigationHost(
                     onMusicAlbumDetailScreenEvent = viewModel::dispatch,
                     onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
 
+                    musicPlayerState = musicPlayerState,
+                    onMusicPlayerEvent = viewModel::dispatch,
+                )
+            }
+            composable(ScreenNavigation.Music.PlayingQueue.route) {
+                val viewModel = hiltViewModel<MusicPlayingQueueScreenViewModel>().apply {
+                    navigateTo.observeWithLifecycle { route ->
+                        if(route == ScreenNavigation.Back.route) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(route)
+                        }
+                    }
+                }
+
+                val screenState by viewModel.musicPlayingQueueScreenState.collectAsStateWithLifecycle()
+                val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
+                MusicPlayingQueueScreen(
+                    musicPlayingQueueScreenState = screenState,
+                    onMusicPlayingQueueScreenEvent = viewModel::dispatch,
+                    onMediaDropDownMenuEvent = {},
                     musicPlayerState = musicPlayerState,
                     onMusicPlayerEvent = viewModel::dispatch,
                 )

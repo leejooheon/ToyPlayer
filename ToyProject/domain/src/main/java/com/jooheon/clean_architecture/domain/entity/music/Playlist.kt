@@ -16,5 +16,13 @@ data class Playlist(
             thumbnailUrl = "",
             songs = emptyList()
         )
+
+        const val PlayingQueuePlaylistId = -1000
+        val playingQueuePlaylist = Playlist(
+            id = PlayingQueuePlaylistId,
+            name = "PlayingQueue",
+            thumbnailUrl = "",
+            songs = emptyList()
+        )
     }
 }

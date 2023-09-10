@@ -16,13 +16,11 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -34,7 +32,6 @@ import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
 import com.jooheon.clean_architecture.toyproject.features.common.R
-import kotlin.math.min
 
 
 @Composable
@@ -350,7 +347,7 @@ internal fun PlayPauseButton(
 @Composable
 internal fun PlayListButton(
     iconRelativeSize: Float = 0.4f,
-    onPlayListButtonPressed: () -> Unit,
+    onPlayingQueueClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     RoundImageButton(
@@ -359,7 +356,7 @@ internal fun PlayListButton(
         iconRelativeSize = iconRelativeSize,
         backgroundColor = Color.Transparent,
         contentDescription = PLAY_LIST_CD,
-        onClick = onPlayListButtonPressed,
+        onClick = onPlayingQueueClick,
         modifier = modifier,
     )
 }

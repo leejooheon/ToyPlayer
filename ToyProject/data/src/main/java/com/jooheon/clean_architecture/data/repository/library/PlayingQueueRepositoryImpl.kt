@@ -21,7 +21,7 @@ class PlayingQueueRepositoryImpl(
     }
 
     override suspend fun getPlayingQueue(): Resource<List<Song>> {
-        val playingQueue = localPlaylistDataSource.getPlaylist(PlayingQueuePlaylistId)
+        val playingQueue = localPlaylistDataSource.getPlaylist(Playlist.PlayingQueuePlaylistId)
 
         val resource = if(playingQueue != null) {
             Resource.Success(playingQueue.songs)
@@ -35,7 +35,7 @@ class PlayingQueueRepositoryImpl(
 
     override suspend fun updatePlayingQueue(songs: List<Song>) {
         localPlaylistDataSource.updatePlaylists(
-            playingQueuePlaylist.copy(
+            Playlist.playingQueuePlaylist.copy(
                 songs = songs
             )
         )
@@ -43,26 +43,16 @@ class PlayingQueueRepositoryImpl(
 
     override suspend fun clear() {
         localPlaylistDataSource.updatePlaylists(
-            playingQueuePlaylist.copy(
+            Playlist.playingQueuePlaylist.copy(
                 songs = emptyList()
             )
         )
     }
 
     private suspend fun maybeMakePlayingQueueDb() {
-        val playlist = localPlaylistDataSource.getPlaylist(PlayingQueuePlaylistId)
+        val playlist = localPlaylistDataSource.getPlaylist(Playlist.PlayingQueuePlaylistId)
         if(playlist == null) {
-            localPlaylistDataSource.insertPlaylists(playingQueuePlaylist)
+            localPlaylistDataSource.insertPlaylists(Playlist.playingQueuePlaylist)
         }
-    }
-
-    companion object {
-        const val PlayingQueuePlaylistId = -1000
-
-        val playingQueuePlaylist = Playlist(
-            id = PlayingQueuePlaylistId,
-            name = "",
-            thumbnailUrl = ""
-        )
     }
 }

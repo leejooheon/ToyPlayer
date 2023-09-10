@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail
+package com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -40,11 +40,9 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.d
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.components.MusicPlaylistDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.detail.model.MusicPlaylistDetailScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
 
 import java.lang.Float
 import kotlin.math.max

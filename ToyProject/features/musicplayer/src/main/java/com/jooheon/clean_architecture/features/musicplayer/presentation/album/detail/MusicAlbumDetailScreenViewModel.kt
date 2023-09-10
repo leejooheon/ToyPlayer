@@ -59,7 +59,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 musicControllerUsecase.onOpenQueue(
                     songs = songs,
                     addToPlayingQueue = false,
-                    autoPlay = true
+                    autoPlay = false
                 )
             }
         }

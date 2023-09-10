@@ -1,14 +1,19 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.common.music
 
 import androidx.lifecycle.viewModelScope
+import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,6 +25,9 @@ open class AbsMusicPlayerViewModel (
     private val _musicPlayerState = MutableStateFlow(MusicPlayerState.default)
     val musicPlayerState = _musicPlayerState.asStateFlow()
 
+    protected val _navigateToPlayingQueueScreen = Channel<Playlist>()
+    val navigateToPlayingQueueScreen = _navigateToPlayingQueueScreen.receiveAsFlow()
+
     init {
         collectMusicState()
         collectDuration()
@@ -27,6 +35,7 @@ open class AbsMusicPlayerViewModel (
 
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {
         when(event) {
+            is MusicPlayerEvent.OnPlayingQueueClick -> onPlayingQueueClick()
             is MusicPlayerEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
             is MusicPlayerEvent.OnPlayClick -> onPlay(event.song)
             is MusicPlayerEvent.OnSnapTo -> snapTo(event.duration)
@@ -48,6 +57,14 @@ open class AbsMusicPlayerViewModel (
 
     private fun onPreviousClicked() = viewModelScope.launch {
         musicControllerUsecase.onPrevious()
+    }
+
+    private fun onPlayingQueueClick() = viewModelScope.launch {
+        _navigateToPlayingQueueScreen.send(
+            Playlist.playingQueuePlaylist.copy(
+                songs = musicPlayerState.value.musicState.playingQueue
+            )
+        )
     }
 
     private fun onPlayPauseButtonClicked(song: Song) = viewModelScope.launch {

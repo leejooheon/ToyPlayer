@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model
+package com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.model
 
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 

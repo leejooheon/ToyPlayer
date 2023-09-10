@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.playlist
+package com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.common.extension.defaultZero
@@ -7,8 +7,8 @@ import com.jooheon.clean_architecture.domain.usecase.music.library.PlaylistUseCa
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.model.MusicPlaylistScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +42,7 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     fun dispatch(event: MusicPlaylistScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlaylistScreenEvent.Refresh -> {} //playlistUseCase.update()
-            is MusicPlaylistScreenEvent.OnPlaylistClick -> _navigateToDetailScreen.send(event.playlist)
+            is MusicPlaylistScreenEvent.OnPlaylistClick -> onPlaylistClick(event.playlist)
             is MusicPlaylistScreenEvent.OnAddPlaylist -> insertPlaylist(event)
         }
     }
@@ -51,7 +51,15 @@ class MusicPlaylistScreenViewModel @Inject constructor(
         musicMediaItemEventUseCase.dispatch(event)
     }
 
-    private fun insertPlaylist(event: MusicPlaylistScreenEvent.OnAddPlaylist) = viewModelScope.launch {
+    private suspend fun onPlaylistClick(playlist: Playlist) {
+        if(playlist.id == Playlist.playingQueuePlaylist.id) {
+            _navigateToPlayingQueueScreen.send(playlist)
+        } else {
+            _navigateToDetailScreen.send(playlist)
+        }
+    }
+
+    private suspend fun insertPlaylist(event: MusicPlaylistScreenEvent.OnAddPlaylist) {
         val title = event.title
         val nextId = musicPlaylistScreenState.value.playlists.maxByOrNull { it.id }?.id.defaultZero() + 1
 

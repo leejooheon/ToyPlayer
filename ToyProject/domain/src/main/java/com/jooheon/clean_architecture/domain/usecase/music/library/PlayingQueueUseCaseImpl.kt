@@ -84,9 +84,7 @@ class PlayingQueueUseCaseImpl(
             playingQueueRepository.getPlayingQueue()
         }
         when(resource) {
-            is Resource.Success -> {
-                _currentPlayingQueue.tryEmit(resource.value)
-            }
+            is Resource.Success -> _currentPlayingQueue.tryEmit(resource.value)
             else -> _currentPlayingQueue.tryEmit(emptyList())
         }
     }

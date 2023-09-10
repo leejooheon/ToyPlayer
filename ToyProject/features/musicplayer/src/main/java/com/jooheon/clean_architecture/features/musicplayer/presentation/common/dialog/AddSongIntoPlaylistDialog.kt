@@ -19,7 +19,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
-import com.jooheon.clean_architecture.features.musicplayer.presentation.playlist.components.MusicPlaylistColumnItem
+import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.components.MusicPlaylistColumnItem
 
 
 @Composable
