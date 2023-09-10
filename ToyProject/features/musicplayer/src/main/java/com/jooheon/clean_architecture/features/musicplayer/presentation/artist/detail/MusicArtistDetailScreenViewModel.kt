@@ -47,7 +47,11 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlay(song = event.song)
+                musicControllerUsecase.onOpenQueue(
+                    songs = listOf(event.song),
+                    addToPlayingQueue = true,
+                    autoPlay = true,
+                )
             }
             is MusicArtistDetailScreenEvent.OnAlbumClick -> {
                 val route = ScreenNavigation.Music.AlbumDetail.createRoute(event.album)

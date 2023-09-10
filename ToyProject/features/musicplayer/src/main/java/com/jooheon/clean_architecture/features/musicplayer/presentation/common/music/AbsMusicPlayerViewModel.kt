@@ -47,19 +47,23 @@ open class AbsMusicPlayerViewModel (
         }
     }
 
-    private fun onPlay(song: Song) = viewModelScope.launch {
-        musicControllerUsecase.onPlay(song = song)
+    private fun onPlay(song: Song) {
+        musicControllerUsecase.onOpenQueue(
+            songs = listOf(song),
+            addToPlayingQueue = true,
+            autoPlay = true,
+        )
     }
 
-    private fun onNextClicked() = viewModelScope.launch {
+    private fun onNextClicked() {
         musicControllerUsecase.onNext()
     }
 
-    private fun onPreviousClicked() = viewModelScope.launch {
+    private fun onPreviousClicked() {
         musicControllerUsecase.onPrevious()
     }
 
-    private fun onPlayingQueueClick() = viewModelScope.launch {
+    private suspend fun onPlayingQueueClick() {
         _navigateToPlayingQueueScreen.send(
             Playlist.playingQueuePlaylist.copy(
                 songs = musicPlayerState.value.musicState.playingQueue
@@ -67,7 +71,7 @@ open class AbsMusicPlayerViewModel (
         )
     }
 
-    private fun onPlayPauseButtonClicked(song: Song) = viewModelScope.launch {
+    private fun onPlayPauseButtonClicked(song: Song) {
         if(musicPlayerState.value.musicState.isPlaying) {
             musicControllerUsecase.onPause()
         } else {
@@ -75,11 +79,11 @@ open class AbsMusicPlayerViewModel (
         }
     }
 
-    private fun onShuffleClicked() = viewModelScope.launch {
+    private fun onShuffleClicked() {
         musicControllerUsecase.onShuffleButtonPressed()
     }
 
-    private fun onRepeatClicked() = viewModelScope.launch {
+    private fun onRepeatClicked() {
         musicControllerUsecase.onRepeatButtonPressed()
     }
 

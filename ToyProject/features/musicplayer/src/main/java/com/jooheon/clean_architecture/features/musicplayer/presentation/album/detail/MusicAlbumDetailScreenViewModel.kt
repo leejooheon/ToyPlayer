@@ -48,7 +48,11 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicAlbumDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicAlbumDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlay(song = event.song)
+                musicControllerUsecase.onOpenQueue(
+                    songs = listOf(event.song),
+                    addToPlayingQueue = true,
+                    autoPlay = true,
+                )
             }
             is MusicAlbumDetailScreenEvent.OnActionPlayAll -> {
                 Timber.d("OnActionPlayAll: ${event.album.name}, ${event.shuffle}")
@@ -59,7 +63,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 musicControllerUsecase.onOpenQueue(
                     songs = songs,
                     addToPlayingQueue = false,
-                    autoPlay = false
+                    autoPlay = true
                 )
             }
         }

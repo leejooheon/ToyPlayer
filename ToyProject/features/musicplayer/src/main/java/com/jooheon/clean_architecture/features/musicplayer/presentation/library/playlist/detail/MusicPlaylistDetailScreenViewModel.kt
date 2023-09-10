@@ -40,7 +40,11 @@ class MusicPlaylistDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicPlaylistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicPlaylistDetailScreenEvent.OnSongClick ->  {
-                musicControllerUsecase.onPlay(song = event.song)
+                musicControllerUsecase.onOpenQueue(
+                    songs = listOf(event.song),
+                    addToPlayingQueue = true,
+                    autoPlay = true,
+                )
             }
         }
     }

@@ -41,7 +41,7 @@ class MusicSongScreenViewModel @Inject constructor(
 
     fun dispatch(event: MusicSongScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicSongScreenEvent.OnMusicListTypeChanged -> onPlaylistTypeChanged(event.musicListType)
+            is MusicSongScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
             is MusicSongScreenEvent.OnItemViewTypeChanged -> {}
         }
     }
@@ -50,7 +50,7 @@ class MusicSongScreenViewModel @Inject constructor(
         musicMediaItemEventUseCase.dispatch(event)
     }
 
-    private fun onPlaylistTypeChanged(musicListType: MusicListType) {
+    private fun onMusicListTypeChanged(musicListType: MusicListType) {
         musicListUseCase.setMusicListType(musicListType)
     }
     private fun collectPlaylist() = viewModelScope.launch {
