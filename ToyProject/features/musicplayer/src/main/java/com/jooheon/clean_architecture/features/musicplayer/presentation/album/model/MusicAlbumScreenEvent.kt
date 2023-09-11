@@ -7,4 +7,14 @@ sealed class MusicAlbumScreenEvent {
     object OnSortByAlbumName: MusicAlbumScreenEvent()
     object OnSortByArtistName: MusicAlbumScreenEvent()
 
+    companion object {
+
+        fun indexToEvent(index: Int): MusicAlbumScreenEvent {
+            return when(index) {
+                0 -> OnSortByAlbumName
+                1 -> OnSortByArtistName
+                else -> OnSortByAlbumName
+            }
+        }
+    }
 }

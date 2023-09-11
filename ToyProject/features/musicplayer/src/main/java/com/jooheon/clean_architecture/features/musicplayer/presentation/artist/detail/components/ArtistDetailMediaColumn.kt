@@ -48,14 +48,11 @@ internal fun ArtistDetailMediaColumn(
         mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
     }
 
-    /** Nothing **/
     Box(
         modifier = Modifier
             .statusBarsPadding()
             .fillMaxSize()
     ) {
-        /** Nothing **/
-        /** Nothing **/
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -66,19 +63,11 @@ internal fun ArtistDetailMediaColumn(
                 items = artist.albums,
                 key = { album: Album -> album.hashCode() }
             ) { album ->
-
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                MediaItemSmall(
+                ArtistDetailAlbumItem(
                     imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),
                     title = album.name,
                     subTitle = album.artist,
-                    showContextualMenu = false,
                     onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnAlbumClick(album)) },
-                    onDropDownMenuClick = { /** Nothing **/ },
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
 

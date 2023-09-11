@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.musicplayer.presentation.album.components
+package com.jooheon.clean_architecture.features.musicplayer.presentation.artist.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.t
 import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 
 @Composable
-internal fun AlbumMediaHeader(
+internal fun ArtistMediaHeader(
     onDropDownMenuClick: (index: Int) -> Unit,
     modifier: Modifier,
 ) {
@@ -61,7 +61,7 @@ internal fun AlbumMediaHeader(
                 }
                 MusicDropDownMenu(
                     expanded = dropDownMenuExpanded,
-                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.albumSortItems),
+                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.artistSortItems),
                     onDismissRequest = { dropDownMenuExpanded = false },
                     onClick = onDropDownMenuClick
                 )
@@ -69,11 +69,12 @@ internal fun AlbumMediaHeader(
         )
     }
 }
+
 @Preview
 @Composable
-private fun AlbumMediaHeaderPreview() {
+private fun ArtistMediaHeaderPreview() {
     PreviewTheme(true) {
-        AlbumMediaHeader(
+        ArtistMediaHeader(
             onDropDownMenuClick = {},
             modifier = Modifier
                 .width(300.dp)

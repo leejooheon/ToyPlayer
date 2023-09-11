@@ -36,7 +36,7 @@ class MusicAlbumScreenViewModel @Inject constructor(
     private val _navigateToDetailScreen = Channel<Album>()
     val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
 
-    private var sortType = MutableStateFlow(true)
+    private val sortType = MutableStateFlow(true)
     private var songList: List<Song> = emptyList()
 
     init {

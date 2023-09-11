@@ -34,6 +34,10 @@
     <string name="action_album_sort_by_artist_name">Artist name</string>
     <string name="action_album_sort_by_album_name">Album name</string>
 
+    <string name="action_arist_sort_by_artist_name">Artist name</string>
+    <string name="action_arist_sort_by_number_of_song">Number of song</string>
+    <string name="action_arist_sort_by_number_of_album">Number of album</string>
+
     <string name="label_file_name">File name</string>
     <string name="label_file_path">File path</string>
     <string name="label_last_modified">Last Modified</string>

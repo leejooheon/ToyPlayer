@@ -4,12 +4,14 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.components.ArtistMediaColumn
+import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.components.ArtistMediaHeader
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
@@ -46,6 +48,11 @@ fun MusicArtistScreen(
         motionProgress = motionProgress,
         onEvent = onMusicPlayerEvent,
         content = {
+            ArtistMediaHeader(
+                onDropDownMenuClick = { onMusicArtistScreenEvent(MusicArtistScreenEvent.indexToEvent(it)) },
+                modifier = Modifier,
+            )
+
             ArtistMediaColumn(
                 artists = musicArtistState.artists,
                 listState = rememberLazyGridState(),
