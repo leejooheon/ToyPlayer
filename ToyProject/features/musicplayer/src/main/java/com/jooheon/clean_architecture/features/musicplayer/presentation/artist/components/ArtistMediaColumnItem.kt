@@ -38,7 +38,13 @@ internal fun ArtistMediaColumnItem(
     onItemClick: () -> Unit
 ) {
     val imageUrl = artist.albums.firstOrNull()?.songs?.firstOrNull()?.imageUrl.defaultEmpty()
-    val size = artist.albums.map { it.songs }.flatten().size
+
+    val songSize = artist.albums.map { it.songs }.flatten().size
+    val albumSize = artist.albums.size
+
+    val songCount = UiText.StringResource(R.string.n_song, songSize).asString()
+    val albumCount = UiText.StringResource(R.string.n_album, albumSize).asString()
+
     Card(
         onClick = onItemClick,
         elevation = CardDefaults.cardElevation(
@@ -74,7 +80,7 @@ internal fun ArtistMediaColumnItem(
             )
 
             Text(
-                text = UiText.StringResource(R.string.n_song, size).asString(),
+                text = "$songCount • $albumCount",
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 style = MaterialTheme.typography.labelSmall,
                 maxLines = 1,

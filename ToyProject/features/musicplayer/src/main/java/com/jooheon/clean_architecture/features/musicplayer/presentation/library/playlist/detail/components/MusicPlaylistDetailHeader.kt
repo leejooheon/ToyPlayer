@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import com.jooheon.clean_architecture.domain.common.extension.default
+import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
@@ -44,9 +46,13 @@ internal fun MusicPlaylistDetailHeader(
     val allDuration = MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
     val songCount = UiText.StringResource(R.string.n_song, playlist.songs.size).asString()
 
+    val thumbnailUrl = playlist.thumbnailUrl.ifBlank {
+        playlist.songs.firstOrNull()?.imageUrl
+    }.default("empty")
+
     Row(modifier = Modifier.fillMaxSize()) {
         CoilImage(
-            url = playlist.thumbnailUrl,
+            url = thumbnailUrl,
             contentDescription = playlist.name,
             placeholderRes = R.drawable.default_album_art,
             modifier = Modifier

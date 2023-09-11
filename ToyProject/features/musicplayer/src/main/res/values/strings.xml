@@ -6,6 +6,7 @@
     <string name="tab_name_playlist">Playlist</string>
 
     <string name="n_song">%1$d Song</string>
+    <string name="n_album">%1$d Album</string>
     <string name="song_list">Song List</string>
     <string name="current_playing_queue">Current playing song</string>
 
