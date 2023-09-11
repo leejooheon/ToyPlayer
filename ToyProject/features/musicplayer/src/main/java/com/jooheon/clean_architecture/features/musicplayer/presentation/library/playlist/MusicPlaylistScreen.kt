@@ -60,7 +60,6 @@ fun MusicPlaylistScreen(
             )
         }
     )
-
 }
 
 @Preview
