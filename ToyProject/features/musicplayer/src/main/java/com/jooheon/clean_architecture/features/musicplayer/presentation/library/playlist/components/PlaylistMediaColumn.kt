@@ -46,7 +46,7 @@ internal fun PlaylistMediaColumn(
             ) { playlist ->
                 MusicPlaylistColumnItem(
                     playlist = playlist,
-                    showContextualMenu = true,
+                    showContextualMenu = playlist.id != Playlist.PlayingQueuePlaylistId,
                     onItemClick = { onItemClick(playlist) },
                     onDropDownMenuClick = onDropDownMenuClick,
                 )
