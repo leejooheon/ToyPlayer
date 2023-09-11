@@ -7,8 +7,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
-import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
-import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,7 +46,7 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onPlay(song: Song) {
-        musicControllerUsecase.onOpenQueue(
+        musicControllerUsecase.onPlayAtPlayingQueue(
             songs = listOf(song),
             addToPlayingQueue = true,
             autoPlay = true,

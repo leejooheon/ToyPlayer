@@ -29,7 +29,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.d
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaDetailHeader
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmall
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 
@@ -79,6 +78,7 @@ internal fun ArtistDetailMediaColumn(
                         title = song.title,
                         subTitle = "${song.artist} • ${song.album}",
                         duration = MusicUtil.toReadableDurationString(song.duration),
+                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
                         onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) },
                         onDropDownMenuClick = {
                             val event = MusicDropDownMenuState.indexToEvent(it, song)

@@ -10,16 +10,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO: 지우자
 @Singleton
 class MusicMediaItemEventUseCase @Inject constructor(
-    private val applicationScope: CoroutineScope,
     private val playlistUseCase: PlaylistUseCase,
 ) {
-    fun dispatch(event: MusicMediaItemEvent) = applicationScope.launch {
+    suspend fun dispatch(event: MusicMediaItemEvent) {
         when(event) {
             is MusicMediaItemEvent.OnAddPlaylistClick -> {
-                val playlist = event.playlist ?: return@launch
+                val playlist = event.playlist ?: return
 
                 val newSongs = playlist.songs.toMutableList().apply {
                     add(event.song)
@@ -39,7 +37,7 @@ class MusicMediaItemEventUseCase @Inject constructor(
         }
     }
 
-    fun dispatch(event: MusicPlaylistItemEvent) = applicationScope.launch {
+    suspend fun dispatch(event: MusicPlaylistItemEvent) {
         when(event) {
             is MusicPlaylistItemEvent.OnDelete -> deletePlaylist(event.playlist)
             is MusicPlaylistItemEvent.OnChangeName -> updatePlaylist(event.playlist)

@@ -82,6 +82,7 @@ internal fun MusicAlbumDetailMediaColumn(
                     title = song.title,
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
+                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
                     onItemClick = { onEvent(MusicAlbumDetailScreenEvent.OnSongClick(song)) },
                     onDropDownMenuClick = {
                         val event = MusicDropDownMenuState.indexToEvent(it, song)

@@ -2,11 +2,12 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.library
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlayingQueueScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase
+    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
 
@@ -39,20 +41,27 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         when(event) {
             is MusicPlayingQueueScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicPlayingQueueScreenEvent.OnSongClick ->  musicControllerUsecase.onPlay(event.song)
-            is MusicPlayingQueueScreenEvent.OnActionPlayAll -> {
-                Timber.d("OnActionPlayAll: ${event.shuffle}")
-                val currentPlayingQueue = musicPlayingQueueScreenState.value.playlist.songs
-
-                val songs = if(event.shuffle) currentPlayingQueue.shuffled()
-                            else currentPlayingQueue
-
-                musicControllerUsecase.onOpenQueue(
-                    songs = songs,
-                    addToPlayingQueue = false,
-                    autoPlay = true
-                )
-            }
+            is MusicPlayingQueueScreenEvent.OnDeleteClick -> musicControllerUsecase.onDeleteAtPlayingQueue(listOf(event.song))
+            is MusicPlayingQueueScreenEvent.OnActionPlayAll -> onActionPlayAll(event.shuffle)
         }
+    }
+
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
+        musicMediaItemEventUseCase.dispatch(event)
+    }
+
+    private fun onActionPlayAll(shuffle: Boolean) {
+        Timber.d("OnActionPlayAll: $shuffle")
+        val currentPlayingQueue = musicPlayingQueueScreenState.value.playlist.songs
+
+        val songs = if(shuffle) currentPlayingQueue.shuffled()
+        else currentPlayingQueue
+
+        musicControllerUsecase.onPlayAtPlayingQueue(
+            songs = songs,
+            addToPlayingQueue = false,
+            autoPlay = true
+        )
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {

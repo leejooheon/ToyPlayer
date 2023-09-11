@@ -46,7 +46,7 @@ class MusicSongScreenViewModel @Inject constructor(
         }
     }
 
-    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
         musicMediaItemEventUseCase.dispatch(event)
     }
 
