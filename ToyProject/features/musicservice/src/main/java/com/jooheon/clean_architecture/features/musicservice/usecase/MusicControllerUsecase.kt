@@ -34,6 +34,9 @@ class MusicControllerUsecase @Inject constructor(
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
+    private val _playingQueue = MutableStateFlow(emptyList<Song>())
+    val playingQueue: StateFlow<List<Song>> = _playingQueue
+
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
 
@@ -76,13 +79,14 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun collectPlayingQueue() = applicationScope.launch {
-        musicController.playingQueue.collectLatest { playlist ->
-            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playlist.size}")
-            _musicState.update {
+        musicController.playingQueue.collectLatest { playingQueue ->
+            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playingQueue.size}")
+            _musicState.update { // it will be removed
                 it.copy(
-                    playingQueue = playlist
+                    playingQueue = playingQueue
                 )
             }
+            _playingQueue.tryEmit(playingQueue)
         }
     }
 

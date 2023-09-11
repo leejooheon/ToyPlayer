@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlaylistScreenViewModel @Inject constructor(
-    musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUsecase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
@@ -38,7 +38,9 @@ class MusicPlaylistScreenViewModel @Inject constructor(
 
     init {
         collectPlaylist()
+        collectPlayingQueue()
     }
+
     fun dispatch(event: MusicPlaylistScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlaylistScreenEvent.Refresh -> {} //playlistUseCase.update()
@@ -72,6 +74,20 @@ class MusicPlaylistScreenViewModel @Inject constructor(
 
         withContext(Dispatchers.IO) {
             playlistUseCase.insertPlaylists(playlist)
+        }
+    }
+
+    private fun collectPlayingQueue() = viewModelScope.launch {
+        musicControllerUsecase.playingQueue.collectLatest { newPlayingQueue ->
+            val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
+                it.id == Playlist.PlayingQueuePlaylistId
+            } ?: return@collectLatest
+
+            if(newPlayingQueue == oldPlayingQueue.songs) {
+                return@collectLatest
+            }
+
+            playlistUseCase.update()
         }
     }
 
