@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,71 +55,71 @@ fun MediaItemSmall(
     Card(
         onClick = { onItemClick() },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
+            defaultElevation = 0.dp
         ),
-        shape = RoundedCornerShape(8.dp),
-        modifier = modifier.padding(4.dp),
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .height(72.dp)
         ) {
             CoilImage(
                 url = imageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = title,
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(start = 16.dp, end = 8.dp)
                     .weight(0.2f)
                     .aspectRatio(1f)
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(MaterialTheme.shapes.small)
             )
+
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .weight(0.7f)
+                modifier = Modifier.weight(0.65f)
             ) {
                 Text(
                     text = title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
 
                 Text(
                     text = subTitle,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.7f
+                    ),
                 )
             }
 
-            if(showContextualMenu) {
-                var dropDownMenuExpanded by remember { mutableStateOf(false) }
+            if(!showContextualMenu) {
+                Spacer(modifier = Modifier.width(16.dp))
+                return@Row
+            }
 
-                IconButton(
-                    onClick = { dropDownMenuExpanded = true },
-                    modifier = Modifier.weight(0.1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "more" // TODO
-                    )
-                    MusicDropDownMenu(
-                        expanded = dropDownMenuExpanded,
-                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
-                        onDismissRequest = { dropDownMenuExpanded = false },
-                        onClick = onDropDownMenuClick
-                    )
-                }
+            var dropDownMenuExpanded by remember { mutableStateOf(false) }
+
+            IconButton(
+                onClick = { dropDownMenuExpanded = true },
+                modifier = Modifier.weight(0.15f).padding(end = 16.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreHoriz,
+                    contentDescription = "more" // TODO
+                )
+                MusicDropDownMenu(
+                    expanded = dropDownMenuExpanded,
+                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
+                    onDismissRequest = { dropDownMenuExpanded = false },
+                    onClick = onDropDownMenuClick
+                )
             }
         }
     }

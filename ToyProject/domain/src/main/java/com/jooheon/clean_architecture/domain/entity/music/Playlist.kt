@@ -14,7 +14,7 @@ data class Playlist(
             id = -1,
             name = "-",
             thumbnailUrl = "",
-            songs = emptyList()
+            songs = Song.defaultList,
         )
 
         const val PlayingQueuePlaylistId = -1000

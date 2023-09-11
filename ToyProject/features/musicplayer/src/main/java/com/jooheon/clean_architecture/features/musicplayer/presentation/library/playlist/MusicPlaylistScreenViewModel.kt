@@ -52,7 +52,7 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private suspend fun onPlaylistClick(playlist: Playlist) {
-        if(playlist.id == Playlist.playingQueuePlaylist.id) {
+        if(playlist.id == Playlist.PlayingQueuePlaylistId) {
             _navigateToPlayingQueueScreen.send(playlist)
         } else {
             _navigateToDetailScreen.send(playlist)

@@ -57,7 +57,7 @@ fun MusicSongScreen(
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
 
     var openDialog by remember { mutableStateOf(false) }
-    var viewType by rememberSaveable { mutableStateOf(true) }
+    var viewType by rememberSaveable { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
