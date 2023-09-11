@@ -24,6 +24,11 @@ data class MusicDropDownMenuState(
             UiText.StringResource(R.string.action_save_as_file),
         )
 
+        val albumSortItems = listOf(
+            UiText.StringResource(R.string.action_album_sort_by_album_name),
+            UiText.StringResource(R.string.action_album_sort_by_artist_name)
+        )
+
         fun indexToEvent(
             index: Int,
             song: Song,
@@ -47,6 +52,13 @@ data class MusicDropDownMenuState(
                 1 -> MusicPlaylistItemEvent.OnChangeName(playlist)
                 2 -> MusicPlaylistItemEvent.OnSaveAsFile(playlist)
                 else -> MusicPlaylistItemEvent.Placeholder
+            }
+        }
+        fun indexToEvent(index: Int): MusicAlbumScreenEvent {
+            return when(index) {
+                0 -> MusicAlbumScreenEvent.OnSortByAlbumName
+                1 -> MusicAlbumScreenEvent.OnSortByArtistName
+                else -> MusicAlbumScreenEvent.OnSortByAlbumName
             }
         }
     }
