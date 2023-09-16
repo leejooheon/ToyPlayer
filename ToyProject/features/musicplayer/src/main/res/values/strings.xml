@@ -6,6 +6,7 @@
     <string name="tab_name_playlist">Playlist</string>
 
     <string name="n_song">%1$d Song</string>
+    <string name="n_album">%1$d Album</string>
     <string name="song_list">Song List</string>
     <string name="current_playing_queue">Current playing song</string>
 
@@ -19,6 +20,7 @@
     <string name="option_only_streaming">Only Streaming</string>
     <string name="option_include_all">Include All</string>
     <string name="option_add_playlist">Add Playlist</string>
+    <string name="option_sort_by">sort by</string>
 
     <string name="action_play_all">Play All</string>
     <string name="action_play_all_shuffle">Play All with Shuffle</string>
@@ -29,6 +31,13 @@
     <string name="action_delete">Delete</string>
     <string name="action_change_name">Change Name</string>
     <string name="action_save_as_file">Save as File</string>
+
+    <string name="action_album_sort_by_artist_name">Artist name</string>
+    <string name="action_album_sort_by_album_name">Album name</string>
+
+    <string name="action_arist_sort_by_artist_name">Artist name</string>
+    <string name="action_arist_sort_by_number_of_song">Number of song</string>
+    <string name="action_arist_sort_by_number_of_album">Number of album</string>
 
     <string name="label_file_name">File name</string>
     <string name="label_file_path">File path</string>

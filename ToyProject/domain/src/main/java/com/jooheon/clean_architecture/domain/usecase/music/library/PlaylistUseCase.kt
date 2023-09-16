@@ -8,4 +8,5 @@ interface PlaylistUseCase {
     suspend fun updatePlaylists(vararg playlist: Playlist)
     suspend fun insertPlaylists(vararg playlist: Playlist)
     suspend fun deletePlaylists(vararg playlist: Playlist)
+    suspend fun update()
 }

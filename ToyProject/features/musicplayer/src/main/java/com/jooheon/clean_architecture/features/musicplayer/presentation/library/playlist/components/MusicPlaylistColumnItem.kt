@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import com.jooheon.clean_architecture.domain.common.extension.default
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
@@ -52,6 +53,10 @@ internal fun MusicPlaylistColumnItem(
     val playlistNameEditIndex = 1
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
     var playlistDialogState by remember { mutableStateOf(false) }
+
+    val thumbnailUrl = playlist.thumbnailUrl.ifBlank {
+        playlist.songs.firstOrNull()?.imageUrl
+    }.default("empty")
 
     Card(
         onClick = onItemClick,
@@ -77,7 +82,7 @@ internal fun MusicPlaylistColumnItem(
             )
             Spacer(modifier = Modifier.width(4.dp))
             CoilImage(
-                url = playlist.thumbnailUrl,
+                url = thumbnailUrl,
                 contentDescription = playlist.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

@@ -19,7 +19,7 @@ data class Song(
     val imageUrl: String,
     var isFavorite: Boolean = false,
     var data: String? = null,
-    private val uniqueId: String = UUID.randomUUID().toString(),
+//    private val uniqueId: String = UUID.randomUUID().toString(),
 ): java.io.Serializable {
 
     companion object {

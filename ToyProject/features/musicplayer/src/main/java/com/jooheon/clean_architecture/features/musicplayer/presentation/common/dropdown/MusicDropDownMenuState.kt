@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.essential.base.UiText
+import com.jooheon.clean_architecture.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
@@ -16,12 +17,29 @@ data class MusicDropDownMenuState(
             UiText.StringResource(R.string.action_add_playlist),
             UiText.StringResource(R.string.action_tag_editor),
             UiText.StringResource(R.string.action_details),
+            UiText.StringResource(R.string.action_delete),
         )
 
         val playlistItems = listOf(
             UiText.StringResource(R.string.action_delete),
             UiText.StringResource(R.string.action_change_name),
             UiText.StringResource(R.string.action_save_as_file),
+        )
+
+        val playlistMediaItems = listOf(
+            UiText.StringResource(R.string.action_delete),
+            UiText.StringResource(R.string.action_details),
+        )
+
+        val albumSortItems = listOf(
+            UiText.StringResource(R.string.action_album_sort_by_album_name),
+            UiText.StringResource(R.string.action_album_sort_by_artist_name)
+        )
+
+        val artistSortItems = listOf(
+            UiText.StringResource(R.string.action_arist_sort_by_artist_name),
+            UiText.StringResource(R.string.action_arist_sort_by_number_of_song),
+            UiText.StringResource(R.string.action_arist_sort_by_number_of_album),
         )
 
         fun indexToEvent(

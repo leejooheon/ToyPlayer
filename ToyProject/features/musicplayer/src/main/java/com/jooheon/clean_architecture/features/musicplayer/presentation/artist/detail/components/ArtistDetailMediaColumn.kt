@@ -29,7 +29,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.d
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaDetailHeader
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmall
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 
@@ -48,14 +47,11 @@ internal fun ArtistDetailMediaColumn(
         mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
     }
 
-    /** Nothing **/
     Box(
         modifier = Modifier
             .statusBarsPadding()
             .fillMaxSize()
     ) {
-        /** Nothing **/
-        /** Nothing **/
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -66,19 +62,11 @@ internal fun ArtistDetailMediaColumn(
                 items = artist.albums,
                 key = { album: Album -> album.hashCode() }
             ) { album ->
-
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                /** Nothing **/
-                MediaItemSmall(
+                ArtistDetailAlbumItem(
                     imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),
                     title = album.name,
                     subTitle = album.artist,
-                    showContextualMenu = false,
                     onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnAlbumClick(album)) },
-                    onDropDownMenuClick = { /** Nothing **/ },
                     modifier = Modifier.padding(horizontal = 12.dp),
                 )
 
@@ -90,6 +78,7 @@ internal fun ArtistDetailMediaColumn(
                         title = song.title,
                         subTitle = "${song.artist} • ${song.album}",
                         duration = MusicUtil.toReadableDurationString(song.duration),
+                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
                         onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) },
                         onDropDownMenuClick = {
                             val event = MusicDropDownMenuState.indexToEvent(it, song)

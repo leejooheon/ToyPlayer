@@ -44,7 +44,6 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
-import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 
 import java.lang.Float
 import kotlin.math.max
@@ -108,7 +107,13 @@ fun MusicPlayingQueueScreen(
                     playlist = musicPlayingQueueScreenState.playlist,
                     onPlayClick = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnSongClick(it)) },
                     onActionPlayAll = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnActionPlayAll(it)) },
-                    onDropDownEvent = onMediaDropDownMenuEvent,
+                    onDropDownEvent = { index, song ->
+                        when(index) {
+                            0 -> onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnDeleteClick(song))
+                            1 -> onMediaDropDownMenuEvent(MusicDropDownMenuState.indexToEvent(index, song))
+                            else -> { /** Nothing **/ }
+                        }
+                    },
                 )
             }
         )
@@ -121,7 +126,7 @@ private fun PlayingQueueMediaColumn(
     playlist: Playlist,
     onPlayClick: (Song) -> Unit,
     onActionPlayAll: (Boolean) -> Unit,
-    onDropDownEvent: (MusicMediaItemEvent) -> Unit,
+    onDropDownEvent: (Int, Song) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -151,11 +156,9 @@ private fun PlayingQueueMediaColumn(
                     title = song.title,
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
+                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistMediaItems),
                     onItemClick = { onPlayClick(song)},
-                    onDropDownMenuClick = {
-                        val event = MusicDropDownMenuState.indexToEvent(index, song)
-                        onDropDownEvent(event)
-                    }
+                    onDropDownMenuClick = { onDropDownEvent(it, song) }
                 )
             }
 

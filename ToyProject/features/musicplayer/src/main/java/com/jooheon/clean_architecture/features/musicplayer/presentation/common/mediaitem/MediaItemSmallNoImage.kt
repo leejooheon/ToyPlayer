@@ -39,6 +39,7 @@ fun MediaItemSmallNoImage(
     title: String,
     subTitle: String,
     duration: String,
+    dropDownMenuState: MusicDropDownMenuState,
     onItemClick: () -> Unit,
     onDropDownMenuClick: (index: Int) -> Unit,
 ) {
@@ -118,7 +119,7 @@ fun MediaItemSmallNoImage(
                 )
                 MusicDropDownMenu(
                     expanded = dropDownMenuExpanded,
-                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
+                    dropDownMenuState = MusicDropDownMenuState(dropDownMenuState.items),
                     onDismissRequest = { dropDownMenuExpanded = false },
                     onClick = onDropDownMenuClick
                 )
@@ -135,6 +136,7 @@ private fun MediaItemSmallWithoutImagePreview() {
             title = UiText.StringResource(R.string.placeholder_long).asString(),
             subTitle = UiText.StringResource(R.string.placeholder_medium).asString(),
             duration = "00:12",
+            dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
             onItemClick = {},
             onDropDownMenuClick = {},
         )

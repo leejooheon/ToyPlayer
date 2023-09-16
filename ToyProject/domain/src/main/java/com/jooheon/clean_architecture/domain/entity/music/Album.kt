@@ -19,7 +19,7 @@ data class Album(
             artist = "<unknown>",
             artistId = "-1",
             imageUrl = "",
-            songs = emptyList()
+            songs = Song.defaultList
         )
 
         val defaultList = listOf(

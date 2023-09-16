@@ -14,6 +14,7 @@ import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -61,7 +62,7 @@ fun MediaSwipeableLayout(
     }
 
     val musicState = musicPlayerState.musicState
-
+    
     MotionLayout(
         motionScene = MotionScene(content = motionSceneContent),
         progress = motionProgress,
@@ -69,7 +70,7 @@ fun MediaSwipeableLayout(
     ) {
         Column(
             modifier = Modifier
-                .padding(bottom = if (musicState.currentPlayingMusic == Song.default) 0.dp else 60.dp)
+                .padding(bottom = 60.dp)
                 .fillMaxWidth()
                 .layoutId("mediaColumn"),
         ) {
@@ -81,8 +82,7 @@ fun MediaSwipeableLayout(
             isPlaying = musicState.isPlaying,
             modifier = Modifier
                 .clickable {}
-                .alpha(if (musicState.currentPlayingMusic == Song.default) 0f else 1f)
-                .zIndex(if (musicState.currentPlayingMusic == Song.default) -1f else 1f)
+                .zIndex(1f)
                 .background(
                     if (musicState.currentPlayingMusic == Song.default) {
                         MaterialTheme.colorScheme.background
@@ -110,17 +110,17 @@ fun MediaSwipeableLayout(
             onPlayingQueueButtonPressed = { onEvent(MusicPlayerEvent.OnPlayingQueueClick) },
             modifier = Modifier
                 .clickable {
+                    if(musicState.currentPlayingMusic == Song.default) return@clickable
                     scope.launch { swipeableState.animateTo(1) }
                 }
-                .alpha(if (musicState.currentPlayingMusic == Song.default) 0f else 1f)
-                .zIndex(if (musicState.currentPlayingMusic == Song.default) -1f else 1f)
+                .zIndex(1f)
                 .fillMaxWidth()
                 .swipeable(
                     state = swipeableState,
                     anchors = anchors,
                     thresholds = { _, _ -> FractionalThreshold(0.3f) },
                     orientation = Orientation.Vertical,
-                    enabled = true
+                    enabled = musicState.currentPlayingMusic != Song.default
                 )
                 .background(MaterialTheme.colorScheme.background)
                 .layoutId("details")
@@ -130,7 +130,7 @@ fun MediaSwipeableLayout(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
-                .zIndex(if (musicState.currentPlayingMusic == Song.default) -1f else 1f)
+                .zIndex(1f)
                 .swipeable(
                     state = swipeableState,
                     anchors = anchors,

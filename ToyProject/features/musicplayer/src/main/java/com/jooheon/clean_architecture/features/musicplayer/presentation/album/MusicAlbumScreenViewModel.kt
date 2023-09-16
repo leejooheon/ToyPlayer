@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
@@ -35,23 +36,30 @@ class MusicAlbumScreenViewModel @Inject constructor(
     private val _navigateToDetailScreen = Channel<Album>()
     val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
 
+    private val sortType = MutableStateFlow(true)
+    private var songList: List<Song> = emptyList()
+
     init {
         collectMusicList()
+        collectSortType()
         loadData()
     }
 
     fun dispatch(event: MusicAlbumScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicAlbumScreenEvent.OnAlbumItemClick -> _navigateToDetailScreen.send(event.album)
+            is MusicAlbumScreenEvent.OnSortByAlbumName -> sortType.tryEmit(true)
+            is MusicAlbumScreenEvent.OnSortByArtistName -> sortType.tryEmit(false)
         }
     }
+
     fun loadData() = viewModelScope.launch {
 //        val playlistType = musicControllerUsecase.musicState.value.playlistType
 //        musicControllerUsecase.loadPlaylist(playlistType)
     }
 
-    private suspend fun updateAlbums(musicList: List<Song>) = withContext(Dispatchers.IO) {
-        val groupByAlbum = musicList.groupBy {
+    private suspend fun updateAlbums() = withContext(Dispatchers.IO) {
+        val groupByAlbum = songList.groupBy {
             it.albumId
         }.map { (albumId, songs) ->
             Album(
@@ -62,12 +70,21 @@ class MusicAlbumScreenViewModel @Inject constructor(
                 imageUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
                 songs = songs.sortedBy { it.trackNumber }
             )
+        }.sortedBy {
+            if(sortType.value) it.name
+            else it.artist
         }
 
         _musicAlbumScreenState.update {
             it.copy(
                 albums = groupByAlbum
             )
+        }
+    }
+
+    private fun collectSortType() = viewModelScope.launch {
+        sortType.collectLatest {
+            updateAlbums()
         }
     }
 
@@ -79,13 +96,12 @@ class MusicAlbumScreenViewModel @Inject constructor(
         ) { localSongList, streamingSongList, musicListType ->
             Triple(localSongList, streamingSongList, musicListType)
         }.collect { (localSongList, streamingSongList, musicListType) ->
-
-            val songList = when(musicListType) {
+            songList = when(musicListType) {
                 MusicListType.All -> localSongList + streamingSongList
                 MusicListType.Local -> localSongList
                 MusicListType.Streaming -> streamingSongList
             }
-            updateAlbums(songList)
+            updateAlbums()
         }
     }
 }

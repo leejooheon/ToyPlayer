@@ -48,7 +48,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicAlbumDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicAlbumDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onOpenQueue(
+                musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = listOf(event.song),
                     addToPlayingQueue = true,
                     autoPlay = true,
@@ -60,7 +60,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 val songs = if(event.shuffle) event.album.songs.shuffled()
                             else event.album.songs
 
-                musicControllerUsecase.onOpenQueue(
+                musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = songs,
                     addToPlayingQueue = false,
                     autoPlay = true
@@ -69,7 +69,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
         }
     }
 
-    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
         musicMediaItemEventUseCase.dispatch(event)
     }
 

@@ -47,7 +47,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onOpenQueue(
+                musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = listOf(event.song),
                     addToPlayingQueue = true,
                     autoPlay = true,
@@ -59,7 +59,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
             }
         }
     }
-    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) {
+    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
         musicMediaItemEventUseCase.dispatch(event)
     }
 

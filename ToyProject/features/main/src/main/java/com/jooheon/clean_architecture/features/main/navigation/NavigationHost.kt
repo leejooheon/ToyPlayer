@@ -335,7 +335,7 @@ internal fun FullScreenNavigationHost(
                 MusicPlayingQueueScreen(
                     musicPlayingQueueScreenState = screenState,
                     onMusicPlayingQueueScreenEvent = viewModel::dispatch,
-                    onMediaDropDownMenuEvent = {},
+                    onMediaDropDownMenuEvent = viewModel::onMusicMediaItemEvent,
                     musicPlayerState = musicPlayerState,
                     onMusicPlayerEvent = viewModel::dispatch,
                 )

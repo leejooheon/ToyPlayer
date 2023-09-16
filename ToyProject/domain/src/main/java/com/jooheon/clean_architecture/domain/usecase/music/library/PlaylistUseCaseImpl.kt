@@ -36,7 +36,7 @@ class PlaylistUseCaseImpl(
         update()
     }
 
-    private suspend fun update() {
+    override suspend fun update() {
         val resource = withContext(Dispatchers.IO) {
             playlistRepository.getAllPlaylist()
         }

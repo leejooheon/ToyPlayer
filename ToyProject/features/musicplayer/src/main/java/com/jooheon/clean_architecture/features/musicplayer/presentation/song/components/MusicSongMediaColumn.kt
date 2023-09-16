@@ -1,6 +1,8 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.song.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -40,7 +42,9 @@ internal fun MusicSongMediaColumn(
 
     LazyColumn(
         state = listState,
-        modifier = modifier
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(bottom = 16.dp),
+        modifier = modifier,
     ) {
         items(
             items = musicSongScreenState.songList,

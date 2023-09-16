@@ -34,6 +34,9 @@ class MusicControllerUsecase @Inject constructor(
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
+    private val _playingQueue = MutableStateFlow(emptyList<Song>())
+    val playingQueue: StateFlow<List<Song>> = _playingQueue
+
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
 
@@ -76,13 +79,14 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun collectPlayingQueue() = applicationScope.launch {
-        musicController.playingQueue.collectLatest { playlist ->
-            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playlist.size}")
-            _musicState.update {
+        musicController.playingQueue.collectLatest { playingQueue ->
+            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playingQueue.size}")
+            _musicState.update { // it will be removed
                 it.copy(
-                    playingQueue = playlist
+                    playingQueue = playingQueue
                 )
             }
+            _playingQueue.tryEmit(playingQueue)
         }
     }
 
@@ -197,7 +201,7 @@ class MusicControllerUsecase @Inject constructor(
         )
     }
 
-    fun onOpenQueue(
+    fun onPlayAtPlayingQueue(
         songs: List<Song>,
         addToPlayingQueue: Boolean,
         autoPlay: Boolean
@@ -221,13 +225,22 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    private fun collectPlayingQueueFromProvider() = applicationScope.launch {
-        playingQueueUseCase.playingQueue().collectLatest {
-            val autoPlayModel = playingQueueUseCase.getAutoPlayWhenQueueChanged()
-            Timber.d("collectPlayingQueueFromProvider: ${it.size}, ${autoPlayModel}")
-            musicController.updatePlayingQueue(it)
+    fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch {
+        playingQueueUseCase.deletePlayingQueue(*songs.toTypedArray())
+    }
 
-            val model = autoPlayModel ?: return@collectLatest
+    private fun collectPlayingQueueFromProvider() = applicationScope.launch {
+        playingQueueUseCase.playingQueue().collectLatest { playingQueue ->
+            val autoPlayModel = playingQueueUseCase.getAutoPlayWhenQueueChanged()
+            Timber.d("collectPlayingQueueFromProvider: ${playingQueue.size}, ${autoPlayModel}")
+            musicController.updatePlayingQueue(playingQueue)
+
+            val model = autoPlayModel ?: run {
+                if(!playingQueue.contains(musicState.value.currentPlayingMusic)) {
+                    musicController.stop()
+                }
+                return@collectLatest
+            }
             val autoPlay = model.first
             val song = model.second
 
