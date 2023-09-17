@@ -2,6 +2,8 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
@@ -78,11 +80,22 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onShuffleClicked() {
-        musicControllerUsecase.onShuffleButtonPressed()
+        val state = musicPlayerState.value.musicState
+        val shuffleModeEnabled = when(state.shuffleMode) {
+            ShuffleMode.SHUFFLE -> false
+            ShuffleMode.NONE -> true
+        }
+        musicControllerUsecase.onShuffleButtonPressed(shuffleModeEnabled)
     }
 
     private fun onRepeatClicked() {
-        musicControllerUsecase.onRepeatButtonPressed()
+        val state = musicPlayerState.value.musicState
+        val repeatMode = when(state.repeatMode) {
+            RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
+            RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
+            RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
+        }
+        musicControllerUsecase.onRepeatButtonPressed(repeatMode)
     }
 
     private fun snapTo(duration: Long) {

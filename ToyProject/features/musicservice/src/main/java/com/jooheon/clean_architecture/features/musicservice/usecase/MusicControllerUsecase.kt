@@ -4,13 +4,23 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicservice.data.exoPlayerStateAsString
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -27,33 +37,28 @@ class MusicControllerUsecase @Inject constructor(
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
-
+    private val TAG_PLAYER = MusicService::class.java.simpleName + "@" + "PlayerListener"
     private var musicService: MusicService? = null
     private val connectionMap = WeakHashMap<Context, ServiceConnection>()
 
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
-    private val _playingQueue = MutableStateFlow(emptyList<Song>())
-    val playingQueue: StateFlow<List<Song>> = _playingQueue
-
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
 
-    private val _exoPlayerState = MutableStateFlow<Int?>(null)
+    private val _exoPlayerState = MutableStateFlow(ExoPlayer.STATE_IDLE)
     val exoPlayerState = _exoPlayerState.asStateFlow()
+
 
     init {
         Timber.tag(TAG).d( "musicController - ${musicController}")
         collectMusicState()
-        collectPlayingQueue()
-        collectCurrentSong()
-        collectIsPlaying()
         collectDuration()
         collectRepeatMode()
         collectShuffleMode()
-        collectExoPlayerState()
-        collectPlayingQueueFromProvider()
+        initPlayingQueue()
+        musicController.registerPlayerListener(playerListener())
     }
 
     private fun commandToService() {
@@ -77,44 +82,6 @@ class MusicControllerUsecase @Inject constructor(
             _timePassed.update { currentDuration }
         }
     }
-
-    private fun collectPlayingQueue() = applicationScope.launch {
-        musicController.playingQueue.collectLatest { playingQueue ->
-            Timber.tag(TAG).d( "collectPlayingQueueFromPlayer - ${playingQueue.size}")
-            _musicState.update { // it will be removed
-                it.copy(
-                    playingQueue = playingQueue
-                )
-            }
-            _playingQueue.tryEmit(playingQueue)
-        }
-    }
-
-    private fun collectCurrentSong() = applicationScope.launch {
-        musicController.currentPlayingMusic.collectLatest { currentPlayingMusic ->
-            Timber.tag(TAG).d( "collectCurrentSong - $currentPlayingMusic")
-
-            _timePassed.update { 0L }
-            _musicState.update {
-                it.copy(currentPlayingMusic = currentPlayingMusic)
-            }
-        }
-    }
-
-    private fun collectIsPlaying() = applicationScope.launch {
-        musicController.isPlaying.collectLatest { isPlaying ->
-            Timber.tag(TAG).d( "collectIsPlaying - ${isPlaying}")
-            if(isPlaying) {
-                musicController.collectDurationFromPlayer()
-            }
-
-            _musicState.update {
-                it.copy(
-                    isPlaying = isPlaying
-                )
-            }
-        }
-    }
     private fun collectRepeatMode() = applicationScope.launch {
         musicController.repeatMode.collectLatest { repeatMode ->
             Timber.tag(TAG).d( "collectRepeatMode - ${repeatMode}")
@@ -136,116 +103,218 @@ class MusicControllerUsecase @Inject constructor(
         }
     }
 
-    private fun collectExoPlayerState() = applicationScope.launch {
-        musicController.exoPlayerState.collectLatest { state ->
-            _exoPlayerState.tryEmit(state)
-
-            _musicState.update {
-                it.copy(
-                    isBuffering = state == ExoPlayer.STATE_BUFFERING
-                )
+    fun onPlayAtPlayingQueue(
+        songs: List<Song>,
+        addToPlayingQueue: Boolean,
+        autoPlay: Boolean
+    ) = applicationScope.launch(Dispatchers.IO) {
+        if (addToPlayingQueue) { // TabToSelect
+            val position = musicController.songLibrary.value.size
+            musicController.addToPlayingQueue(
+                songs = songs,
+                position = position,
+            )
+            if (autoPlay && songs.isNotEmpty()) {
+                musicController.play(position)
+            }
+        } else { // TabToPlay
+            musicController.openPlayingQueue(
+                songs = songs,
+                startIndex = 0
+            )
+            if (autoPlay && songs.isNotEmpty()) {
+                musicController.play(0)
             }
         }
+    }
+
+    fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch(Dispatchers.IO) {
+        val playingQueue = musicController.songLibrary.value
+
+        val songIndexList = songs.filter {
+            it != Song.default
+        }.map { targetSong ->
+            playingQueue.indexOfFirst { it.id() == targetSong.id() }
+        }.filter {
+            it != -1
+        }
+
+        val deletedSongs = songIndexList.map { playingQueue[it] }
+        musicController.deleteFromPlayingQueue(
+            songIndexList = songIndexList,
+            deletedSongs = deletedSongs
+        )
     }
 
     fun onPlay(
         song: Song = musicState.value.currentPlayingMusic,
     ) = applicationScope.launch(Dispatchers.IO) {
         val state = musicState.value
-        if(isFirstPlay(song)) { // 최초 실행시
-            val firstSong = state.playingQueue.firstOrNull() ?: song
-            musicController.play(firstSong)
+        if (isFirstPlay(song)) { // 최초 실행시
+            musicController.play(0)
             return@launch
         }
 
-        if(state.currentPlayingMusic == song) { // pause -> play 한 경우
+        if (state.currentPlayingMusic == song) { // pause -> play 한 경우
             musicController.resume()
             return@launch
         }
 
-        musicController.play(song)
-    }
+        val index = state.playingQueue.indexOfFirst {
+            it.id() == song.id()
+        }
 
+        musicController.play(index)
+    }
     fun onPause() = applicationScope.launch(Dispatchers.IO) {
         musicController.pause()
     }
     fun onStop() = applicationScope.launch(Dispatchers.IO) {
         musicController.stop()
     }
-
-    fun onNext() = applicationScope.launch(Dispatchers.IO) {
+    fun onNext() = applicationScope.launch(Dispatchers.Main) {
         musicController.next()
     }
-
-    fun onPrevious() = applicationScope.launch(Dispatchers.IO) {
+    fun onPrevious() = applicationScope.launch(Dispatchers.Main) {
         musicController.previous()
     }
-
-    fun onShuffleButtonPressed() = applicationScope.launch(Dispatchers.IO) {
-        musicController.changeShuffleMode()
-    }
-    fun onRepeatButtonPressed() = applicationScope.launch(Dispatchers.IO) {
-        musicController.changeRepeatMode()
-    }
-    fun onRefresh() = applicationScope.launch(Dispatchers.IO) {
-        musicController.refresh()
-    }
-    fun onSkipDurationChanged() = applicationScope.launch(Dispatchers.IO) {
-        musicController.changeSkipDuration()
-    }
-
     fun snapTo(duration: Long) = applicationScope.launch(Dispatchers.Main) {
         musicController.snapTo(
             duration = duration,
             fromUser = true
         )
     }
+    fun onShuffleButtonPressed(shuffleModeEnabled: Boolean) = applicationScope.launch(Dispatchers.IO) {
+        musicController.changeShuffleMode(shuffleModeEnabled)
+    }
+    fun onRepeatButtonPressed(repeatMode: RepeatMode) = applicationScope.launch(Dispatchers.IO) {
+        musicController.changeRepeatMode(repeatMode.ordinal)
+    }
+    fun onSkipDurationChanged() = applicationScope.launch(Dispatchers.IO) {
+        musicController.changeSkipDuration()
+    }
 
-    fun onPlayAtPlayingQueue(
-        songs: List<Song>,
-        addToPlayingQueue: Boolean,
-        autoPlay: Boolean
-    ) = applicationScope.launch(Dispatchers.IO){
-        if(addToPlayingQueue) { // TabToSelect
-            playingQueueUseCase.addToPlayingQueue(
-                song = songs.toTypedArray(),
-                autoPlayWhenQueueChanged = autoPlay
-            )
-        } else { // TabToPlay
-            if(songs == musicState.value.playingQueue) {
-                if(songs.isEmpty()) return@launch
-                if(!autoPlay) return@launch
-                musicController.play(songs.first())
-            } else {
-                playingQueueUseCase.openQueue(
-                    song = songs.toTypedArray(),
-                    autoPlayWhenQueueChanged = autoPlay
-                )
+    private fun playerListener() = object: Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            Timber.tag(TAG_PLAYER).d(playbackState.exoPlayerStateAsString())
+
+            if (playbackState == ExoPlayer.STATE_ENDED) {
+                val repeatMode = musicState.value.repeatMode
+                when (repeatMode) {
+                    RepeatMode.REPEAT_ALL -> this@MusicControllerUsecase.onNext()
+                    RepeatMode.REPEAT_OFF -> this@MusicControllerUsecase.onStop()
+                    RepeatMode.REPEAT_ONE -> this@MusicControllerUsecase.onPlay()
+                }
+            }
+
+            _exoPlayerState.tryEmit(playbackState)
+            _musicState.update {
+                it.copy(isBuffering = (playbackState == ExoPlayer.STATE_BUFFERING))
             }
         }
-    }
 
-    fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch {
-        playingQueueUseCase.deletePlayingQueue(*songs.toTypedArray())
-    }
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            super.onPlayWhenReadyChanged(playWhenReady, reason)
+            Timber.tag(TAG_PLAYER).d("onPlayWhenReadyChanged: ${playWhenReady}, reason: ${reason}")
+        }
 
-    private fun collectPlayingQueueFromProvider() = applicationScope.launch {
-        playingQueueUseCase.playingQueue().collectLatest { playingQueue ->
-            val autoPlayModel = playingQueueUseCase.getAutoPlayWhenQueueChanged()
-            Timber.d("collectPlayingQueueFromProvider: ${playingQueue.size}, ${autoPlayModel}")
-            musicController.updatePlayingQueue(playingQueue)
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            Timber.tag(TAG_PLAYER).d( "onIsPlayingChanged - ${isPlaying}")
 
-            val model = autoPlayModel ?: run {
-                if(!playingQueue.contains(musicState.value.currentPlayingMusic)) {
-                    musicController.stop()
-                }
-                return@collectLatest
+            if(isPlaying) {
+                musicController.collectDuration()
             }
-            val autoPlay = model.first
-            val song = model.second
 
-            musicController.play(song)
-            if(!autoPlay) musicController.pause()
+            _musicState.update {
+                it.copy(isPlaying = isPlaying)
+            }
+        }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            super.onMediaItemTransition(mediaItem, reason)
+            Timber.tag(TAG_PLAYER).d("onMediaItemTransition: ${mediaItem?.mediaMetadata?.title}")
+
+            val playingQueue = musicController.songLibrary.value
+            val id = mediaItem?.mediaId ?: run {
+                Timber.tag(TAG_PLAYER).d("onMediaItemTransition: invalid mediaId")
+                return
+            }
+            val song = playingQueue.firstOrNull {
+                it.id() == id
+            } ?: run {
+                Timber.tag(TAG_PLAYER).d("onMediaItemTransition: not inside playingQueue ")
+                return
+            }
+
+            _timePassed.update { 0L }
+            _musicState.update {
+                it.copy(currentPlayingMusic = song)
+            }
+        }
+
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+            super.onTimelineChanged(timeline, reason)
+            if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
+                applicationScope.launch(Dispatchers.Main) {
+                    val playingQueue = musicController.getPlayingQueue()
+                    val position = musicController.mediaItemPosition()
+                    Timber.tag(TAG_PLAYER).d( "onTimelineChanged - ${playingQueue.size}, pos: ${position}")
+
+                    playingQueueUseCase.openPlayingQueue(
+                        song = playingQueue.toTypedArray()
+                    )
+                    _musicState.update {
+                        it.copy(playingQueue = playingQueue)
+                    }
+                    playingQueueUseCase.setPlayingQueuePosition(position)
+                }
+            }
+        }
+
+        @UnstableApi
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            super.onMediaMetadataChanged(mediaMetadata)
+            applicationScope.launch(Dispatchers.Main) {
+                val position = musicController.mediaItemPosition()
+                Timber.tag(TAG_PLAYER).d("onMediaMetadataChanged: ${mediaMetadata.title}, position: $position")
+                playingQueueUseCase.setPlayingQueuePosition(position)
+            }
+        }
+
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            super.onRepeatModeChanged(repeatMode)
+            onRepeatButtonPressed(RepeatMode.values()[repeatMode])
+        }
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            super.onShuffleModeEnabledChanged(shuffleModeEnabled)
+            onShuffleButtonPressed(shuffleModeEnabled)
+        }
+
+        override fun onTracksChanged(tracks: Tracks) {
+            super.onTracksChanged(tracks)
+            Timber.tag(TAG_PLAYER).d("onTracksChanged: ${tracks.groups.size}")
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            Timber.tag(TAG_PLAYER).d("Jooheon onPlayerError: ${error.message}")
+
+            _musicState.update {
+                it.copy(currentPlayingMusic = Song.default)
+            }
+        }
+        override fun onEvents(player: Player, events: Player.Events) {
+            super.onEvents(player, events)
+//            if(events.size() > 1) {
+//                var msg = ""
+//                repeat(events.size()) { msg += "${it}th: event: ${events.get(it)}\n" }
+//                Timber.tag(TAG_PLAYER).d("====== onEvents ======\n${msg}")
+//            } else {
+//                Timber.tag(TAG_PLAYER).d("onEvents: ${events.get(0)}")
+//            }
         }
     }
 
@@ -287,6 +356,17 @@ class MusicControllerUsecase @Inject constructor(
         if (connectionMap.isEmpty()) {
             musicService = null
         }
+    }
+
+    private fun initPlayingQueue() = applicationScope.launch {
+        playingQueueUseCase.getPlayingQueue().onEach {
+            if(it is Resource.Success) {
+                musicController.openPlayingQueue(
+                    songs = it.value,
+                    startIndex = playingQueueUseCase.getPlayingQueuePosition()
+                )
+            }
+        }.launchIn(this)
     }
 
     private fun isFirstPlay(song: Song): Boolean { // 현재 재생중인 곡이 없고, 요청한 곡이 emptySong일떄 (최초 실행시)

@@ -5,7 +5,7 @@ import com.jooheon.clean_architecture.data.datasource.SubwayRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.TempDataSource
 import com.jooheon.clean_architecture.data.datasource.WikipediaRemoteDataSource
 import com.jooheon.clean_architecture.data.datasource.local.LocalParkingSpotDataSource
-import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.data.repository.*
 import com.jooheon.clean_architecture.domain.repository.*
 import dagger.Module

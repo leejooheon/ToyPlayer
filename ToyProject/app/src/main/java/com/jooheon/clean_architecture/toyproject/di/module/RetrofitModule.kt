@@ -6,7 +6,7 @@ import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.toyproject.BuildConfig
 import com.jooheon.clean_architecture.toyproject.di.Constants
 import dagger.Module

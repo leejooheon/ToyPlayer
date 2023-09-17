@@ -6,7 +6,8 @@ import java.util.UUID
 
 @Serializable
 data class Song(
-    val audioId: Long,
+    private val uniqueId: String = UUID.randomUUID().toString(),
+    private val audioId: Long,
     val displayName: String,
     val title: String,
     val artist: String,
@@ -19,9 +20,8 @@ data class Song(
     val imageUrl: String,
     var isFavorite: Boolean = false,
     var data: String? = null,
-//    private val uniqueId: String = UUID.randomUUID().toString(),
 ): java.io.Serializable {
-
+    fun id() = uniqueId //audioId.toString()
     companion object {
         val default = Song(
             audioId = -1L,

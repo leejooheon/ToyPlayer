@@ -1,6 +1,6 @@
 package com.jooheon.clean_architecture.data.repository
 
-import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.domain.repository.FirebaseTokenRepository
 
 class FirebaseTokenRepositoryImpl(

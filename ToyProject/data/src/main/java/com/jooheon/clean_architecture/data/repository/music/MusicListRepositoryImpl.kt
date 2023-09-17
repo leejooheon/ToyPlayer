@@ -3,7 +3,7 @@ package com.jooheon.clean_architecture.data.repository.music
 import android.net.Uri
 import com.jooheon.clean_architecture.data.datasource.local.LocalMusicDataSource
 import com.jooheon.clean_architecture.data.datasource.remote.RemoteMusicDataSource
-import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.MusicListType

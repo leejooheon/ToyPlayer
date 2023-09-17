@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.toyproject.di.module.music
 import androidx.room.Room
 import com.jooheon.clean_architecture.data.dao.playlist.PlaylistDatabase
 import com.jooheon.clean_architecture.data.dao.playlist.data.PlaylistMapper
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSource
 import com.jooheon.clean_architecture.data.repository.library.PlayingQueueRepositoryImpl
 import com.jooheon.clean_architecture.data.repository.library.PlaylistRepositoryImpl
@@ -51,19 +52,19 @@ object MusicLibraryModule {
     @Provides
     fun providePlayingQueueRepository(
         applicationScope: CoroutineScope,
-        localPlaylistDataSource: LocalPlaylistDataSource
+        localPlaylistDataSource: LocalPlaylistDataSource,
+        appPreferences: AppPreferences,
     ): PlayingQueueRepository = PlayingQueueRepositoryImpl(
-        applicationScope,
-        localPlaylistDataSource
+        applicationScope = applicationScope,
+        localPlaylistDataSource = localPlaylistDataSource,
+        appPreferences = appPreferences
     )
 
     @Singleton
     @Provides
     fun providePlayingQueueUseCase(
-        applicationScope: CoroutineScope,
         playingQueueRepository: PlayingQueueRepository
     ): PlayingQueueUseCase = PlayingQueueUseCaseImpl(
-        applicationScope,
         playingQueueRepository
     )
 }

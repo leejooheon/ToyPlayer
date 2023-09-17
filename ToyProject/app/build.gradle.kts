@@ -69,6 +69,8 @@ dependencies {
     implementation(project(App.Module.Features.musicService))
     implementation(project(App.Module.Features.musicPlayer))
 
+    implementation(libs.jakewharton.timber)
+
     // androidx
     implementation(libs.androidx.multidex)
     implementation(libs.androidx.material)
@@ -98,6 +100,7 @@ dependencies {
 
     // mediaSession
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
     implementation(libs.androidx.mediarouter)
 
     // Room

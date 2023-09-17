@@ -1,7 +1,7 @@
 package com.jooheon.clean_architecture.toyproject.di.module
 
 import android.content.Context
-import com.jooheon.clean_architecture.data.local.AppPreferences
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -78,12 +78,12 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicControllerUsecase.playingQueue.collectLatest { newPlayingQueue ->
+        musicControllerUsecase.musicState.collectLatest {
             val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
                 it.id == Playlist.PlayingQueuePlaylistId
             } ?: return@collectLatest
 
-            if(newPlayingQueue == oldPlayingQueue.songs) {
+            if(it.playingQueue == oldPlayingQueue.songs) {
                 return@collectLatest
             }
 

@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.data.repository.library
 
+import com.jooheon.clean_architecture.data.datasource.local.AppPreferences
 import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSource
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
@@ -12,12 +13,21 @@ import kotlinx.coroutines.launch
 
 class PlayingQueueRepositoryImpl(
     applicationScope: CoroutineScope,
-    private val localPlaylistDataSource: LocalPlaylistDataSource
+    private val localPlaylistDataSource: LocalPlaylistDataSource,
+    private val appPreferences: AppPreferences
 ): PlayingQueueRepository {
     init {
         applicationScope.launch {
             maybeMakePlayingQueueDb()
         }
+    }
+
+    override suspend fun getPlayingQueuePosition(): Int {
+        return appPreferences.lastPlayingQueuePosition
+    }
+
+    override suspend fun setPlayingQueuePosition(position: Int) {
+        appPreferences.lastPlayingQueuePosition = position
     }
 
     override suspend fun getPlayingQueue(): Resource<List<Song>> {

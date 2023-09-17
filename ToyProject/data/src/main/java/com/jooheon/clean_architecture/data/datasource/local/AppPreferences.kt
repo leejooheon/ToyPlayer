@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.data.local
+package com.jooheon.clean_architecture.data.datasource.local
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -17,6 +17,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private const val SESSION_PREFERENCES_NAME = "APP-UserCache"
         private const val MODE = Context.MODE_PRIVATE
 
+        private val LAST_PLAYING_QUEUE_POSITION = Pair("LAST_PLAYING_QUEUE_POSITION", 0)
         private val USER_DATA = Pair("USER_DATA", "")
         private val MUSIC_LIST_TYPE = Pair("MUSIC_LIST_TYPE", 0)
         private val FIREBASE_TOKEN = Pair("FIREBASE_TOKEN", "")
@@ -28,8 +29,12 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private val THEME = Pair("THEME", Entity.SupportThemes.LIGHT.ordinal)
     }
 
-    private val appPreferences: SharedPreferences = context.getSharedPreferences(APP_PREFERENCES_NAME, MODE)
-    private val sessionPreferences: SharedPreferences = context.getSharedPreferences(SESSION_PREFERENCES_NAME, MODE)
+    private val appPreferences: SharedPreferences = context.getSharedPreferences(
+        APP_PREFERENCES_NAME, MODE
+    )
+    private val sessionPreferences: SharedPreferences = context.getSharedPreferences(
+        SESSION_PREFERENCES_NAME, MODE
+    )
 
     /**
      * SharedPreferences extension function, so we won't need to call edit() and apply()
@@ -68,6 +73,14 @@ class AppPreferences @Inject constructor(private val context: Context) {
         }
         set(value) = appPreferences.edit {
             it.putInt(MUSIC_LIST_TYPE.first, value)
+        }
+
+    var lastPlayingQueuePosition: Int
+        get() {
+            return appPreferences.getInt(LAST_PLAYING_QUEUE_POSITION.first, MUSIC_LIST_TYPE.second)
+        }
+        set(value) = appPreferences.edit {
+            it.putInt(LAST_PLAYING_QUEUE_POSITION.first, value)
         }
 
     var firebaseToken: String?
