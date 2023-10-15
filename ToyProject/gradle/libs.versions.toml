@@ -3,41 +3,43 @@
 # compose-compiler: https://developer.android.com/jetpack/androidx/releases/compose-compiler
 
 # Project
-androidGradlePlugin = "8.1.0"
+androidGradlePlugin = "8.1.2"
 kotlin = "1.8.22"
 composeCompiler = "1.4.8"
-gms = "4.3.14"
+gms = "4.4.0"
 
 # Compose
 composeBom = "2023.06.01"
 compose-accompanist = "0.30.1"
 
 # Plugins
-ksp = "1.8.0-1.0.9"
+ksp = "1.9.10-1.0.13"
 
 # AndroidX
-corektx = "1.10.1"
+corektx = "1.12.0"
 appcompat = "1.6.1"
-material = "1.9.0"
+material = "1.10.0"
 constraint = "2.1.4"
 multidex = "2.0.1"
-lifecycle = "2.6.1"
-media3 = "1.1.1"
-mediarouter = "1.4.0"
+lifecycle = "2.6.2"
 splashscreen = "1.0.1"
 datastore="1.0.0"
-activityCompose = "1.7.2"
+activityCompose = "1.8.0"
 constraintLayout = "1.0.1"
+
+# Media3
+media3 = "1.1.1"
+mediarouter = "1.4.0"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
-kotlinxSerialization = "1.5.1"
+kotlinxSerialization = "1.6.0"
 
 # JavaX
 javaxInject = "1"
 
 # Hilt
-hilt = "2.45"
+hilt = "2.48"
 hiltCompose = "1.0.0"
 hiltWorker = "1.0.0"
 
@@ -50,13 +52,13 @@ room = "2.5.2"
 # Network
 retrofit = "2.9.0"
 retrofit-mock = "2.4.0"
-retrofit-interceptor = "5.0.0-alpha.10"
+retrofit-interceptor = "5.0.0-alpha.11"
 chucker = "3.5.2"
-retrofit-serialization-converter = "0.8.0"
+retrofit-serialization-converter = "1.0.0"
 
 # Glide
 glide = "4.15.1"
-coil = "2.2.2"
+coil = "2.4.0"
 
 # Timber
 timber ="5.0.1"
@@ -72,6 +74,9 @@ fft = "2.0.0"
 
 # AudioFileIO
 jaudiotagger = "2.3.15"
+
+# Leak canary
+learkCanary = "2.10"
 
 # Test
 testJunit = "4.13.2"
@@ -186,6 +191,9 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 
 # Timber
 jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# Leark canary
+squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "learkCanary" }
 
 # Lottie
 airbnb-android-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie"}
