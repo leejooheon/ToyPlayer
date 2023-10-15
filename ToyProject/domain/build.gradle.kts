@@ -4,8 +4,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = App.Versions.javaCompileVersion
-    targetCompatibility = App.Versions.javaCompileVersion
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {

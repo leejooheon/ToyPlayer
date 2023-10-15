@@ -9,15 +9,6 @@ object App {
         const val versionName = "1.0.0"
     }
 
-    object Versions {
-        const val compileSdk = 34
-        const val minSdk = 26
-        const val targetSdk = 34
-
-        val javaCompileVersion = JavaVersion.VERSION_17
-        val javaLanguageVersion = JavaVersion.VERSION_17.toString()
-    }
-
     object Module {
         const val app = ":app"
         const val data = ":data"

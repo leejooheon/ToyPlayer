@@ -1,17 +1,25 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+@file:Suppress("DSL_SCOPE_VIOLATION")
 buildscript {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
+        maven(url = "https://jitpack.io" )
     }
     dependencies {
-        classpath(libs.android.gradle.plugin)
-        classpath(libs.kotlin.gradle.plugin)
-        classpath(libs.kotlin.serialization.gradle.plugin)
-        classpath(libs.hilt.gradle.plugin)
         classpath(libs.google.gms.plugin)
     }
+}
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.hilt) apply false
+}
+
+apply {
+    from("gradle/dependencyGraph.gradle")
 }
 
 allprojects {

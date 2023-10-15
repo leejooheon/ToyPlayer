@@ -1,30 +1,18 @@
-@file:Suppress("UnstableApiUsage")
-
+@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-kapt")
-    id("com.google.gms.google-services")
-    id("dagger.hilt.android.plugin")
+    id("toyproject.android.application")
+//    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = App.nameSpace
-
-    compileSdk = App.Versions.compileSdk
     defaultConfig {
         applicationId = App.applicationId
-
-        minSdk = App.Versions.minSdk
-        targetSdk = App.Versions.targetSdk
-
         versionCode = App.Releases.versionCode
         versionName = App.Releases.versionName
 
-        multiDexEnabled = true
-        vectorDrawables.useSupportLibrary = true
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+//        multiDexEnabled = true
+//        vectorDrawables.useSupportLibrary = true
 
         buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
         buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
@@ -34,32 +22,16 @@ android {
         resValue("string", "deeplink_prefix", project.properties["DEEPLINK_BASE"] as String)
     }
 
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
     buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles("proguard-android-optimize.txt", "proguard-rules.pro")
-        }
-
-        debug {
-            isMinifyEnabled = false
-            isShrinkResources = false
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-DEBUG"
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
-    compileOptions {
-        sourceCompatibility = App.Versions.javaCompileVersion
-        targetCompatibility = App.Versions.javaCompileVersion
-    }
-    kotlinOptions {
-        jvmTarget = App.Versions.javaLanguageVersion
-    }
-    packagingOptions {
-        resources.excludes += "META-INF/AL2.0"
-        resources.excludes += "META-INF/LGPL2.1"
-    }
-    dataBinding.enable = true
 }
 
 dependencies {
@@ -69,24 +41,14 @@ dependencies {
     implementation(project(App.Module.Features.musicService))
     implementation(project(App.Module.Features.musicPlayer))
 
-    implementation(libs.jakewharton.timber)
-
-    // androidx
-    implementation(libs.androidx.multidex)
+    // theme
     implementation(libs.androidx.material)
 
-    // hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    // media3
+    implementation(libs.androidx.media3.common)
 
-    // hilt_work
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.hilt.worker)
-    kapt(libs.hilt.worker.compiler)
-
-    // coroutine
-    implementation(libs.kotlinx.coroutines.core)
-    testImplementation(libs.kotlinx.coroutines.test)
+    // log
+    implementation(libs.jakewharton.timber)
 
     // Network
     implementation(libs.squareup.retrofit)
@@ -97,11 +59,6 @@ dependencies {
     // Api debug
     debugImplementation(libs.chucker.debug)
     releaseImplementation(libs.chucker.release)
-
-    // mediaSession
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.session)
-    implementation(libs.androidx.mediarouter)
 
     // Room
     implementation(libs.androidx.room)
