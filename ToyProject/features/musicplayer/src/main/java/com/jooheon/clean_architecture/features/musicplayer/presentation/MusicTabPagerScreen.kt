@@ -58,7 +58,12 @@ fun MusicTabPagerScreen(
     )
 
     val scope = rememberCoroutineScope()
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        tabPages.size
+    }
 
     val scrollToPage: (Int) -> Unit = { page ->
         scope.launch { pagerState.animateScrollToPage(page) }
@@ -115,7 +120,6 @@ fun MusicTabPagerScreen(
             }
 
             HorizontalPager(
-                pageCount = 4,
                 state = pagerState
             ) { page ->
                 when (page) {
