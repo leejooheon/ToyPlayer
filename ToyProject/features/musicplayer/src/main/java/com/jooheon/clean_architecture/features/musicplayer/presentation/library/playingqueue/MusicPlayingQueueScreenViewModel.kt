@@ -60,7 +60,7 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         musicControllerUsecase.onPlayAtPlayingQueue(
             songs = songs,
             addToPlayingQueue = false,
-            autoPlay = true
+            playWhenReady = true
         )
     }
 

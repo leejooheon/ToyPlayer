@@ -48,11 +48,7 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onPlay(song: Song) {
-        musicControllerUsecase.onPlayAtPlayingQueue(
-            songs = listOf(song),
-            addToPlayingQueue = true,
-            autoPlay = true,
-        )
+        musicControllerUsecase.addToPlayingQueue(song)
     }
 
     private fun onNextClicked() {

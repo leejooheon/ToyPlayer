@@ -19,7 +19,7 @@ import kotlin.math.roundToInt
 @UnstableApi
 class PlayingMediaNotificationAdapter @Inject constructor(
     private val context: Context,
-    private val applicationScope: CoroutineScope,
+    private val scope: CoroutineScope,
     private val pendingIntent: PendingIntent?,
 ) : PlayerNotificationManager.MediaDescriptionAdapter {
 
@@ -48,7 +48,7 @@ class PlayingMediaNotificationAdapter @Inject constructor(
         synchronized(lock) {
             if(bitmapProvider.requireLoadBitmap(albumArtUri)) {
                 bitmapJob?.cancel()
-                bitmapJob = applicationScope.launch(Dispatchers.IO) {
+                bitmapJob = scope.launch(Dispatchers.IO) {
                     val bitmap = bitmapProvider.load(
                         context = context,
                         uri = albumArtUri,

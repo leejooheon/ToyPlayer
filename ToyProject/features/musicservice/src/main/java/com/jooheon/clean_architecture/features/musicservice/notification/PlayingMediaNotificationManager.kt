@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -14,15 +13,14 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import timber.log.Timber
 
 class PlayingMediaNotificationManager(
-    @ApplicationContext private val context: Context,
-    private val applicationScope: CoroutineScope,
+    private val context: Context,
+    private val scope: CoroutineScope,
     private val player: ExoPlayer,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + PlayingMediaNotificationManager::class.java.simpleName
@@ -56,7 +54,7 @@ class PlayingMediaNotificationManager(
             .setMediaDescriptionAdapter(
                 PlayingMediaNotificationAdapter(
                     context = context,
-                    applicationScope = applicationScope,
+                    scope = scope,
                     pendingIntent = mediaSession.sessionActivity,
                 )
             )
@@ -106,8 +104,8 @@ class PlayingMediaNotificationManager(
 
     private fun startForegroundNotification(mediaSessionService: MediaSessionService) {
         val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setCategory(Notification.CATEGORY_TRANSPORT)
-//            .setCategory(Notification.CATEGORY_SERVICE)
+//            .setCategory(Notification.CATEGORY_TRANSPORT)
+            .setCategory(Notification.CATEGORY_SERVICE)
             .build()
         mediaSessionService.startForeground(NOTIFICATION_ID, notification)
     }

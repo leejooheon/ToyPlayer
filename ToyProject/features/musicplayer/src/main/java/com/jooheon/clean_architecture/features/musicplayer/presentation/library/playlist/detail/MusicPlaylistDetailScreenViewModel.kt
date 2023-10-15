@@ -43,7 +43,7 @@ class MusicPlaylistDetailScreenViewModel @Inject constructor(
                 musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = listOf(event.song),
                     addToPlayingQueue = true,
-                    autoPlay = true,
+                    playWhenReady = true,
                 )
             }
         }

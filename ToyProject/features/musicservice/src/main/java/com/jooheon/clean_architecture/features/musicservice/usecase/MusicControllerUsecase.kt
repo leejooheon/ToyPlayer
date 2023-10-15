@@ -4,42 +4,48 @@ import android.app.Activity
 import android.content.*
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
+import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.common.Timeline
-import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
 import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
-import com.jooheon.clean_architecture.features.musicservice.data.exoPlayerStateAsString
+import com.jooheon.clean_architecture.features.musicservice.ext.playbackErrorReason
+import com.jooheon.clean_architecture.features.musicservice.ext.toMediaItem
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
 import javax.inject.Singleton
 
-@Singleton
-class MusicControllerUsecase @Inject constructor(
-    @ApplicationContext private val context: Context,
+@UnstableApi
+class MusicControllerUsecase(
+    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
-    private val TAG_PLAYER = MusicService::class.java.simpleName + "@" + "PlayerListener"
     private var musicService: MusicService? = null
     private val connectionMap = WeakHashMap<Context, ServiceConnection>()
+
+    private val _songLibrary = MutableStateFlow(emptyList<Song>())
+//    val songLibrary = _songLibrary.asStateFlow()
+
+    private val _playingQueue = MutableStateFlow<List<Song>>(emptyList())
+    val playingQueue = _playingQueue.asStateFlow()
 
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
@@ -47,18 +53,26 @@ class MusicControllerUsecase @Inject constructor(
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
 
-    private val _exoPlayerState = MutableStateFlow(ExoPlayer.STATE_IDLE)
-    val exoPlayerState = _exoPlayerState.asStateFlow()
+    private val _playerState = MutableStateFlow<Int?>(null)
+    val playerState = _playerState.asStateFlow()
 
+    private val _musicStreamErrorChannel = Channel<Resource.Failure>()
+    val musicStreamErrorChannel = _musicStreamErrorChannel.receiveAsFlow()
 
     init {
         Timber.tag(TAG).d( "musicController - ${musicController}")
         collectMusicState()
+        collectTimelineWindows()
+        collectNullableWindow()
+        collectMediaItemIndex()
+        collectIsPlaying()
         collectDuration()
         collectRepeatMode()
         collectShuffleMode()
+        collectExoPlayerState()
+        collectPlaybackException()
+
         initPlayingQueue()
-        musicController.registerPlayerListener(playerListener())
     }
 
     private fun commandToService() {
@@ -69,17 +83,67 @@ class MusicControllerUsecase @Inject constructor(
         serviceIntent.putExtra(MUSIC_DURATION, timePassed.value)
         MusicService.startService(context, serviceIntent)
     }
-
     private fun collectMusicState() = applicationScope.launch(Dispatchers.IO) {
         musicState.collectLatest {
             Timber.tag(TAG).d( "collectMusicState")
             commandToService()
         }
     }
-
     private fun collectDuration() = applicationScope.launch {
         musicController.currentDuration.collectLatest { currentDuration ->
             _timePassed.update { currentDuration }
+        }
+    }
+    private fun collectTimelineWindows() = applicationScope.launch {
+        musicController.timelineWindows.collectLatest { timelineWindows ->
+            val songLibrary = _songLibrary.value
+            Timber.tag(TAG).d("collectTimelineWindows: origin: ${timelineWindows.size}, filtered: ${songLibrary.size}")
+
+            val newPlayingQueue = mutableListOf<Song>()
+            timelineWindows.forEach { window ->
+                val song = songLibrary.firstOrNull {
+                    it.id() == window.mediaItem.mediaId
+                } ?: return@forEach
+                Timber.tag(TAG).d("collectTimelineWindows: ${song.title}")
+                newPlayingQueue.add(song)
+            }
+            if(newPlayingQueue.isNotEmpty()) {
+                playingQueueUseCase.updatePlayingQueue(
+                    song = newPlayingQueue.toTypedArray()
+                )
+            }
+            _playingQueue.tryEmit(newPlayingQueue)
+            _musicState.update {
+                it.copy(
+                    playingQueue = newPlayingQueue
+                )
+            }
+        }
+    }
+    private fun collectNullableWindow() = applicationScope.launch {
+        musicController.nullableWindow.collectLatest { window ->
+            val songLibrary = _songLibrary.value
+
+            val song = songLibrary.firstOrNull {
+                it.id() == window?.mediaItem?.mediaId
+            } ?: Song.default
+
+            updateCurrentPlayingMusic(song)
+        }
+    }
+    private fun collectMediaItemIndex() = applicationScope.launch {
+        musicController.mediaItemIndex.collectLatest {
+            playingQueueUseCase.setPlayingQueuePosition(it)
+        }
+    }
+    private fun collectIsPlaying() = applicationScope.launch {
+        musicController.isPlaying.collectLatest { isPlaying ->
+            Timber.tag(TAG).d( "collectIsPlaying - ${isPlaying}")
+            _musicState.update {
+                it.copy(
+                    isPlaying = isPlaying
+                )
+            }
         }
     }
     private fun collectRepeatMode() = applicationScope.launch {
@@ -87,7 +151,7 @@ class MusicControllerUsecase @Inject constructor(
             Timber.tag(TAG).d( "collectRepeatMode - ${repeatMode}")
             _musicState.update {
                 it.copy(
-                    repeatMode = repeatMode
+                    repeatMode = RepeatMode.getByValue(repeatMode)
                 )
             }
         }
@@ -97,39 +161,97 @@ class MusicControllerUsecase @Inject constructor(
             Timber.tag(TAG).d( "collectShuffleMode - ${shuffleMode}")
             _musicState.update {
                 it.copy(
-                    shuffleMode = shuffleMode
+                    shuffleMode = ShuffleMode.getByValue(shuffleMode)
                 )
             }
         }
+    }
+    private fun collectExoPlayerState() = applicationScope.launch {
+        musicController.exoPlayerState.collectLatest { state ->
+            _playerState.tryEmit(state)
+
+            if(state == ExoPlayer.STATE_READY) {
+                updateCurrentPlayingMusic(musicState.value.currentPlayingMusic)
+            }
+
+            _musicState.update {
+                it.copy(
+                    isBuffering = state == ExoPlayer.STATE_BUFFERING
+                )
+            }
+        }
+    }
+    private fun collectPlaybackException() = applicationScope.launch {
+        musicController.playbackExceptionChannel.collectLatest { error ->
+            Timber.tag(TAG).e("collectPlaybackException: ${error.errorCode.playbackErrorReason()}, ${error.message}")
+
+            val failureStatus = when(error.errorCode) {
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> FailureStatus.NO_INTERNET
+                else -> FailureStatus.OTHER
+            }
+
+            _musicStreamErrorChannel.send(
+                Resource.Failure(
+                    failureStatus = failureStatus,
+                    code = error.errorCode,
+                    message = error.message
+                )
+            )
+        }
+    }
+    fun addToPlayingQueue(song: Song) = applicationScope.launch {
+        val index = playingQueue.value.indexOfFirst {
+            it.id() == song.id()
+        }
+
+        if(index != C.INDEX_UNSET) {
+            musicController.removeMeidaItems(listOf(index))
+        } else {
+            _songLibrary.update { it.toMutableList().apply { add(song) } }
+        }
+
+        musicController.addMediaItems(
+            mediaItems = listOf(song).map { it.toMediaItem() },
+            addNext = true,
+            playWhenReady = true
+        )
     }
 
     fun onPlayAtPlayingQueue(
         songs: List<Song>,
         addToPlayingQueue: Boolean,
-        autoPlay: Boolean
+        playWhenReady: Boolean
     ) = applicationScope.launch(Dispatchers.IO) {
         if (addToPlayingQueue) { // TabToSelect
-            val position = musicController.songLibrary.value.size
-            musicController.addToPlayingQueue(
-                songs = songs,
-                position = position,
-            )
-            if (autoPlay && songs.isNotEmpty()) {
-                musicController.play(position)
+            val songLibrary = _songLibrary.value
+
+            val filtered = songs.filter { song ->
+                songLibrary.none { it.id() == song.id() }
             }
+
+            _songLibrary.update {
+                it.toMutableList().apply { addAll(filtered) }
+            }
+
+            musicController.addMediaItems(
+                mediaItems = filtered.map { it.toMediaItem() },
+                addNext = false,
+                playWhenReady = true //playWhenReady,
+            )
         } else { // TabToPlay
-            musicController.openPlayingQueue(
-                songs = songs,
-                startIndex = 0
+            _songLibrary.update { songs }
+
+            musicController.setMediaItems(
+                mediaItems = songs.map{ it.toMediaItem() },
+                startIndex = 0,
+                playWhenReady = playWhenReady
             )
-            if (autoPlay && songs.isNotEmpty()) {
-                musicController.play(0)
-            }
         }
     }
 
     fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch(Dispatchers.IO) {
-        val playingQueue = musicController.songLibrary.value
+        val playingQueue = _playingQueue.value
 
         val songIndexList = songs.filter {
             it != Song.default
@@ -139,10 +261,8 @@ class MusicControllerUsecase @Inject constructor(
             it != -1
         }
 
-        val deletedSongs = songIndexList.map { playingQueue[it] }
-        musicController.deleteFromPlayingQueue(
-            songIndexList = songIndexList,
-            deletedSongs = deletedSongs
+        musicController.removeMeidaItems(
+            mediaItemIndexes = songIndexList,
         )
     }
 
@@ -150,21 +270,16 @@ class MusicControllerUsecase @Inject constructor(
         song: Song = musicState.value.currentPlayingMusic,
     ) = applicationScope.launch(Dispatchers.IO) {
         val state = musicState.value
-        if (isFirstPlay(song)) { // 최초 실행시
-            musicController.play(0)
-            return@launch
-        }
-
-        if (state.currentPlayingMusic == song) { // pause -> play 한 경우
-            musicController.resume()
-            return@launch
-        }
 
         val index = state.playingQueue.indexOfFirst {
             it.id() == song.id()
         }
 
-        musicController.play(index)
+        musicController.play(
+            index = index,
+            seekTo = C.TIME_UNSET,
+            playWhenReady = true
+        )
     }
     fun onPause() = applicationScope.launch(Dispatchers.IO) {
         musicController.pause()
@@ -184,137 +299,19 @@ class MusicControllerUsecase @Inject constructor(
             fromUser = true
         )
     }
+
     fun onShuffleButtonPressed(shuffleModeEnabled: Boolean) = applicationScope.launch(Dispatchers.IO) {
         musicController.changeShuffleMode(shuffleModeEnabled)
     }
     fun onRepeatButtonPressed(repeatMode: RepeatMode) = applicationScope.launch(Dispatchers.IO) {
         musicController.changeRepeatMode(repeatMode.ordinal)
     }
-    fun onSkipDurationChanged() = applicationScope.launch(Dispatchers.IO) {
-        musicController.changeSkipDuration()
-    }
+    private fun updateCurrentPlayingMusic(song: Song) {
+        Timber.tag(TAG).d("updateCurrentPlayingMusic: ${song.title}, Id: ${song.id()}")
 
-    private fun playerListener() = object: Player.Listener {
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            super.onPlaybackStateChanged(playbackState)
-            Timber.tag(TAG_PLAYER).d(playbackState.exoPlayerStateAsString())
-
-            if (playbackState == ExoPlayer.STATE_ENDED) {
-                val repeatMode = musicState.value.repeatMode
-                when (repeatMode) {
-                    RepeatMode.REPEAT_ALL -> this@MusicControllerUsecase.onNext()
-                    RepeatMode.REPEAT_OFF -> this@MusicControllerUsecase.onStop()
-                    RepeatMode.REPEAT_ONE -> this@MusicControllerUsecase.onPlay()
-                }
-            }
-
-            _exoPlayerState.tryEmit(playbackState)
-            _musicState.update {
-                it.copy(isBuffering = (playbackState == ExoPlayer.STATE_BUFFERING))
-            }
-        }
-
-        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-            super.onPlayWhenReadyChanged(playWhenReady, reason)
-            Timber.tag(TAG_PLAYER).d("onPlayWhenReadyChanged: ${playWhenReady}, reason: ${reason}")
-        }
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            super.onIsPlayingChanged(isPlaying)
-            Timber.tag(TAG_PLAYER).d( "onIsPlayingChanged - ${isPlaying}")
-
-            if(isPlaying) {
-                musicController.collectDuration()
-            }
-
-            _musicState.update {
-                it.copy(isPlaying = isPlaying)
-            }
-        }
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            super.onMediaItemTransition(mediaItem, reason)
-            Timber.tag(TAG_PLAYER).d("onMediaItemTransition: ${mediaItem?.mediaMetadata?.title}")
-
-            val playingQueue = musicController.songLibrary.value
-            val id = mediaItem?.mediaId ?: run {
-                Timber.tag(TAG_PLAYER).d("onMediaItemTransition: invalid mediaId")
-                return
-            }
-            val song = playingQueue.firstOrNull {
-                it.id() == id
-            } ?: run {
-                Timber.tag(TAG_PLAYER).d("onMediaItemTransition: not inside playingQueue ")
-                return
-            }
-
-            _timePassed.update { 0L }
-            _musicState.update {
-                it.copy(currentPlayingMusic = song)
-            }
-        }
-
-        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-            super.onTimelineChanged(timeline, reason)
-            if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
-                applicationScope.launch(Dispatchers.Main) {
-                    val playingQueue = musicController.getPlayingQueue()
-                    val position = musicController.mediaItemPosition()
-                    Timber.tag(TAG_PLAYER).d( "onTimelineChanged - ${playingQueue.size}, pos: ${position}")
-
-                    playingQueueUseCase.openPlayingQueue(
-                        song = playingQueue.toTypedArray()
-                    )
-                    _musicState.update {
-                        it.copy(playingQueue = playingQueue)
-                    }
-                    playingQueueUseCase.setPlayingQueuePosition(position)
-                }
-            }
-        }
-
-        @UnstableApi
-        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-            super.onMediaMetadataChanged(mediaMetadata)
-            applicationScope.launch(Dispatchers.Main) {
-                val position = musicController.mediaItemPosition()
-                Timber.tag(TAG_PLAYER).d("onMediaMetadataChanged: ${mediaMetadata.title}, position: $position")
-                playingQueueUseCase.setPlayingQueuePosition(position)
-            }
-        }
-
-        override fun onRepeatModeChanged(repeatMode: Int) {
-            super.onRepeatModeChanged(repeatMode)
-            onRepeatButtonPressed(RepeatMode.values()[repeatMode])
-        }
-
-        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            super.onShuffleModeEnabledChanged(shuffleModeEnabled)
-            onShuffleButtonPressed(shuffleModeEnabled)
-        }
-
-        override fun onTracksChanged(tracks: Tracks) {
-            super.onTracksChanged(tracks)
-            Timber.tag(TAG_PLAYER).d("onTracksChanged: ${tracks.groups.size}")
-        }
-
-        override fun onPlayerError(error: PlaybackException) {
-            super.onPlayerError(error)
-            Timber.tag(TAG_PLAYER).d("Jooheon onPlayerError: ${error.message}")
-
-            _musicState.update {
-                it.copy(currentPlayingMusic = Song.default)
-            }
-        }
-        override fun onEvents(player: Player, events: Player.Events) {
-            super.onEvents(player, events)
-//            if(events.size() > 1) {
-//                var msg = ""
-//                repeat(events.size()) { msg += "${it}th: event: ${events.get(it)}\n" }
-//                Timber.tag(TAG_PLAYER).d("====== onEvents ======\n${msg}")
-//            } else {
-//                Timber.tag(TAG_PLAYER).d("onEvents: ${events.get(0)}")
-//            }
+        _timePassed.update { 0L }
+        _musicState.update {
+            it.copy(currentPlayingMusic = song)
         }
     }
 
@@ -359,18 +356,18 @@ class MusicControllerUsecase @Inject constructor(
     }
 
     private fun initPlayingQueue() = applicationScope.launch {
+        Timber.tag("Jooheon").e("initPlayingQueue: $musicController")
         playingQueueUseCase.getPlayingQueue().onEach {
             if(it is Resource.Success) {
-                musicController.openPlayingQueue(
-                    songs = it.value,
-                    startIndex = playingQueueUseCase.getPlayingQueuePosition()
+                val playingQueue = it.value
+                _songLibrary.tryEmit(playingQueue)
+                musicController.setMediaItems(
+                    mediaItems = playingQueue.map { it.toMediaItem() },
+                    startIndex = playingQueueUseCase.getPlayingQueuePosition(),
+                    playWhenReady = false
                 )
             }
         }.launchIn(this)
-    }
-
-    private fun isFirstPlay(song: Song): Boolean { // 현재 재생중인 곡이 없고, 요청한 곡이 emptySong일떄 (최초 실행시)
-        return song == Song.default && musicState.value.currentPlayingMusic == Song.default
     }
 
     private val serviceIntent = Intent(context, MusicService::class.java)

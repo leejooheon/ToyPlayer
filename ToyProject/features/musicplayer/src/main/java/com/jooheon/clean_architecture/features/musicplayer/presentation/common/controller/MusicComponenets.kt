@@ -30,7 +30,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 import com.jooheon.clean_architecture.features.essential.base.UiText
-import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
+import com.jooheon.clean_architecture.features.musicservice.ext.albumArtUri
 import com.jooheon.clean_architecture.toyproject.features.common.R
 
 

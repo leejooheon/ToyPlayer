@@ -1,146 +1,80 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
-import android.content.Context
+import androidx.annotation.FloatRange
 import androidx.media3.common.*
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
-import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicservice.MusicService
-import com.jooheon.clean_architecture.features.musicservice.data.toMediaItem
-import com.jooheon.clean_architecture.toyproject.features.common.extension.showToast
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.jooheon.clean_architecture.features.musicservice.ext.currentWindow
+import com.jooheon.clean_architecture.features.musicservice.ext.mediaItemTransitionReason
+import com.jooheon.clean_architecture.features.musicservice.ext.playWhenReadyChangeReason
+import com.jooheon.clean_architecture.features.musicservice.ext.playerState
+import com.jooheon.clean_architecture.features.musicservice.ext.timelineChangeReason
+import com.jooheon.clean_architecture.features.musicservice.ext.windows
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-/**
- * IMPORTANT!!
- * NEVER APPROACH DIRECTLY.
- * Use MusicControllerUsecase.
-**/
-@Singleton
-class MusicController @Inject constructor( // di 옮기고, internal class로 바꿔야함
-    @ApplicationContext private val context: Context,
+@UnstableApi
+class MusicController(
     private val applicationScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
 ) : IMusicController {
-    private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName + "@Main"
+    private val TAG_PLAYER = MusicService::class.java.simpleName + "@" + "PlayerListener"
 
-    private val _songLibrary = MutableStateFlow(emptyList<Song>())
-    val songLibrary = _songLibrary.asStateFlow()
+    private val _timelineWindows = MutableStateFlow(exoPlayer.currentTimeline.windows)
+    val timelineWindows = _timelineWindows.asStateFlow()
 
-    private val _repeatMode = MutableStateFlow(RepeatMode.REPEAT_ALL)
-    val repeatMode: StateFlow<RepeatMode> = _repeatMode
+    private val _nullableWindow = MutableStateFlow(exoPlayer.currentWindow)
+    val nullableWindow = _nullableWindow.asStateFlow()
 
-    private val _shuffleMode = MutableStateFlow(ShuffleMode.SHUFFLE)
-    val shuffleMode: StateFlow<ShuffleMode> = _shuffleMode
+    private val _mediaItemIndex = MutableStateFlow(if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET else exoPlayer.currentMediaItemIndex)
+    val mediaItemIndex = _mediaItemIndex.asStateFlow()
 
-    private val _currentDuration = MutableStateFlow(0L)
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying
+
+    private val _repeatMode = MutableStateFlow(ExoPlayer.REPEAT_MODE_ALL)
+    val repeatMode: StateFlow<Int> = _repeatMode
+
+    private val _shuffleMode = MutableStateFlow(false)
+    val shuffleMode: StateFlow<Boolean> = _shuffleMode
+
+    private val _currentDuration = MutableStateFlow(C.TIME_UNSET)
     val currentDuration: StateFlow<Long> = _currentDuration
+
+    private val _playbackSpeed = MutableStateFlow<@receiver:FloatRange(from = 0.1, to = 1.0) Float>( 1f)
+    val playbackSpeed: StateFlow<Float> = _playbackSpeed
+
+    private val _exoPlayerState = MutableStateFlow<@Player.State Int>(ExoPlayer.STATE_IDLE)
+    val exoPlayerState: StateFlow<Int> = _exoPlayerState
+
+    private val _forceUpdate = MutableStateFlow(Player.STATE_READY)
+    val forceUpdate: StateFlow<Int> = _forceUpdate
+
+    private val _playbackExceptionChannel = Channel<PlaybackException>()
+    val playbackExceptionChannel = _playbackExceptionChannel.receiveAsFlow()
 
     private var durationFromPlayerJob: Job? = null
 
     init {
-        initPlaybackState()
+        initExoPlayer()
     }
-
-    fun registerPlayerListener(listener: Player.Listener) {
-        exoPlayer.addListener(listener)
-    }
-    override suspend fun getPlayingQueue(): List<Song> = withContext(Dispatchers.Main) {
-        val songLibrary = songLibrary.value
-        val newPlayingQueue = mutableListOf<Song>()
-        repeat(exoPlayer.mediaItemCount) {
-            val mediaItem = exoPlayer.getMediaItemAt(it)
-            val song = songLibrary.firstOrNull { it.id() == mediaItem.mediaId } ?: return@repeat
-            newPlayingQueue.add(song)
-        }
-
-        return@withContext newPlayingQueue
-    }
-
-    override fun mediaItemPosition() = exoPlayer.currentMediaItemIndex
-
-    override suspend fun openPlayingQueue(songs: List<Song>, startIndex: Int) = withContext(Dispatchers.Main) {
-        _songLibrary.tryEmit(songs)
-        val index = if(songs.size <= startIndex) 0
-                    else startIndex
-        exoPlayer.setMediaItems(
-            songs.map { it.toMediaItem() },
-            index,
-            C.INDEX_UNSET.toLong()
-        )
-        exoPlayer.prepare()
-    }
-
-    override suspend fun addToPlayingQueue(
-        songs: List<Song>,
-        position: Int,
+    override suspend fun play(
+        index: Int,
+        seekTo: Long,
+        playWhenReady: Boolean,
     ) = withContext(Dispatchers.Main) {
-        songLibrary.value.toMutableList().apply {
-            addAll(songs)
-        }.run {
-            _songLibrary.tryEmit(this)
-        }
+        Timber.tag(TAG).d("play: index: $index, playWhenReady: $playWhenReady")
 
-        exoPlayer.addMediaItems(
-            position,
-            songs.map { it.toMediaItem() },
-        )
-        exoPlayer.prepare()
-    }
-    override suspend fun deleteFromPlayingQueue(
-        songIndexList: List<Int>,
-        deletedSongs: List<Song>,
-    ) = withContext(Dispatchers.Main) {
-        val newLibrary = songLibrary.value.toMutableList()
-        deletedSongs.forEach { target ->
-            songLibrary.value.firstOrNull {
-                it.id() == target.id()
-            }?.let {
-                newLibrary.remove(it)
-            }
-        }
-        _songLibrary.tryEmit(newLibrary)
-
-        songIndexList.forEach {
-            exoPlayer.removeMediaItem(it)
-        }
-        exoPlayer.prepare()
-    }
-
-    override suspend fun play(index: Int) = withContext(Dispatchers.Main) {
-        Timber.tag(TAG).d("play musicStreamUri - $index")
         exoPlayer.run {
-            playWhenReady = true
-            seekTo(index, C.INDEX_UNSET.toLong()) // n번째 곡의 X초부터 시작한다.
-            play()
+            this@run.playWhenReady = playWhenReady
+            if(exoPlayer.currentMediaItemIndex != index) seekTo(index, seekTo)
+            if(exoPlayerState.value == Player.STATE_IDLE) prepare()
         }
-    }
-
-    override suspend fun resume() = withContext(Dispatchers.Main) {
-        exoPlayer.playWhenReady = true
-        exoPlayer.seekTo(exoPlayer.currentMediaItemIndex, currentDuration.value)
-        exoPlayer.play()
-        debugMessage("resume")
-    }
-
-    override suspend fun pause() = withContext(Dispatchers.Main) {
-        exoPlayer.run {
-            playWhenReady = true
-            pause()
-        }
-        debugMessage("pause")
-    }
-
-    override suspend fun stop() = withContext(Dispatchers.Main) {
-        Timber.tag(TAG).d( "stop")
-        exoPlayer.stop()
-
-        debugMessage("stop")
+        debugMessage("play $playWhenReady")
     }
 
     override suspend fun previous() = withContext(Dispatchers.Main) {
@@ -149,72 +83,112 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
         with(exoPlayer) {
             if(hasPreviousMediaItem()) {
                 seekToPreviousMediaItem()
-                debugMessage("previous")
+            } else {
+                snapTo(C.TIME_UNSET, true)
             }
+
+            debugMessage("previous")
         }
     }
-
     override suspend fun next() = withContext(Dispatchers.Main) {
         Timber.tag(TAG).d( "next")
         with(exoPlayer) {
             if(hasNextMediaItem()) {
                 seekToNextMediaItem()
-                debugMessage("next")
+            } else {
+                snapTo(C.TIME_UNSET, true)
+            }
+            debugMessage("next")
+        }
+    }
+
+    override suspend fun pause() = withContext(Dispatchers.Main) {
+        if(isPlaying.value) {
+            exoPlayer.run {
+                pause()
             }
         }
+        debugMessage("pause")
+    }
+
+    override suspend fun stop() = withContext(Dispatchers.Main) {
+        Timber.tag(TAG).d( "stop")
+        exoPlayer.stop()
+        debugMessage("stop")
     }
 
     override suspend fun snapTo(duration: Long, fromUser: Boolean) = withContext(Dispatchers.Main) {
         _currentDuration.tryEmit(duration)
-        if(fromUser) {
-            exoPlayer.seekTo(duration)
-        }
+        if(fromUser) exoPlayer.seekTo(duration)
     }
 
-    override suspend fun changeRepeatMode(repeatMode: Int) = withContext(Dispatchers.Main) {
-        val value = RepeatMode.values()[repeatMode]
-        val (playerState, state) = when(value) {
-            RepeatMode.REPEAT_ALL -> Player.REPEAT_MODE_ALL to RepeatMode.REPEAT_ALL
-            RepeatMode.REPEAT_ONE -> Player.REPEAT_MODE_ONE to RepeatMode.REPEAT_ONE
-            RepeatMode.REPEAT_OFF -> Player.REPEAT_MODE_OFF to RepeatMode.REPEAT_OFF
-        }
-
-        if(exoPlayer.repeatMode != playerState) {
-            exoPlayer.repeatMode = playerState
-        }
-        _repeatMode.tryEmit(state)
-
+    override suspend fun changeRepeatMode(@Player.RepeatMode repeatMode: Int) = withContext(Dispatchers.Main) {
+        Timber.tag(TAG).d("changeRepeatMode: $repeatMode")
+        exoPlayer.repeatMode = repeatMode
         debugMessage("repeatMode")
     }
 
     override suspend fun changeShuffleMode(shuffleModeEnabled: Boolean) = withContext(Dispatchers.Main) {
-        val shuffleMode = when(shuffleModeEnabled) {
-            true -> ShuffleMode.SHUFFLE
-            false -> ShuffleMode.NONE
-        }
+        Timber.tag(TAG).d("changeShuffleMode: $shuffleModeEnabled")
         exoPlayer.shuffleModeEnabled = shuffleModeEnabled
-        _shuffleMode.tryEmit(shuffleMode)
         debugMessage("shuffleMode")
     }
+    override suspend fun changePlaybackSpeed(
+        @FloatRange(from = 0.1, to = 1.0) playbackSpeed: Float
+    ) = withContext(Dispatchers.Main) {
+        _playbackSpeed.tryEmit(playbackSpeed)
+        exoPlayer.setPlaybackSpeed(playbackSpeed)
+        debugMessage("changePlaybackSpeed: $playbackSpeed")
+    }
 
-    override suspend fun changeSkipDuration() {
-//        val skipDuration = settingUseCase.getSkipForwardBackward()
-//        runOnUiThread {
-//            _skipState.tryEmit(skipDuration)
-//        }
+    override suspend fun setMediaItems(
+        mediaItems: List<MediaItem>,
+        startIndex: Int,
+        playWhenReady: Boolean
+    ) = withContext(Dispatchers.Main) {
+        with(exoPlayer) {
+            setMediaItems(mediaItems, startIndex, C.TIME_UNSET)
+
+            this@with.playWhenReady = playWhenReady
+            prepare()
+        }
+    }
+    override suspend fun addMediaItems(
+        mediaItems: List<MediaItem>,
+        addNext: Boolean,
+        playWhenReady: Boolean,
+    ) = withContext(Dispatchers.Main) {
+        with(exoPlayer) {
+            val index = if(addNext) currentMediaItemIndex + 1 else mediaItemCount
+            addMediaItems(index, mediaItems)
+
+            if(playWhenReady) {
+                prepare()
+                this@MusicController.play(
+                    index = index,
+                    seekTo = C.TIME_UNSET,
+                    playWhenReady = true
+                )
+            }
+        }
+    }
+    override suspend fun removeMeidaItems(
+        mediaItemIndexes: List<Int>
+    ) = withContext(Dispatchers.Main) {
+        mediaItemIndexes.forEach { exoPlayer.removeMediaItem(it) }
     }
 
     @Synchronized
-    fun collectDuration() {
+    private fun collectDuration() {
         durationFromPlayerJob?.cancel()
         durationFromPlayerJob = applicationScope.launch(Dispatchers.Main) {
             while (exoPlayer.isPlaying && isActive) {
-                val duration = if (exoPlayer.duration != -1L) {
+                val duration = if (exoPlayer.duration != C.TIME_UNSET) {
                     exoPlayer.currentPosition
                 } else {
                     0L
                 }
-                Timber.tag(TAG).d( "snapTo: ${duration}, job: ${this}")
+                Timber.tag(TAG).d( "snapTo: ${duration}, job: $this")
 
                 snapTo(
                     duration = duration,
@@ -228,11 +202,111 @@ class MusicController @Inject constructor( // di 옮기고, internal class로 �
         }
     }
 
-    private fun initPlaybackState() = applicationScope.launch {
-        changeRepeatMode(repeatMode.value.ordinal)
+    private fun initExoPlayer() {
+        Timber.tag("Jooheon").e("initExoPlayer: $this")
+        exoPlayer.apply {
+            addListener(exoPlayerListener())
+        }.run {
+            emitExoPlayerState(playbackState)
+        }
+    }
+
+    private fun exoPlayerListener() = object : Player.Listener {
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            super.onMediaItemTransition(mediaItem, reason)
+            Timber.tag(TAG_PLAYER).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
+            val mediaItemIndex = if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET
+                                 else exoPlayer.currentMediaItemIndex
+
+            _nullableWindow.tryEmit(exoPlayer.currentWindow)
+            _mediaItemIndex.tryEmit(mediaItemIndex)
+        }
+
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+            super.onTimelineChanged(timeline, reason)
+            Timber.tag(TAG_PLAYER).d("onTimelineChanged: ${reason.timelineChangeReason()}")
+
+            _timelineWindows.tryEmit(timeline.windows)
+
+            val mediaItemIndex = if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET
+            else exoPlayer.currentMediaItemIndex
+            _mediaItemIndex.tryEmit(mediaItemIndex)
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            Timber.tag(TAG_PLAYER).d( "onIsPlayingChanged - ${isPlaying}")
+            _isPlaying.tryEmit(isPlaying)
+
+            if(isPlaying) {
+                collectDuration()
+            }
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            Timber.tag(TAG_PLAYER).d("onPlaybackStateChanged: ${playbackState.playerState()}")
+            emitExoPlayerState(playbackState)
+        }
+
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            super.onMediaMetadataChanged(mediaMetadata)
+            Timber.tag(TAG_PLAYER).d("onMediaMetadataChanged: ${mediaMetadata.title}")
+        }
+
+        override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
+            super.onPlaylistMetadataChanged(mediaMetadata)
+            Timber.tag(TAG_PLAYER).d("onPlaylistMetadataChanged: mediaMetadata: ${mediaMetadata.title}")
+        }
+
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            super.onPlayWhenReadyChanged(playWhenReady, reason)
+            Timber.tag(TAG_PLAYER).d("onPlayWhenReadyChanged: playWhenReady: ${playWhenReady}, reason: ${reason.playWhenReadyChangeReason()}")
+        }
+
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            super.onRepeatModeChanged(repeatMode)
+            _repeatMode.tryEmit(repeatMode)
+        }
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            super.onShuffleModeEnabledChanged(shuffleModeEnabled)
+            _shuffleMode.tryEmit(shuffleModeEnabled)
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            Timber.tag(TAG_PLAYER).d("onPlayerError: ${error.message}")
+            _playbackExceptionChannel.trySend(error)
+        }
+
+        override fun onEvents(player: Player, events: Player.Events) {
+            super.onEvents(player, events)
+            var msg = ""
+            repeat(events.size()) {
+                msg += "${it}th: event: ${events.get(it)}\n"
+            }
+//            Timber.tag(TAG_PLAYER).d("====== onEvents ======\n${msg}")
+        }
+    }
+
+    private fun emitExoPlayerState(playbackState: Int) = applicationScope.launch {
+        if(playbackState == Player.STATE_READY) {
+            _exoPlayerState.tryEmit(playbackState)
+            withContext(Dispatchers.IO) {
+                repeat(3) {
+                    delay(300)
+                    _forceUpdate.tryEmit(Player.STATE_READY + it)
+                }
+            }
+        } else {
+            _exoPlayerState.tryEmit(playbackState)
+        }
     }
 
     private suspend fun debugMessage(message: String) = withContext(Dispatchers.Main) {
-        context.showToast(message)
+        if(BuildConfig.DEBUG) {
+//            context.showToast(message)
+        }
     }
 }

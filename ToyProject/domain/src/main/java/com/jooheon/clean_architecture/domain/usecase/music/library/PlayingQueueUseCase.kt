@@ -8,6 +8,6 @@ interface PlayingQueueUseCase {
     suspend fun getPlayingQueuePosition(): Int
     suspend fun setPlayingQueuePosition(position: Int)
     suspend fun getPlayingQueue(): Flow<Resource<List<Song>>>
-    suspend fun openPlayingQueue(vararg song: Song)
+    suspend fun updatePlayingQueue(vararg song: Song): Boolean
     suspend fun clear()
 }

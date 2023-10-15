@@ -30,7 +30,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var musicControllerUseCase: MusicControllerUsecase
-//    private var serviceToken: MusicControllerUsecase.ServiceToken? = null
+    private var serviceToken: MusicControllerUsecase.ServiceToken? = null
 
     @Inject
     lateinit var themeStateFlow: ThemeStateFlow
@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        serviceToken = musicControllerUseCase.bindToService(this)
+        serviceToken = musicControllerUseCase.bindToService(this)
 
         lifecycleScope.launch {
             SettingScreenEvent.changeLanguage(
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-//        musicControllerUseCase.unbindToService(serviceToken)
+        musicControllerUseCase.unbindToService(serviceToken)
     }
 
     @Composable

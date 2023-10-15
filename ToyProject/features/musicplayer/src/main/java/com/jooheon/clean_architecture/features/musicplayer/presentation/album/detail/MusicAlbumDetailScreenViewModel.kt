@@ -51,7 +51,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = listOf(event.song),
                     addToPlayingQueue = true,
-                    autoPlay = true,
+                    playWhenReady = true,
                 )
             }
             is MusicAlbumDetailScreenEvent.OnActionPlayAll -> {
@@ -63,7 +63,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 musicControllerUsecase.onPlayAtPlayingQueue(
                     songs = songs,
                     addToPlayingQueue = false,
-                    autoPlay = true
+                    playWhenReady = true
                 )
             }
         }

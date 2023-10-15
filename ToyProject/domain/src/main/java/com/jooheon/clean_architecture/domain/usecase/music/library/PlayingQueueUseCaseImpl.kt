@@ -22,12 +22,14 @@ class PlayingQueueUseCaseImpl(
         emit(resource)
     }
 
-    override suspend fun openPlayingQueue(vararg song: Song){
+    override suspend fun updatePlayingQueue(vararg song: Song): Boolean {
         val newPlayingQueue = mutableListOf<Song>().apply {
             addAll(song)
         }
         playingQueueRepository.clear()
         playingQueueRepository.updatePlayingQueue(newPlayingQueue)
+
+        return true
     }
 
     override suspend fun clear() {

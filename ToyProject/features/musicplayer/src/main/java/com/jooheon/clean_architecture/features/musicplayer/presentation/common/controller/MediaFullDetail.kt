@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.features.musicservice.data.albumArtUri
+import com.jooheon.clean_architecture.features.musicservice.ext.albumArtUri
 
 @Composable
 fun MediaFullDetails(

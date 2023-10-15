@@ -1,11 +1,13 @@
 package com.jooheon.clean_architecture.features.musicservice
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import androidx.core.content.ContextCompat
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
@@ -16,7 +18,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,10 +28,14 @@ class MusicService: MediaSessionService() {
     lateinit var musicControllerUsecase: MusicControllerUsecase
 
     @Inject
-    lateinit var mediaSession: MediaSession
+    lateinit var exoPlayer: ExoPlayer
 
     @Inject
-    lateinit var playingMediaNotificationManager: PlayingMediaNotificationManager
+    lateinit var singleTopActivityIntent: Intent
+
+    private lateinit var mediaSession: MediaSession
+
+    private lateinit var playingMediaNotificationManager: PlayingMediaNotificationManager
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -67,6 +72,40 @@ class MusicService: MediaSessionService() {
     }
 
     @UnstableApi
+    private fun initNotification() {
+        playingMediaNotificationManager = PlayingMediaNotificationManager(
+            context = this,
+            scope = serviceScope,
+            player = exoPlayer
+        ).also {
+            it.startNotificationService(this, mediaSession)
+        }
+
+        serviceScope.launch {
+            playingMediaNotificationManager.cancelChannel.collectLatest {
+                withContext(Dispatchers.IO) {
+                    delay(1000)
+                }
+                quit()
+            }
+        }
+    }
+    @UnstableApi
+    private fun initMediaSession() {
+        val sessionActivityIntent = PendingIntent.getActivity(
+            this,
+            0,
+            singleTopActivityIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
+
+        mediaSession = MediaSession.Builder(this, exoPlayer).build().apply {
+            setSessionActivity(sessionActivityIntent)
+        }
+    }
+
+
+        @UnstableApi
     override fun onUpdateNotification(session: MediaSession, startInForegroundRequired: Boolean) {
         // TODO: 이 메소드를 재정의하지않으면 2개의 Notification이 생기는 현상이 발생함. 원인을 찾아보자.
         Timber.d("onUpdateNotification")
@@ -76,14 +115,9 @@ class MusicService: MediaSessionService() {
     override fun onCreate() {
         Timber.tag(TAG).d( "onCreate")
         super.onCreate()
-        playingMediaNotificationManager.startNotificationService(this, mediaSession)
-        serviceScope.launch {
-            playingMediaNotificationManager.cancelChannel.collectLatest {
-                quit()
-            }
-        }
+        initMediaSession()
+        initNotification()
     }
-
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).d( "onTaskRemoved")
@@ -107,8 +141,9 @@ class MusicService: MediaSessionService() {
         mediaSession.run {
             if (player.playbackState != Player.STATE_IDLE) {
                 player.playWhenReady = false
-                player.stop()
+                player.pause()
             }
+//            https://github.com/androidx/media/issues/389: 서비스 중지를 api에서 해준다구..??
 //            try {
 //                release()
 //            } catch (e: Exception) {
