@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".musicplayer"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.musicplayer"
 }
 
 dependencies {
-    implementation(project(App.Module.Features.musicService))
+    implementation(projects.features.musicservice)
 
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.constraintlayout.compose)

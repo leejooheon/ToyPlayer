@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".map"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.map"
 }
 
 dependencies {

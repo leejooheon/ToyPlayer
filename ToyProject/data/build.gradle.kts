@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = App.nameSpace + ".data"
+    namespace = "com.jooheon.clean_architecture.toyproject.data"
 }
 
 dependencies {
-    implementation(project(App.Module.domain))
+    implementation(projects.domain)
 
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.serialization.json)

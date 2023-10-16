@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".setting"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.setting"
 }
 
 dependencies {

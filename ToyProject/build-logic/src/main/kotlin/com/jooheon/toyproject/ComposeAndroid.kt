@@ -10,7 +10,7 @@ internal fun Project.configureComposeAndroid() {
             compose = true
         }
         composeOptions {
-            kotlinCompilerExtensionVersion = libs.findVersion("composeCompiler").get().toString()
+            kotlinCompilerExtensionVersion = libs.composeVersion
         }
 
         dependencies {
@@ -40,8 +40,6 @@ internal fun Project.configureComposeAndroid() {
 
             add("debugImplementation", libs.findLibrary("androidx.compose.ui.tooling").get())
             add("debugImplementation", libs.findLibrary("androidx.compose.ui.testManifest").get())
-
-
         }
     }
 }

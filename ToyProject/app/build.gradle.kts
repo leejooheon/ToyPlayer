@@ -5,14 +5,11 @@ plugins {
 }
 
 android {
-    namespace = App.nameSpace
+    namespace = "com.jooheon.clean_architecture.toyproject"
     defaultConfig {
-        applicationId = App.applicationId
-        versionCode = App.Releases.versionCode
-        versionName = App.Releases.versionName
-
-//        multiDexEnabled = true
-//        vectorDrawables.useSupportLibrary = true
+        applicationId = "com.jooheon.clean_architecture.toyproject"
+        versionCode = Integer.parseInt(libs.versions.version.code.get())
+        versionName = libs.versions.version.name.get()
 
         buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
         buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
@@ -35,11 +32,11 @@ android {
 }
 
 dependencies {
-    implementation(project(App.Module.data))
-    implementation(project(App.Module.domain))
-    implementation(project(App.Module.Features.main))
-    implementation(project(App.Module.Features.musicService))
-    implementation(project(App.Module.Features.musicPlayer))
+    implementation(projects.data)
+    implementation(projects.domain)
+    implementation(projects.features.main)
+    implementation(projects.features.musicservice)
+    implementation(projects.features.musicplayer)
 
     // theme
     implementation(libs.androidx.material)

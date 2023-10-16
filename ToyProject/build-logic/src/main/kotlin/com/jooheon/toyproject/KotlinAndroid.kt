@@ -2,7 +2,6 @@ package com.jooheon.toyproject
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -11,15 +10,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * https://github.com/android/nowinandroid/blob/main/build-logic/convention/src/main/kotlin/com/google/samples/apps/nowinandroid/KotlinAndroid.kt
  */
 internal fun Project.configureKotlinAndroid() {
+    val libs = extensions.libs
     // Plugins
     pluginManager.apply("org.jetbrains.kotlin.android")
 
     // Android settings
     androidExtension.apply {
-        compileSdk = 34
+
+        compileSdk = Integer.parseInt(libs.sdkCompile)
 
         defaultConfig {
-            minSdk = 24
+            minSdk = Integer.parseInt(libs.sdkMin)
         }
 
         compileOptions {

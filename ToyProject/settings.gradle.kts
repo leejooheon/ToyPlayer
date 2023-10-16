@@ -18,6 +18,6 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
         google()
-        includeBuild("Plugins")
+        includeBuild("build-logic")
     }
 }

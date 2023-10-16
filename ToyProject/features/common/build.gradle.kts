@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".common"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.common"
 
     defaultConfig {
         buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
@@ -14,7 +14,7 @@ android {
 }
 
 dependencies {
-    implementation(project(App.Module.domain))
+    implementation(projects.domain)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)

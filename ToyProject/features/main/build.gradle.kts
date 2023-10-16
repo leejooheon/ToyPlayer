@@ -3,20 +3,20 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".main"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.main"
 }
 
 dependencies {
-    implementation(project(App.Module.domain))
-    implementation(project(App.Module.Features.common))
-    implementation(project(App.Module.Features.splash))
-    implementation(project(App.Module.Features.github))
-    implementation(project(App.Module.Features.wikipedia))
-    implementation(project(App.Module.Features.map))
-    implementation(project(App.Module.Features.musicPlayer))
-    implementation(project(App.Module.Features.musicService))
-    implementation(project(App.Module.Features.setting))
-    implementation(project(App.Module.Features.splash))
+    implementation(projects.domain)
+    implementation(projects.features.common)
+    implementation(projects.features.splash)
+    implementation(projects.features.github)
+    implementation(projects.features.wikipedia)
+    implementation(projects.features.map)
+    implementation(projects.features.musicplayer)
+    implementation(projects.features.musicservice)
+    implementation(projects.features.setting)
+    implementation(projects.features.splash)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.material.iconsExtended)

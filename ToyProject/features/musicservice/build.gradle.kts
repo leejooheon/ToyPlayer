@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".musicservice"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.musicservice"
 }
 
 dependencies {
-    implementation(project(App.Module.domain))
-    implementation(project(App.Module.Features.common))
+    implementation(projects.domain)
+    implementation(projects.features.common)
 
     // media3
     implementation(libs.androidx.media3.exoplayer)

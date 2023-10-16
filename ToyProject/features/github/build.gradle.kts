@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".github"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.github"
 }
 
 dependencies {

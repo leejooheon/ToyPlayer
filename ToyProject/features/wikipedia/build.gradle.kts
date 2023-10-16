@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = App.Module.Features.nameSpace + ".wikipedia"
+    namespace = "com.jooheon.clean_architecture.toyproject.features.wikipedia"
 }
