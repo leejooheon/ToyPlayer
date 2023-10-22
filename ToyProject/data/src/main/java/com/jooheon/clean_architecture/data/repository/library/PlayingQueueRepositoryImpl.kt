@@ -5,6 +5,8 @@ import com.jooheon.clean_architecture.data.datasource.local.LocalPlaylistDataSou
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.repository.library.PlayingQueueRepository
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +24,14 @@ class PlayingQueueRepositoryImpl(
         }
     }
 
+    override suspend fun setRepeatMode(repeatMode: Int) {
+        appPreferences.repeatMode = RepeatMode.getByValue(repeatMode)
+    }
+    override suspend fun setShuffleMode(shuffleEnabled: Boolean) {
+        appPreferences.shuffleMode = ShuffleMode.getByValue(shuffleEnabled)
+    }
+    override suspend fun getRepeatMode() = appPreferences.repeatMode
+    override suspend fun getShuffleMode() = appPreferences.shuffleMode
     override suspend fun getPlayingQueuePosition(): Int {
         return appPreferences.lastPlayingQueuePosition
     }

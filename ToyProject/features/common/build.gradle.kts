@@ -19,7 +19,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
 
+    // material icons
     implementation(libs.androidx.compose.material.iconsExtended)
+
+    // theme
+    implementation(libs.androidx.material)
 
     // coil
     implementation(libs.coil)

@@ -89,18 +89,6 @@ private fun AddSongPlaylistDialogHeader() {
     }
 }
 
-
-@Composable
-private fun AddSongPlaylistDialogContent(playlist: Playlist) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-    ) {
-
-    }
-}
-
 @Preview
 @Composable
 private fun AddSongIntoPlaylistDialogPreview() {

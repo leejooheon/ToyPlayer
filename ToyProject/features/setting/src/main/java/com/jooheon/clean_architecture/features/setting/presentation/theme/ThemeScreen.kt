@@ -56,7 +56,7 @@ private fun ThemeScreen(
     onEvent: (Context, SettingScreenEvent) -> Unit
 ) {
     val context = LocalContext.current
-    val supportThemes = Entity.SupportThemes.values()
+    val supportThemes = Entity.SupportThemes.entries
 
     Column(
         modifier = Modifier

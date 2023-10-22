@@ -19,7 +19,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase,
     private val themeStateFlow: ThemeStateFlow
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
     val _sharedState = MutableStateFlow(SettingScreenState.default)

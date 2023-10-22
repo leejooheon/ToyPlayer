@@ -56,7 +56,7 @@ private fun LanguageScreen(
 ) {
     val context = LocalContext.current
 //    val localizeState = viewModel.localizedState.collectAsState()
-    val supportLanguages = Entity.SupportLaunguages.values()
+    val supportLanguages = Entity.SupportLaunguages.entries
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,8 +82,7 @@ private fun LanguageScreen(
                 containerColor = Color.Transparent
             )
         )
-
-        val context = LocalContext.current
+        
         supportLanguages.forEach {
             val selected = it == state.language
             SettingDetailItem(

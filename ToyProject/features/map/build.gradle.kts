@@ -7,7 +7,6 @@ android {
 }
 
 dependencies {
-    // google map
-    implementation("com.google.maps.android:maps-compose:2.5.3")
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation(libs.google.maps.compose)
+    implementation(libs.play.services.maps)
 }

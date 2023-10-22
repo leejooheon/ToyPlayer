@@ -94,7 +94,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
     var repeatMode: RepeatMode
         get() {
             val ordinal = sessionPreferences.getInt(REPEAT_MODE.first, REPEAT_MODE.second)
-            return RepeatMode.values()[ordinal]
+            return RepeatMode.entries[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(REPEAT_MODE.first, value.ordinal)
@@ -103,7 +103,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
     var shuffleMode: ShuffleMode
         get() {
             val ordinal = sessionPreferences.getInt(SHUFFLE_MODE.first, SHUFFLE_MODE.second)
-            return ShuffleMode.values()[ordinal]
+            return ShuffleMode.entries[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(SHUFFLE_MODE.first, value.ordinal)
@@ -112,7 +112,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
     var skipForwardBackward: SkipForwardBackward
         get() {
             val ordinal = sessionPreferences.getInt(SKIP_DURATION.first, SKIP_DURATION.second)
-            return SkipForwardBackward.values()[ordinal]
+            return SkipForwardBackward.entries[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(SKIP_DURATION.first, value.ordinal)
@@ -121,7 +121,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
     var language: Entity.SupportLaunguages
         get() {
             val ordinal = sessionPreferences.getInt(LANGUAGE.first, LANGUAGE.second)
-            return Entity.SupportLaunguages.values()[ordinal]
+            return Entity.SupportLaunguages.entries[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(LANGUAGE.first, value.ordinal)
@@ -130,7 +130,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
     var theme: Entity.SupportThemes
         get() {
             val ordinal = sessionPreferences.getInt(THEME.first, THEME.second)
-            return Entity.SupportThemes.values()[ordinal]
+            return Entity.SupportThemes.entries[ordinal]
         }
         set(value) = sessionPreferences.edit {
             it.putInt(THEME.first, value.ordinal)

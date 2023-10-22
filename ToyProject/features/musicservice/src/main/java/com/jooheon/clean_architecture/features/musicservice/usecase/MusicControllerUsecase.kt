@@ -70,6 +70,7 @@ class MusicControllerUsecase(
         collectPlaybackException()
 
         initPlayingQueue()
+        initPlaybackOptions()
     }
 
     private fun commandToService() {
@@ -360,6 +361,14 @@ class MusicControllerUsecase(
                 )
             }
         }.launchIn(this)
+    }
+
+    private fun initPlaybackOptions() = applicationScope.launch {
+        val repeatMode = playingQueueUseCase.repeatMode()
+        val shuffleMode = playingQueueUseCase.shuffleMode()
+
+        musicController.changeRepeatMode(repeatMode.ordinal)
+        musicController.changeShuffleMode(shuffleMode == ShuffleMode.SHUFFLE)
     }
 
     private val serviceIntent = Intent(context, MusicService::class.java)

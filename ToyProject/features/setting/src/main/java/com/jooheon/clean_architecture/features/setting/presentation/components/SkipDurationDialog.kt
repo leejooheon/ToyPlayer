@@ -61,7 +61,7 @@ internal fun SkipDurationDialog(
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    SkipForwardBackward.values().forEach {
+                    SkipForwardBackward.entries.forEach {
                         SkipForwardBackwardItem(
                             selected = currentState == it,
                             skipForwardBackward = it,

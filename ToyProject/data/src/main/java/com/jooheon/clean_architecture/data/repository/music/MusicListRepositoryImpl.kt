@@ -42,8 +42,7 @@ class MusicListRepositoryImpl(
 
     override fun getMusicListType(): MusicListType {
         val ordinal = appPreferences.musicListType
-        val musicListType = MusicListType.values()[ordinal]
-        return musicListType
+        return MusicListType.entries[ordinal]
     }
 
     override fun setMusicListType(musicListType: MusicListType) {

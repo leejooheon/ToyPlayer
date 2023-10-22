@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GithubScreenViewModel @Inject constructor(
     private val githubUseCase: GithubUseCase,
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG: String = GithubScreenViewModel::class.java.simpleName
 
     var githubState by mutableStateOf(GithubScreenState.default)

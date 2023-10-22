@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val subwayUseCase: SubwayUseCase,
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG: String = MainViewModel::class.java.simpleName
 
     private val _mainScreenState = MutableStateFlow(MainScreenState.default)

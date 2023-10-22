@@ -10,11 +10,11 @@ compose_compiler = "1.5.3"
 version_code = "10000"
 version_name = "1.0.0"
 android_sdk_compile = "34"
-android_sdk_min = "24"
+android_sdk_min = "26"
 
 
 # Compose
-composeBom = "2023.10.00"
+composeBom = "2023.10.01"
 compose-accompanist = "0.32.0"
 
 # Plugins
@@ -36,7 +36,7 @@ composeNavigation = "2.7.4"
 
 # Media3
 media3 = "1.1.1"
-mediarouter = "1.4.0"
+mediarouter = "1.6.0"
 
 # KotlinX
 kotlinxCoroutines = "1.7.3"
@@ -54,7 +54,7 @@ hiltWorker = "1.0.0"
 work = "2.8.1"
 
 # Room
-room = "2.5.2"
+room = "2.6.0"
 
 # Network
 retrofit = "2.9.0"
@@ -66,6 +66,10 @@ retrofit-serialization-converter = "1.0.0"
 # Glide
 glide = "4.15.1"
 coil = "2.4.0"
+
+# Google map
+googleMap = "2.5.3"
+playServiceMap = "18.2.0"
 
 # Timber
 timber ="5.0.1"
@@ -210,6 +214,10 @@ chucker-release = { module = "com.github.chuckerteam.chucker:library-no-op", ver
 # Glide
 bumptech-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide"}
 bumptech-glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide"}
+
+# Maps
+google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "googleMap"}
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServiceMap"}
 
 # Coil
 coil = { module = "io.coil-kt:coil", version.ref = "coil"}

@@ -5,8 +5,7 @@ enum class RepeatMode {
     REPEAT_ONE, /** ExoPlayer.REPEAT_MODE_ONE **/
     REPEAT_ALL, /** ExoPlayer.REPEAT_MODE_ALL **/
     ;
-//    RepeatMode.values()[ordinal]
     companion object {
-        fun getByValue(value: Int) = RepeatMode.values()[value]
+        fun getByValue(value: Int) = entries[value]
     }
 }

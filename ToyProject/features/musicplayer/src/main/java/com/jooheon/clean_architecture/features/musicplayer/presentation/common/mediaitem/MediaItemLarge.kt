@@ -32,7 +32,6 @@ import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaItemLarge(
     title: String,
@@ -72,7 +71,6 @@ fun MediaItemLarge(
                 CoilImage(
                     url = imageUrl,
                     contentDescription = subTitle,
-                    placeholderRes = R.drawable.test_2,
                     modifier = Modifier
                         .weight(0.2f)
                         .aspectRatio(1f)

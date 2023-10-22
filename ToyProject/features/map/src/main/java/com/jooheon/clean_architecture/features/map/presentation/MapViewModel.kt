@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(
     private val parkingSpotUseCase: ParkingSpotUseCase
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG = MapViewModel::class.java.simpleName
 
     private val _mapState = MutableStateFlow(MapScreenState())

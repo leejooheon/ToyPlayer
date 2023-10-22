@@ -22,6 +22,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.c
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.colors.pallette.DarkColorScheme
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.colors.pallette.LightColorPalette
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.colors.pallette.LightColorScheme
+import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
 
 @Composable
 fun ApplicationTheme(
@@ -96,13 +97,13 @@ fun getColorScheme(theme: Entity.SupportThemes): ColorScheme {
 @Composable
 private fun parseColorScheme(supportDynamicColor: Boolean, isDark: Boolean): ColorScheme {
     val colorScheme = if(isDark) {
-        if(supportDynamicColor) {
+        if(supportDynamicColor && VersionUtil.hasS()) {
             dynamicDarkColorScheme(LocalContext.current)
         } else {
             DarkColorScheme
         }
     } else {
-        if(supportDynamicColor) {
+        if(supportDynamicColor && VersionUtil.hasS()) {
             dynamicLightColorScheme(LocalContext.current)
         } else {
             LightColorScheme

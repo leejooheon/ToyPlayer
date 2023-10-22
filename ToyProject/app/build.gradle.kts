@@ -60,6 +60,7 @@ dependencies {
     // Room
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
+//    ksp(libs.androidx.room.compile)
     kapt(libs.androidx.room.compile)
 
     // LearkCanary

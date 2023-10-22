@@ -11,9 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
-
-): com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel() {
+class SplashViewModel @Inject constructor(): BaseViewModel() {
     override val TAG: String = SplashViewModel::class.java.simpleName
     private val _done = mutableStateOf<SplashResult<*>>(SplashResult.Default)
     val done = _done
