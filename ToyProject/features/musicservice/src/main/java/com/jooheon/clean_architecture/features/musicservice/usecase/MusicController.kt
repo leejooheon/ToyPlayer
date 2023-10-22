@@ -4,13 +4,14 @@ import androidx.annotation.FloatRange
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ShuffleOrder
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.ext.currentWindow
 import com.jooheon.clean_architecture.features.musicservice.ext.mediaItemTransitionReason
+import com.jooheon.clean_architecture.features.musicservice.ext.mediaItemsIndices
 import com.jooheon.clean_architecture.features.musicservice.ext.playWhenReadyChangeReason
 import com.jooheon.clean_architecture.features.musicservice.ext.playerState
 import com.jooheon.clean_architecture.features.musicservice.ext.timelineChangeReason
-import com.jooheon.clean_architecture.features.musicservice.ext.windows
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -24,11 +25,11 @@ class MusicController(
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName + "@Main"
     private val TAG_PLAYER = MusicService::class.java.simpleName + "@" + "PlayerListener"
 
-    private val _timelineWindows = MutableStateFlow(exoPlayer.currentTimeline.windows)
-    val timelineWindows = _timelineWindows.asStateFlow()
+    private val _mediaItems = MutableStateFlow<List<MediaItem>>(emptyList())
+    val mediaItems = _mediaItems.asStateFlow()
 
-    private val _nullableWindow = MutableStateFlow(exoPlayer.currentWindow)
-    val nullableWindow = _nullableWindow.asStateFlow()
+    private val _currentWindow = MutableStateFlow(exoPlayer.currentWindow)
+    val currentWindow = _currentWindow.asStateFlow()
 
     private val _mediaItemIndex = MutableStateFlow(if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET else exoPlayer.currentMediaItemIndex)
     val mediaItemIndex = _mediaItemIndex.asStateFlow()
@@ -84,7 +85,7 @@ class MusicController(
             if(hasPreviousMediaItem()) {
                 seekToPreviousMediaItem()
             } else {
-                snapTo(C.TIME_UNSET, true)
+                seekToDefaultPosition(mediaItemCount - 1)
             }
 
             debugMessage("previous")
@@ -96,7 +97,7 @@ class MusicController(
             if(hasNextMediaItem()) {
                 seekToNextMediaItem()
             } else {
-                snapTo(C.TIME_UNSET, true)
+                seekToDefaultPosition(0)
             }
             debugMessage("next")
         }
@@ -163,19 +164,38 @@ class MusicController(
             addMediaItems(index, mediaItems)
 
             if(playWhenReady) {
-                prepare()
                 this@MusicController.play(
                     index = index,
                     seekTo = C.TIME_UNSET,
-                    playWhenReady = true
+                    playWhenReady = playWhenReady
                 )
             }
         }
     }
     override suspend fun removeMeidaItems(
-        mediaItemIndexes: List<Int>
+        mediaItemsIndices: List<Int>
     ) = withContext(Dispatchers.Main) {
-        mediaItemIndexes.forEach { exoPlayer.removeMediaItem(it) }
+        mediaItemsIndices.forEach { exoPlayer.removeMediaItem(it) }
+    }
+
+    private suspend fun maybeShufflePlaylist() = withContext(Dispatchers.Main) {
+        val indices = exoPlayer.mediaItemsIndices.toMutableList()
+        if(indices.isEmpty()) return@withContext
+
+        if(exoPlayer.shuffleModeEnabled) {
+            indices.remove(exoPlayer.currentMediaItemIndex)
+            indices.shuffle()
+            indices.add(0, exoPlayer.currentMediaItemIndex)
+        }
+        exoPlayer.setShuffleOrder(
+            ShuffleOrder.DefaultShuffleOrder(indices.toIntArray(), System.currentTimeMillis())
+        )
+    }
+
+    private suspend fun currentTimelineMediaItems(): List<MediaItem> = withContext(Dispatchers.Main) {
+        val indices = exoPlayer.mediaItemsIndices.toMutableList()
+        Timber.tag(TAG).d("currentTimelineMediaItems: ${shuffleMode.value}, shuffled: $indices")
+        return@withContext indices.map { exoPlayer.getMediaItemAt(it) }
     }
 
     @Synchronized
@@ -215,22 +235,24 @@ class MusicController(
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             super.onMediaItemTransition(mediaItem, reason)
             Timber.tag(TAG_PLAYER).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
-            val mediaItemIndex = if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET
-                                 else exoPlayer.currentMediaItemIndex
 
-            _nullableWindow.tryEmit(exoPlayer.currentWindow)
-            _mediaItemIndex.tryEmit(mediaItemIndex)
+            applicationScope.launch(Dispatchers.Main) {
+                changePlaybackSpeed(1f)
+                _currentWindow.tryEmit(exoPlayer.currentWindow)
+            }
         }
 
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
             super.onTimelineChanged(timeline, reason)
             Timber.tag(TAG_PLAYER).d("onTimelineChanged: ${reason.timelineChangeReason()}")
 
-            _timelineWindows.tryEmit(timeline.windows)
+            applicationScope.launch(Dispatchers.Main) {
+                if(reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
+                    _mediaItems.tryEmit(currentTimelineMediaItems())
+                }
 
-            val mediaItemIndex = if (exoPlayer.mediaItemCount == 0) C.INDEX_UNSET
-            else exoPlayer.currentMediaItemIndex
-            _mediaItemIndex.tryEmit(mediaItemIndex)
+                _currentWindow.tryEmit(exoPlayer.currentWindow)
+            }
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -267,11 +289,15 @@ class MusicController(
         override fun onRepeatModeChanged(repeatMode: Int) {
             super.onRepeatModeChanged(repeatMode)
             _repeatMode.tryEmit(repeatMode)
+            Timber.tag(TAG_PLAYER).d("onRepeatModeChanged: $repeatMode")
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             super.onShuffleModeEnabledChanged(shuffleModeEnabled)
-            _shuffleMode.tryEmit(shuffleModeEnabled)
+            applicationScope.launch {
+                maybeShufflePlaylist()
+                _shuffleMode.tryEmit(shuffleModeEnabled)
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {

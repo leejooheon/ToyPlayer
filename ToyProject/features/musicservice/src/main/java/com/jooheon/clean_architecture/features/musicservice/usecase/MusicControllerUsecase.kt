@@ -6,11 +6,11 @@ import android.os.IBinder
 import androidx.core.content.ContextCompat
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
@@ -21,14 +21,11 @@ import com.jooheon.clean_architecture.features.musicservice.MusicService.Compani
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import com.jooheon.clean_architecture.features.musicservice.ext.playbackErrorReason
 import com.jooheon.clean_architecture.features.musicservice.ext.toMediaItem
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import java.util.*
-import javax.inject.Inject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
-import javax.inject.Singleton
 
 @UnstableApi
 class MusicControllerUsecase(
@@ -62,8 +59,8 @@ class MusicControllerUsecase(
     init {
         Timber.tag(TAG).d( "musicController - ${musicController}")
         collectMusicState()
-        collectTimelineWindows()
-        collectNullableWindow()
+        collectMediaItems()
+        collectCurrentWindow()
         collectMediaItemIndex()
         collectIsPlaying()
         collectDuration()
@@ -86,7 +83,7 @@ class MusicControllerUsecase(
     private fun collectMusicState() = applicationScope.launch(Dispatchers.IO) {
         musicState.collectLatest {
             Timber.tag(TAG).d( "collectMusicState")
-            commandToService()
+//            commandToService()
         }
     }
     private fun collectDuration() = applicationScope.launch {
@@ -94,39 +91,33 @@ class MusicControllerUsecase(
             _timePassed.update { currentDuration }
         }
     }
-    private fun collectTimelineWindows() = applicationScope.launch {
-        musicController.timelineWindows.collectLatest { timelineWindows ->
-            val songLibrary = _songLibrary.value
-            Timber.tag(TAG).d("collectTimelineWindows: origin: ${timelineWindows.size}, filtered: ${songLibrary.size}")
+    private fun collectMediaItems() = applicationScope.launch {
+        musicController.mediaItems.collectLatest { mediaItems ->
+            Timber.tag(TAG).d( "collectMediaItems: ${mediaItems.size}")
+            val originPlaylist = _songLibrary.value
 
-            val newPlayingQueue = mutableListOf<Song>()
-            timelineWindows.forEach { window ->
-                val song = songLibrary.firstOrNull {
-                    it.id() == window.mediaItem.mediaId
-                } ?: return@forEach
-                Timber.tag(TAG).d("collectTimelineWindows: ${song.title}")
-                newPlayingQueue.add(song)
+            val newPlayingQueue = mediaItems.mapNotNull { mediaItem ->
+                originPlaylist.firstOrNull { it.id() == mediaItem.mediaId }
             }
-            if(newPlayingQueue.isNotEmpty()) {
-                playingQueueUseCase.updatePlayingQueue(
-                    song = newPlayingQueue.toTypedArray()
-                )
-            }
+
+            playingQueueUseCase.updatePlayingQueue(song = newPlayingQueue.toTypedArray())
             _playingQueue.tryEmit(newPlayingQueue)
             _musicState.update {
-                it.copy(
-                    playingQueue = newPlayingQueue
-                )
+                it.copy(playingQueue = newPlayingQueue)
             }
         }
     }
-    private fun collectNullableWindow() = applicationScope.launch {
-        musicController.nullableWindow.collectLatest { window ->
-            val songLibrary = _songLibrary.value
-
-            val song = songLibrary.firstOrNull {
-                it.id() == window?.mediaItem?.mediaId
-            } ?: Song.default
+    private fun collectCurrentWindow() = applicationScope.launch {
+        combine(
+            playingQueue,
+            musicController.currentWindow
+        ) { playingQueue, currentWindow ->
+            Pair(playingQueue, currentWindow)
+        }.collectLatest { (playingQueue, currentWindow) ->
+            currentWindow ?: return@collectLatest
+            val song = playingQueue.firstOrNull { it.id() == currentWindow.mediaItem.mediaId } ?: Song.default
+            Timber.tag(TAG).d( "collectCurrentWindow: ${song.title.defaultEmpty()}")
+            if(song == Song.default) return@collectLatest
 
             updateCurrentPlayingMusic(song)
         }
@@ -262,7 +253,7 @@ class MusicControllerUsecase(
         }
 
         musicController.removeMeidaItems(
-            mediaItemIndexes = songIndexList,
+            mediaItemsIndices = songIndexList,
         )
     }
 
@@ -335,6 +326,7 @@ class MusicControllerUsecase(
             )
         ) {
             connectionMap[contextWrapper] = serviceConnection
+            commandToService()
             return ServiceToken(contextWrapper)
         }
 

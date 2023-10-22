@@ -16,7 +16,7 @@ interface IMusicController {
         playWhenReady: Boolean,
     )
     suspend fun removeMeidaItems(
-        mediaItemIndexes: List<Int>,
+        mediaItemsIndices: List<Int>,
     )
 
     suspend fun play(

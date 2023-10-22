@@ -11,6 +11,23 @@ import com.jooheon.clean_architecture.toyproject.features.common.utils.MusicUtil
 
 val Player.currentWindow: Timeline.Window?
     get() = if (mediaItemCount == 0) null else currentTimeline.getWindow(currentMediaItemIndex, Timeline.Window())
+
+val Player.mediaItemsIndices: List<Int>
+    get() {
+        val indices = mutableListOf<Int>()
+        var index = currentTimeline.getFirstWindowIndex(shuffleModeEnabled)
+        if (index == -1) {
+            return emptyList()
+        }
+
+        repeat(currentTimeline.windowCount) {
+            indices += index
+            index = currentTimeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, shuffleModeEnabled)
+        }
+
+        return indices
+    }
+
 val Timeline.mediaItems: List<MediaItem>
     get() = List(windowCount) {
         getWindow(it, Timeline.Window()).mediaItem
