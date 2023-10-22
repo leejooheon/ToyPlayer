@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.jooheon.clean_architecture.domain.entity.Entity
@@ -29,6 +30,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.t
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.github.main.model.GithubDetailScreenState
 import com.jooheon.clean_architecture.features.github.main.presentation.main.components.RepositoryImage
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.toyproject.features.github.R
 import kotlin.math.max
 import kotlin.math.min
@@ -46,6 +48,22 @@ private val HzPadding = Modifier.padding(horizontal = 24.dp)
 
 @Composable
 fun GithubDetailScreen(
+    githubId: String,
+    repository: Entity.Repository,
+    viewModel: GithubDetailScreenViewModel = hiltViewModel()
+) {
+    viewModel.initState(
+        id = githubId,
+        item = repository
+    )
+
+    GithubDetailScreen(
+        state = viewModel.state
+    )
+}
+
+@Composable
+private fun GithubDetailScreen(
     state: GithubDetailScreenState
 ) {
     Box(

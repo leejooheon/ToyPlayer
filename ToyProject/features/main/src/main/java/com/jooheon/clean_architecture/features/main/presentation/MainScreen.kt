@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.main
+package com.jooheon.clean_architecture.features.main.presentation
 
 import android.util.Log
 import android.widget.Toast
@@ -28,21 +28,42 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.google.accompanist.insets.statusBarsHeight
 import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.jooheon.clean_architecture.features.main.MainViewModel
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.main.model.MainScreenEvent
 import com.jooheon.clean_architecture.features.main.navigation.BottomNavigationHost
-import com.jooheon.clean_architecture.features.main.navigation.MyBottomNavigation
 import com.jooheon.clean_architecture.features.main.model.MainScreenState
-import com.jooheon.clean_architecture.features.main.navigation.currentBottomNavScreenAsState
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 const val TAG = "MainScreen"
+
+@Composable
+fun MainScreen(
+    navController: NavController,
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    viewModel.navigateToSettingScreen.observeWithLifecycle {
+        navController.navigate(ScreenNavigation.Setting.Main.route)
+    }
+
+    val state by viewModel.mainScreenState.collectAsStateWithLifecycle()
+
+    MainScreen(
+        navController = navController,
+        state = state,
+        onEvent = viewModel::dispatch
+    )
+}
 
 @OptIn(
     ExperimentalAnimationApi::class,
@@ -50,8 +71,8 @@ const val TAG = "MainScreen"
     ExperimentalMaterial3Api::class,
 )
 @Composable
-fun MainScreen(
-    navigator: NavController,
+private fun MainScreen(
+    navController: NavController,
     state: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit
 ) {
@@ -82,7 +103,7 @@ fun MainScreen(
                 bottomBarPadding.value = paddingParent.calculateBottomPadding()
                 BottomNavigationHost(
                     navController = bottomNavController,
-                    navigator = navigator,
+                    navigator = navController,
                     modifier = Modifier.padding(paddingParent),
                 )
             }
@@ -276,7 +297,7 @@ private fun PreviewMainScreen() {
 
     PreviewTheme(false) {
         MainScreen(
-            navigator = NavController(context),
+            navController = NavController(context),
             state = MainScreenState.default,
             onEvent = { _, -> }
         )

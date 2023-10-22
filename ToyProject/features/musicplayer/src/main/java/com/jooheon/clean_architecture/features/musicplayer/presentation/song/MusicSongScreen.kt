@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.toyproject.features.common.compose.extensions.scrollEnabled
@@ -31,13 +33,37 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.components.MusicSongMediaColumn
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.components.MusicSongMediaHeader
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
 
+@Composable
+internal fun MusicSongScreen(
+    navController: NavController,
+    viewModel: MusicSongScreenViewModel = hiltViewModel(),
+) {
+    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
+        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    }
+    val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
+    val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
+    MusicSongScreen(
+        musicSongState = screenState,
+        onMusicSongEvent = viewModel::dispatch,
+        onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+
+        musicPlayerState = musicPlayerState,
+        onMusicPlayerEvent = viewModel::dispatch,
+    )
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MusicSongScreen(
+private fun MusicSongScreen(
     musicSongState: MusicSongScreenState,
     onMusicSongEvent: (MusicSongScreenEvent) -> Unit,
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,

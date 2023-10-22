@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.features.setting.presentation.main
 
-
 import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
@@ -21,6 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CustomDivider
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
@@ -28,11 +29,33 @@ import com.jooheon.clean_architecture.features.setting.presentation.components.S
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenItem
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
+import com.jooheon.clean_architecture.features.setting.presentation.SettingViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.sharedViewModel
 import com.jooheon.clean_architecture.toyproject.features.setting.R
+
+@Composable
+fun SettingScreen(
+    navController: NavHostController,
+    backStackEntry: NavBackStackEntry,
+) {
+    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(navController).apply {
+        navigateTo.observeWithLifecycle {
+            SettingScreenEvent.navigateTo(navController, it)
+        }
+    }
+    val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
+
+    SettingScreen(
+        state = state,
+        onEvent = settingViewModel::dispatch
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(
+private fun SettingScreen(
     state: SettingScreenState,
     onEvent: (Context, SettingScreenEvent) -> Unit,
 ) {

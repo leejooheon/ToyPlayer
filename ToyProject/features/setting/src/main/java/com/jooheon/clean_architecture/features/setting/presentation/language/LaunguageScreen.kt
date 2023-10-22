@@ -7,21 +7,50 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.essential.base.UiText
 import com.jooheon.clean_architecture.features.setting.presentation.main.SettingDetailItem
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenState
+import com.jooheon.clean_architecture.features.setting.presentation.SettingViewModel
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.sharedViewModel
 import com.jooheon.clean_architecture.toyproject.features.setting.R
+
+@Composable
+fun LanguageScreen(
+    navController: NavHostController,
+    backStackEntry: NavBackStackEntry,
+) {
+    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
+        navController = navController,
+        parentRoute = ScreenNavigation.Setting.Main.route,
+    ).apply {
+        navigateTo.observeWithLifecycle {
+            SettingScreenEvent.navigateTo(navController, it)
+        }
+    }
+    val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
+
+    LanguageScreen(
+        state = state,
+        onEvent = settingViewModel::dispatch
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LanguageScreen(
+private fun LanguageScreen(
     state: SettingScreenState,
     onEvent: (Context, SettingScreenEvent) -> Unit
 ) {

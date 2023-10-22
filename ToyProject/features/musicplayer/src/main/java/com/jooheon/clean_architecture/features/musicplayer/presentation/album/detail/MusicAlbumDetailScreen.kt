@@ -42,6 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.toyproject.features.common.compose.components.CoilImage
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
@@ -55,12 +57,46 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.c
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import java.lang.Float
 import kotlin.math.max
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MusicAlbumDetailScreen(
+    navController: NavController,
+    album: Album,
+    viewModel: MusicAlbumDetailScreenViewModel = hiltViewModel()
+) {
+    viewModel.initialize(album)
+    viewModel.navigateTo.observeWithLifecycle { route ->
+        if(route == ScreenNavigation.Back.route) {
+            navController.popBackStack()
+        } else {
+            navController.navigate(route)
+        }
+    }
+    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
+        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    }
+    
+    val state by viewModel.musicAlbumDetailScreenState.collectAsStateWithLifecycle()
+    val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
+    MusicAlbumDetailScreen(
+        musicAlbumDetailScreenState = state,
+        onMusicAlbumDetailScreenEvent = viewModel::dispatch,
+        onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+
+        musicPlayerState = musicPlayerState,
+        onMusicPlayerEvent = viewModel::dispatch,
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun MusicAlbumDetailScreen(
     musicAlbumDetailScreenState: MusicAlbumDetailScreenState,
     onMusicAlbumDetailScreenEvent: (MusicAlbumDetailScreenEvent) -> Unit,
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,

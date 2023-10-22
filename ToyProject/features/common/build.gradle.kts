@@ -28,4 +28,7 @@ dependencies {
     // glide
     implementation(libs.bumptech.glide)
     kapt(libs.bumptech.glide.compiler)
+
+    //hiltViewModel
+    implementation(libs.hilt.androidx.navigation.compose)
 }

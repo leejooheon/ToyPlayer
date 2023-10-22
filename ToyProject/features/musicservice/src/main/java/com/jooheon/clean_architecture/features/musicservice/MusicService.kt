@@ -7,7 +7,9 @@ import android.os.Binder
 import androidx.core.content.ContextCompat
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSourceBitmapLoader
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.ui.PlayerNotificationManager
@@ -99,18 +101,16 @@ class MusicService: MediaSessionService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
-        mediaSession = MediaSession.Builder(this, exoPlayer).build().apply {
+        mediaSession = MediaSession.Builder(this, exoPlayer).apply {
             setSessionActivity(sessionActivityIntent)
-        }
+            setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this@MusicService)))
+        } .build()
     }
-
-
-        @UnstableApi
+    @UnstableApi
     override fun onUpdateNotification(session: MediaSession, startInForegroundRequired: Boolean) {
         // TODO: 이 메소드를 재정의하지않으면 2개의 Notification이 생기는 현상이 발생함. 원인을 찾아보자.
         Timber.d("onUpdateNotification")
     }
-
     @UnstableApi
     override fun onCreate() {
         Timber.tag(TAG).d( "onCreate")
@@ -132,6 +132,7 @@ class MusicService: MediaSessionService() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.tag(TAG).d( "onDestroy")
+        quit()
     }
 
     private fun quit() {
@@ -139,16 +140,12 @@ class MusicService: MediaSessionService() {
         serviceScope.cancel()
 
         mediaSession.run {
+            release()
             if (player.playbackState != Player.STATE_IDLE) {
                 player.playWhenReady = false
-                player.pause()
+                player.stop()
             }
 //            https://github.com/androidx/media/issues/389: 서비스 중지를 api에서 해준다구..??
-//            try {
-//                release()
-//            } catch (e: Exception) {
-//                return@run
-//            }
         }
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -184,4 +181,5 @@ class MusicService: MediaSessionService() {
     inner class MediaPlayerServiceBinder : Binder() {
         fun getService() = this@MusicService
     }
+
 }

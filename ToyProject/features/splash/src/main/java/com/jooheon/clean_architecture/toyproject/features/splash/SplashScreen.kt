@@ -26,7 +26,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenN
 
 @Composable
 fun SplashScreen(
-    navigator: NavController,
+    navcontroller: NavController,
     viewModel: SplashViewModel = hiltViewModel(),
     scaleInitialValue: Float = 0f
 ) {
@@ -70,7 +70,7 @@ fun SplashScreen(
         )
     }
 
-    PrepareRecomposableHandler(navigator, viewModel)
+    PrepareRecomposableHandler(navcontroller, viewModel)
 }
 
 

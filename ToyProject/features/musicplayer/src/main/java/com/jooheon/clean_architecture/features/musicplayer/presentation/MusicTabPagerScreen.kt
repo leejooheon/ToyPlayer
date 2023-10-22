@@ -16,31 +16,22 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.toyproject.features.common.compose.extensions.pagerTabIndicatorOffset
-import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.album.MusicAlbumScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.MusicArtistScreenViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.MusicPlaylistScreen
-import com.jooheon.clean_architecture.features.musicplayer.presentation.library.playlist.MusicPlaylistScreenViewModel
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.MusicSongScreenViewModel
+import com.jooheon.clean_architecture.features.musicplayer.presentation.model.MusicTabScreen
 
 import kotlinx.coroutines.launch
 
@@ -49,25 +40,12 @@ import kotlinx.coroutines.launch
 fun MusicTabPagerScreen(
     navController: NavController,
 ) {
-
-    val tabPages = listOf(
-        stringResource(id = R.string.tab_name_song ),
-        stringResource(id = R.string.tab_name_album),
-        stringResource(id = R.string.tab_name_artist),
-        stringResource(id = R.string.tab_name_playlist)
-    )
-
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f
     ) {
-        tabPages.size
-    }
-
-    val scrollToPage: (Int) -> Unit = { page ->
-        scope.launch { pagerState.animateScrollToPage(page) }
-        Unit
+        MusicTabScreen.entries.size
     }
 
     Box(
@@ -95,113 +73,36 @@ fun MusicTabPagerScreen(
                     )
                 }
             ) {
-                tabPages.forEachIndexed { i, title ->
-                    val selected = pagerState.currentPage == i
+                MusicTabScreen.entries.forEachIndexed { index, musicTabScreen ->
+                    val selected = pagerState.currentPage == index
 
                     Tab(
                         selected = selected,
                         text = {
                             Text(
-                                text = title,
+                                text = musicTabScreen.value.asString(),
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                                 style = MaterialTheme.typography.titleSmall.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
                                 color = if(selected) MaterialTheme.colorScheme.onBackground
-                                        else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+                                else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
                             )
                         },
                         onClick = {
-                            scrollToPage(i)
+                            scope.launch { pagerState.animateScrollToPage(index) }
                         }
                     )
                 }
             }
 
-            HorizontalPager(
-                state = pagerState
-            ) { page ->
-                when (page) {
-                    0 -> {
-                        val viewModel = hiltViewModel<MusicSongScreenViewModel>().apply {
-                            navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
-                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-                            }
-                        }
-                        val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
-                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
-
-                        MusicSongScreen(
-                            musicSongState = screenState,
-                            onMusicSongEvent = viewModel::dispatch,
-                            onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
-
-                            musicPlayerState = musicPlayerState,
-                            onMusicPlayerEvent = viewModel::dispatch,
-                        )
-                    }
-                    1 -> {
-                        val viewModel = hiltViewModel<MusicAlbumScreenViewModel>().apply {
-                            navigateToDetailScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.AlbumDetail.createRoute(it))
-                            }
-                            navigateToPlayingQueueScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-                            }
-                        }
-                        val screenState by viewModel.musicAlbumScreenState.collectAsStateWithLifecycle()
-                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
-
-                        MusicAlbumScreen(
-                            musicAlbumState = screenState,
-                            onMusicAlbumEvent = viewModel::dispatch,
-
-                            musicPlayerState = musicPlayerState,
-                            onMusicPlayerEvent = viewModel::dispatch,
-                        )
-                    }
-                    2 -> {
-                        val viewModel = hiltViewModel<MusicArtistScreenViewModel>().apply {
-                            navigateToDetailScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
-                            }
-                            navigateToPlayingQueueScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-                            }
-                        }
-                        val screenState by viewModel.musicArtistScreenState.collectAsStateWithLifecycle()
-                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
-
-                        MusicArtistScreen(
-                            musicArtistState = screenState,
-                            onMusicArtistScreenEvent = viewModel::dispatch,
-
-                            musicPlayerState = musicPlayerState,
-                            onMusicPlayerEvent = viewModel::dispatch,
-                        )
-                    }
-                    3 -> {
-                        val viewModel = hiltViewModel<MusicPlaylistScreenViewModel>().apply {
-                            navigateToDetailScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.PlaylistDetail.createRoute(it))
-                            }
-                            navigateToPlayingQueueScreen.observeWithLifecycle {
-                                navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-                            }
-                        }
-                        val state by viewModel.musicPlaylistScreenState.collectAsStateWithLifecycle()
-                        val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
-
-                        MusicPlaylistScreen(
-                            musicPlaylistScreenState = state,
-                            onMusicPlaylistScreenEvent = viewModel::dispatch,
-                            onMusicPlaylistItemEvent = viewModel::onMusicMediaItemEvent,
-
-                            musicPlayerState = musicPlayerState,
-                            onMusicPlayerEvent = viewModel::dispatch,
-                        )
-                    }
+            HorizontalPager(pagerState) {
+                when (MusicTabScreen.fromIndex(it)) {
+                    MusicTabScreen.Song -> MusicSongScreen(navController)
+                    MusicTabScreen.Album -> MusicAlbumScreen(navController)
+                    MusicTabScreen.Artist -> MusicArtistScreen(navController)
+                    MusicTabScreen.Playlist -> MusicPlaylistScreen(navController)
                 }
             }
         }
@@ -212,8 +113,8 @@ fun MusicTabPagerScreen(
 @Composable
 private fun MusicTabPagerScreenPreviewDark() {
     PreviewTheme(true) {
-//        MusicTabPagerScreen(
-//            navController = NavController(LocalContext.current),
-//        )
+        MusicTabPagerScreen(
+            navController = NavController(LocalContext.current),
+        )
     }
 }

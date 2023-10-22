@@ -15,12 +15,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.jooheon.clean_architecture.domain.entity.music.Artist
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.components.ArtistDetailMediaColumn
 import com.jooheon.clean_architecture.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
@@ -31,12 +35,44 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
+import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
+import com.jooheon.clean_architecture.toyproject.features.common.compose.observeWithLifecycle
+import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import java.lang.Float
 import kotlin.math.max
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MusicArtistDetailScreen(
+    navController: NavController,
+    artist: Artist,
+    viewModel: MusicArtistDetailScreenViewModel = hiltViewModel()
+) {
+    viewModel.initialize(artist)
+    viewModel.navigateTo.observeWithLifecycle { route ->
+        if(route == ScreenNavigation.Back.route) {
+            navController.popBackStack()
+        } else {
+            navController.navigate(route)
+        }
+    }
+    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
+        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    }
+    val state by viewModel.musicArtistDetailScreenState.collectAsStateWithLifecycle()
+    val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
+
+    MusicArtistDetailScreen(
+        musicArtistDetailScreenState = state,
+        onMusicArtistDetailScreenEvent = viewModel::dispatch,
+        onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+
+        musicPlayerState = musicPlayerState,
+        onMusicPlayerEvent = viewModel::dispatch,
+    )
+}
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun MusicArtistDetailScreen(
     musicArtistDetailScreenState: MusicArtistDetailScreenState,
     onMusicArtistDetailScreenEvent: (MusicArtistDetailScreenEvent) -> Unit,
     onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,

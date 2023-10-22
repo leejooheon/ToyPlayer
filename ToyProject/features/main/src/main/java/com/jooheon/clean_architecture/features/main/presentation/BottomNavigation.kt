@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.features.main.navigation
+package com.jooheon.clean_architecture.features.main.presentation
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
@@ -83,6 +85,38 @@ private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boole
             contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
         )
     }
+}
+
+@Stable
+@Composable
+fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
+    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Music) }
+
+    DisposableEffect(this) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            when {
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Github.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Github
+                }
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Wiki.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Wiki
+                }
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Map.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Map
+                }
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Music.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Music
+                }
+            }
+        }
+        addOnDestinationChangedListener(listener)
+
+        onDispose {
+            removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    return selectedItem
 }
 
 @ExperimentalAnimationApi
