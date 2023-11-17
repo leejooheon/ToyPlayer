@@ -35,7 +35,6 @@ class MusicControllerUsecase(
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
-    private var musicService: MusicService? = null
     private val connectionMap = WeakHashMap<Context, ServiceConnection>()
 
     private val _songLibrary = MutableStateFlow(emptyList<Song>())
@@ -327,7 +326,6 @@ class MusicControllerUsecase(
             )
         ) {
             connectionMap[contextWrapper] = serviceConnection
-            commandToService()
             return ServiceToken(contextWrapper)
         }
 
@@ -342,10 +340,6 @@ class MusicControllerUsecase(
         val contextWrapper = serviceToken.wrappedContext
         val binder = connectionMap.remove(contextWrapper) ?: return
         contextWrapper.unbindService(binder)
-
-        if (connectionMap.isEmpty()) {
-            musicService = null
-        }
     }
 
     private fun initPlayingQueue() = applicationScope.launch {
@@ -376,11 +370,11 @@ class MusicControllerUsecase(
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as MusicService.MediaPlayerServiceBinder
-            musicService = binder.getService()
+            Timber.tag(TAG).i("onServiceConnected: $binder")
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            musicService = null
+            Timber.tag(TAG).i("onServiceDisconnected: $className")
         }
     }
 

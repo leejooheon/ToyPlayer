@@ -19,6 +19,9 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.mediarouter)
 
+    // coil
+    implementation(libs.coil)
+
     // 위치 바꾸자
     implementation(libs.jakewharton.timber)
 }

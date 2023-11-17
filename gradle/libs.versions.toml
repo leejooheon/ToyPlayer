@@ -87,7 +87,7 @@ fft = "2.0.0"
 jaudiotagger = "2.3.15"
 
 # Leak canary
-learkCanary = "2.10"
+leakCanary = "2.10"
 detekt = "1.23.0" # https://github.com/detekt/detekt
 # kotest
 kotest = "5.6.2"
@@ -131,6 +131,7 @@ javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInjec
 # KotlinX
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
@@ -227,7 +228,7 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # Leark canary
-squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "learkCanary" }
+squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 
 # Lottie
 airbnb-android-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie"}

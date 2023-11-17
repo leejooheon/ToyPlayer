@@ -15,6 +15,7 @@ internal fun Project.configureCoroutineKotlin() {
     val libs = extensions.libs
     dependencies {
         "implementation"(libs.findLibrary("kotlinx.coroutines.core").get())
+        "implementation"(libs.findLibrary("kotlinx.coroutines.guava").get())
         "testImplementation"(libs.findLibrary("kotlinx.coroutines.test").get())
     }
 }
