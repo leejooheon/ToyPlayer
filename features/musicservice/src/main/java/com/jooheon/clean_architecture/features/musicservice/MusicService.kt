@@ -6,9 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import androidx.core.content.ContextCompat
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
@@ -27,21 +31,21 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MusicService: MediaLibraryService() {
-    private val TAG = MusicService::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" + "Main"
 
     @Inject
     lateinit var musicControllerUsecase: MusicControllerUsecase
-
-    @Inject
-    lateinit var exoPlayer: ExoPlayer
 
     @Inject
     lateinit var singleTopActivityIntent: Intent
 
     @Inject
     lateinit var mediaSessionCallback: CustomMediaSessionCallback
-    private lateinit var mediaSession: MediaLibrarySession
 
+    @Inject
+    lateinit var exoPlayer: ExoPlayer
+
+    private lateinit var mediaSession: MediaLibrarySession
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -52,53 +56,28 @@ class MusicService: MediaLibraryService() {
     override fun onCreate() {
         Timber.tag(TAG).d( "onCreate")
         super.onCreate()
+
         initNotification()
         initMediaSession()
-
-        val sessionToken = SessionToken(this, ComponentName(this, MusicService::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener({ controllerFuture.get() }, MoreExecutors.directExecutor())
     }
 
-
     @UnstableApi
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
-
-        if(intent == null) {
-            Timber.tag(TAG).d( "onStartCommand: intent is null")
-            return START_NOT_STICKY
-        }
-
-        intent.action?.let {
-            Timber.tag(TAG).d( "onStartCommand: action: ${it}")
-            doAction(it)
-            return START_NOT_STICKY
-        }
-
-        return START_NOT_STICKY
-    }
-
-
-    @UnstableApi
-    private fun doAction(action: String) {
-        when(action) {
-            PlayerNotificationManager.ACTION_PLAY -> musicControllerUsecase.onPlay()
-            PlayerNotificationManager.ACTION_PAUSE -> musicControllerUsecase.onPause()
-            PlayerNotificationManager.ACTION_NEXT -> musicControllerUsecase.onNext()
-            PlayerNotificationManager.ACTION_PREVIOUS -> musicControllerUsecase.onPrevious()
-            PlayerNotificationManager.ACTION_STOP -> musicControllerUsecase.onStop()
-            ACTION_QUIT -> quit()
-        }
+    override fun onDestroy() {
+        Timber.tag(TAG).d( "onDestroy")
+        musicControllerUsecase.releaseMediaBrowser()
+        exoPlayer.release()
+        mediaSession.release()
+        serviceScope.cancel()
+        super.onDestroy()
     }
 
     @UnstableApi
     private fun initNotification() {
         val mediaNotificationProvider = CustomMediaNotificationProvider(
-            /** context **/this,
-            { NOTIFICATION_ID },
-            NOTIFICATION_CHANNEL_ID,
-            R.string.playing_notification_name
+            context = this,
+            notificationIdProvider = { NOTIFICATION_ID },
+            channelId = NOTIFICATION_CHANNEL_ID,
+            channelNameResourceId = R.string.playing_notification_name
         )
 
         setMediaNotificationProvider(mediaNotificationProvider)
@@ -107,44 +86,79 @@ class MusicService: MediaLibraryService() {
     @UnstableApi
     private fun initMediaSession() {
         mediaSession = MediaLibrarySession.Builder(
-            this, exoPlayer, mediaSessionCallback
+            this, customForwardingPlayer, mediaSessionCallback
         ).setSessionActivity(
             PendingIntent.getActivity(
                 this, 0, singleTopActivityIntent,
                 PendingIntent.FLAG_IMMUTABLE
             )
         ).setBitmapLoader(
-            provideCoilBitmapLoader(this)
+            CoilBitmapLoader(this, serviceScope)
         ).build()
     }
 
-    @UnstableApi
-    fun provideCoilBitmapLoader(context: Context): CoilBitmapLoader = CoilBitmapLoader(context, serviceScope)
+    private val customForwardingPlayer by lazy {
+        @UnstableApi
+        object : ForwardingPlayer(exoPlayer) {
+            override fun getAvailableCommands(): Player.Commands {
+                return super.getAvailableCommands().buildUpon()
+                    .add(Player.COMMAND_SEEK_TO_NEXT)
+                    .add(Player.COMMAND_SEEK_TO_PREVIOUS)
+                    .remove(Player.COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM)
+                    .build()
+            }
+
+            override fun isCommandAvailable(command: Int): Boolean {
+                // https://github.com/androidx/media/issues/140
+                val available = when(command) {
+                    COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM -> false
+                    COMMAND_SEEK_TO_NEXT -> true
+                    COMMAND_SEEK_TO_PREVIOUS -> true
+                    else -> super.isCommandAvailable(command)
+                }
+
+                return available
+            }
+
+            override fun play() {
+                if(fromSystemUi()) musicControllerUsecase.onPlay()
+                else super.play()
+            }
+            override fun pause() {
+                if(fromSystemUi()) musicControllerUsecase.onPause()
+                else super.pause()
+            }
+            override fun seekToNext() {
+                if(fromSystemUi()) musicControllerUsecase.onNext()
+                else super.seekToNext()
+            }
+            override fun seekToPrevious() {
+                if(fromSystemUi()) musicControllerUsecase.onPrevious()
+                else super.seekToPrevious()
+            }
+            override fun stop() {
+                if(fromSystemUi()) musicControllerUsecase.onStop()
+                else super.stop()
+            }
+
+            fun fromSystemUi() = mediaSession.isMediaNotificationController(mediaSession.controllerForCurrentRequest!!)
+        }
+    }
+
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).d( "onTaskRemoved")
         quit()
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.tag(TAG).d( "onDestroy")
-        quit()
-    }
 
     private fun quit() {
-        Timber.tag(TAG).d( "quit")
-        serviceScope.cancel()
-
-        mediaSession.run {
-            release()
-            if (player.playbackState != Player.STATE_IDLE) {
-                player.release()
-            }
-//            https://github.com/androidx/media/issues/389: 서비스 중지를 api에서 해준다구..??
+        if (!exoPlayer.isPlaying) {
+            Timber.tag(TAG).d( "quit")
+            exoPlayer.playWhenReady = false
+            exoPlayer.pause()
+            stopSelf()
         }
-
-        stopSelf()
     }
 
     override fun onLowMemory() {
@@ -153,33 +167,7 @@ class MusicService: MediaLibraryService() {
     }
 
     companion object {
-        const val MUSIC_STATE = "MusicState"
-        const val MUSIC_DURATION = "MusicDuration"
-        const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
-        const val ACTION_QUIT = "$PACKAGE_NAME.quitservice"
-
         const val NOTIFICATION_ID = 234
         const val NOTIFICATION_CHANNEL_ID = "Jooheon_player_notification"
-        const val NOTIFICATION_CHANNEL_NAME = "Jooheon player notification"
-        fun startService(context: Context, intent: Intent) {
-            try {
-                // IMPORTANT NOTE: (kind of a hack)
-                // on Android O and above the following crashes when the app is not running
-                // there is no good way to check whether the app is running so we catch the exception
-                // we do not always want to use startForegroundService() because then one gets an ANR
-                // if no notification is displayed via startForeground()
-                // according to Play analytics this happens a lot, I suppose for example if command = PAUSE
-                context.startService(intent)
-            } catch (ignored: IllegalStateException) {
-                runCatching {
-                    ContextCompat.startForegroundService(context, intent)
-                }
-            }
-        }
     }
-
-    inner class MediaPlayerServiceBinder : Binder() {
-        fun getService() = this@MusicService
-    }
-
 }

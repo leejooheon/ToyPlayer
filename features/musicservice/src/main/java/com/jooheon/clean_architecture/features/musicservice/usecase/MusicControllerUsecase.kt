@@ -1,9 +1,5 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
-import android.app.Activity
-import android.content.*
-import android.os.IBinder
-import androidx.core.content.ContextCompat
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
@@ -16,29 +12,23 @@ import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
-import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_DURATION
-import com.jooheon.clean_architecture.features.musicservice.MusicService.Companion.MUSIC_STATE
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import com.jooheon.clean_architecture.features.musicservice.ext.playbackErrorReason
 import com.jooheon.clean_architecture.features.musicservice.ext.toMediaItem
 import kotlinx.coroutines.flow.*
-import java.util.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
 
 @UnstableApi
 class MusicControllerUsecase(
-    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
-    private val connectionMap = WeakHashMap<Context, ServiceConnection>()
 
     private val _songLibrary = MutableStateFlow(emptyList<Song>())
-//    val songLibrary = _songLibrary.asStateFlow()
 
     private val _playingQueue = MutableStateFlow<List<Song>>(emptyList())
     val playingQueue = _playingQueue.asStateFlow()
@@ -56,8 +46,7 @@ class MusicControllerUsecase(
     val musicStreamErrorChannel = _musicStreamErrorChannel.receiveAsFlow()
 
     init {
-        Timber.tag(TAG).d( "musicController - ${musicController}")
-        collectMusicState()
+        collectPlayerInitialized()
         collectMediaItems()
         collectCurrentWindow()
         collectMediaItemIndex()
@@ -67,25 +56,15 @@ class MusicControllerUsecase(
         collectShuffleMode()
         collectExoPlayerState()
         collectPlaybackException()
-
-        initPlayingQueue()
-        initPlaybackOptions()
     }
 
-    private fun commandToService() {
-        Timber.tag(TAG).d( "commandToService")
-        if(serviceIntent == null) return
-
-        serviceIntent.putExtra(MUSIC_STATE, musicState.value)
-        serviceIntent.putExtra(MUSIC_DURATION, timePassed.value)
-        MusicService.startService(context, serviceIntent)
-    }
-    private fun collectMusicState() = applicationScope.launch(Dispatchers.IO) {
-        musicState.collectLatest {
-            Timber.tag(TAG).d( "collectMusicState")
-//            commandToService()
+    private fun collectPlayerInitialized() = applicationScope.launch {
+        musicController.playerInitialized.collectLatest {
+            initPlayingQueue()
+            initPlaybackOptions()
         }
     }
+
     private fun collectDuration() = applicationScope.launch {
         musicController.currentDuration.collectLatest { currentDuration ->
             _timePassed.update { currentDuration }
@@ -297,6 +276,11 @@ class MusicControllerUsecase(
     fun onRepeatButtonPressed(repeatMode: RepeatMode) = applicationScope.launch(Dispatchers.IO) {
         musicController.changeRepeatMode(repeatMode.ordinal)
     }
+
+    fun releaseMediaBrowser() {
+        musicController.releaseMediaBrowser()
+    }
+
     private fun updateCurrentPlayingMusic(song: Song) {
         Timber.tag(TAG).d("updateCurrentPlayingMusic: ${song.title}, Id: ${song.id()}")
 
@@ -305,45 +289,7 @@ class MusicControllerUsecase(
             it.copy(currentPlayingMusic = song)
         }
     }
-
-    fun bindToService(context: Context): ServiceToken? {
-        val realActivity = (context as Activity).parent ?: context
-        val contextWrapper = ContextWrapper(realActivity)
-        val intent = Intent(contextWrapper, MusicService::class.java)
-
-        try {
-            contextWrapper.startService(intent)
-        } catch (ignored: IllegalStateException) {
-            runCatching {
-                ContextCompat.startForegroundService(context, intent)
-            }
-        }
-
-        if (contextWrapper.bindService(
-                Intent().setClass(contextWrapper, MusicService::class.java),
-                serviceConnection,
-                Context.BIND_AUTO_CREATE
-            )
-        ) {
-            connectionMap[contextWrapper] = serviceConnection
-            return ServiceToken(contextWrapper)
-        }
-
-        return null
-    }
-
-    fun unbindToService(serviceToken: ServiceToken?) {
-        if (serviceToken == null) {
-            return
-        }
-
-        val contextWrapper = serviceToken.wrappedContext
-        val binder = connectionMap.remove(contextWrapper) ?: return
-        contextWrapper.unbindService(binder)
-    }
-
-    private fun initPlayingQueue() = applicationScope.launch {
-        Timber.tag("Jooheon").e("initPlayingQueue: $musicController")
+    private suspend fun initPlayingQueue() = withContext(Dispatchers.IO) {
         playingQueueUseCase.getPlayingQueue().onEach {
             if(it is Resource.Success) {
                 val playingQueue = it.value
@@ -357,26 +303,11 @@ class MusicControllerUsecase(
         }.launchIn(this)
     }
 
-    private fun initPlaybackOptions() = applicationScope.launch {
+    private suspend fun initPlaybackOptions() {
         val repeatMode = playingQueueUseCase.repeatMode()
         val shuffleMode = playingQueueUseCase.shuffleMode()
 
         musicController.changeRepeatMode(repeatMode.ordinal)
         musicController.changeShuffleMode(shuffleMode == ShuffleMode.SHUFFLE)
     }
-
-    private val serviceIntent = Intent(context, MusicService::class.java)
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as MusicService.MediaPlayerServiceBinder
-            Timber.tag(TAG).i("onServiceConnected: $binder")
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            Timber.tag(TAG).i("onServiceDisconnected: $className")
-        }
-    }
-
-    class ServiceToken internal constructor(internal var wrappedContext: ContextWrapper)
 }

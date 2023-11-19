@@ -1,10 +1,16 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
+import android.content.ComponentName
+import android.content.Context
 import androidx.annotation.FloatRange
+import androidx.core.content.ContextCompat
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ShuffleOrder
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.ext.currentWindow
 import com.jooheon.clean_architecture.features.musicservice.ext.mediaItemTransitionReason
@@ -19,11 +25,17 @@ import timber.log.Timber
 
 @UnstableApi
 class MusicController(
+    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val exoPlayer: ExoPlayer,
 ) : IMusicController {
     private val TAG = MusicService::class.java.simpleName + "@" +  MusicController::class.java.simpleName + "@Main"
     private val TAG_PLAYER = MusicService::class.java.simpleName + "@" + "PlayerListener"
+
+    private lateinit var browserFuture: ListenableFuture<MediaBrowser>
+
+    private val _playerInitialized = MutableStateFlow(false)
+    val playerInitialized: StateFlow<Boolean> = _playerInitialized
 
     private val _mediaItems = MutableStateFlow<List<MediaItem>>(emptyList())
     val mediaItems = _mediaItems.asStateFlow()
@@ -52,17 +64,15 @@ class MusicController(
     private val _exoPlayerState = MutableStateFlow<@Player.State Int>(ExoPlayer.STATE_IDLE)
     val exoPlayerState: StateFlow<Int> = _exoPlayerState
 
-    private val _forceUpdate = MutableStateFlow(Player.STATE_READY)
-    val forceUpdate: StateFlow<Int> = _forceUpdate
-
     private val _playbackExceptionChannel = Channel<PlaybackException>()
     val playbackExceptionChannel = _playbackExceptionChannel.receiveAsFlow()
 
     private var durationFromPlayerJob: Job? = null
 
     init {
-        initExoPlayer()
+        initMediaControllerFuture()
     }
+
     override suspend fun play(
         index: Int,
         seekTo: Long,
@@ -178,6 +188,10 @@ class MusicController(
         mediaItemsIndices.forEach { exoPlayer.removeMediaItem(it) }
     }
 
+    override fun releaseMediaBrowser() {
+        MediaBrowser.releaseFuture(browserFuture)
+    }
+
     private suspend fun maybeShufflePlaylist() = withContext(Dispatchers.Main) {
         val indices = exoPlayer.mediaItemsIndices.toMutableList()
         if(indices.isEmpty()) return@withContext
@@ -222,16 +236,26 @@ class MusicController(
         }
     }
 
+    private fun initMediaControllerFuture() {
+        browserFuture = MediaBrowser.Builder(
+            context, SessionToken(context, ComponentName(context, MusicService::class.java))
+        ).buildAsync()
+
+        browserFuture.addListener({
+            initExoPlayer()
+            _playerInitialized.tryEmit(true)
+        }, ContextCompat.getMainExecutor(context))
+    }
+
     private fun initExoPlayer() {
-        Timber.tag("Jooheon").e("initExoPlayer: $this")
         exoPlayer.apply {
-            addListener(exoPlayerListener())
+            addListener(exoPlayerListener)
         }.run {
             emitExoPlayerState(playbackState)
         }
     }
 
-    private fun exoPlayerListener() = object : Player.Listener {
+    private val exoPlayerListener = object : Player.Listener {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             super.onMediaItemTransition(mediaItem, reason)
             Timber.tag(TAG_PLAYER).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
@@ -317,17 +341,7 @@ class MusicController(
     }
 
     private fun emitExoPlayerState(playbackState: Int) = applicationScope.launch {
-        if(playbackState == Player.STATE_READY) {
-            _exoPlayerState.tryEmit(playbackState)
-            withContext(Dispatchers.IO) {
-                repeat(3) {
-                    delay(300)
-                    _forceUpdate.tryEmit(Player.STATE_READY + it)
-                }
-            }
-        } else {
-            _exoPlayerState.tryEmit(playbackState)
-        }
+        _exoPlayerState.tryEmit(playbackState)
     }
 
     private suspend fun debugMessage(message: String) = withContext(Dispatchers.Main) {

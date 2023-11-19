@@ -35,7 +35,7 @@ androidxLifecycle = "2.6.2"
 composeNavigation = "2.7.4"
 
 # Media3
-media3 = "1.1.1"
+media3 = "1.2.0"
 mediarouter = "1.6.0"
 
 # KotlinX

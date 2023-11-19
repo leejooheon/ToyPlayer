@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.domain.usecase.setting
 
 import com.jooheon.clean_architecture.domain.entity.Entity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,9 +22,9 @@ class ThemeStateFlow @Inject constructor(
     val themeState = _themeState.asStateFlow()
 
     fun update() {
-        applicationScope.launch {
+        applicationScope.launch(Dispatchers.Main) {
             val theme = settingUseCase.getTheme()
-            _themeState.tryEmit(theme)
+            _themeState.emit(theme)
         }
     }
 }

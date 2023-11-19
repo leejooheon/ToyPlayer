@@ -32,4 +32,6 @@ interface IMusicController {
     suspend fun changeRepeatMode(@Player.RepeatMode repeatMode: Int)
     suspend fun changeShuffleMode(shuffleModeEnabled: Boolean)
     suspend fun changePlaybackSpeed(@FloatRange(from = 0.1, to = 1.0) playbackSpeed: Float)
+
+    fun releaseMediaBrowser()
 }

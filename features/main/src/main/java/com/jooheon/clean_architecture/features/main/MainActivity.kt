@@ -1,37 +1,30 @@
 package com.jooheon.clean_architecture.features.main
 
-import android.content.Context
-import android.content.res.Resources
+import android.content.ComponentName
 import android.os.Bundle
-import android.os.LocaleList
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.core.os.ConfigurationCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.jooheon.clean_architecture.domain.entity.Entity
+import androidx.media3.session.MediaBrowser
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.clean_architecture.domain.usecase.setting.SettingUseCase
 import com.jooheon.clean_architecture.domain.usecase.setting.ThemeStateFlow
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.ApplicationTheme
 import com.jooheon.clean_architecture.features.main.navigation.FullScreenNavigationHost
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.setting.model.SettingScreenEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.util.Locale
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var musicControllerUseCase: MusicControllerUsecase
-    private var serviceToken: MusicControllerUsecase.ServiceToken? = null
-
     @Inject
     lateinit var themeStateFlow: ThemeStateFlow
 
@@ -40,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        serviceToken = musicControllerUseCase.bindToService(this)
+        Timber.d("onCreate")
 
         lifecycleScope.launch {
             SettingScreenEvent.changeLanguage(
@@ -55,8 +48,8 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        Timber.d("onDestroy")
         super.onDestroy()
-        musicControllerUseCase.unbindToService(serviceToken)
     }
 
     @Composable

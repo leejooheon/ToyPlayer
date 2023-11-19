@@ -28,7 +28,7 @@ class CoilBitmapLoader(
         }
     }
 
-    override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
+    override fun loadBitmap(uri: Uri, options: BitmapFactory.Options?): ListenableFuture<Bitmap> {
         return scope.future(Dispatchers.IO) {
             val result = context.imageLoader.execute(
                 ImageRequest.Builder(context)

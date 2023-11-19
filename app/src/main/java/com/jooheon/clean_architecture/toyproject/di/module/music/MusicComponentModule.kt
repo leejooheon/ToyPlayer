@@ -28,12 +28,10 @@ object MusicComponentModule {
     @Singleton
     @UnstableApi
     fun provideMusicControllerUsecase(
-        @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicController: MusicController,
         playingQueueUseCase: PlayingQueueUseCase,
     ) = MusicControllerUsecase(
-        context = context,
         applicationScope = applicationScope,
         musicController = musicController,
         playingQueueUseCase = playingQueueUseCase,
