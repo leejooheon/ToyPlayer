@@ -20,7 +20,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
 
-@UnstableApi
 class MusicControllerUsecase(
     private val applicationScope: CoroutineScope,
     private val musicController: MusicController,
@@ -270,10 +269,21 @@ class MusicControllerUsecase(
         )
     }
 
-    fun onShuffleButtonPressed(shuffleModeEnabled: Boolean) = applicationScope.launch(Dispatchers.IO) {
+    fun onShuffleButtonPressed() = applicationScope.launch(Dispatchers.IO) {
+        val state = musicState.value
+        val shuffleModeEnabled = when(state.shuffleMode) {
+            ShuffleMode.SHUFFLE -> false
+            ShuffleMode.NONE -> true
+        }
         musicController.changeShuffleMode(shuffleModeEnabled)
     }
-    fun onRepeatButtonPressed(repeatMode: RepeatMode) = applicationScope.launch(Dispatchers.IO) {
+    fun onRepeatButtonPressed() = applicationScope.launch(Dispatchers.IO) {
+        val state = musicState.value
+        val repeatMode = when(state.repeatMode) {
+            RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
+            RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
+            RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
+        }
         musicController.changeRepeatMode(repeatMode.ordinal)
     }
 

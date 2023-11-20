@@ -33,8 +33,6 @@ class CustomMediaSessionCallback @Inject constructor(
         val sessionCommands =
             connectionResult.availableSessionCommands
                 .buildUpon()
-                // Add custom commands
-//                .add(SessionCommand(CYCLE_REPEAT, Bundle()))
                 .build()
         return MediaSession.ConnectionResult.accept(
             sessionCommands, connectionResult.availablePlayerCommands
@@ -49,37 +47,15 @@ class CustomMediaSessionCallback @Inject constructor(
         args: Bundle
     ): ListenableFuture<SessionResult> {
         when (customCommand.customAction) {
-//            CYCLE_REPEAT -> musicControllerUsecase.onRepeatButtonPressed()
-//            TOGGLE_SHUFFLE -> musicControllerUsecase.onShuffleButtonPressed()
+            CYCLE_REPEAT -> musicControllerUsecase.onRepeatButtonPressed()
+            TOGGLE_SHUFFLE -> musicControllerUsecase.onShuffleButtonPressed()
         }
 
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
     }
 
-    override fun onGetLibraryRoot(
-        session: MediaLibrarySession,
-        browser: MediaSession.ControllerInfo,
-        params: MediaLibraryService.LibraryParams?,
-    ): ListenableFuture<LibraryResult<MediaItem>> = Futures.immediateFuture(
-        LibraryResult.ofItem(
-            MediaItem.Builder()
-                .setMediaId(MEDIA_ID_ROOT)
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setIsPlayable(false)
-                        .setIsBrowsable(false)
-                        .setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED)
-                        .build()
-                )
-                .build(),
-            params
-        )
-    )
-
     companion object {
-        const val MEDIA_ID_ROOT = "__ROOT__"
-
-        const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
+        private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
         const val CYCLE_REPEAT = "$PACKAGE_NAME.cyclerepeat"
         const val TOGGLE_SHUFFLE = "$PACKAGE_NAME.toggleshuffle"
     }

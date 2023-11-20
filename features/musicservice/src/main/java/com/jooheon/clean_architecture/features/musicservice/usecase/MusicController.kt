@@ -23,7 +23,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
-@UnstableApi
 class MusicController(
     private val context: Context,
     private val applicationScope: CoroutineScope,
@@ -192,6 +191,7 @@ class MusicController(
         MediaBrowser.releaseFuture(browserFuture)
     }
 
+    @UnstableApi
     private suspend fun maybeShufflePlaylist() = withContext(Dispatchers.Main) {
         val indices = exoPlayer.mediaItemsIndices.toMutableList()
         if(indices.isEmpty()) return@withContext
@@ -316,6 +316,7 @@ class MusicController(
             Timber.tag(TAG_PLAYER).d("onRepeatModeChanged: $repeatMode")
         }
 
+        @UnstableApi
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             super.onShuffleModeEnabledChanged(shuffleModeEnabled)
             applicationScope.launch {

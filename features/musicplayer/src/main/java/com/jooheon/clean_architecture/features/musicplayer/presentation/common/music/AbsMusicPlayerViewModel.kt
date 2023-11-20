@@ -76,12 +76,7 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onShuffleClicked() {
-        val state = musicPlayerState.value.musicState
-        val shuffleModeEnabled = when(state.shuffleMode) {
-            ShuffleMode.SHUFFLE -> false
-            ShuffleMode.NONE -> true
-        }
-        musicControllerUsecase.onShuffleButtonPressed(shuffleModeEnabled)
+        musicControllerUsecase.onShuffleButtonPressed()
     }
 
     private fun onRepeatClicked() {
@@ -91,7 +86,7 @@ open class AbsMusicPlayerViewModel (
             RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
             RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
         }
-        musicControllerUsecase.onRepeatButtonPressed(repeatMode)
+        musicControllerUsecase.onRepeatButtonPressed()
     }
 
     private fun snapTo(duration: Long) {

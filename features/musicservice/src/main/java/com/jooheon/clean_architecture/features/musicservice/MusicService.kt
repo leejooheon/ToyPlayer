@@ -77,7 +77,8 @@ class MusicService: MediaLibraryService() {
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
             channelId = NOTIFICATION_CHANNEL_ID,
-            channelNameResourceId = R.string.playing_notification_name
+            channelNameResourceId = R.string.playing_notification_name,
+            musicState = musicControllerUsecase.musicState.value
         )
 
         setMediaNotificationProvider(mediaNotificationProvider)
@@ -104,14 +105,12 @@ class MusicService: MediaLibraryService() {
                 return super.getAvailableCommands().buildUpon()
                     .add(Player.COMMAND_SEEK_TO_NEXT)
                     .add(Player.COMMAND_SEEK_TO_PREVIOUS)
-                    .remove(Player.COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM)
                     .build()
             }
 
             override fun isCommandAvailable(command: Int): Boolean {
                 // https://github.com/androidx/media/issues/140
                 val available = when(command) {
-                    COMMAND_SEEK_IN_CURRENT_MEDIA_ITEM -> false
                     COMMAND_SEEK_TO_NEXT -> true
                     COMMAND_SEEK_TO_PREVIOUS -> true
                     else -> super.isCommandAvailable(command)
