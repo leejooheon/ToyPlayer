@@ -31,37 +31,13 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    @Named(Constants.GITHUB_RETROFIT)
-    fun providesGithubRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
+    fun providesRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BuildConfig.GITHUB_URL)
+            .baseUrl("1234")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
     }
-
-    @Provides
-    @Singleton
-    @Named(Constants.WIKI_RETROFIT)
-    fun providesWikipediaRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.WIKIPEDIA_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    @Named(Constants.SUBWAY_RETROFIT)
-    fun providesSubwayRetrofit(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.SUBWAY_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
-    }
-
     @Provides
     @Singleton
     fun provideOkHttpClient(

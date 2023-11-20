@@ -11,10 +11,10 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenN
 import java.util.Locale
 
 sealed class SettingScreenEvent {
-    object OnBackClick: SettingScreenEvent()
-    object OnThemeScreenClick: SettingScreenEvent()
-    object OnLanguageScreenClick: SettingScreenEvent()
-    object OnEqualizerScreenClick: SettingScreenEvent()
+    data object OnBackClick: SettingScreenEvent()
+    data object OnThemeScreenClick: SettingScreenEvent()
+    data object OnLanguageScreenClick: SettingScreenEvent()
+    data object OnEqualizerScreenClick: SettingScreenEvent()
     data class OnSkipDurationScreenClick(val isShow: Boolean): SettingScreenEvent()
     data class OnSkipDurationChanged(val data: SkipForwardBackward): SettingScreenEvent()
     data class OnLanguageChanged(val language: Entity.SupportLaunguages): SettingScreenEvent()

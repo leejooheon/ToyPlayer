@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.setting.model
 import android.os.Build
 import com.jooheon.clean_architecture.domain.entity.Entity
 import com.jooheon.clean_architecture.domain.entity.music.SkipForwardBackward
+import com.jooheon.clean_architecture.toyproject.features.common.utils.VersionUtil
 
 data class SettingScreenState(
     val language: Entity.SupportLaunguages,
@@ -19,7 +20,7 @@ data class SettingScreenState(
         )
 
         fun showableTheme(theme: Entity.SupportThemes): Boolean {
-            val supportDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S // 12 이상일때
+            val supportDynamicColor = VersionUtil.hasS()
             return if(theme.code.contains("dynamic") ) {
                 supportDynamicColor
             } else {

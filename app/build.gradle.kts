@@ -10,13 +10,6 @@ android {
         applicationId = "com.jooheon.clean_architecture.toyproject"
         versionCode = Integer.parseInt(libs.versions.version.code.get())
         versionName = libs.versions.version.name.get()
-
-        buildConfigField("String", "GITHUB_URL", "\"https://api.github.com\"")
-        buildConfigField("String", "WIKIPEDIA_URL", "\"https://en.wikipedia.org\"")
-        buildConfigField("String", "SUBWAY_URL", "\"http://swopenapi.seoul.go.kr/api/subway/\"")
-
-        resValue("string", "google_maps_key", project.properties["GOOGLE_MAPS_API_KEY"] as String)
-        resValue("string", "deeplink_prefix", project.properties["DEEPLINK_BASE"] as String)
     }
 
     packaging {

@@ -46,27 +46,6 @@ class AppPreferences @Inject constructor(private val context: Context) {
         editor.apply()
     }
 
-    var userData: Entity.User?
-        get() {
-            val value: String? = sessionPreferences.getString(USER_DATA.first, USER_DATA.second)
-            return Gson().fromJson(value, Entity.User::class.java)
-        }
-        set(value) = sessionPreferences.edit {
-            it.putString(USER_DATA.first, Gson().toJson(value))
-        }
-
-    val userToken: String?
-        get() {
-            val value: String? = sessionPreferences.getString(USER_DATA.first, USER_DATA.second)
-            val user = Gson().fromJson(value, Entity.User::class.java)
-
-            return if (user == null || user.token.isEmpty()) {
-                null
-            } else {
-                user.token
-            }
-        }
-
     var musicListType: Int
         get() {
             return appPreferences.getInt(MUSIC_LIST_TYPE.first, MUSIC_LIST_TYPE.second)

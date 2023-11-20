@@ -30,19 +30,19 @@ class LocalMusicDataSource @Inject constructor(
 
     private fun getSongFromCursor(cursor: Cursor): Song {
         val audioId = cursor.getLong(MediaStore.Audio.AudioColumns._ID)
-//        val displayName = cursor.getStringOrNull(MediaStore.Audio.Media.DISPLAY_NAME)
         val title = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.TITLE)
         val trackNumber = cursor.getInt(MediaStore.Audio.AudioColumns.TRACK)
-        val year = cursor.getInt(MediaStore.Audio.AudioColumns.YEAR)
         val duration = cursor.getLong(MediaStore.Audio.AudioColumns.DURATION)
-        val dateModified = cursor.getLong(MediaStore.Audio.AudioColumns.DATE_MODIFIED)
         val albumId = cursor.getLong(MediaStore.Audio.AudioColumns.ALBUM_ID)
         val albumName = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.ALBUM)
         val artistId = cursor.getLong(MediaStore.Audio.AudioColumns.ARTIST_ID)
         val artistName = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.ARTIST)
-        val composer = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.COMPOSER)
-        val albumArtist = cursor.getStringOrNull("album_artist")
         val data = cursor.getStringOrNull("_data")
+//        val displayName = cursor.getStringOrNull(MediaStore.Audio.Media.DISPLAY_NAME)
+//        val year = cursor.getInt(MediaStore.Audio.AudioColumns.YEAR)
+//        val dateModified = cursor.getLong(MediaStore.Audio.AudioColumns.DATE_MODIFIED)
+//        val composer = cursor.getStringOrNull(MediaStore.Audio.AudioColumns.COMPOSER)
+//        val albumArtist = cursor.getStringOrNull("album_artist")
 
         val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val artworkUri = Uri.parse("content://media/external/audio/albumart")

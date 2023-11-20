@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.transform.RoundedCornersTransformation
 import com.jooheon.clean_architecture.toyproject.features.common.R
 
 @Composable
@@ -29,6 +30,7 @@ fun CoilImage(
             ImageRequest.Builder(LocalContext.current).data(data = url).apply(block = fun ImageRequest.Builder.() {
                 crossfade(true)
                 placeholder(drawableResId = placeholderRes)
+                transformations(RoundedCornersTransformation())
                 error(drawableResId = errorRes)
             }).build()
         ),

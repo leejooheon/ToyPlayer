@@ -348,5 +348,7 @@ class MusicController(
         if(BuildConfig.DEBUG) {
 //            context.showToast(message)
         }
+
+        Timber.tag(TAG).d(message)
     }
 }

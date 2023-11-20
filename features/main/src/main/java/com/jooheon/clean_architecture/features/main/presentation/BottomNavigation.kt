@@ -73,7 +73,7 @@ private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boole
     }
 
     if (selectedPainter != null) {
-        Crossfade(targetState = selected) {
+        Crossfade(targetState = selected, label = "") {
             Icon(
                 painter = if (it) selectedPainter else painter,
                 contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
@@ -90,22 +90,22 @@ private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boole
 @Stable
 @Composable
 fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
-    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Music) }
+    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Song) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
             when {
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Github.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Github
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Song.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Song
                 }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Wiki.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Wiki
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Album.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Album
                 }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Map.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Map
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Artist.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Artist
                 }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Music.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Music
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Playlist.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Playlist
                 }
             }
         }

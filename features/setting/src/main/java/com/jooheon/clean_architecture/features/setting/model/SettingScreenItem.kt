@@ -54,7 +54,6 @@ class SettingScreenItem(
             )
         }
 
-
         private fun parseThemeUiText(theme: Entity.SupportThemes) =  when(theme) {
             Entity.SupportThemes.AUTO -> UiText.StringResource(R.string.setting_follow_system)
             Entity.SupportThemes.DARK -> UiText.StringResource(R.string.setting_theme_dark)
@@ -63,5 +62,4 @@ class SettingScreenItem(
             Entity.SupportThemes.DYNAMIC_LIGHT -> UiText.StringResource(R.string.setting_theme_dynamic_light)
         }
     }
-
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -65,7 +66,8 @@ fun MediaItemSmall(
                 contentDescription = title,
                 modifier = Modifier
                     .padding(start = 16.dp, end = 8.dp)
-                    .weight(0.2f)
+                    .width(48.dp)
+                    .height(48.dp)
                     .aspectRatio(1f)
                     .clip(MaterialTheme.shapes.small)
             )

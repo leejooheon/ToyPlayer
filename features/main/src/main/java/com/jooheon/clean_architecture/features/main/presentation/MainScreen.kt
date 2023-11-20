@@ -1,13 +1,8 @@
 package com.jooheon.clean_architecture.features.main.presentation
 
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.*
@@ -31,9 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.google.accompanist.insets.statusBarsHeight
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ui.TopAppBar
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.clean_architecture.features.main.MainViewModel
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.main.model.MainScreenEvent
@@ -44,8 +38,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.observe
 import com.jooheon.clean_architecture.toyproject.features.common.extension.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-const val TAG = "MainScreen"
+import timber.log.Timber
 
 @Composable
 fun MainScreen(
@@ -56,29 +49,24 @@ fun MainScreen(
         navController.navigate(ScreenNavigation.Setting.Main.route)
     }
 
-    val state by viewModel.mainScreenState.collectAsStateWithLifecycle()
-
     MainScreen(
         navController = navController,
-        state = state,
         onEvent = viewModel::dispatch
     )
 }
 
 @OptIn(
-    ExperimentalAnimationApi::class,
     ExperimentalComposeUiApi::class,
     ExperimentalMaterial3Api::class,
 )
 @Composable
 private fun MainScreen(
     navController: NavController,
-    state: MainScreenState,
     onEvent: (MainScreenEvent) -> Unit
 ) {
-    val bottomNavController = rememberAnimatedNavController()
+    val bottomNavController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val snackbarHostState = remember { SnackbarHostState() }
+    val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val bottomBarVisibility = remember { mutableStateOf(true) }
     val bottomBarPadding = remember { mutableStateOf(60.dp) }
@@ -86,7 +74,7 @@ private fun MainScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState)},
+            snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
             bottomBar = { BottomBar(bottomNavController, bottomBarVisibility.value) },
             floatingActionButtonPosition = FabPosition.End,
             contentColor = MaterialTheme.colorScheme.surface,
@@ -109,69 +97,6 @@ private fun MainScreen(
             }
         )
     }
-
-//    RegisterBackPressedHandler(
-//        isDoubleBackPressed = state.doubleBackPressedState,
-//        drawerState = drawerState,
-//        scope = scope,
-//        onBackPressed = { /** EVENT **/}
-//    )
-}
-
-@Composable
-fun MyFloatingActionButton(
-    viewModel: MainViewModel,
-) {
-    FloatingActionButton(
-        shape = CircleShape,
-        onClick = { viewModel.onFloatingButtonClicked() },
-        containerColor = MaterialTheme.colorScheme.tertiary,
-        contentColor = MaterialTheme.colorScheme.onTertiary
-    ) {
-        Icon(
-            imageVector = if (viewModel.floatingButtonState.value) {
-                Icons.Default.ToggleOff
-            } else Icons.Default.ToggleOn,
-            contentDescription = "floating action button"
-        )
-    }
-}
-
-@ExperimentalMaterial3Api
-@Composable
-fun DrawerContent(
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    paddingValues: PaddingValues
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(paddingValues)
-    ) {
-        Spacer(Modifier.statusBarsHeight(additional = 24.dp))
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "drawerContent - 1",
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelMedium
-        )
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "drawerContent - 2",
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelMedium
-        )
-        Text(
-            modifier = Modifier
-                .padding(16.dp)
-                .clickable { scope.launch { drawerState.close() } },
-            text = "drawerContent - 3",
-            color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelMedium
-        )
-    }
 }
 
 @Composable
@@ -192,7 +117,7 @@ fun BottomBar(
                     .background(MaterialTheme.colorScheme.inverseSurface),
                 selectedNavigation = currentSelectedItem,
                 onNavigationSelected = { selectedScreen ->
-                    Log.d(TAG, "selectedScreen: $selectedScreen")
+                    Timber.d("selectedScreen: $selectedScreen")
 
                     bottomNavController.navigate(selectedScreen.route) {
                         launchSingleTop = true
@@ -230,7 +155,7 @@ fun TopBar(
         navigationIcon = {
             IconButton(onClick = {
                 scope.launch { drawerState.open() }
-                Log.d(TAG, "Menu IconButton")
+                Timber.d("Menu IconButton")
             }) {
                 Icon(
                     Icons.Filled.Menu,
@@ -264,32 +189,6 @@ fun TopBar(
     )
 }
 
-@ExperimentalMaterial3Api
-@Composable
-fun RegisterBackPressedHandler (
-    isDoubleBackPressed: Boolean,
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-    onBackPressed: () -> Unit,
-) {
-    val context = LocalContext.current
-    BackHandler(
-        enabled = drawerState.isOpen || isDoubleBackPressed
-    ) {
-        scope.launch {
-            if(drawerState.isOpen) {
-                scope.launch { drawerState.close() }
-                return@launch
-            }
-            if(isDoubleBackPressed) {
-                onBackPressed()
-                Toast.makeText(context, "Press once more to exit.", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 private fun PreviewMainScreen() {
@@ -298,8 +197,7 @@ private fun PreviewMainScreen() {
     PreviewTheme(false) {
         MainScreen(
             navController = NavController(context),
-            state = MainScreenState.default,
-            onEvent = { _, -> }
+            onEvent = { _ -> }
         )
     }
 }

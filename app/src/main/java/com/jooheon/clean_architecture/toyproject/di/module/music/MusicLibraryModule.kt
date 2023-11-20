@@ -31,8 +31,7 @@ object MusicLibraryModule {
         Room.databaseBuilder(myApplication, PlaylistDatabase::class.java, Constants.PLAYLIST_DB).build()
     @Provides
     @Singleton
-    fun provideMusicPlaylistDao(playlistDatabase: PlaylistDatabase) =
-        playlistDatabase.dao
+    fun provideMusicPlaylistDao(playlistDatabase: PlaylistDatabase) = playlistDatabase.dao
     @Provides
     fun provideMusicPlaylistMapper(): PlaylistMapper = PlaylistMapper()
 

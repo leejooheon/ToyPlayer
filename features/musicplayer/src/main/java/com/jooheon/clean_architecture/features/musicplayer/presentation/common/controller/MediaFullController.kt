@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.clean_architecture.toyproject.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicplayer.presentation.song.model.MusicSongScreenState
+import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
 import kotlinx.coroutines.flow.MutableStateFlow
 
