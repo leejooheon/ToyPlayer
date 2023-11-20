@@ -3,7 +3,7 @@
 # compose-compiler: https://developer.android.com/jetpack/androidx/releases/compose-compiler
 
 # Project
-androidGradlePlugin = "8.1.2"
+androidGradlePlugin = "8.1.4"
 gms = "4.4.0"
 kotlin = "1.9.10"
 compose_compiler = "1.5.3"
@@ -29,10 +29,10 @@ multidex = "2.0.1"
 lifecycle = "2.6.2"
 splashscreen = "1.0.1"
 datastore="1.0.0"
-activityCompose = "1.8.0"
+activityCompose = "1.8.1"
 constraintLayout = "1.0.1"
 androidxLifecycle = "2.6.2"
-composeNavigation = "2.7.4"
+composeNavigation = "2.7.5"
 
 # Media3
 media3 = "1.2.0"
@@ -46,9 +46,9 @@ kotlinxSerialization = "1.6.0"
 javaxInject = "1"
 
 # Hilt
-hilt = "2.48"
-hiltCompose = "1.0.0"
-hiltWorker = "1.0.0"
+hilt = "2.48.1"
+hiltCompose = "1.1.0"
+hiltWorker = "1.1.0"
 
 # work
 work = "2.8.1"
@@ -64,7 +64,7 @@ chucker = "3.5.2"
 retrofit-serialization-converter = "1.0.0"
 
 # Glide
-glide = "4.15.1"
+glide = "4.16.0"
 coil = "2.4.0"
 
 # Google map
