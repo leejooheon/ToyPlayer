@@ -1,0 +1,3 @@
+import com.jooheon.toyproject.configureComposeAndroid
+
+configureComposeAndroid()
