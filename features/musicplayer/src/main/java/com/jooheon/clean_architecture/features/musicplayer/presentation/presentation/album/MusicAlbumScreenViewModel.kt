@@ -91,10 +91,11 @@ class MusicAlbumScreenViewModel @Inject constructor(
     private fun collectMusicList() = viewModelScope.launch {
         combine(
             musicListUseCase.localSongList,
+            musicListUseCase.assetSongList,
             musicListUseCase.streamingSongList,
             musicListUseCase.musicListType,
-        ) { localSongList, streamingSongList, musicListType ->
-            Triple(localSongList, streamingSongList, musicListType)
+        ) { localSongList, assetSongList, streamingSongList, musicListType ->
+            Triple(localSongList + assetSongList, streamingSongList, musicListType)
         }.collect { (localSongList, streamingSongList, musicListType) ->
             songList = when(musicListType) {
                 MusicListType.All -> localSongList + streamingSongList

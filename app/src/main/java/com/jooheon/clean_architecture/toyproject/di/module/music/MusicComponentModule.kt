@@ -40,11 +40,9 @@ object MusicComponentModule {
     @Provides
     @Singleton
     fun providesMusicListUseCase(
-        applicationScope: CoroutineScope,
         musicListRepository: MusicListRepository,
     ): MusicListUseCase =
         MusicListUseCase(
-            applicationScope = applicationScope,
             musicListRepository = musicListRepository,
         )
     @Provides

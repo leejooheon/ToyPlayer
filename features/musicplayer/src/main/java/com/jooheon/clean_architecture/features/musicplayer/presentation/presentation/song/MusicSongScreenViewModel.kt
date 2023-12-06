@@ -36,7 +36,7 @@ class MusicSongScreenViewModel @Inject constructor(
         collectPlaylist()
         collectMusicList()
 
-        musicListUseCase.loadSongList(MusicUtil.localMusicStorageUri().toString())
+        loadMusicList()
     }
 
     fun dispatch(event: MusicSongScreenEvent) = viewModelScope.launch {
@@ -66,10 +66,11 @@ class MusicSongScreenViewModel @Inject constructor(
     private fun collectMusicList() = viewModelScope.launch {
         combine(
             musicListUseCase.localSongList,
+            musicListUseCase.assetSongList,
             musicListUseCase.streamingSongList,
             musicListUseCase.musicListType,
-        ) { localSongList, streamingSongList, musicListType ->
-            Triple(localSongList, streamingSongList, musicListType)
+        ) { localSongList, assetSongList, streamingSongList, musicListType ->
+            Triple(localSongList + assetSongList, streamingSongList, musicListType)
         }.collect { (localSongList, streamingSongList, musicListType) ->
 
             val songList = when(musicListType) {
@@ -85,5 +86,9 @@ class MusicSongScreenViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun loadMusicList() = viewModelScope.launch {
+        musicListUseCase.loadSongList(MusicUtil.localMusicStorageUri().toString())
     }
 }
