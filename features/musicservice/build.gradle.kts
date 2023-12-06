@@ -11,10 +11,12 @@ android {
 dependencies {
     implementation(projects.domain)
     implementation(projects.features.common)
+    testImplementation(projects.testing)
 
     // media3
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)
+    implementation(libs.androidx.media3.hls)
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.mediarouter)

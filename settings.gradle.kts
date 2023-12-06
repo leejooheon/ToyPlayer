@@ -1,6 +1,7 @@
 include(":app")
 include(":domain")
 include(":data")
+include(":testing")
 include(":features:musicservice")
 include(":features:musicplayer")
 include(":features:common")
