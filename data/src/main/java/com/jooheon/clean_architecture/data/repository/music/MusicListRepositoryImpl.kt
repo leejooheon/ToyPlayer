@@ -16,6 +16,16 @@ class MusicListRepositoryImpl(
     private val appPreferences: AppPreferences,
 ): MusicListRepository {
     private val TAG = MusicListRepositoryImpl::class.java.simpleName
+    override suspend fun getMusicFromAsset(): Resource<MutableList<Song>> {
+        val data = localMusicDataSource.loadFromAssets()
+        val result = if (data.isEmpty()) {
+            Resource.Failure(FailureStatus.EMPTY)
+        } else {
+            Resource.Success(data)
+        }
+
+        return result
+    }
 
     override suspend fun getLocalMusicList(uri: String): Resource<MutableList<Song>> {
         val data = localMusicDataSource.getLocalMusicList(Uri.parse(uri))

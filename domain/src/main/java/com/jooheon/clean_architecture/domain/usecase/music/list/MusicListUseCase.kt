@@ -55,6 +55,23 @@ class MusicListUseCase(
         }
     }
 
+    override fun loadSongListFromAsset() {
+        applicationScope.launch {
+            val resource = musicListRepository.getMusicFromAsset()
+            val list = when(resource) {
+                is Resource.Success -> resource.value
+                is Resource.Failure -> emptyList()
+                else -> return@launch
+            }
+
+            val songList = streamingSongList.value.toMutableList().apply {
+                addAll(list)
+            }
+
+            _streamingSongList.tryEmit(songList)
+        }
+    }
+
     override fun getMusicListType(): MusicListType {
         return musicListRepository.getMusicListType()
     }

@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.data.datasource.local
 
 import android.content.ContentUris
 import android.content.Context
+import android.content.res.AssetManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
@@ -9,12 +10,35 @@ import android.provider.BaseColumns
 import android.provider.MediaStore
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
 import javax.inject.Inject
+import kotlin.random.Random
 
 class LocalMusicDataSource @Inject constructor(
     private val applicationContext: Context
 ): BaseLocalDataSource {
+
+    fun loadFromAssets(): MutableList<Song> {
+        val raw = applicationContext.assets
+            .open("catalog.json")
+            .bufferedReader()
+            .use(BufferedReader::readText)
+        val jsonObject = JSONObject(raw)
+        val mediaList = jsonObject.getJSONArray("media")
+
+        val random = Random(System.currentTimeMillis())
+        val songs = mutableListOf<Song>()
+        for(i in 0 until mediaList.length()) {
+            val mediaObject =  mediaList.getJSONObject(i)
+            val id = random.nextLong()
+            if(mediaObject.getString("genre") == "Video") continue
+            getSongFromJsonObject(id, mediaObject)
+        }
+
+        return songs
+    }
 
     fun getLocalMusicList(uri: Uri): MutableList<Song> {
         val cursor = makeSongCursor(applicationContext, uri)
@@ -26,6 +50,32 @@ class LocalMusicDataSource @Inject constructor(
         }
         cursor?.close()
         return songs
+    }
+
+    private fun getSongFromJsonObject(id: Long, mediaObject: JSONObject): Song {
+        val trackId = mediaObject.getString("id")
+        val albumName = mediaObject.getString("album")
+        val title = mediaObject.getString("title")
+        val artistName = mediaObject.getString("artist")
+        val trackNumber = mediaObject.getInt("trackNumber")
+        val duration = (mediaObject.getInt("duration") * 1000).toLong()
+        val sourceUri = mediaObject.getString("source")
+        val imageUri = mediaObject.getString("image")
+
+        return Song(
+            audioId = id,
+            displayName = title,
+            title = title.defaultEmpty(),
+            artist = artistName.defaultEmpty(),
+            artistId = "unset",
+            album = albumName.defaultEmpty(),
+            albumId = "unset",
+            duration = duration,
+            path = sourceUri,
+            trackNumber = trackNumber % 1000,
+            imageUrl = imageUri,
+            isFavorite = false,
+        )
     }
 
     private fun getSongFromCursor(cursor: Cursor): Song {
