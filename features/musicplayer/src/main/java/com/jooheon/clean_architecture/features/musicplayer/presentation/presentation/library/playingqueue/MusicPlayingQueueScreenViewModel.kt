@@ -8,7 +8,7 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenN
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlayingQueueScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
@@ -57,11 +57,18 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         val songs = if(shuffle) currentPlayingQueue.shuffled()
         else currentPlayingQueue
 
-        musicControllerUsecase.onPlayAtPlayingQueue(
-            songs = songs,
-            addToPlayingQueue = false,
-            playWhenReady = true
-        )
+        val isPlaying = musicPlayerState.value.musicState.isPlaying
+        if(shuffle) {
+            musicControllerUsecase.shuffle(
+                playWhenReady = isPlaying
+            )
+        } else {
+            musicControllerUsecase.enqueue(
+                songs = songs,
+                addNext = false,
+                playWhenReady = true
+            )
+        }
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {

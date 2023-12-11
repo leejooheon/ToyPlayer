@@ -10,7 +10,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicSongScreenViewModel @Inject constructor(
-    musicControllerUsecase: MusicControllerUsecase,
+    musicControllerUsecase: MusicControllerUseCase,
     private val musicListUseCase: MusicListUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
     private val playlistUseCase: PlaylistUseCase,

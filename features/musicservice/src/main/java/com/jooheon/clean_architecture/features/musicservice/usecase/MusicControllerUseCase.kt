@@ -1,9 +1,9 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
+import android.media.session.PlaybackState
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.Player
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
@@ -13,19 +13,27 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicservice.ext.enqueue
+import com.jooheon.clean_architecture.features.musicservice.ext.forceEnqueue
+import com.jooheon.clean_architecture.features.musicservice.ext.forceSeekToNext
+import com.jooheon.clean_architecture.features.musicservice.ext.forceSeekToPrevious
+import com.jooheon.clean_architecture.features.musicservice.ext.playAtIndex
 import com.jooheon.clean_architecture.features.musicservice.ext.playbackErrorReason
+import com.jooheon.clean_architecture.features.musicservice.ext.shuffledItems
 import com.jooheon.clean_architecture.features.musicservice.ext.toMediaItem
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import timber.log.Timber
 
-class MusicControllerUsecase(
+class MusicControllerUseCase(
     private val applicationScope: CoroutineScope,
-    private val musicController: MusicController,
     private val playingQueueUseCase: PlayingQueueUseCase,
+    private val musicStateHolder: MusicStateHolder,
 ) {
-    private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUsecase::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUseCase::class.java.simpleName
+    private val immediate = Dispatchers.Main.immediate
+    private var player: Player? = null
 
     private val _songLibrary = MutableStateFlow(emptyList<Song>())
 
@@ -38,39 +46,37 @@ class MusicControllerUsecase(
     private val _timePassed = MutableStateFlow(0L)
     val timePassed = _timePassed.asStateFlow()
 
-    private val _playerState = MutableStateFlow<Int?>(null)
-    val playerState = _playerState.asStateFlow()
+    private val _playbackState = MutableStateFlow(PlaybackState.STATE_NONE)
+    val playbackState = _playbackState.asStateFlow()
 
     private val _musicStreamErrorChannel = Channel<Resource.Failure>()
     val musicStreamErrorChannel = _musicStreamErrorChannel.receiveAsFlow()
 
     init {
-        collectPlayerInitialized()
         collectMediaItems()
         collectCurrentWindow()
-        collectMediaItemIndex()
         collectIsPlaying()
         collectDuration()
         collectRepeatMode()
         collectShuffleMode()
-        collectExoPlayerState()
-        collectPlaybackException()
+        collectPlaybackState()
+        collectPlayerState()
+        collectPlaybackError()
     }
 
-    private fun collectPlayerInitialized() = applicationScope.launch {
-        musicController.playerInitialized.collectLatest {
-            initPlayingQueue()
-            initPlaybackOptions()
-        }
+    fun setPlayer(player: Player) {
+        this.player = player
+        initPlayingQueue()
+        initPlaybackOptions()
     }
 
     private fun collectDuration() = applicationScope.launch {
-        musicController.currentDuration.collectLatest { currentDuration ->
+        musicStateHolder.currentDuration.collectLatest { currentDuration ->
             _timePassed.update { currentDuration }
         }
     }
     private fun collectMediaItems() = applicationScope.launch {
-        musicController.mediaItems.collectLatest { mediaItems ->
+        musicStateHolder.mediaItems.collectLatest { mediaItems ->
             Timber.tag(TAG).d( "collectMediaItems: ${mediaItems.size}")
             val originPlaylist = _songLibrary.value
 
@@ -88,7 +94,7 @@ class MusicControllerUsecase(
     private fun collectCurrentWindow() = applicationScope.launch {
         combine(
             playingQueue,
-            musicController.currentWindow
+            musicStateHolder.currentWindow
         ) { playingQueue, currentWindow ->
             Pair(playingQueue, currentWindow)
         }.collectLatest { (playingQueue, currentWindow) ->
@@ -100,14 +106,10 @@ class MusicControllerUsecase(
             updateCurrentPlayingMusic(song)
         }
     }
-    private fun collectMediaItemIndex() = applicationScope.launch {
-        musicController.mediaItemIndex.collectLatest {
-            playingQueueUseCase.setPlayingQueuePosition(it)
-        }
-    }
+
     private fun collectIsPlaying() = applicationScope.launch {
-        musicController.isPlaying.collectLatest { isPlaying ->
-            Timber.tag(TAG).d( "collectIsPlaying - ${isPlaying}")
+        musicStateHolder.isPlaying.collectLatest { isPlaying ->
+            Timber.tag(TAG).d( "collectIsPlaying - $isPlaying")
             _musicState.update {
                 it.copy(
                     isPlaying = isPlaying
@@ -116,8 +118,8 @@ class MusicControllerUsecase(
         }
     }
     private fun collectRepeatMode() = applicationScope.launch {
-        musicController.repeatMode.collectLatest { repeatMode ->
-            Timber.tag(TAG).d( "collectRepeatMode - ${repeatMode}")
+        musicStateHolder.repeatMode.collectLatest { repeatMode ->
+            Timber.tag(TAG).d( "collectRepeatMode - $repeatMode")
             _musicState.update {
                 it.copy(
                     repeatMode = RepeatMode.getByValue(repeatMode)
@@ -126,32 +128,38 @@ class MusicControllerUsecase(
         }
     }
     private fun collectShuffleMode() = applicationScope.launch {
-        musicController.shuffleMode.collectLatest { shuffleMode ->
-            Timber.tag(TAG).d( "collectShuffleMode - ${shuffleMode}")
+        musicStateHolder.shuffleMode.collectLatest { shuffleMode ->
+            Timber.tag(TAG).d( "collectShuffleMode - $shuffleMode")
             _musicState.update {
                 it.copy(
                     shuffleMode = ShuffleMode.getByValue(shuffleMode)
                 )
             }
+
+            shuffle(
+                playWhenReady = musicState.value.isPlaying
+            )
         }
     }
-    private fun collectExoPlayerState() = applicationScope.launch {
-        musicController.exoPlayerState.collectLatest { state ->
-            _playerState.tryEmit(state)
-
-            if(state == ExoPlayer.STATE_READY) {
+    private fun collectPlayerState() = applicationScope.launch {
+        musicStateHolder.playerState.collectLatest { state ->
+            if(state == Player.STATE_READY) {
                 updateCurrentPlayingMusic(musicState.value.currentPlayingMusic)
             }
-
+        }
+    }
+    private fun collectPlaybackState() = applicationScope.launch {
+        musicStateHolder.playbackState.collectLatest { state ->
+            _playbackState.tryEmit(state)
             _musicState.update {
                 it.copy(
-                    isBuffering = state == ExoPlayer.STATE_BUFFERING
+                    isBuffering = state == PlaybackState.STATE_BUFFERING
                 )
             }
         }
     }
-    private fun collectPlaybackException() = applicationScope.launch {
-        musicController.playbackExceptionChannel.collectLatest { error ->
+    private fun collectPlaybackError() = applicationScope.launch {
+        musicStateHolder.playbackError.collectLatest { error ->
             Timber.tag(TAG).e("collectPlaybackException: ${error.errorCode.playbackErrorReason()}, ${error.message}")
 
             val failureStatus = when(error.errorCode) {
@@ -169,57 +177,66 @@ class MusicControllerUsecase(
             )
         }
     }
-    fun addToPlayingQueue(song: Song) = applicationScope.launch {
+
+    fun enqueue(
+        song: Song,
+        playWhenReady: Boolean
+    ) = applicationScope.launch(immediate) {
+        val player = player ?: return@launch
+
+        val songLibrary = _songLibrary.value.toMutableList()
         val index = playingQueue.value.indexOfFirst {
             it.id() == song.id()
         }
 
         if(index != C.INDEX_UNSET) {
-            musicController.removeMeidaItems(listOf(index))
-        } else {
-            _songLibrary.update { it.toMutableList().apply { add(song) } }
+            player.removeMediaItem(index)
+            songLibrary.remove(song) // remove duplicate
         }
+        songLibrary.add(song)
+        _songLibrary.update { songLibrary }
 
-        musicController.addMediaItems(
-            mediaItems = listOf(song).map { it.toMediaItem() },
-            addNext = true,
-            playWhenReady = true
+        player.enqueue(
+            mediaItem = song.toMediaItem(),
+            playWhenReady = playWhenReady
         )
     }
 
-    fun onPlayAtPlayingQueue(
+    fun enqueue(
         songs: List<Song>,
-        addToPlayingQueue: Boolean,
+        addNext: Boolean,
         playWhenReady: Boolean
-    ) = applicationScope.launch(Dispatchers.IO) {
-        if (addToPlayingQueue) { // TabToSelect
-            val songLibrary = _songLibrary.value
+    ) = applicationScope.launch(immediate) {
+        val player = player ?: return@launch
 
-            val filtered = songs.filter { song ->
-                songLibrary.none { it.id() == song.id() }
+        if (addNext) { // TabToSelect
+            val songLibrary = _songLibrary.value.toMutableList()
+
+            val newMediaItems = songs.filter { song ->
+                songLibrary.none { it.id() == song.id() } // remove duplicate
+            }.also {
+                songLibrary.addAll(it)
+                _songLibrary.update { songLibrary }
+            }.map {
+                it.toMediaItem()
             }
 
-            _songLibrary.update {
-                it.toMutableList().apply { addAll(filtered) }
-            }
-
-            musicController.addMediaItems(
-                mediaItems = filtered.map { it.toMediaItem() },
-                addNext = false,
-                playWhenReady = true //playWhenReady,
+            player.enqueue(
+                mediaItems = newMediaItems,
+                playWhenReady = playWhenReady
             )
         } else { // TabToPlay
             _songLibrary.update { songs }
+            val newMediaItems = songs.map { it.toMediaItem() }
 
-            musicController.setMediaItems(
-                mediaItems = songs.map{ it.toMediaItem() },
-                startIndex = 0,
+            player.forceEnqueue(
+                mediaItems = newMediaItems,
                 playWhenReady = playWhenReady
             )
         }
     }
 
-    fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch(Dispatchers.IO) {
+    fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch(immediate) {
         val playingQueue = _playingQueue.value
 
         val songIndexList = songs.filter {
@@ -230,65 +247,74 @@ class MusicControllerUsecase(
             it != -1
         }
 
-        musicController.removeMeidaItems(
-            mediaItemsIndices = songIndexList,
-        )
+        songIndexList.forEach {
+            player?.removeMediaItem(it)
+        }
     }
 
     fun onPlay(
         song: Song = musicState.value.currentPlayingMusic,
-    ) = applicationScope.launch(Dispatchers.IO) {
+    ) = applicationScope.launch(immediate) {
         val state = musicState.value
 
         val index = state.playingQueue.indexOfFirst {
             it.id() == song.id()
         }
 
-        musicController.play(
-            index = index,
-            seekTo = C.TIME_UNSET,
-            playWhenReady = true
+        if(index != C.INDEX_UNSET) {
+            player?.playAtIndex(index, C.TIME_UNSET)
+        } else {
+            enqueue(
+                song = song,
+                playWhenReady = true
+            )
+        }
+    }
+    fun shuffle(playWhenReady: Boolean) = applicationScope.launch(immediate) {
+        val player = player ?: return@launch
+        val shuffledItems = player.shuffledItems()
+
+        player.forceEnqueue(
+            mediaItems = shuffledItems,
+            playWhenReady = playWhenReady
         )
     }
-    fun onPause() = applicationScope.launch(Dispatchers.IO) {
-        musicController.pause()
+    fun onPause() = applicationScope.launch(immediate) {
+        player?.pause()
     }
-    fun onStop() = applicationScope.launch(Dispatchers.IO) {
-        musicController.stop()
+    fun onStop() = applicationScope.launch(immediate) {
+        player?.stop()
     }
-    fun onNext() = applicationScope.launch(Dispatchers.Main) {
-        musicController.next()
+    fun onNext() = applicationScope.launch(immediate) {
+        player?.forceSeekToNext()
     }
-    fun onPrevious() = applicationScope.launch(Dispatchers.Main) {
-        musicController.previous()
+    fun onPrevious() = applicationScope.launch(immediate) {
+        player?.forceSeekToPrevious()
     }
-    fun snapTo(duration: Long) = applicationScope.launch(Dispatchers.Main) {
-        musicController.snapTo(
-            duration = duration,
-            fromUser = true
-        )
+    fun snapTo(duration: Long) = applicationScope.launch(immediate) {
+        player?.seekTo(duration)
     }
 
-    fun onShuffleButtonPressed() = applicationScope.launch(Dispatchers.IO) {
+    fun onShuffleButtonPressed() = applicationScope.launch(immediate) {
         val state = musicState.value
         val shuffleModeEnabled = when(state.shuffleMode) {
             ShuffleMode.SHUFFLE -> false
             ShuffleMode.NONE -> true
         }
-        musicController.changeShuffleMode(shuffleModeEnabled)
+        player?.shuffleModeEnabled = shuffleModeEnabled
     }
-    fun onRepeatButtonPressed() = applicationScope.launch(Dispatchers.IO) {
+    fun onRepeatButtonPressed() = applicationScope.launch(immediate) {
         val state = musicState.value
         val repeatMode = when(state.repeatMode) {
             RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
             RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
             RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
         }
-        musicController.changeRepeatMode(repeatMode.ordinal)
+        player?.repeatMode = repeatMode.ordinal
     }
 
-    fun releaseMediaBrowser() {
-        musicController.releaseMediaBrowser()
+    fun release() {
+        player = null
     }
 
     private fun updateCurrentPlayingMusic(song: Song) {
@@ -299,25 +325,30 @@ class MusicControllerUsecase(
             it.copy(currentPlayingMusic = song)
         }
     }
-    private suspend fun initPlayingQueue() = withContext(Dispatchers.IO) {
+
+    private fun initPlayingQueue() = applicationScope.launch(Dispatchers.IO) {
         playingQueueUseCase.getPlayingQueue().onEach {
             if(it is Resource.Success) {
                 val playingQueue = it.value
                 _songLibrary.tryEmit(playingQueue)
-                musicController.setMediaItems(
-                    mediaItems = playingQueue.map { it.toMediaItem() },
-                    startIndex = playingQueueUseCase.getPlayingQueuePosition(),
-                    playWhenReady = false
-                )
+                val newMediaItems = playingQueue.map { it.toMediaItem() }
+                withContext(immediate) {
+                    player?.enqueue(
+                        mediaItems = newMediaItems,
+                        playWhenReady = false
+                    )
+                }
+
+//                playingQueueUseCase.getPlayingQueuePosition(), // TODO: set last position
             }
         }.launchIn(this)
     }
 
-    private suspend fun initPlaybackOptions() {
+    private fun initPlaybackOptions() = applicationScope.launch(immediate) {
         val repeatMode = playingQueueUseCase.repeatMode()
         val shuffleMode = playingQueueUseCase.shuffleMode()
 
-        musicController.changeRepeatMode(repeatMode.ordinal)
-        musicController.changeShuffleMode(shuffleMode == ShuffleMode.SHUFFLE)
+        player?.repeatMode = repeatMode.ordinal
+        player?.shuffleModeEnabled = shuffleMode == ShuffleMode.SHUFFLE
     }
 }

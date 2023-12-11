@@ -2,8 +2,10 @@ package com.jooheon.clean_architecture.features.musicservice.di
 
 import android.content.Context
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicController
+import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
+import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,17 +17,21 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MusicControllerModule {
+object PlayerModule {
     @Provides
     @Singleton
     @UnstableApi
-    fun provideMusicController(
+    fun provideMediaControllerManager(
         @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
-        exoPlayer: ExoPlayer,
-    ) = MusicController(
+        musicStateHolder: MusicStateHolder,
+    ) = MediaControllerManager(
         context = context,
         applicationScope = applicationScope,
-        exoPlayer = exoPlayer
+        musicStateHolder = musicStateHolder,
     )
+
+    @Provides
+    @Singleton
+    fun provideMusicStateHolder() = MusicStateHolder()
 }

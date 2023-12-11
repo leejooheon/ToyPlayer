@@ -3,11 +3,10 @@ package com.jooheon.clean_architecture.features.musicplayer.presentation.common.
 import androidx.lifecycle.viewModelScope
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
-    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUseCase,
 ): BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
 
@@ -48,7 +47,7 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onPlay(song: Song) {
-        musicControllerUsecase.addToPlayingQueue(song)
+        musicControllerUsecase.onPlay(song)
     }
 
     private fun onNextClicked() {

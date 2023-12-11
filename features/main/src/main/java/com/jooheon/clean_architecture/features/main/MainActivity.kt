@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
@@ -25,6 +26,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private lateinit var browserFuture: ListenableFuture<MediaBrowser>
+    private val browser: MediaBrowser?
+        get() = if (browserFuture.isDone) browserFuture.get() else null
+
     @Inject
     lateinit var themeStateFlow: ThemeStateFlow
 
@@ -47,6 +52,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        initializeBrowser()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        releaseBrowser()
+    }
+
     override fun onDestroy() {
         Timber.d("onDestroy")
         super.onDestroy()
@@ -62,8 +77,15 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+    private fun initializeBrowser() {
+        browserFuture =
+            MediaBrowser.Builder(
+                this,
+                SessionToken(this, ComponentName(this, MusicService::class.java))
+            ).buildAsync()
+    }
 
-    companion object {
-        private val TAG = MainActivity::class.java.simpleName
+    private fun releaseBrowser() {
+        MediaBrowser.releaseFuture(browserFuture)
     }
 }

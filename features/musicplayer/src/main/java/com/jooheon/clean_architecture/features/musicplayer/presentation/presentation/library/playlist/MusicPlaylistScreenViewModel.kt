@@ -9,7 +9,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlaylistScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {

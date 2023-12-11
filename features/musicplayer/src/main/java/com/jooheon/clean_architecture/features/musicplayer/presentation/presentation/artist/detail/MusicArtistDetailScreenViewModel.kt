@@ -9,7 +9,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.presenta
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
@@ -47,10 +47,9 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlayAtPlayingQueue(
-                    songs = listOf(event.song),
-                    addToPlayingQueue = true,
-                    playWhenReady = true,
+                musicControllerUsecase.enqueue(
+                    song = event.song,
+                    playWhenReady = true
                 )
             }
             is MusicArtistDetailScreenEvent.OnAlbumClick -> {

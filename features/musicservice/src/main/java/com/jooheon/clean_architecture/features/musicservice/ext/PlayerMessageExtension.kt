@@ -1,15 +1,30 @@
 package com.jooheon.clean_architecture.features.musicservice.ext
 
+import android.media.session.PlaybackState
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
+fun Int.playbackState() = when(this) {
+    PlaybackState.STATE_STOPPED -> "STATE_STOPPED"
+    PlaybackState.STATE_PAUSED -> "STATE_PAUSED"
+    PlaybackState.STATE_PLAYING -> "STATE_PLAYING"
+    PlaybackState.STATE_FAST_FORWARDING -> "STATE_FAST_FORWARDING"
+    PlaybackState.STATE_REWINDING -> "STATE_REWINDING"
+    PlaybackState.STATE_BUFFERING -> "STATE_BUFFERING"
+    PlaybackState.STATE_ERROR -> "STATE_ERROR"
+    PlaybackState.STATE_CONNECTING -> "STATE_CONNECTING"
+    PlaybackState.STATE_SKIPPING_TO_PREVIOUS -> "STATE_SKIPPING_TO_PREVIOUS"
+    PlaybackState.STATE_SKIPPING_TO_NEXT -> "STATE_SKIPPING_TO_NEXT"
+    PlaybackState.STATE_SKIPPING_TO_QUEUE_ITEM -> "STATE_SKIPPING_TO_QUEUE_ITEM"
+    else -> "STATE_NONE"
+}
 fun Int.playerState() = when(this) {
-    ExoPlayer.STATE_IDLE -> "STATE_IDLE"
-    ExoPlayer.STATE_BUFFERING -> "STATE_BUFFERING"
-    ExoPlayer.STATE_READY -> "STATE_READY"
-    ExoPlayer.STATE_ENDED -> "STATE_ENDED"
-    else -> throw IllegalStateException("Unknown playbackState.")
+    Player.STATE_IDLE -> "STATE_IDLE"
+    Player.STATE_BUFFERING -> "STATE_BUFFERING"
+    Player.STATE_READY -> "STATE_READY"
+    Player.STATE_ENDED -> "STATE_ENDED"
+    else -> "STATE_NONE"
 }
 fun Int.mediaItemTransitionReason() = when(this) {
     Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT -> "MEDIA_ITEM_TRANSITION_REASON_REPEAT"
@@ -28,7 +43,7 @@ fun Int.playWhenReadyChangeReason() = when(this) {
     else -> throw IllegalStateException("Unknown MediaItemTransitionReason")
 }
 fun Int.timelineChangeReason() = when(this) {
-    Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED -> "PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST"
+    Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED -> "TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED"
     Player.TIMELINE_CHANGE_REASON_SOURCE_UPDATE, -> "PLAY_WHEN_READY_CHANGE_REASON_AUDIO_FOCUS_LOSS"
     else -> throw IllegalStateException("Unknown MediaItemTransitionReason")
 }

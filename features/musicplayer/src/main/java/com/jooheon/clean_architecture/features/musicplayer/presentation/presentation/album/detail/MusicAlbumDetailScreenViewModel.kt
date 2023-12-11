@@ -9,7 +9,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.presenta
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUsecase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicAlbumDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUsecase,
+    private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase) {
@@ -48,10 +48,9 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
         when(event) {
             is MusicAlbumDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicAlbumDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.onPlayAtPlayingQueue(
-                    songs = listOf(event.song),
-                    addToPlayingQueue = true,
-                    playWhenReady = true,
+                musicControllerUsecase.enqueue(
+                    song = event.song,
+                    playWhenReady = true
                 )
             }
             is MusicAlbumDetailScreenEvent.OnActionPlayAll -> {
@@ -60,9 +59,9 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                 val songs = if(event.shuffle) event.album.songs.shuffled()
                             else event.album.songs
 
-                musicControllerUsecase.onPlayAtPlayingQueue(
+                musicControllerUsecase.enqueue(
                     songs = songs,
-                    addToPlayingQueue = false,
+                    addNext = false,
                     playWhenReady = true
                 )
             }
