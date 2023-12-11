@@ -11,6 +11,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,8 @@ class MusicSongScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
     private val playlistUseCase: PlaylistUseCase,
-): AbsMusicPlayerViewModel(musicControllerUsecase) {
+    musicStateHolder: MusicStateHolder,
+): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
     override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
 
     private val _musicSongScreenState = MutableStateFlow(MusicSongScreenState.default)

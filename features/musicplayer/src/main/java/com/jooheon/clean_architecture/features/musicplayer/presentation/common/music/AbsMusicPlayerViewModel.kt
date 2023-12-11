@@ -6,7 +6,9 @@ import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.clean_architecture.features.musicservice.ext.isPlaying
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import com.jooheon.clean_architecture.toyproject.features.common.base.BaseViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
     private val musicControllerUsecase: MusicControllerUseCase,
+    private val musicStateHolder: MusicStateHolder,
 ): BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
 
@@ -29,7 +32,6 @@ open class AbsMusicPlayerViewModel (
 
     init {
         collectMusicState()
-        collectDuration()
     }
 
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {
@@ -61,13 +63,13 @@ open class AbsMusicPlayerViewModel (
     private suspend fun onPlayingQueueClick() {
         _navigateToPlayingQueueScreen.send(
             Playlist.playingQueuePlaylist.copy(
-                songs = musicPlayerState.value.musicState.playingQueue
+                songs = musicPlayerState.value.playingQueue
             )
         )
     }
 
     private fun onPlayPauseButtonClicked(song: Song) {
-        if(musicPlayerState.value.musicState.isPlaying) {
+        if(musicPlayerState.value.musicState.playbackState.isPlaying) {
             musicControllerUsecase.onPause()
         } else {
             musicControllerUsecase.onPlay(song = song)
@@ -79,30 +81,14 @@ open class AbsMusicPlayerViewModel (
     }
 
     private fun onRepeatClicked() {
-        val state = musicPlayerState.value.musicState
-        val repeatMode = when(state.repeatMode) {
-            RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
-            RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
-            RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
-        }
         musicControllerUsecase.onRepeatButtonPressed()
     }
 
     private fun snapTo(duration: Long) {
         musicControllerUsecase.snapTo(duration)
     }
-
-    private fun collectDuration() = viewModelScope.launch {
-        musicControllerUsecase.timePassed.collectLatest { duration ->
-            _musicPlayerState.update {
-                it.copy(
-                    duration = duration
-                )
-            }
-        }
-    }
     private fun collectMusicState() = viewModelScope.launch {
-        musicControllerUsecase.musicState.collectLatest { musicState ->
+        musicStateHolder.musicState.collectLatest { musicState ->
             _musicPlayerState.update {
                 it.copy(
                     musicState = musicState

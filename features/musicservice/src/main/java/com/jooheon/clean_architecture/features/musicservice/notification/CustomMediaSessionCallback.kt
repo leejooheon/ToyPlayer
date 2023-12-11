@@ -10,6 +10,8 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
+import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConfig
@@ -25,20 +27,19 @@ class CustomMediaSessionCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
-        val state = musicControllerUseCase.musicState.value
         val connectionResult = super.onConnect(session, controller)
         val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
         CustomMediaNotificationCommandButton.repeatButton(
             context = context,
-            repeatMode = state.repeatMode
+            repeatMode = RepeatMode.REPEAT_OFF, // TODO: 확인하자.
         ).commandButton.sessionCommand?.let {
             availableSessionCommands.add(it)
         }
 
         CustomMediaNotificationCommandButton.shuffleButton(
             context = context,
-            shuffleMode = state.shuffleMode
+            shuffleMode = ShuffleMode.SHUFFLE, // TODO: 확인하자.
         ).commandButton.sessionCommand?.let {
             availableSessionCommands.add(it)
         }

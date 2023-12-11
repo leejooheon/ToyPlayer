@@ -19,7 +19,6 @@ import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 @UnstableApi
 class CustomMediaNotificationProvider(
     private val context: Context,
-    private val musicState: MusicState,
     notificationIdProvider: NotificationIdProvider,
     channelId: String,
     channelNameResourceId: Int,
@@ -33,9 +32,9 @@ class CustomMediaNotificationProvider(
         val defaultPlayPauseCommandButton = mediaButtons.getOrNull( 0 )
         val notificationMediaButtons = if (defaultPlayPauseCommandButton != null ) {
             ImmutableList.builder<CommandButton>().apply {
-                add(CustomMediaNotificationCommandButton.repeatButton(context, musicState.repeatMode).commandButton)
+                add(CustomMediaNotificationCommandButton.repeatButton(context, RepeatMode.REPEAT_OFF).commandButton) // TODO: 업데이트 어떻게 할까?
                 mediaButtons.forEach { add(it) }
-                add(CustomMediaNotificationCommandButton.shuffleButton(context, musicState.shuffleMode).commandButton)
+                add(CustomMediaNotificationCommandButton.shuffleButton(context, ShuffleMode.SHUFFLE).commandButton) // TODO: 업데이트 어떻게 할까?
             }.build()
         } else {
             mediaButtons

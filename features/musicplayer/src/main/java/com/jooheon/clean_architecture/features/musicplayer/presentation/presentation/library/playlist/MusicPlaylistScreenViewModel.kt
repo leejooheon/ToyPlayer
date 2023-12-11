@@ -10,6 +10,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -27,7 +28,8 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-): AbsMusicPlayerViewModel(musicControllerUsecase) {
+    private val musicStateHolder: MusicStateHolder,
+): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
     override val TAG = MusicPlaylistScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
@@ -78,12 +80,12 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicControllerUsecase.musicState.collectLatest {
+        musicStateHolder.playingQueue.collectLatest { playingQueue ->
             val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
                 it.id == Playlist.PlayingQueuePlaylistId
             } ?: return@collectLatest
 
-            if(it.playingQueue == oldPlayingQueue.songs) {
+            if(playingQueue == oldPlayingQueue.songs) {
                 return@collectLatest
             }
 

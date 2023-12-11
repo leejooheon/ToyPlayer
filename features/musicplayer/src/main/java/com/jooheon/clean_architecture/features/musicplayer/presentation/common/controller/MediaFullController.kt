@@ -14,6 +14,7 @@ import com.jooheon.clean_architecture.features.musicplayer.presentation.common.m
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicservice.ext.isPlaying
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @Composable
@@ -28,7 +29,6 @@ fun MediaFullController(
     modifier: Modifier = Modifier
 ) {
     val musicState = musicPlayerState.musicState
-    val duration = musicPlayerState.duration
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -37,7 +37,7 @@ fun MediaFullController(
         MusicProgress(
             modifier = Modifier.fillMaxWidth(0.9f),
             maxDuration = musicState.currentPlayingMusic.duration,
-            currentDuration = duration,
+            currentDuration = musicState.timePassed,
             onChanged = {
                 val progress = it * musicState.currentPlayingMusic.duration
                 snapTo(progress.toLong())
@@ -45,9 +45,9 @@ fun MediaFullController(
         )
 
         MusicControlButtons(
-            isPlaying = musicState.isPlaying,
-            repeatMode = musicState.repeatMode,
-            shuffleMode = musicState.shuffleMode,
+            isPlaying = musicState.playbackState.isPlaying,
+            repeatMode = musicPlayerState.repeatMode,
+            shuffleMode = musicPlayerState.shuffleMode,
             onRepeatModePressed = onRepeatClicked,
             onPrevious = onPreviousClicked,
             onPlayPauseButtonPressed = onPlayPauseButtonClicked,

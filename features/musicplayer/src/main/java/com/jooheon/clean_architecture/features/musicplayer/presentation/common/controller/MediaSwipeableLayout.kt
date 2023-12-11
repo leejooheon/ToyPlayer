@@ -35,6 +35,8 @@ import com.jooheon.clean_architecture.toyproject.features.musicplayer.R
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState
+import com.jooheon.clean_architecture.features.musicservice.ext.isBuffering
+import com.jooheon.clean_architecture.features.musicservice.ext.isPlaying
 import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
@@ -79,7 +81,7 @@ fun MediaSwipeableLayout(
 
         AlbumImage(
             song = musicState.currentPlayingMusic,
-            isPlaying = musicState.isPlaying,
+            isPlaying = musicState.playbackState.isPlaying,
             modifier = Modifier
                 .clickable {}
                 .zIndex(1f)
@@ -104,8 +106,8 @@ fun MediaSwipeableLayout(
         MediaBottomController(
             motionProgress = motionProgress,
             song = musicState.currentPlayingMusic,
-            isPlaying = musicState.isPlaying,
-            isBuffering = musicState.isBuffering,
+            isPlaying = musicState.playbackState.isPlaying,
+            isBuffering = musicState.playbackState.isBuffering,
             onPlayPauseButtonClicked = { onEvent(MusicPlayerEvent.OnPlayPauseClick(it)) },
             onPlayingQueueButtonPressed = { onEvent(MusicPlayerEvent.OnPlayingQueueClick) },
             modifier = Modifier
@@ -181,7 +183,6 @@ private fun MediaSwipeableLayoutPreview() {
         MediaSwipeableLayout(
             musicPlayerState = MusicPlayerState.default.copy(
                 musicState = MusicState(
-                    playingQueue = Song.defaultList,
                     currentPlayingMusic = Song.default.copy(albumId = "1234")
                 )
             ),

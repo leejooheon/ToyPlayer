@@ -8,7 +8,9 @@ import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenN
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
+import com.jooheon.clean_architecture.features.musicservice.ext.isPlaying
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +26,8 @@ import javax.inject.Inject
 class MusicPlayingQueueScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-): AbsMusicPlayerViewModel(musicControllerUsecase) {
+    private val musicStateHolder: MusicStateHolder,
+): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
 
     private val _musicPlayingQueueScreenState = MutableStateFlow(MusicPlayingQueueScreenState.default)
@@ -57,7 +60,7 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         val songs = if(shuffle) currentPlayingQueue.shuffled()
         else currentPlayingQueue
 
-        val isPlaying = musicPlayerState.value.musicState.isPlaying
+        val isPlaying = musicPlayerState.value.musicState.playbackState.isPlaying
         if(shuffle) {
             musicControllerUsecase.shuffle(
                 playWhenReady = isPlaying
@@ -72,11 +75,11 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicControllerUsecase.musicState.collectLatest { musicState ->
+        musicStateHolder.playingQueue.collectLatest { playingQueue ->
             _musicPlayingQueueScreenState.update {
                 it.copy(
                     playlist = Playlist.playingQueuePlaylist.copy(
-                        songs = musicState.playingQueue
+                        songs = playingQueue
                     )
                 )
             }

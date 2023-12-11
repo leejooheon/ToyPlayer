@@ -81,7 +81,6 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
     private fun initNotification() {
         val mediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
-            musicState = musicControllerUseCase.musicState.value,
             notificationIdProvider = { NOTIFICATION_ID },
             channelId = NOTIFICATION_CHANNEL_ID,
             channelNameResourceId = R.string.playing_notification_name,

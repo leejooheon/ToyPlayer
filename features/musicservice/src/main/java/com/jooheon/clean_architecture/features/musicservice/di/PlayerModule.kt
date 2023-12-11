@@ -33,5 +33,7 @@ object PlayerModule {
 
     @Provides
     @Singleton
-    fun provideMusicStateHolder() = MusicStateHolder()
+    fun provideMusicStateHolder(
+        applicationScope: CoroutineScope
+    ) = MusicStateHolder(applicationScope)
 }

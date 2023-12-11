@@ -5,11 +5,9 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ShuffleOrder
-import timber.log.Timber
 
+val Int.isPlaying: Boolean get() = this == PlaybackState.STATE_PLAYING
+val Int.isBuffering: Boolean get() = this == PlaybackState.STATE_BUFFERING
 val Timeline.mediaItems: List<MediaItem>
     get() = List(windowCount) { getWindow(it, Timeline.Window()).mediaItem }
 
@@ -76,6 +74,7 @@ fun Player.enqueue(
 
     if(playWhenReady) playAtIndex(index, C.TIME_UNSET)
 }
+
 fun Player.forceEnqueue(
     mediaItems: List<MediaItem>,
     playWhenReady: Boolean
