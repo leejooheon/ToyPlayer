@@ -1,16 +1,23 @@
 package com.jooheon.clean_architecture.features.musicservice
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.content.Intent
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSourceBitmapLoader
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.clean_architecture.features.musicservice.notification.CoilBitmapLoader
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
@@ -19,22 +26,21 @@ import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConf
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import okhttp3.internal.notifyAll
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySession.Callback {
+class MusicService: MediaLibraryService() {
     private val TAG = MusicService::class.java.simpleName + "@" + "Main"
 
     @Inject
     lateinit var musicControllerUseCase: MusicControllerUseCase
 
     @Inject
-    lateinit var singleTopActivityIntent: Intent
+    lateinit var mediaControllerManager: MediaControllerManager
 
     @Inject
-    lateinit var mediaControllerManager: MediaControllerManager
+    lateinit var singleTopActivityIntent: Intent
 
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
@@ -51,17 +57,7 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
         initPlayer()
         initNotification()
         initMediaSession()
-    }
-
-    @UnstableApi
-    override fun onDestroy() {
-        Timber.tag(TAG).d( "onDestroy")
-        musicControllerUseCase.release()
-        mediaControllerManager.release()
-        exoPlayer.release()
-        mediaSession.release()
-        serviceScope.cancel()
-        super.onDestroy()
+        setListener(MediaSessionServiceListener())
     }
 
     private fun initPlayer() {
@@ -91,7 +87,6 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
 
     @UnstableApi
     private fun initMediaSession() {
-
         mediaSession = MediaLibrarySession.Builder(
             /** service **/this,
             /** player **/ customForwardingPlayer,
@@ -99,17 +94,22 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
                 context = this,
                 musicControllerUseCase = musicControllerUseCase,
             )
-        ).setSessionActivity(
-            PendingIntent.getActivity(
-                this, 0, singleTopActivityIntent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        ).setBitmapLoader(
-            CoilBitmapLoader(this, serviceScope)
-        ).build()
+        )
+        .setSessionActivity(getSingleTopActivity())
+//        .setBitmapLoader(CoilBitmapLoader(this, serviceScope))
+        .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
+        .build()
 
-        mediaControllerManager.init()
+        mediaControllerManager.setPlayer(exoPlayer)
         musicControllerUseCase.setPlayer(exoPlayer)
+    }
+
+    private fun getSingleTopActivity(): PendingIntent {
+        return PendingIntent.getActivity(
+            this,
+            0,
+            singleTopActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
     }
 
     private val customForwardingPlayer by lazy {
@@ -163,17 +163,33 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        Timber.tag(TAG).d( "onTaskRemoved")
-        quit()
+        Timber.tag(TAG).d( "onTaskRemoved - 1")
+        if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
+            Timber.tag(TAG).d( "onTaskRemoved - 2")
+            stopSelf()
+        }
     }
 
-    private fun quit() {
-        if (!exoPlayer.isPlaying) {
-            Timber.tag(TAG).d( "quit")
-            exoPlayer.playWhenReady = false
-            exoPlayer.pause()
-            stopSelf()
+    override fun onDestroy() {
+        Timber.tag(TAG).d( "onDestroy")
+
+        musicControllerUseCase.release()
+        mediaControllerManager.release()
+
+        mediaSession.setSessionActivity(getBackStackedActivity())
+        mediaSession.release()
+
+        exoPlayer.release()
+        clearListener()
+
+        serviceScope.cancel()
+        super.onDestroy()
+    }
+
+    private fun getBackStackedActivity(): PendingIntent {
+        return TaskStackBuilder.create(this).run {
+            addNextIntent(singleTopActivityIntent)
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
         }
     }
 
@@ -182,6 +198,45 @@ class MusicService: MediaLibraryService(), MediaLibraryService.MediaLibrarySessi
         Timber.tag(TAG).d( "onLowMemory")
     }
 
+    @UnstableApi
+    private inner class MediaSessionServiceListener : Listener {
+        /**
+         * This method is only required to be implemented on Android 12 or above when an attempt is made
+         * by a media controller to resume playback when the {@link MediaSessionService} is in the
+         * background.
+         */
+        @SuppressLint("MissingPermission") // TODO: b/280766358 - Request this permission at runtime.
+        override fun onForegroundServiceStartNotAllowedException() {
+            val notificationManagerCompat = NotificationManagerCompat.from(this@MusicService)
+            ensureNotificationChannel(notificationManagerCompat)
+            val pendingIntent = getBackStackedActivity()
+            val builder =
+                NotificationCompat.Builder(this@MusicService, NOTIFICATION_CHANNEL_ID)
+                    .setContentIntent(pendingIntent)
+                    .setSmallIcon(R.drawable.media3_notification_small_icon)
+                    .setContentTitle(getString(R.string.playing_notification_error_title))
+                    .setStyle(
+                        NotificationCompat.BigTextStyle()
+                            .bigText(getString(R.string.playing_notification_error_content))
+                    )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true)
+            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build())
+        }
+        private fun ensureNotificationChannel(notificationManagerCompat: NotificationManagerCompat) {
+            if (notificationManagerCompat.getNotificationChannel(NOTIFICATION_CHANNEL_ID) != null) {
+                return
+            }
+
+            val channel =
+                NotificationChannel(
+                    NOTIFICATION_CHANNEL_ID,
+                    getString(R.string.playing_notification_error_title),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+            notificationManagerCompat.createNotificationChannel(channel)
+        }
+    }
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
 

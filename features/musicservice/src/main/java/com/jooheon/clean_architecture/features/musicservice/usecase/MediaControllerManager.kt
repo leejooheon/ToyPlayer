@@ -1,14 +1,9 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
-import android.content.ComponentName
 import android.content.Context
 import android.media.session.PlaybackState
-import androidx.core.content.ContextCompat
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
-import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.clean_architecture.domain.common.extension.defaultFalse
 import com.jooheon.clean_architecture.domain.common.extension.defaultZero
 import com.jooheon.clean_architecture.features.musicservice.MusicService
@@ -30,17 +25,13 @@ class MediaControllerManager(
     private val musicStateHolder: MusicStateHolder
 ) : Player.Listener {
     private val TAG = MusicService::class.java.simpleName + "@" + MediaControllerManager::class.java.simpleName
-
-    private lateinit var controllerFuture: ListenableFuture<MediaController>
-    private val controller: MediaController?
-        get() = if (controllerFuture.isDone) controllerFuture.get() else null
-
+    private var player: Player? = null
     private var durationJob: Job? = null
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
         Timber.tag(TAG).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
-        musicStateHolder.onCurrentWindowChanged(controller?.currentWindow)
+        musicStateHolder.onCurrentWindowChanged(player?.currentWindow)
     }
 
     override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -48,10 +39,10 @@ class MediaControllerManager(
         Timber.tag(TAG).d("onTimelineChanged: ${reason.timelineChangeReason()}")
 
         if(reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
-            musicStateHolder.onMediaItemsChanged(controller?.mediaItems ?: emptyList())
-            Timber.tag("shuffle_test").d("onTimelineChanged: ${controller?.shuffleModeEnabled}, ${controller?.mediaItemsIndices}")
+            musicStateHolder.onMediaItemsChanged(player?.mediaItems ?: emptyList())
+            Timber.tag("shuffle_test").d("onTimelineChanged: ${player?.shuffleModeEnabled}, ${player?.mediaItemsIndices}")
         }
-        musicStateHolder.onCurrentWindowChanged(controller?.currentWindow)
+        musicStateHolder.onCurrentWindowChanged(player?.currentWindow)
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -59,14 +50,14 @@ class MediaControllerManager(
         Timber.tag(TAG).d( "onIsPlayingChanged - $isPlaying")
         musicStateHolder.onIsPlayingChanged(isPlaying)
         if(isPlaying) {
-            Timber.tag("shuffle_test").d("onIsPlayingChanged: ${controller?.mediaItemsIndices}")
+            Timber.tag("shuffle_test").d("onIsPlayingChanged: ${player?.mediaItemsIndices}")
             collectDuration()
         }
     }
 
     override fun onPlaybackStateChanged(playbackState: Int) {
         super.onPlaybackStateChanged(playbackState)
-        val androidPlaybackState = controller?.androidPlaybackState ?: PlaybackState.STATE_NONE
+        val androidPlaybackState = player?.androidPlaybackState ?: PlaybackState.STATE_NONE
         Timber.tag(TAG).d("onPlaybackStateChanged: playbackState: ${playbackState.playerState()}, androidPlaybackState: ${androidPlaybackState.playbackState()}")
 
         musicStateHolder.onPlaybackStateChanged(androidPlaybackState)
@@ -120,9 +111,9 @@ class MediaControllerManager(
     private fun collectDuration() {
         durationJob?.cancel()
         durationJob = applicationScope.launch(Dispatchers.Main) {
-            while (controller?.isPlaying.defaultFalse() && isActive) {
-                val duration = if (controller?.duration != C.TIME_UNSET) {
-                    controller?.currentPosition.defaultZero()
+            while (player?.isPlaying.defaultFalse() && isActive) {
+                val duration = if (player?.duration != C.TIME_UNSET) {
+                    player?.currentPosition.defaultZero()
                 } else {
                     0L
                 }
@@ -136,18 +127,15 @@ class MediaControllerManager(
         }
     }
 
-    fun init() {
-        controllerFuture = MediaController.Builder(
-            context,
-            SessionToken(context, ComponentName(context, MusicService::class.java))
-        ).buildAsync()
-
-        controllerFuture.addListener({
-            controller?.addListener(this)
-        }, ContextCompat.getMainExecutor(context))
+    fun setPlayer(player: Player) {
+        this.player = player.apply {
+            removeListener(this@MediaControllerManager)
+        }
+        this.player?.addListener(this@MediaControllerManager)
     }
 
     fun release() {
-        MediaController.releaseFuture(controllerFuture)
+        player?.removeListener(this)
+        player = null
     }
 }

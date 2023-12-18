@@ -3,7 +3,10 @@ package com.jooheon.clean_architecture.features.musicservice.notification
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
@@ -62,5 +65,15 @@ class CustomMediaSessionCallback(
         }
 
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+    }
+
+    override fun onGetLibraryRoot(
+        session: MediaLibrarySession,
+        browser: MediaSession.ControllerInfo,
+        params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<MediaItem>> {
+        // The service currently does not support playback resumption. Tell System UI by returning
+        // an error of type 'RESULT_ERROR_NOT_SUPPORTED' for a `params.isRecent` request. See
+        return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED))
     }
 }
