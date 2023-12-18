@@ -21,11 +21,12 @@ class PlayingQueueUseCaseImpl(
 
     override suspend fun shuffleMode() = playingQueueRepository.getShuffleMode()
 
-    override suspend fun getPlayingQueuePosition(): Int {
-        return playingQueueRepository.getPlayingQueuePosition()
+    override suspend fun getPlayingQueueKey(): Long {
+        return playingQueueRepository.getPlayingQueueKey()
     }
-    override suspend fun setPlayingQueuePosition(position: Int) {
-        playingQueueRepository.setPlayingQueuePosition(position)
+
+    override suspend fun setPlayingQueueKey(key: Long) {
+        playingQueueRepository.setPlayingQueueKey(key)
     }
 
     override suspend fun playingQueue() = flow {
@@ -42,13 +43,14 @@ class PlayingQueueUseCaseImpl(
     }
 
     override suspend fun updatePlayingQueue(songs: List<Song>): Boolean {
-        playingQueueRepository.clear()
+        clear()
         playingQueueRepository.updatePlayingQueue(songs)
 
         return true
     }
 
     override suspend fun clear() {
+        setPlayingQueueKey(-1L)
         playingQueueRepository.clear()
     }
 }

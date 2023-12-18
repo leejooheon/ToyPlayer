@@ -10,7 +10,6 @@ import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.repository.library.PlayingQueueRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class PlayingQueueRepositoryImpl(
@@ -32,12 +31,12 @@ class PlayingQueueRepositoryImpl(
     }
     override suspend fun getRepeatMode() = appPreferences.repeatMode
     override suspend fun getShuffleMode() = appPreferences.shuffleMode
-    override suspend fun getPlayingQueuePosition(): Int {
+    override suspend fun getPlayingQueueKey(): Long {
         return appPreferences.lastPlayingQueuePosition
     }
 
-    override suspend fun setPlayingQueuePosition(position: Int) {
-        appPreferences.lastPlayingQueuePosition = position
+    override suspend fun setPlayingQueueKey(key: Long) {
+        appPreferences.lastPlayingQueuePosition = key
     }
 
     override suspend fun getPlayingQueue(): Resource<List<Song>> {

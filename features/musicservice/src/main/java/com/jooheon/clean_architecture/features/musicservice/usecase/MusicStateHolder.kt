@@ -43,7 +43,7 @@ class MusicStateHolder(
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
 
-    private val _mediaItems = MutableStateFlow<List<MediaItem>>(emptyList())
+    private val _mediaItems = MutableStateFlow<List<MediaItem>?>(null)
     val mediaItems = _mediaItems.asStateFlow()
 
 //    private val _playingQueue = MutableStateFlow<List<Song>>(emptyList())
@@ -86,9 +86,12 @@ class MusicStateHolder(
     }
     private fun collectMediaItemsState() = applicationScope.launch {
         mediaItems.collectLatest { mediaItems ->
+            mediaItems ?: return@collectLatest
+
             val newPlayingQueue = mediaItems.mapNotNull { mediaItem ->
                 songLibrary.firstOrNull { it.key() == mediaItem.mediaId }
             }
+
             playingQueueUseCase.updatePlayingQueue(newPlayingQueue)
         }
     }

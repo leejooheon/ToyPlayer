@@ -12,6 +12,7 @@ import com.jooheon.clean_architecture.features.musicservice.ext.enqueue
 import com.jooheon.clean_architecture.features.musicservice.ext.forceEnqueue
 import com.jooheon.clean_architecture.features.musicservice.ext.forceSeekToNext
 import com.jooheon.clean_architecture.features.musicservice.ext.forceSeekToPrevious
+import com.jooheon.clean_architecture.features.musicservice.ext.lastIndex
 import com.jooheon.clean_architecture.features.musicservice.ext.playAtIndex
 import com.jooheon.clean_architecture.features.musicservice.ext.shuffledItems
 import com.jooheon.clean_architecture.features.musicservice.ext.toMediaItem
@@ -30,6 +31,7 @@ class MusicControllerUseCase(
 
     init {
         collectShuffleMode()
+        collectCurrentWindow()
     }
 
     fun setPlayer(player: Player) {
@@ -44,6 +46,14 @@ class MusicControllerUseCase(
             shuffle(
                 playWhenReady = musicStateHolder.isPlaying.value
             )
+        }
+    }
+
+    private fun collectCurrentWindow() = applicationScope.launch {
+        musicStateHolder.currentWindow.collectLatest { window ->
+            window ?: return@collectLatest
+            val key = window.mediaItem.mediaId.toLongOrNull() ?: return@collectLatest
+            playingQueueUseCase.setPlayingQueueKey(key)
         }
     }
 
@@ -95,6 +105,8 @@ class MusicControllerUseCase(
 
             player.forceEnqueue(
                 mediaItems = newMediaItems,
+                startIndex = 0,
+                startPositionMs = C.TIME_UNSET,
                 playWhenReady = playWhenReady
             )
         }
@@ -140,6 +152,8 @@ class MusicControllerUseCase(
 
         player.forceEnqueue(
             mediaItems = shuffledItems,
+            startIndex = 0,
+            startPositionMs = musicStateHolder.musicState.value.timePassed,
             playWhenReady = playWhenReady
         )
     }
@@ -180,13 +194,17 @@ class MusicControllerUseCase(
 
                 val newMediaItems = playingQueue.map { it.toMediaItem() }
                 withContext(immediate) {
-                    player?.enqueue(
+                    val key = playingQueueUseCase.getPlayingQueueKey()
+                    val index = newMediaItems.indexOfFirst {
+                        it.mediaId == key.toString()
+                    }
+                    player?.forceEnqueue(
                         mediaItems = newMediaItems,
+                        startIndex = index,
+                        startPositionMs = C.TIME_UNSET,
                         playWhenReady = false
                     )
                 }
-
-//                playingQueueUseCase.getPlayingQueuePosition(), // TODO: set last position
             }
         }.launchIn(this)
     }

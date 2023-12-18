@@ -17,7 +17,7 @@ class AppPreferences @Inject constructor(private val context: Context) {
         private const val SESSION_PREFERENCES_NAME = "APP-UserCache"
         private const val MODE = Context.MODE_PRIVATE
 
-        private val LAST_PLAYING_QUEUE_POSITION = Pair("LAST_PLAYING_QUEUE_POSITION", 0)
+        private val LAST_PLAYING_QUEUE_POSITION = Pair("LAST_PLAYING_QUEUE_POSITION", -1L)
         private val USER_DATA = Pair("USER_DATA", "")
         private val MUSIC_LIST_TYPE = Pair("MUSIC_LIST_TYPE", 0)
         private val FIREBASE_TOKEN = Pair("FIREBASE_TOKEN", "")
@@ -54,12 +54,12 @@ class AppPreferences @Inject constructor(private val context: Context) {
             it.putInt(MUSIC_LIST_TYPE.first, value)
         }
 
-    var lastPlayingQueuePosition: Int
+    var lastPlayingQueuePosition: Long
         get() {
-            return appPreferences.getInt(LAST_PLAYING_QUEUE_POSITION.first, MUSIC_LIST_TYPE.second)
+            return appPreferences.getLong(LAST_PLAYING_QUEUE_POSITION.first, LAST_PLAYING_QUEUE_POSITION.second)
         }
         set(value) = appPreferences.edit {
-            it.putInt(LAST_PLAYING_QUEUE_POSITION.first, value)
+            it.putLong(LAST_PLAYING_QUEUE_POSITION.first, value)
         }
 
     var firebaseToken: String?

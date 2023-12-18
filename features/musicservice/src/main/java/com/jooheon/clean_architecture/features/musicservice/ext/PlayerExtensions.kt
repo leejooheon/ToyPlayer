@@ -69,18 +69,20 @@ fun Player.enqueue(
     mediaItems: List<MediaItem>,
     playWhenReady: Boolean
 ) {
-    val index = lastIndex
-    addMediaItems(mediaItemCount, mediaItems)
+    val index = mediaItemCount
+    addMediaItems(index, mediaItems)
 
     if(playWhenReady) playAtIndex(index, C.TIME_UNSET)
 }
 
 fun Player.forceEnqueue(
     mediaItems: List<MediaItem>,
+    startIndex: Int,
+    startPositionMs: Long,
     playWhenReady: Boolean
 ) {
-    setMediaItems(mediaItems)
-    if(playWhenReady) playAtIndex(0, C.TIME_UNSET)
+    setMediaItems(mediaItems, startIndex, startPositionMs)
+    if(playWhenReady) playAtIndex(startIndex, startPositionMs)
 }
 
 fun Player.shuffledItems(): List<MediaItem> {

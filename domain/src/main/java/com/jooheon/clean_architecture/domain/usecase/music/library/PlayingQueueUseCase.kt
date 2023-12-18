@@ -11,8 +11,8 @@ interface PlayingQueueUseCase {
     suspend fun shuffleModeChanged(shuffleEnabled: Boolean)
     suspend fun repeatMode(): RepeatMode
     suspend fun shuffleMode(): ShuffleMode
-    suspend fun getPlayingQueuePosition(): Int
-    suspend fun setPlayingQueuePosition(position: Int)
+    suspend fun getPlayingQueueKey(): Long
+    suspend fun setPlayingQueueKey(key: Long)
     suspend fun playingQueue(): Flow<Resource<List<Song>>>
     suspend fun getPlayingQueue(): List<Song>
     suspend fun updatePlayingQueue(songs: List<Song>): Boolean
