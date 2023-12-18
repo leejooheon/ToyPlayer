@@ -13,7 +13,8 @@ interface PlayingQueueUseCase {
     suspend fun shuffleMode(): ShuffleMode
     suspend fun getPlayingQueuePosition(): Int
     suspend fun setPlayingQueuePosition(position: Int)
-    suspend fun getPlayingQueue(): Flow<Resource<List<Song>>>
-    suspend fun updatePlayingQueue(vararg song: Song): Boolean
+    suspend fun playingQueue(): Flow<Resource<List<Song>>>
+    suspend fun getPlayingQueue(): List<Song>
+    suspend fun updatePlayingQueue(songs: List<Song>): Boolean
     suspend fun clear()
 }

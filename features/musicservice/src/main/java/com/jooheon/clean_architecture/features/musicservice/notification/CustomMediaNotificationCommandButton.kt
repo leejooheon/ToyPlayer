@@ -21,7 +21,7 @@ class CustomMediaNotificationCommandButton(
     init {
         commandButton = CommandButton.Builder()
             .setDisplayName(displayName)
-            .setSessionCommand(SessionCommand(customAction, Bundle()))
+            .setSessionCommand(SessionCommand(customAction, Bundle.EMPTY))
             .setIconResId(iconResId)
             .build()
     }

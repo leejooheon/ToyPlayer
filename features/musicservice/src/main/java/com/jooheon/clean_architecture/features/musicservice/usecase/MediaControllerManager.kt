@@ -77,6 +77,7 @@ class MediaControllerManager(
     override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
         super.onPlayWhenReadyChanged(playWhenReady, reason)
         Timber.tag(TAG).d("onPlayWhenReadyChanged: playWhenReady: ${playWhenReady}, reason: ${reason.playWhenReadyChangeReason()}")
+        musicStateHolder.onPlayWhenReadyChanged(playWhenReady)
     }
 
     override fun onRepeatModeChanged(repeatMode: Int) {

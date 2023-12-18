@@ -1,11 +1,12 @@
 package com.jooheon.clean_architecture.domain.usecase.music.library
 
 import com.jooheon.clean_architecture.domain.common.Resource
-import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
+import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.repository.library.PlayingQueueRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 
 class PlayingQueueUseCaseImpl(
     private val playingQueueRepository: PlayingQueueRepository,
@@ -27,18 +28,22 @@ class PlayingQueueUseCaseImpl(
         playingQueueRepository.setPlayingQueuePosition(position)
     }
 
-    override suspend fun getPlayingQueue() = flow {
+    override suspend fun playingQueue() = flow {
         emit(Resource.Loading)
-        val resource = playingQueueRepository.getPlayingQueue()
+        val resource = withContext(Dispatchers.IO) {
+            playingQueueRepository.getPlayingQueue()
+        }
         emit(resource)
     }
 
-    override suspend fun updatePlayingQueue(vararg song: Song): Boolean {
-        val newPlayingQueue = mutableListOf<Song>().apply {
-            addAll(song)
-        }
+    override suspend fun getPlayingQueue(): List<Song> = withContext(Dispatchers.IO) {
+        val resource = playingQueueRepository.getPlayingQueue()
+        return@withContext (resource as? Resource.Success)?.value.defaultEmpty()
+    }
+
+    override suspend fun updatePlayingQueue(songs: List<Song>): Boolean {
         playingQueueRepository.clear()
-        playingQueueRepository.updatePlayingQueue(newPlayingQueue)
+        playingQueueRepository.updatePlayingQueue(songs)
 
         return true
     }

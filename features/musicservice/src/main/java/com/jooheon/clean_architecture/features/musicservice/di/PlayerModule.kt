@@ -2,6 +2,12 @@ package com.jooheon.clean_architecture.features.musicservice.di
 
 import android.content.Context
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.ResolvingDataSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.extractor.DefaultExtractorsFactory
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
+import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
+import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.Module
@@ -31,7 +37,15 @@ object PlayerModule {
 
     @Provides
     @Singleton
+    @UnstableApi
+    fun providePlaybackUriResolver(
+        playingQueueUseCase: PlayingQueueUseCase,
+    ): PlaybackUriResolver = PlaybackUriResolver(playingQueueUseCase)
+
+    @Provides
+    @Singleton
     fun provideMusicStateHolder(
-        applicationScope: CoroutineScope
-    ) = MusicStateHolder(applicationScope)
+        applicationScope: CoroutineScope,
+        playingQueueUseCase: PlayingQueueUseCase,
+    ) = MusicStateHolder(applicationScope, playingQueueUseCase)
 }

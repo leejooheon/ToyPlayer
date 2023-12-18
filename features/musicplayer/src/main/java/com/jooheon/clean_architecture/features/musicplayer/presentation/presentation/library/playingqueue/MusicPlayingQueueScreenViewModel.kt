@@ -1,7 +1,9 @@
 package com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playingqueue
 
 import androidx.lifecycle.viewModelScope
+import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.entity.music.Playlist
+import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
@@ -16,6 +18,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,6 +31,7 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
     private val musicControllerUsecase: MusicControllerUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
     private val musicStateHolder: MusicStateHolder,
+    private val playingQueueUseCase: PlayingQueueUseCase,
 ): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
 
@@ -75,7 +80,10 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicStateHolder.playingQueue.collectLatest { playingQueue ->
+        playingQueueUseCase.playingQueue().onEach {
+            if(it !is Resource.Success) return@onEach
+
+            val playingQueue = it.value
             _musicPlayingQueueScreenState.update {
                 it.copy(
                     playlist = Playlist.playingQueuePlaylist.copy(
@@ -83,6 +91,6 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
                     )
                 )
             }
-        }
+        }.launchIn(this)
     }
 }

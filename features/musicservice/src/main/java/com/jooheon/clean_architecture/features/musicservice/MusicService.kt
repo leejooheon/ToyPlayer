@@ -14,12 +14,17 @@ import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSourceBitmapLoader
+import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
+import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
+import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConfig
@@ -42,9 +47,13 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var singleTopActivityIntent: Intent
 
+    @Inject
+    lateinit var playbackUriResolver: PlaybackUriResolver
+
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
+    private lateinit var playbackCacheManager: PlaybackCacheManager
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -90,13 +99,26 @@ class MusicService: MediaLibraryService() {
         super.onDestroy()
     }
 
+    @UnstableApi
     private fun initPlayer() {
+        playbackCacheManager = PlaybackCacheManager(this)
+        playbackUriResolver.init(playbackCacheManager)
+
+        val mediaSourceFactory = DefaultMediaSourceFactory(
+            ResolvingDataSource.Factory(
+                playbackCacheManager.cacheDataSource(),
+                playbackUriResolver
+            ),
+            DefaultExtractorsFactory()
+        )
+
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
             .build()
 
         exoPlayer = ExoPlayer.Builder(applicationContext)
+            .setMediaSourceFactory(mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
             .setWakeMode(C.WAKE_MODE_NETWORK) // 잠금화면에서 Wifi를 이용한 백그라운드 재생 허용
@@ -247,6 +269,7 @@ class MusicService: MediaLibraryService() {
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }
+
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
 

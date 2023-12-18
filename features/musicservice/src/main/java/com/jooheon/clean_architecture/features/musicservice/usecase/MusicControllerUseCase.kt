@@ -4,7 +4,6 @@ import androidx.media3.common.C
 import androidx.media3.common.Player
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultZero
-import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
@@ -22,8 +21,8 @@ import timber.log.Timber
 
 class MusicControllerUseCase(
     private val applicationScope: CoroutineScope,
-    private val playingQueueUseCase: PlayingQueueUseCase,
     private val musicStateHolder: MusicStateHolder,
+    private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUseCase::class.java.simpleName
     private val immediate = Dispatchers.Main.immediate
@@ -53,10 +52,10 @@ class MusicControllerUseCase(
         playWhenReady: Boolean
     ) = applicationScope.launch(immediate) {
         val player = player ?: return@launch
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val index = playingQueue.indexOfFirst {
-            it.id() == song.id()
+            it.key() == song.key()
         }
 
         if(index != C.INDEX_UNSET) {
@@ -79,10 +78,9 @@ class MusicControllerUseCase(
 
         if (addNext) { // TabToSelect
             musicStateHolder.enqueueSongLibrary(songs)
-            val songLibrary = musicStateHolder.songLibrary
 
-            val newMediaItems = songs.filter { song ->
-                songLibrary.none { it.id() == song.id() } // remove duplicate
+            val newMediaItems = songs.distinctBy {
+                it.key() // remove duplicate
             }.map {
                 it.toMediaItem()
             }
@@ -103,12 +101,12 @@ class MusicControllerUseCase(
     }
 
     fun onDeleteAtPlayingQueue(songs: List<Song>) = applicationScope.launch(immediate) {
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val songIndexList = songs.filter {
             it != Song.default
         }.map { targetSong ->
-            playingQueue.indexOfFirst { it.id() == targetSong.id() }
+            playingQueue.indexOfFirst { it.key() == targetSong.key() }
         }.filter {
             it != -1
         }
@@ -121,10 +119,10 @@ class MusicControllerUseCase(
     fun onPlay(
         song: Song = musicStateHolder.musicState.value.currentPlayingMusic
     ) = applicationScope.launch(immediate) {
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val index = playingQueue.indexOfFirst {
-            it.id() == song.id()
+            it.key() == song.key()
         }
 
         if(index != C.INDEX_UNSET) {
@@ -175,7 +173,7 @@ class MusicControllerUseCase(
     }
 
     private fun initPlayingQueue() = applicationScope.launch(Dispatchers.IO) {
-        playingQueueUseCase.getPlayingQueue().onEach {
+        playingQueueUseCase.playingQueue().onEach {
             if(it is Resource.Success) {
                 val playingQueue = it.value
                 musicStateHolder.enqueueSongLibrary(playingQueue)

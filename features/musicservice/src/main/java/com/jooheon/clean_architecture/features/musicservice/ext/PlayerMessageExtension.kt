@@ -26,6 +26,17 @@ fun Int.playerState() = when(this) {
     Player.STATE_ENDED -> "STATE_ENDED"
     else -> "STATE_NONE"
 }
+
+fun @Player.State Int.toPlaybackState(playWhenReady: Boolean): Int {
+    return when(this) {
+        Player.STATE_BUFFERING -> if (playWhenReady) PlaybackState.STATE_BUFFERING else PlaybackState.STATE_PAUSED
+        Player.STATE_READY -> if (playWhenReady) PlaybackState.STATE_PLAYING else PlaybackState.STATE_PAUSED
+        Player.STATE_ENDED -> PlaybackState.STATE_STOPPED
+        Player.STATE_IDLE -> PlaybackState.STATE_NONE
+        else -> PlaybackState.STATE_NONE
+    }
+}
+
 fun Int.mediaItemTransitionReason() = when(this) {
     Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT -> "MEDIA_ITEM_TRANSITION_REASON_REPEAT"
     Player.MEDIA_ITEM_TRANSITION_REASON_AUTO, -> "MEDIA_ITEM_TRANSITION_REASON_AUTO"

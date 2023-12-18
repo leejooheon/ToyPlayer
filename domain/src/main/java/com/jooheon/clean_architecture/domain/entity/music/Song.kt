@@ -21,7 +21,7 @@ data class Song(
     var isFavorite: Boolean = false,
     var data: String? = null,
 ): java.io.Serializable {
-    fun id() = audioId.toString()
+    fun key() = audioId.toString()
     companion object {
         val default = Song(
             audioId = -1L,
