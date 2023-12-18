@@ -44,6 +44,7 @@ class MusicService: MediaLibraryService() {
 
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
+    private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -58,6 +59,35 @@ class MusicService: MediaLibraryService() {
         initNotification()
         initMediaSession()
         setListener(MediaSessionServiceListener())
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Timber.tag(TAG).d( "onLowMemory")
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Timber.tag(TAG).d( "onTaskRemoved - 1")
+        if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
+            Timber.tag(TAG).d( "onTaskRemoved - 2")
+            stopSelf()
+        }
+    }
+
+    override fun onDestroy() {
+        Timber.tag(TAG).d( "onDestroy")
+
+        musicControllerUseCase.release()
+        mediaControllerManager.release()
+
+        mediaSession.setSessionActivity(getBackStackedActivity())
+        mediaSession.release()
+
+        exoPlayer.release()
+        clearListener()
+
+        serviceScope.cancel()
+        super.onDestroy()
     }
 
     private fun initPlayer() {
@@ -75,25 +105,35 @@ class MusicService: MediaLibraryService() {
 
     @UnstableApi
     private fun initNotification() {
-        val mediaNotificationProvider = CustomMediaNotificationProvider(
+        CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
             channelId = NOTIFICATION_CHANNEL_ID,
             channelNameResourceId = R.string.playing_notification_name,
-        )
+        ).also {
+            setMediaNotificationProvider(it)
+        }
 
-        setMediaNotificationProvider(mediaNotificationProvider)
+        customMediaSessionCallback = CustomMediaSessionCallback(
+            context = this,
+            onCustomEvent = { event ->
+                when(event) {
+                    is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed ->
+                        musicControllerUseCase.onRepeatButtonPressed()
+
+                    is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed ->
+                        musicControllerUseCase.onShuffleButtonPressed()
+                }
+            }
+        )
     }
 
     @UnstableApi
     private fun initMediaSession() {
         mediaSession = MediaLibrarySession.Builder(
-            /** service **/this,
-            /** player **/ customForwardingPlayer,
-            /** callback **/ CustomMediaSessionCallback(
-                context = this,
-                musicControllerUseCase = musicControllerUseCase,
-            )
+            /** service  **/this,
+            /** player   **/ customForwardingPlayer,
+            /** callback **/ customMediaSessionCallback,
         )
         .setSessionActivity(getSingleTopActivity())
 //        .setBitmapLoader(CoilBitmapLoader(this, serviceScope))
@@ -162,40 +202,11 @@ class MusicService: MediaLibraryService() {
         }
     }
 
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        Timber.tag(TAG).d( "onTaskRemoved - 1")
-        if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
-            Timber.tag(TAG).d( "onTaskRemoved - 2")
-            stopSelf()
-        }
-    }
-
-    override fun onDestroy() {
-        Timber.tag(TAG).d( "onDestroy")
-
-        musicControllerUseCase.release()
-        mediaControllerManager.release()
-
-        mediaSession.setSessionActivity(getBackStackedActivity())
-        mediaSession.release()
-
-        exoPlayer.release()
-        clearListener()
-
-        serviceScope.cancel()
-        super.onDestroy()
-    }
-
     private fun getBackStackedActivity(): PendingIntent {
         return TaskStackBuilder.create(this).run {
             addNextIntent(singleTopActivityIntent)
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
         }
-    }
-
-    override fun onLowMemory() {
-        super.onLowMemory()
-        Timber.tag(TAG).d( "onLowMemory")
     }
 
     @UnstableApi
@@ -228,12 +239,11 @@ class MusicService: MediaLibraryService() {
                 return
             }
 
-            val channel =
-                NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    getString(R.string.playing_notification_error_title),
-                    NotificationManager.IMPORTANCE_DEFAULT
-                )
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                getString(R.string.playing_notification_error_title),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }

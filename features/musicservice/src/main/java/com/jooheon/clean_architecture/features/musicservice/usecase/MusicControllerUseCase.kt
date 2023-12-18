@@ -3,6 +3,7 @@ package com.jooheon.clean_architecture.features.musicservice.usecase
 import androidx.media3.common.C
 import androidx.media3.common.Player
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.common.extension.defaultZero
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song
@@ -165,14 +166,8 @@ class MusicControllerUseCase(
         player?.shuffleModeEnabled = !shuffleMode
     }
     fun onRepeatButtonPressed() = applicationScope.launch(immediate) {
-        val value = musicStateHolder.repeatMode.value
-        val repeatMode = when(RepeatMode.getByValue(value)) {
-            RepeatMode.REPEAT_ALL -> RepeatMode.REPEAT_ONE
-            RepeatMode.REPEAT_ONE -> RepeatMode.REPEAT_OFF
-            RepeatMode.REPEAT_OFF -> RepeatMode.REPEAT_ALL
-        }
-
-        player?.repeatMode = repeatMode.ordinal
+        val value = (player?.repeatMode.defaultZero() + 1) % 3
+        player?.repeatMode = value
     }
 
     fun release() {

@@ -2,9 +2,7 @@ package com.jooheon.clean_architecture.features.musicservice.di
 
 import android.content.Context
 import androidx.media3.common.util.UnstableApi
-import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.Module
 import dagger.Provides

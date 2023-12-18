@@ -1,7 +1,6 @@
 package com.jooheon.clean_architecture.features.musicservice.notification
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
@@ -13,19 +12,16 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.features.musicservice.MusicService
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConfig
-import timber.log.Timber
-import javax.inject.Inject
 
 class CustomMediaSessionCallback(
     private val context: Context,
-    private val musicControllerUseCase: MusicControllerUseCase,
+    private val onCustomEvent: (CustomEvent) -> Unit,
 ): MediaLibrarySession.Callback {
-
+    sealed class CustomEvent {
+        data object OnRepeatIconPressed: CustomEvent()
+        data object OnShuffleIconPressed: CustomEvent()
+    }
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
@@ -33,16 +29,16 @@ class CustomMediaSessionCallback(
         val connectionResult = super.onConnect(session, controller)
         val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
-        CustomMediaNotificationCommandButton.repeatButton(
+        CustomMediaNotificationCommandButton.shuffleButton(
             context = context,
-            repeatMode = RepeatMode.REPEAT_OFF, // TODO: 확인하자.
+            shuffleMode = session.player.shuffleModeEnabled,
         ).commandButton.sessionCommand?.let {
             availableSessionCommands.add(it)
         }
 
-        CustomMediaNotificationCommandButton.shuffleButton(
+        CustomMediaNotificationCommandButton.repeatButton(
             context = context,
-            shuffleMode = ShuffleMode.SHUFFLE, // TODO: 확인하자.
+            repeatMode = session.player.repeatMode,
         ).commandButton.sessionCommand?.let {
             availableSessionCommands.add(it)
         }
@@ -60,8 +56,8 @@ class CustomMediaSessionCallback(
         args: Bundle
     ): ListenableFuture<SessionResult> {
         when (customCommand.customAction) {
-            MusicService.CYCLE_REPEAT -> musicControllerUseCase.onRepeatButtonPressed()
-            MusicService.TOGGLE_SHUFFLE -> musicControllerUseCase.onShuffleButtonPressed()
+            MusicService.CYCLE_REPEAT -> onCustomEvent(CustomEvent.OnRepeatIconPressed)
+            MusicService.TOGGLE_SHUFFLE -> onCustomEvent(CustomEvent.OnShuffleIconPressed)
         }
 
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))

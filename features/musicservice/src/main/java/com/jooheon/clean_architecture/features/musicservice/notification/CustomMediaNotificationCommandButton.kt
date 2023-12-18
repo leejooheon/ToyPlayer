@@ -2,10 +2,13 @@ package com.jooheon.clean_architecture.features.musicservice.notification
 
 import android.content.Context
 import android.os.Bundle
+import androidx.media3.common.Player
+import androidx.media3.common.Player.REPEAT_MODE_ALL
+import androidx.media3.common.Player.REPEAT_MODE_OFF
+import androidx.media3.common.Player.REPEAT_MODE_ONE
+import androidx.media3.common.Player.RepeatMode
 import androidx.media3.session.CommandButton
 import androidx.media3.session.SessionCommand
-import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
-import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.features.musicservice.MusicService
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 
@@ -24,10 +27,10 @@ class CustomMediaNotificationCommandButton(
     }
 
     companion object {
-        fun shuffleButton(context: Context, shuffleMode: ShuffleMode): CustomMediaNotificationCommandButton {
+        fun shuffleButton(context: Context, shuffleMode: Boolean): CustomMediaNotificationCommandButton {
             val shuffleIconResId = when(shuffleMode) {
-                ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
-                ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
+                true -> R.drawable.ic_shuffle_on_circled
+                false -> R.drawable.ic_shuffle_off_circled
             }
             return CustomMediaNotificationCommandButton(
                 customAction = MusicService.TOGGLE_SHUFFLE,
@@ -36,11 +39,12 @@ class CustomMediaNotificationCommandButton(
             )
         }
 
-        fun repeatButton(context: Context, repeatMode: RepeatMode): CustomMediaNotificationCommandButton {
+        fun repeatButton(context: Context, @RepeatMode repeatMode: Int): CustomMediaNotificationCommandButton {
             val repeatIconResId = when(repeatMode) {
-                RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
-                RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
-                RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
+                REPEAT_MODE_ALL -> R.drawable.ic_repeat_white_circle
+                REPEAT_MODE_ONE -> R.drawable.ic_repeat_one
+                REPEAT_MODE_OFF -> R.drawable.ic_repeat
+                else -> throw IllegalStateException("Unknown RepeatMode: $repeatMode")
             }
             return CustomMediaNotificationCommandButton(
                 customAction = MusicService.CYCLE_REPEAT,

@@ -32,9 +32,19 @@ class CustomMediaNotificationProvider(
         val defaultPlayPauseCommandButton = mediaButtons.getOrNull( 0 )
         val notificationMediaButtons = if (defaultPlayPauseCommandButton != null ) {
             ImmutableList.builder<CommandButton>().apply {
-                add(CustomMediaNotificationCommandButton.repeatButton(context, RepeatMode.REPEAT_OFF).commandButton) // TODO: 업데이트 어떻게 할까?
+                add(
+                    CustomMediaNotificationCommandButton.repeatButton(
+                        context = context,
+                        repeatMode = mediaSession.player.repeatMode
+                    ).commandButton
+                )
                 mediaButtons.forEach { add(it) }
-                add(CustomMediaNotificationCommandButton.shuffleButton(context, ShuffleMode.SHUFFLE).commandButton) // TODO: 업데이트 어떻게 할까?
+                add(
+                    CustomMediaNotificationCommandButton.shuffleButton(
+                        context = context,
+                        shuffleMode = mediaSession.player.shuffleModeEnabled
+                    ).commandButton
+                )
             }.build()
         } else {
             mediaButtons
