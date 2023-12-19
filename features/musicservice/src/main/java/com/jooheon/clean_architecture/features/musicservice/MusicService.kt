@@ -60,7 +60,7 @@ class MusicService: MediaLibraryService() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
     private var notificationManager: NotificationManager? = null
-    
+
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession = mediaSession
 
     @UnstableApi
@@ -91,6 +91,7 @@ class MusicService: MediaLibraryService() {
     override fun onDestroy() {
         Timber.tag(TAG).d( "onDestroy")
 
+        playbackUriResolver.release()
         playbackCacheManager.release()
 
         musicControllerUseCase.release()
