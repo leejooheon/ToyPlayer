@@ -19,11 +19,19 @@ import javax.inject.Singleton
 class PlaybackCacheManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    private val cache = SimpleCache(
-        cacheDirectory(context),
-        NoOpCacheEvictor(),
-        StandaloneDatabaseProvider(context)
-    )
+    private lateinit var cache: SimpleCache
+
+    internal fun init() {
+        cache = SimpleCache(
+            cacheDirectory(context),
+            NoOpCacheEvictor(),
+            StandaloneDatabaseProvider(context)
+        )
+    }
+
+    internal fun release() {
+        cache.release()
+    }
 
     internal fun isCached(key: String, position: Long, length: Long): Boolean {
         val cached = cache.isCached(key, position, length)

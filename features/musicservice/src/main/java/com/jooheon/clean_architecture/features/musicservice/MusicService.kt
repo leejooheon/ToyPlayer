@@ -85,6 +85,7 @@ class MusicService: MediaLibraryService() {
 
     override fun onDestroy() {
         Timber.tag(TAG).d( "onDestroy")
+        playbackCacheManager.release()
 
         musicControllerUseCase.release()
         mediaControllerManager.release()
@@ -102,6 +103,8 @@ class MusicService: MediaLibraryService() {
     @UnstableApi
     private fun initPlayer() {
         playbackCacheManager = PlaybackCacheManager(this)
+
+        playbackCacheManager.init()
         playbackUriResolver.init(playbackCacheManager)
 
         val mediaSourceFactory = DefaultMediaSourceFactory(

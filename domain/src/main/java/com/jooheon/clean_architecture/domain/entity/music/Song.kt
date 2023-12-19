@@ -8,7 +8,7 @@ import java.util.UUID
 data class Song(
 //    private val uniqueId: String = UUID.randomUUID().toString(),
     private val audioId: Long,
-    val audioType: AudioType,
+    val useCache: Boolean,
     val displayName: String,
     val title: String,
     val artist: String,
@@ -26,7 +26,7 @@ data class Song(
     companion object {
         val default = Song(
             audioId = -1L,
-            audioType = AudioType.SONG,
+            useCache = false,
             displayName = "-",
             title = "-",
             artist = "<unknown>",

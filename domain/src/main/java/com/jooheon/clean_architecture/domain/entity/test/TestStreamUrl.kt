@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.domain.entity.test
 
-import com.jooheon.clean_architecture.domain.entity.music.AudioType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 class TestStreamUrl {
@@ -8,7 +7,7 @@ class TestStreamUrl {
         val list = listOf(
             Song.default.copy(
                 audioId = 8086,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Pop",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -17,7 +16,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8034,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Latin",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -26,7 +25,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8006,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Jazz",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -35,7 +34,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8036,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Lounge",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -44,7 +43,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8000,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Gold",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -53,7 +52,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8088,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "Classical",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -62,7 +61,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8027,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "World",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -71,7 +70,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8000,
-                audioType = AudioType.STREAMING,
+                useCache = false,
                 title = "France",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",

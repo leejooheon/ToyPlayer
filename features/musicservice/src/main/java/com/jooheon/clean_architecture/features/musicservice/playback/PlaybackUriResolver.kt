@@ -5,13 +5,11 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.ResolvingDataSource
-import com.jooheon.clean_architecture.domain.entity.music.AudioType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.data.RingBuffer
 import com.jooheon.clean_architecture.features.musicservice.data.TestLogKey
 import com.jooheon.clean_architecture.features.musicservice.ext.uri
-import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -71,7 +69,10 @@ class PlaybackUriResolver(
         val newDataSpec = dataSpec
             .withUri(uri)
             .withCustomData(song.key())
-            .subrange(dataSpec.uriPositionOffset, chunkLength)
+
+        if(song.useCache) {
+            newDataSpec.subrange(dataSpec.uriPositionOffset, chunkLength)
+        }
 
         Timber.tag(TAG).i("resolveDataSpec: customData: ${newDataSpec.customData} key: ${newDataSpec.key}")
 
@@ -84,10 +85,12 @@ class PlaybackUriResolver(
     }
 
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
-        if(song.audioType == AudioType.STREAMING) return false
-        val cached = playbackCacheManager.isCached(song.key(), dataSpec.position, chunkLength)
+        if(song.useCache) {
+            val cached = playbackCacheManager.isCached(song.key(), dataSpec.position, chunkLength)
+            return cached
+        }
 
-        return cached
+        return false
     }
 
     private fun getStreamUri(song: Song): Uri {
