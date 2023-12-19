@@ -131,6 +131,7 @@ class MusicControllerUseCase(
     fun onPlay(
         song: Song = musicStateHolder.musicState.value.currentPlayingMusic
     ) = applicationScope.launch(immediate) {
+        val player = player ?: return@launch
         val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val index = playingQueue.indexOfFirst {
@@ -138,7 +139,10 @@ class MusicControllerUseCase(
         }
 
         if(index != C.INDEX_UNSET) {
-            player?.playAtIndex(index, C.TIME_UNSET)
+            player.playAtIndex(
+                index = index,
+                duration = player.currentPosition
+            )
         } else {
             enqueue(
                 song = song,
@@ -146,6 +150,7 @@ class MusicControllerUseCase(
             )
         }
     }
+
     fun shuffle(playWhenReady: Boolean) = applicationScope.launch(immediate) {
         val player = player ?: return@launch
         val shuffledItems = player.shuffledItems()
