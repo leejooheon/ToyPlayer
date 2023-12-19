@@ -20,7 +20,6 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 
 class MediaControllerManager(
-    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder
 ) : Player.Listener {

@@ -26,11 +26,9 @@ object PlayerModule {
     @Singleton
     @UnstableApi
     fun provideMediaControllerManager(
-        @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
     ) = MediaControllerManager(
-        context = context,
         applicationScope = applicationScope,
         musicStateHolder = musicStateHolder,
     )

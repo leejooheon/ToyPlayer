@@ -5,6 +5,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.ResolvingDataSource
+import com.jooheon.clean_architecture.domain.entity.music.AudioType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.data.RingBuffer
@@ -83,6 +84,7 @@ class PlaybackUriResolver(
     }
 
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
+        if(song.audioType == AudioType.STREAMING) return false
         val cached = playbackCacheManager.isCached(song.key(), dataSpec.position, chunkLength)
 
         return cached

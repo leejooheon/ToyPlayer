@@ -10,6 +10,7 @@ import android.provider.BaseColumns
 import android.provider.MediaStore
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.common.extension.defaultZero
+import com.jooheon.clean_architecture.domain.entity.music.AudioType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import org.json.JSONException
 import org.json.JSONObject
@@ -68,6 +69,7 @@ class LocalMusicDataSource @Inject constructor(
 
             return Song(
                 audioId = id,
+                audioType = AudioType.SONG,
                 displayName = trackId,
                 title = title.defaultEmpty(),
                 artist = artistName.defaultEmpty(),
@@ -106,6 +108,7 @@ class LocalMusicDataSource @Inject constructor(
 
         return Song(
             audioId = audioId,
+            audioType = AudioType.SONG,
             displayName = "".defaultEmpty(),
             title = title.defaultEmpty(),
             artist = artistName.defaultEmpty(),

@@ -1,5 +1,6 @@
 package com.jooheon.clean_architecture.domain.entity.test
 
+import com.jooheon.clean_architecture.domain.entity.music.AudioType
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 class TestStreamUrl {
@@ -7,6 +8,7 @@ class TestStreamUrl {
         val list = listOf(
             Song.default.copy(
                 audioId = 8086,
+                audioType = AudioType.STREAMING,
                 title = "Pop",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -15,6 +17,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8034,
+                audioType = AudioType.STREAMING,
                 title = "Latin",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -23,6 +26,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8006,
+                audioType = AudioType.STREAMING,
                 title = "Jazz",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -31,6 +35,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8036,
+                audioType = AudioType.STREAMING,
                 title = "Lounge",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -39,6 +44,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8000,
+                audioType = AudioType.STREAMING,
                 title = "Gold",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -47,6 +53,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8088,
+                audioType = AudioType.STREAMING,
                 title = "Classical",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -55,6 +62,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8027,
+                audioType = AudioType.STREAMING,
                 title = "World",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
@@ -63,6 +71,7 @@ class TestStreamUrl {
             ),
             Song.default.copy(
                 audioId = 8000,
+                audioType = AudioType.STREAMING,
                 title = "France",
                 artist = "Unknown artist (just streaming)",
                 album = "Unknown album (just streaming)",
