@@ -8,6 +8,7 @@ import android.app.TaskStackBuilder
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
@@ -58,6 +59,8 @@ class MusicService: MediaLibraryService() {
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+    private var notificationManager: NotificationManager? = null
+    
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession = mediaSession
 
     @UnstableApi
@@ -79,12 +82,15 @@ class MusicService: MediaLibraryService() {
         Timber.tag(TAG).d( "onTaskRemoved - 1")
         if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
+
+            notificationManager?.cancel(NOTIFICATION_ID)
             stopSelf()
         }
     }
 
     override fun onDestroy() {
         Timber.tag(TAG).d( "onDestroy")
+
         playbackCacheManager.release()
 
         musicControllerUseCase.release()
@@ -130,6 +136,7 @@ class MusicService: MediaLibraryService() {
 
     @UnstableApi
     private fun initNotification() {
+        notificationManager = getSystemService()
         CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
