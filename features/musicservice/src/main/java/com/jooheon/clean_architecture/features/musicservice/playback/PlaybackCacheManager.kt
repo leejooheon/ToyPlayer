@@ -23,9 +23,12 @@ class PlaybackCacheManager @Inject constructor(
 
     internal fun init() {
         cache = SimpleCache(
-            cacheDirectory(context),
-            NoOpCacheEvictor(),
-            StandaloneDatabaseProvider(context)
+            /** file **/ cacheDirectory(context),
+            /** CacheEvictor **/ NoOpCacheEvictor(),
+            /** database-provider **/ StandaloneDatabaseProvider(context),
+            /** legacyIndexSecretKey **/ SECRET_KEY.toByteArray(),
+            /** legacyIndexEncrypt **/ true,
+            /** preferLegacyIndex **/ true,
         )
     }
 
@@ -35,15 +38,13 @@ class PlaybackCacheManager @Inject constructor(
 
     internal fun isCached(key: String, position: Long, length: Long): Boolean {
         val cached = cache.isCached(key, position, length)
-        Timber.d("isCached: ${cached}, [key: $key, position: $position, length: $length]")
+        Timber.tag(CACHE_TAG).d("isCached: ${cached}, [key: $key, position: $position, length: $length]")
         return cached
     }
 
     internal fun cacheDataSource(): DataSource.Factory {
         return CacheDataSource.Factory()
             .setCache(cache)
-//            .setCacheWriteDataSinkFactory(BugsCacheWriteDataSink.Factory(context, cache))
-//            .setCacheReadDataSourceFactory(BugsCacheReadDataSource.Factory(context))
             .setUpstreamDataSourceFactory(DefaultDataSource.Factory(context)) // 캐시에 없는 미디어를 재생할때 사용
     }
 
@@ -54,5 +55,11 @@ class PlaybackCacheManager @Inject constructor(
         }
 
         return cacheDirectory
+    }
+
+    companion object {
+        internal const val CACHE_TAG = "Cache@Main"
+        const val SECRET_KEY = "AES_KEY_JOO_HEON"
+        const val SECRET_IV = "AES256_SECRET_IV"
     }
 }
