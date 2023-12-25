@@ -28,13 +28,11 @@ class LocalMusicDataSource @Inject constructor(
         val jsonObject = JSONObject(raw)
         val mediaList = jsonObject.getJSONArray("media")
 
-        val random = Random(System.currentTimeMillis())
         val songs = mutableListOf<Song>()
         for(i in 0 until mediaList.length()) {
             val mediaObject =  mediaList.getJSONObject(i)
-            val id = random.nextLong()
             if(mediaObject.getString("genre") == "Video") continue
-            val song = getSongFromJsonObject(id, mediaObject) ?: continue
+            val song = getSongFromJsonObject(mediaObject) ?: continue
             songs.add(song)
         }
 
@@ -53,7 +51,7 @@ class LocalMusicDataSource @Inject constructor(
         return songs
     }
 
-    private fun getSongFromJsonObject(id: Long, mediaObject: JSONObject): Song? {
+    private fun getSongFromJsonObject(mediaObject: JSONObject): Song? {
         try {
             val trackId = mediaObject.getString("id")
             val albumName = mediaObject.getString("album")
@@ -65,7 +63,7 @@ class LocalMusicDataSource @Inject constructor(
             val imageUri = mediaObject.getString("image")
 
             return Song(
-                audioId = id,
+                audioId = trackId.hashCode().toLong(),
                 useCache = true,
                 displayName = trackId,
                 title = title.defaultEmpty(),
