@@ -171,10 +171,12 @@ class MusicStateHolder(
     }
 
     fun enqueueSongLibrary(songs: List<Song>) {
+        val songLibrary = songLibrary.value
+
         songs.filter { song ->
-            songLibrary.value.none { it.key() == song.key() } // remove duplicate
+            songLibrary.none { it.key() == song.key() } // remove duplicate
         }.also {
-            _songLibrary.tryEmit(it)
+            _songLibrary.tryEmit(songLibrary + it)
         }
     }
 
