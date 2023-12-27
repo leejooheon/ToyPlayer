@@ -11,6 +11,7 @@ import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueU
 import com.jooheon.clean_architecture.features.musicservice.data.RingBuffer
 import com.jooheon.clean_architecture.features.musicservice.data.TestLogKey
 import com.jooheon.clean_architecture.features.musicservice.ext.uri
+import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager.Companion.chunkLength
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -88,9 +89,12 @@ class PlaybackUriResolver(
         return super.resolveReportedUri(uri)
     }
 
+
+    @UnstableApi
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
         if(song.useCache) {
             val cached = playbackCacheManager?.isCached(song.key(), dataSpec.position, chunkLength).defaultFalse()
+            Timber.tag(PlaybackCacheManager.CACHE_TAG).d("isCached: ${cached}, [${song.title} key: ${song.key()}, position: ${dataSpec.position}, length: $chunkLength]")
             return cached
         }
 
@@ -150,7 +154,6 @@ class PlaybackUriResolver(
     }
 
     companion object {
-        private const val chunkLength = 512 * 1024L
         private const val URI_BUFFER_SIZE = 2
     }
 }

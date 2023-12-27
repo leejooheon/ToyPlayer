@@ -5,10 +5,12 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Album
+import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material.icons.outlined.Album
+import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PlaylistPlay
@@ -94,6 +96,7 @@ sealed class ScreenNavigation(open val route: String) {
         data object Song : ScreenNavigation("Song")
         data object Album : ScreenNavigation("Album")
         data object Artist : ScreenNavigation("Artist")
+        data object Cache : ScreenNavigation("Cache")
         data object Playlist : ScreenNavigation("Playlist")
         companion object {
             val items = listOf(
@@ -117,6 +120,13 @@ sealed class ScreenNavigation(open val route: String) {
                     contentDescriptionResId = R.string.title_cd_artist,
                     iconImageVector = Icons.Outlined.Person,
                     selectedImageVector = Icons.Default.Person,
+                ),
+                BottomNavigationItem.ImageVectorIcon(
+                    screen = Cache,
+                    labelResId = R.string.title_cache,
+                    contentDescriptionResId = R.string.title_cd_cache,
+                    iconImageVector = Icons.Outlined.Cached,
+                    selectedImageVector = Icons.Default.Cached,
                 ),
                 BottomNavigationItem.ImageVectorIcon(
                     screen = Playlist,

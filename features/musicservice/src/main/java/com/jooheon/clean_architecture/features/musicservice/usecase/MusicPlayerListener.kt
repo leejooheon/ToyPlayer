@@ -1,6 +1,5 @@
 package com.jooheon.clean_architecture.features.musicservice.usecase
 
-import android.content.Context
 import android.media.session.PlaybackState
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
@@ -19,11 +18,11 @@ import com.jooheon.clean_architecture.features.musicservice.ext.timelineChangeRe
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class MediaControllerManager(
+class MusicPlayerListener(
     private val applicationScope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder
 ) : Player.Listener {
-    private val TAG = MusicService::class.java.simpleName + "@" + MediaControllerManager::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" + MusicPlayerListener::class.java.simpleName
     private var player: Player? = null
     private var durationJob: Job? = null
 
@@ -129,9 +128,9 @@ class MediaControllerManager(
 
     fun setPlayer(player: Player) {
         this.player = player.apply {
-            removeListener(this@MediaControllerManager)
+            removeListener(this@MusicPlayerListener)
         }
-        this.player?.addListener(this@MediaControllerManager)
+        this.player?.addListener(this@MusicPlayerListener)
     }
 
     fun release() {

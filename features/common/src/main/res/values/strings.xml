@@ -26,6 +26,8 @@
     <string name="title_cd_album">Album</string>
     <string name="title_artist">Artist</string>
     <string name="title_cd_artist">Artist</string>
+    <string name="title_cache">Cache</string>
+    <string name="title_cd_cache">Cache</string>
     <string name="title_playlist">Playlist</string>
     <string name="title_cd_playlist">Playlist</string>
 </resources>

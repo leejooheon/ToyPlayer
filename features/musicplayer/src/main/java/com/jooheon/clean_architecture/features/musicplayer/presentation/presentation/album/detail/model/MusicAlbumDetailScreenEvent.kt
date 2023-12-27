@@ -4,7 +4,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.Song
 
 sealed class MusicAlbumDetailScreenEvent {
-    object OnBackClick: MusicAlbumDetailScreenEvent()
+    data object OnBackClick: MusicAlbumDetailScreenEvent()
     data class OnSongClick(val song: Song): MusicAlbumDetailScreenEvent()
     data class OnActionPlayAll(
         val album: Album,

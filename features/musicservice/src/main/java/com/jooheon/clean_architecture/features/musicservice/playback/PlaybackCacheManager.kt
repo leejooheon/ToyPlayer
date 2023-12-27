@@ -5,6 +5,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.NoOpCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
@@ -16,8 +17,8 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 @UnstableApi
+@Singleton
 class PlaybackCacheManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
@@ -29,24 +30,14 @@ class PlaybackCacheManager @Inject constructor(
             NoOpCacheEvictor(),
             StandaloneDatabaseProvider(context)
         )
-//        cache = SimpleCache(
-//            /** file **/ cacheDirectory(context),
-//            /** CacheEvictor **/ NoOpCacheEvictor(),
-//            /** databaseProvider **/ StandaloneDatabaseProvider(context),
-//            /** legacyIndexSecretKey **/ SECRET_KEY.toByteArray(),
-//            /** legacyIndexEncrypt **/ true,
-//            /** preferLegacyIndex **/ true,
-//        )
     }
 
     internal fun release() {
         cache.release()
     }
 
-    internal fun isCached(key: String, position: Long, length: Long): Boolean {
-        val cached = cache.isCached(key, position, length)
-        Timber.tag(CACHE_TAG).d("isCached: ${cached}, [key: $key, position: $position, length: $length]")
-        return cached
+    fun isCached(key: String, position: Long, length: Long): Boolean {
+        return cache.isCached(key, position, length)
     }
 
     internal fun cacheDataSource(): DataSource.Factory {
@@ -76,9 +67,16 @@ class PlaybackCacheManager @Inject constructor(
         return cacheDirectory
     }
 
+    fun addListener(key: String, listener: Cache.Listener) {
+        cache.addListener(key, listener)
+    }
+    fun removeListener(key: String, listener: Cache.Listener) {
+        cache.removeListener(key, listener)
+    }
+
     companion object {
         internal const val CACHE_TAG = "Cache@Main"
+        const val chunkLength = 512 * 1024L
         const val SECRET_KEY = "AES_KEY_JOO_HEON"
-        const val SECRET_IV = "AES256_SECRET_IV"
     }
 }

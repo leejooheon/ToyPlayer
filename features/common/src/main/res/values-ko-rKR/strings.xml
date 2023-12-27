@@ -23,6 +23,8 @@
     <string name="title_cd_album">앨범</string>
     <string name="title_artist">아티스트</string>
     <string name="title_cd_artist">아티스트</string>
+    <string name="title_cache">캐시</string>
+    <string name="title_cd_cache">캐시</string>
     <string name="title_playlist">재생목록</string>
     <string name="title_cd_playlist">재생목록</string>
 </resources>

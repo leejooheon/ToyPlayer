@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import com.jooheon.clean_architecture.toyproject.features.common.compose.ScreenNavigation
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.album.MusicAlbumScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.artist.MusicArtistScreen
+import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.cache.MusicCacheScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.library.playlist.MusicPlaylistScreen
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.song.MusicSongScreen
 
@@ -35,6 +36,9 @@ internal fun BottomNavigationHost(
             }
             composable(ScreenNavigation.BottomSheet.Artist.route) {
                 MusicArtistScreen(navigator)
+            }
+            composable(ScreenNavigation.BottomSheet.Cache.route) {
+                MusicCacheScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Playlist.route) {
                 MusicPlaylistScreen(navController)

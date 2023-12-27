@@ -7,7 +7,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.common.FailureStatus
-import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
@@ -18,14 +17,11 @@ import com.jooheon.clean_architecture.features.musicservice.ext.playbackErrorRea
 import com.jooheon.clean_architecture.features.musicservice.ext.playbackState
 import com.jooheon.clean_architecture.features.musicservice.ext.toPlaybackState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,8 +33,8 @@ class MusicStateHolder(
 ) {
     private val TAG = MusicStateHolder::class.java.simpleName
 
-    private val _songLibrary = mutableListOf<Song>()
-    private val songLibrary: List<Song> get() = _songLibrary.toList()
+    private val _songLibrary = MutableStateFlow<List<Song>>(emptyList())
+    val songLibrary = _songLibrary.asStateFlow()
 
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
@@ -76,6 +72,9 @@ class MusicStateHolder(
     private val _playbackError = Channel<PlaybackException>()
     val playbackError = _playbackError.receiveAsFlow()
 
+    private val _browserConnected = MutableStateFlow(false)
+    val browserConnected = _browserConnected.asStateFlow()
+
     init {
         collectDuration()
         collectCurrentWindow()
@@ -89,7 +88,7 @@ class MusicStateHolder(
             mediaItems ?: return@collectLatest
 
             val newPlayingQueue = mediaItems.mapNotNull { mediaItem ->
-                songLibrary.firstOrNull { it.key() == mediaItem.mediaId }
+                songLibrary.value.firstOrNull { it.key() == mediaItem.mediaId }
             }
 
             playingQueueUseCase.updatePlayingQueue(newPlayingQueue)
@@ -173,9 +172,9 @@ class MusicStateHolder(
 
     fun enqueueSongLibrary(songs: List<Song>) {
         songs.filter { song ->
-            _songLibrary.none { it.key() == song.key() } // remove duplicate
+            songLibrary.value.none { it.key() == song.key() } // remove duplicate
         }.also {
-            _songLibrary.addAll(it)
+            _songLibrary.tryEmit(it)
         }
     }
 
@@ -208,5 +207,8 @@ class MusicStateHolder(
     }
     fun onPlaybackErrorChannel(exception: PlaybackException) {
         _playbackError.trySend(exception)
+    }
+    fun onBrowserConnectionChanged(connection: Boolean) {
+        _browserConnected.tryEmit(connection)
     }
 }

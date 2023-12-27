@@ -9,6 +9,7 @@
     <string name="n_album">%1$d 앨범</string>
     <string name="song_list">음악 목록</string>
     <string name="current_playing_queue">현재 재생중인 음악</string>
+    <string name="cached_song">캐시된 음악</string>
 
     <string name="dialog_new_playlist">새 재생목록</string>
     <string name="dialog_new_playlist_label">재생목록</string>

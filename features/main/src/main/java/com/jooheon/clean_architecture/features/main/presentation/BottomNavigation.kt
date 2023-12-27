@@ -104,6 +104,9 @@ fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
                 destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Artist.route } -> {
                     selectedItem.value = ScreenNavigation.BottomSheet.Artist
                 }
+                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Cache.route } -> {
+                    selectedItem.value = ScreenNavigation.BottomSheet.Cache
+                }
                 destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Playlist.route } -> {
                     selectedItem.value = ScreenNavigation.BottomSheet.Playlist
                 }

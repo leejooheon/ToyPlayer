@@ -1,19 +1,13 @@
 package com.jooheon.clean_architecture.features.musicservice.di
 
-import android.content.Context
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.ResolvingDataSource
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.extractor.DefaultExtractorsFactory
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
-import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
-import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicPlayerListener
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
@@ -25,10 +19,10 @@ object PlayerModule {
     @Provides
     @Singleton
     @UnstableApi
-    fun provideMediaControllerManager(
+    fun provideMusicPlayerListener(
         applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
-    ) = MediaControllerManager(
+    ) = MusicPlayerListener(
         applicationScope = applicationScope,
         musicStateHolder = musicStateHolder,
     )

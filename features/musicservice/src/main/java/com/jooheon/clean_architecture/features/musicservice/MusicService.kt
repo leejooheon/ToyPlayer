@@ -26,7 +26,7 @@ import com.jooheon.clean_architecture.features.musicservice.notification.CustomM
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
-import com.jooheon.clean_architecture.features.musicservice.usecase.MediaControllerManager
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicPlayerListener
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
 import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConfig
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
@@ -43,7 +43,7 @@ class MusicService: MediaLibraryService() {
     lateinit var musicControllerUseCase: MusicControllerUseCase
 
     @Inject
-    lateinit var mediaControllerManager: MediaControllerManager
+    lateinit var musicPlayerListener: MusicPlayerListener
 
     @Inject
     lateinit var singleTopActivityIntent: Intent
@@ -51,10 +51,12 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var playbackUriResolver: PlaybackUriResolver
 
+    @Inject
+    lateinit var playbackCacheManager: PlaybackCacheManager
+
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
-    private lateinit var playbackCacheManager: PlaybackCacheManager
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -95,7 +97,7 @@ class MusicService: MediaLibraryService() {
         playbackCacheManager.release()
 
         musicControllerUseCase.release()
-        mediaControllerManager.release()
+        musicPlayerListener.release()
 
         mediaSession.setSessionActivity(getBackStackedActivity())
         mediaSession.release()
@@ -109,8 +111,6 @@ class MusicService: MediaLibraryService() {
 
     @UnstableApi
     private fun initPlayer() {
-        playbackCacheManager = PlaybackCacheManager(this)
-
         playbackCacheManager.init()
         playbackUriResolver.init(playbackCacheManager)
 
@@ -173,7 +173,7 @@ class MusicService: MediaLibraryService() {
         .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
         .build()
 
-        mediaControllerManager.setPlayer(exoPlayer)
+        musicPlayerListener.setPlayer(exoPlayer)
         musicControllerUseCase.setPlayer(exoPlayer)
     }
 

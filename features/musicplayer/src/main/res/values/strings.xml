@@ -9,6 +9,7 @@
     <string name="n_album">%1$d Album</string>
     <string name="song_list">Song List</string>
     <string name="current_playing_queue">Current playing song</string>
+    <string name="cached_song">Cached Song</string>
 
     <string name="dialog_new_playlist">New Playlist</string>
     <string name="dialog_new_playlist_label">Playlist</string>
