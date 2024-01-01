@@ -129,8 +129,8 @@ class MusicPlayerListener(
     fun setPlayer(player: Player) {
         this.player = player.apply {
             removeListener(this@MusicPlayerListener)
+            addListener(this@MusicPlayerListener)
         }
-        this.player?.addListener(this@MusicPlayerListener)
     }
 
     fun release() {

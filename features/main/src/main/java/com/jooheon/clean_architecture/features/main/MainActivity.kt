@@ -28,10 +28,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private lateinit var browserFuture: ListenableFuture<MediaBrowser>
-    val browser: MediaBrowser?
-        get() = if (browserFuture.isDone || !browserFuture.isCancelled) browserFuture.get() else null
-
     @Inject
     lateinit var themeStateFlow: ThemeStateFlow
 
@@ -57,16 +53,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        initializeBrowser()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        releaseBrowser()
-    }
-
     override fun onDestroy() {
         Timber.d("onDestroy")
         super.onDestroy()
@@ -81,25 +67,5 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize()
             )
         }
-    }
-    private fun initializeBrowser() {
-        browserFuture =
-            MediaBrowser.Builder(
-                this,
-                SessionToken(this, ComponentName(this, MusicService::class.java))
-            ).buildAsync()
-
-        browserFuture.addListener({
-            onBrowserConnected()
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun releaseBrowser() {
-        musicStateHolder.onBrowserConnectionChanged(false)
-        MediaBrowser.releaseFuture(browserFuture)
-    }
-
-    private fun onBrowserConnected() {
-        musicStateHolder.onBrowserConnectionChanged(browser != null)
     }
 }

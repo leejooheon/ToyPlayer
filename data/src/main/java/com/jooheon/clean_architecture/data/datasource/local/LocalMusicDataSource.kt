@@ -7,14 +7,17 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.BaseColumns
 import android.provider.MediaStore
+import androidx.media3.common.MediaMetadata
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
+import com.jooheon.clean_architecture.domain.entity.music.MediaFolder
+import com.jooheon.clean_architecture.domain.entity.music.MediaId
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.toyproject.data.R
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.File
 import javax.inject.Inject
-import kotlin.random.Random
 
 class LocalMusicDataSource @Inject constructor(
     private val applicationContext: Context
@@ -49,6 +52,26 @@ class LocalMusicDataSource @Inject constructor(
         }
         cursor?.close()
         return songs
+    }
+
+    fun getMediaFolderList(): List<MediaFolder> {
+        val allSongs = MediaFolder(
+            title = applicationContext.getString(R.string.media_folder_all_songs),
+            mediaId = MediaId.AllSongs,
+            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+        )
+        val album = MediaFolder(
+            title = applicationContext.getString(R.string.media_folder_album),
+            mediaId = MediaId.Album,
+            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+        )
+        val playlist = MediaFolder(
+            title = applicationContext.getString(R.string.media_folder_playlist),
+            mediaId = MediaId.Playlist,
+            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+        )
+
+        return listOf(allSongs, album, playlist)
     }
 
     private fun getSongFromJsonObject(mediaObject: JSONObject): Song? {

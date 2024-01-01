@@ -13,6 +13,9 @@ dependencies {
     implementation(projects.features.common)
     testImplementation(projects.testing)
 
+    // serialization
+    implementation(libs.serialization.json)
+
     // media3
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.session)

@@ -8,6 +8,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.clean_architecture.domain.common.FailureStatus
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
+import com.jooheon.clean_architecture.domain.entity.music.MediaId
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.data.MusicState

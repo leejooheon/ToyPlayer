@@ -18,4 +18,5 @@
     <string name="action_toggle_shuffle">셔플 모드</string>
     <string name="action_refresh">리프레시</string>
 
+    <string name="media_folder_root">루트 폴더</string>
 </resources>

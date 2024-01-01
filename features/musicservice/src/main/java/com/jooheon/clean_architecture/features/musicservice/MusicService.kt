@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
@@ -22,8 +23,8 @@ import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import com.jooheon.clean_architecture.features.musicservice.data.MediaItemProvider
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationProvider
-import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaSessionCallback
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicPlayerListener
@@ -35,6 +36,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
+@OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MusicService: MediaLibraryService() {
     private val TAG = MusicService::class.java.simpleName + "@" + "Main"
@@ -54,6 +56,9 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var playbackCacheManager: PlaybackCacheManager
 
+    @Inject
+    lateinit var mediaItemProvider: MediaItemProvider
+
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
@@ -63,16 +68,17 @@ class MusicService: MediaLibraryService() {
 
     private var notificationManager: NotificationManager? = null
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession = mediaSession
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession {
+        return mediaSession
+    }
 
-    @UnstableApi
     override fun onCreate() {
         Timber.tag(TAG).d( "onCreate")
         super.onCreate()
         initPlayer()
         initNotification()
         initMediaSession()
-        setListener(MediaSessionServiceListener())
+        initListener()
     }
 
     override fun onLowMemory() {
@@ -84,32 +90,35 @@ class MusicService: MediaLibraryService() {
         Timber.tag(TAG).d( "onTaskRemoved - 1")
         if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
-
-            notificationManager?.cancel(NOTIFICATION_ID)
+            release()
             stopSelf()
         }
     }
 
-    override fun onDestroy() {
-        Timber.tag(TAG).d( "onDestroy")
 
+    private fun release() {
+        notificationManager?.cancel(NOTIFICATION_ID)
         playbackUriResolver.release()
         playbackCacheManager.release()
 
-        musicControllerUseCase.release()
+        // clear listener
+        customMediaSessionCallback.release()
         musicPlayerListener.release()
+        clearListener()
 
         mediaSession.setSessionActivity(getBackStackedActivity())
         mediaSession.release()
-
         exoPlayer.release()
-        clearListener()
 
         serviceScope.cancel()
+    }
+
+    override fun onDestroy() {
+        Timber.tag(TAG).d( "onDestroy")
+        release()
         super.onDestroy()
     }
 
-    @UnstableApi
     private fun initPlayer() {
         playbackCacheManager.init()
         playbackUriResolver.init(playbackCacheManager)
@@ -135,7 +144,6 @@ class MusicService: MediaLibraryService() {
             .build()
     }
 
-    @UnstableApi
     private fun initNotification() {
         notificationManager = getSystemService()
         CustomMediaNotificationProvider(
@@ -149,19 +157,10 @@ class MusicService: MediaLibraryService() {
 
         customMediaSessionCallback = CustomMediaSessionCallback(
             context = this,
-            onCustomEvent = { event ->
-                when(event) {
-                    is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed ->
-                        musicControllerUseCase.onRepeatButtonPressed()
-
-                    is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed ->
-                        musicControllerUseCase.onShuffleButtonPressed()
-                }
-            }
+            mediaItemProvider = mediaItemProvider,
         )
     }
 
-    @UnstableApi
     private fun initMediaSession() {
         mediaSession = MediaLibrarySession.Builder(
             /** service  **/this,
@@ -173,8 +172,16 @@ class MusicService: MediaLibraryService() {
         .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
         .build()
 
+    }
+    private fun initListener() {
         musicPlayerListener.setPlayer(exoPlayer)
-        musicControllerUseCase.setPlayer(exoPlayer)
+        setListener(MediaSessionServiceListener())
+        customMediaSessionCallback.initEventListener { event ->
+            when(event) {
+                is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed()
+                is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed()
+            }
+        }
     }
 
     private fun getSingleTopActivity(): PendingIntent {
@@ -186,7 +193,6 @@ class MusicService: MediaLibraryService() {
     }
 
     private val customForwardingPlayer by lazy {
-        @UnstableApi
         object : ForwardingPlayer(exoPlayer) {
             override fun getAvailableCommands(): Player.Commands {
                 return super.getAvailableCommands().buildUpon()
@@ -241,8 +247,6 @@ class MusicService: MediaLibraryService() {
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
         }
     }
-
-    @UnstableApi
     private inner class MediaSessionServiceListener : Listener {
         /**
          * This method is only required to be implemented on Android 12 or above when an attempt is made
@@ -289,5 +293,15 @@ class MusicService: MediaLibraryService() {
 
         const val CYCLE_REPEAT = "$PACKAGE_NAME.cycle_repeat"
         const val TOGGLE_SHUFFLE = "$PACKAGE_NAME.toggle_shuffle"
+
+        fun allowedCaller(caller: String): Boolean {
+            val me = "com.jooheon.clean_architecture.toyproject"
+            val androidAuto = "com.google.android.projection.gearhead"
+            val wearOs = "com.google.android.wearable.app"
+            val androidAutoSimulator = "com.google.android.autosimulator"
+
+            val validPackageNames = listOf(me, androidAuto, wearOs, androidAutoSimulator)
+            return validPackageNames.contains(caller)
+        }
     }
 }

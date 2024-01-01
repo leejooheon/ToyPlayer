@@ -1,7 +1,9 @@
 package com.jooheon.clean_architecture.features.musicservice.di
 
 import androidx.media3.common.util.UnstableApi
+import com.jooheon.clean_architecture.domain.usecase.music.automotive.AutomotiveUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
+import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicPlayerListener
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
@@ -32,7 +34,8 @@ object PlayerModule {
     @UnstableApi
     fun providePlaybackUriResolver(
         playingQueueUseCase: PlayingQueueUseCase,
-    ): PlaybackUriResolver = PlaybackUriResolver(playingQueueUseCase)
+        automotiveUseCase: AutomotiveUseCase,
+    ): PlaybackUriResolver = PlaybackUriResolver(playingQueueUseCase, automotiveUseCase)
 
     @Provides
     @Singleton

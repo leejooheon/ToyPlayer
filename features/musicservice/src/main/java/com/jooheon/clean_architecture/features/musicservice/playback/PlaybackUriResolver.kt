@@ -1,12 +1,14 @@
 package com.jooheon.clean_architecture.features.musicservice.playback
 
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.ResolvingDataSource
 import com.jooheon.clean_architecture.domain.common.extension.defaultFalse
 import com.jooheon.clean_architecture.domain.entity.music.Song
+import com.jooheon.clean_architecture.domain.usecase.music.automotive.AutomotiveUseCase
 import com.jooheon.clean_architecture.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.clean_architecture.features.musicservice.data.RingBuffer
 import com.jooheon.clean_architecture.features.musicservice.data.TestLogKey
@@ -19,8 +21,10 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.random.Random
 
+@OptIn(UnstableApi::class)
 class PlaybackUriResolver(
     private val playingQueueUseCase: PlayingQueueUseCase,
+    private val automotiveUseCase: AutomotiveUseCase,
 ) : ResolvingDataSource.Resolver {
     private val TAG = PlaybackUriResolver::class.java.simpleName
 
@@ -36,21 +40,17 @@ class PlaybackUriResolver(
         playbackCacheManager = null
     }
 
-    @UnstableApi
     override fun resolveDataSpec(dataSpec: DataSpec): DataSpec {
         val customCacheKey = dataSpec.key ?: run {
             Timber.tag(TAG).e("dataSpec key is null")
             error("A key must be set")
         }
 
-        val playingQueue = runBlocking {
-            playingQueueUseCase.getPlayingQueue()
+        val (playingQueue, automotiveQueue) = runBlocking {
+            Pair(playingQueueUseCase.getPlayingQueue(), automotiveUseCase.getCurrentPlayingSongs())
         }
 
-        val song = playingQueue.firstOrNull { it.key() == customCacheKey } ?: run {
-            Timber.tag(TAG).d("resolveDataSpec: $customCacheKey is not found in playlist.")
-            throw PlaybackException("key not found in playlist.", null, PlaybackException.ERROR_CODE_REMOTE_ERROR)
-        }
+        val song = findSong(customCacheKey, playingQueue + automotiveQueue)
 
         isCached(
             dataSpec = dataSpec,
@@ -83,14 +83,20 @@ class PlaybackUriResolver(
 
         return newDataSpec
     }
-    @UnstableApi
+
     override fun resolveReportedUri(uri: Uri): Uri {
         Timber.tag(TAG).i("resolveReportedUri: $uri")
         return super.resolveReportedUri(uri)
     }
 
+    private fun findSong(customCacheKey: String, playingQueue: List<Song>): Song {
+        val song = playingQueue.firstOrNull { it.key() == customCacheKey } ?: run {
+            Timber.tag(TAG).d("resolveDataSpec: $customCacheKey is not found in playlist.")
+            throw PlaybackException("key not found in playlist.", null, PlaybackException.ERROR_CODE_REMOTE_ERROR)
+        }
+        return song
+    }
 
-    @UnstableApi
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
         if(song.useCache) {
             val cached = playbackCacheManager?.isCached(song.key(), dataSpec.position, chunkLength).defaultFalse()
@@ -138,7 +144,6 @@ class PlaybackUriResolver(
         return Pair(song.uri, logKey)
     }
 
-    @UnstableApi
     private fun DataSpec.withCustomData(customData: Any): DataSpec {
         return DataSpec.Builder().setUri(uri)
             .setUriPositionOffset(uriPositionOffset)

@@ -1,4 +1,4 @@
-package com.jooheon.clean_architecture.data.repository.music
+package com.jooheon.clean_architecture.data.repository
 
 import android.net.Uri
 import com.jooheon.clean_architecture.data.datasource.local.LocalMusicDataSource
@@ -49,7 +49,6 @@ class MusicListRepositoryImpl(
 
         return resource
     }
-
     override fun getMusicListType(): MusicListType {
         val ordinal = appPreferences.musicListType
         return MusicListType.entries[ordinal]

@@ -4,13 +4,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheSpan
-import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
 import com.jooheon.clean_architecture.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.clean_architecture.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.clean_architecture.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenEvent
-import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.cache.model.MusicCacheScreenEvent
 import com.jooheon.clean_architecture.features.musicplayer.presentation.presentation.cache.model.MusicCacheScreenState
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
@@ -21,9 +17,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -84,10 +81,10 @@ class MusicCacheScreenViewModel @Inject constructor(
         }
     }
 
-    private fun loadData() {
-        if(!musicStateHolder.browserConnected.value) return
+    private fun loadData() = viewModelScope.launch {
+        if(!musicStateHolder.browserConnected.value) return@launch
 
-        val library = musicListUseCase.assetSongList.value
+        val library = musicListUseCase.assetSongList.firstOrNull() ?: emptyList()
 
         val cachedSongs = library.filter {
             playbackCacheManager.isCached(it.key(), 0, chunkLength)

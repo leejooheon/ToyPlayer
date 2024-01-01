@@ -15,6 +15,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
 
+    // media3
+    implementation(libs.androidx.media3.common)
+
     // Network
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.retrofit.converter)

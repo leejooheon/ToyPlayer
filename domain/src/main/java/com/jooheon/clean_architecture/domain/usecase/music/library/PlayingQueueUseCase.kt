@@ -1,6 +1,7 @@
 package com.jooheon.clean_architecture.domain.usecase.music.library
 
 import com.jooheon.clean_architecture.domain.common.Resource
+import com.jooheon.clean_architecture.domain.entity.music.MediaId
 import com.jooheon.clean_architecture.domain.entity.music.RepeatMode
 import com.jooheon.clean_architecture.domain.entity.music.ShuffleMode
 import com.jooheon.clean_architecture.domain.entity.music.Song

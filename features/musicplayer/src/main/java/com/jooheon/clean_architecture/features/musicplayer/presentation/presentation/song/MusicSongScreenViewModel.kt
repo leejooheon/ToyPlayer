@@ -91,6 +91,6 @@ class MusicSongScreenViewModel @Inject constructor(
     }
 
     private fun loadMusicList() = viewModelScope.launch {
-        musicListUseCase.loadSongList(MusicUtil.localMusicStorageUri().toString())
+        musicListUseCase.initialize(MusicUtil.localMusicStorageUri().toString())
     }
 }
