@@ -1,9 +1,9 @@
 plugins {
-    id("toyproject.android.feature")
+    id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.musicplayer"
+    namespace = "com.jooheon.toyplayer.features.musicplayer"
 }
 
 dependencies {

@@ -1,13 +1,13 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("toyproject.android.application")
+    id("toyplayer.android.application")
 //    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject"
+    namespace = "com.jooheon.toyplayer"
     defaultConfig {
-        applicationId = "com.jooheon.clean_architecture.toyproject"
+        applicationId = "com.jooheon.toyplayer"
         versionCode = Integer.parseInt(libs.versions.version.code.get())
         versionName = libs.versions.version.name.get()
     }

@@ -1,11 +1,11 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("toyproject.android.library.hilt")
+    id("toyplayer.android.library.hilt")
     id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.musicservice"
+    namespace = "com.jooheon.toyplayer.features.musicservice"
 }
 
 dependencies {

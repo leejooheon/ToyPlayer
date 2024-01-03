@@ -1,9 +1,9 @@
 plugins {
-    id("toyproject.android.library")
+    id("toyplayer.android.library")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.testing"
+    namespace = "com.jooheon.testing"
 }
 
 dependencies {

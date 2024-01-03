@@ -12,12 +12,12 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidHilt") {
-            id = "toyproject.android.hilt"
-            implementationClass = "com.jooheon.toyproject.HiltAndroidPlugin"
+            id = "toyplayer.android.hilt"
+            implementationClass = "com.jooheon.toyplayer.HiltAndroidPlugin"
         }
         register("kotlinHilt") {
-            id = "toyproject.kotlin.hilt"
-            implementationClass = "com.jooheon.toyproject.HiltKotlinPlugin"
+            id = "toyplayer.kotlin.hilt"
+            implementationClass = "com.jooheon.toyplayer.HiltKotlinPlugin"
         }
     }
 }
