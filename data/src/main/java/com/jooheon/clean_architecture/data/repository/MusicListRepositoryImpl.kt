@@ -27,8 +27,8 @@ class MusicListRepositoryImpl(
         return result
     }
 
-    override suspend fun getLocalMusicList(uri: String): Resource<MutableList<Song>> {
-        val data = localMusicDataSource.getLocalMusicList(Uri.parse(uri))
+    override suspend fun getLocalMusicList(): Resource<MutableList<Song>> {
+        val data = localMusicDataSource.getLocalMusicList()
         val result = if (data.isEmpty()) {
             Resource.Failure(FailureStatus.EMPTY)
         } else {

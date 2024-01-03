@@ -10,9 +10,12 @@ import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSourceBitmapLoader
@@ -23,6 +26,7 @@ import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import com.jooheon.clean_architecture.domain.entity.music.MediaId
 import com.jooheon.clean_architecture.features.musicservice.data.MediaItemProvider
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
@@ -33,6 +37,7 @@ import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConf
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -68,8 +73,14 @@ class MusicService: MediaLibraryService() {
 
     private var notificationManager: NotificationManager? = null
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession {
-        return mediaSession
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
+        return mediaSession.takeUnless { session ->
+            session.invokeIsReleased
+        }.also {
+            if (it == null) {
+                Timber.tag(TAG).e("onGetSession returns null because the session is already released")
+            }
+        }
     }
 
     override fun onCreate() {
@@ -87,8 +98,9 @@ class MusicService: MediaLibraryService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).d( "onTaskRemoved - 1")
-        if (!exoPlayer.playWhenReady || exoPlayer.mediaItemCount == 0) {
+        if (!exoPlayer.playWhenReady) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
             release()
             stopSelf()
@@ -114,9 +126,9 @@ class MusicService: MediaLibraryService() {
     }
 
     override fun onDestroy() {
-        Timber.tag(TAG).d( "onDestroy")
-        release()
         super.onDestroy()
+        release()
+        Timber.tag(TAG).d( "onDestroy")
     }
 
     private fun initPlayer() {
@@ -160,7 +172,6 @@ class MusicService: MediaLibraryService() {
             mediaItemProvider = mediaItemProvider,
         )
     }
-
     private fun initMediaSession() {
         mediaSession = MediaLibrarySession.Builder(
             /** service  **/this,
@@ -180,6 +191,7 @@ class MusicService: MediaLibraryService() {
             when(event) {
                 is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed()
                 is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed()
+                else -> {}
             }
         }
     }
@@ -285,6 +297,18 @@ class MusicService: MediaLibraryService() {
         }
     }
 
+    private val MediaSession.invokeIsReleased: Boolean
+        get() = try {
+            // temporarily checked to debug
+            // https://github.com/androidx/media/issues/422
+            MediaSession::class.java.getDeclaredMethod("isReleased")
+                .apply { isAccessible = true }
+                .invoke(this) as Boolean
+        } catch (e: Exception) {
+            Timber.tag(TAG).e("Couldn't check if it's released")
+            false
+        }
+
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
 
@@ -296,11 +320,9 @@ class MusicService: MediaLibraryService() {
 
         fun allowedCaller(caller: String): Boolean {
             val me = "com.jooheon.clean_architecture.toyproject"
-            val androidAuto = "com.google.android.projection.gearhead"
             val wearOs = "com.google.android.wearable.app"
-            val androidAutoSimulator = "com.google.android.autosimulator"
 
-            val validPackageNames = listOf(me, androidAuto, wearOs, androidAutoSimulator)
+            val validPackageNames = listOf(me, wearOs)
             return validPackageNames.contains(caller)
         }
     }

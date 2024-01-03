@@ -11,8 +11,8 @@ interface MusicListUseCase {
     val assetSongList: Flow<List<Song>>
     val musicListType: Flow<MusicListType>
 
-    suspend fun initialize(storageUrl: String)
-    suspend fun getLocalSongList(storageUrl: String): List<Song>
+    suspend fun initialize()
+    suspend fun getLocalSongList(): List<Song>
     suspend fun getStreamingUrlList(): List<Song>
     suspend fun getSongListFromAsset(): List<Song>
 

@@ -7,7 +7,7 @@ import com.jooheon.clean_architecture.domain.entity.music.Song
 
 interface MusicListRepository {
     suspend fun getMusicFromAsset(): Resource<MutableList<Song>>
-    suspend fun getLocalMusicList(uri: String): Resource<MutableList<Song>>
+    suspend fun getLocalMusicList(): Resource<MutableList<Song>>
     suspend fun getStreamingMusicList(): Resource<MutableList<Song>>
     fun getMusicListType(): MusicListType
     fun setMusicListType(musicListType: MusicListType)

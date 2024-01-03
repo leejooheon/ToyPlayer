@@ -2,6 +2,7 @@ package com.jooheon.clean_architecture.domain.usecase.music.automotive
 
 import com.jooheon.clean_architecture.domain.common.Resource
 import com.jooheon.clean_architecture.domain.common.extension.defaultEmpty
+import com.jooheon.clean_architecture.domain.entity.music.Album
 import com.jooheon.clean_architecture.domain.entity.music.MediaFolder
 import com.jooheon.clean_architecture.domain.entity.music.Song
 import com.jooheon.clean_architecture.domain.repository.AutomotiveRepository
@@ -27,9 +28,9 @@ class AutomotiveUseCaseImpl(
     }
 
 
-    override suspend fun getAllSongs(storageUrl: String): List<Song> {
+    override suspend fun getAllSongs(): List<Song> {
         val allSongs = mutableListOf<Song>()
-        musicListUseCase.getLocalSongList(storageUrl).run {
+        musicListUseCase.getLocalSongList().run {
             allSongs.addAll(this)
         }
         musicListUseCase.getStreamingUrlList().run {
@@ -50,28 +51,50 @@ class AutomotiveUseCaseImpl(
         ).forEach { songListFlow ->
             val songList = songListFlow.firstOrNull().defaultEmpty()
             val song = songList.firstOrNull { it.key() == mediaId }
-
-            currentPlayingQueue = songList
-
             if(song != null) return songList
         }
 
         return null
     }
 
-    override suspend fun getSong(mediaId: String): Song? {
-        listOf(
-            musicListUseCase.localSongList,
-            musicListUseCase.streamingSongList,
-            musicListUseCase.assetSongList
-        ).forEach { songListFlow ->
-            val songList = songListFlow.firstOrNull().defaultEmpty()
-            val song = songList.firstOrNull { it.key() == mediaId }
+    override fun getSong(mediaId: String): Song? {
+        return currentPlayingQueue.firstOrNull { it.key() == mediaId }
+    }
 
-            if(song != null) return song
+    override suspend fun getAlbums(): List<Album> {
+        val groupByAlbum = getAllSongs().groupBy {
+            it.albumId
+        }.map { (albumId, songs) ->
+            Album(
+                id = albumId,
+                name = songs.firstOrNull()?.album.defaultEmpty(),
+                artist = songs.firstOrNull()?.artist.defaultEmpty(),
+                artistId = songs.firstOrNull()?.artistId.defaultEmpty(),
+                imageUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
+                songs = songs.sortedBy { it.trackNumber }
+            )
         }
-        return null
+        return groupByAlbum
+    }
+
+    override suspend fun getAlbum(mediaId: String): Album? {
+        val albums = getAlbums()
+        val album = albums.firstOrNull {
+            it.id == mediaId
+        }
+
+        return album
     }
 
     override suspend fun getCurrentPlayingSongs(): List<Song> = currentPlayingQueue
+    override suspend fun setCurrentDisplayedSongList(songList: List<Song>) {
+        songList.filter { song ->
+            currentPlayingQueue.none { it.key() == song.key() } // remove duplicate
+        }.also {
+            val new = currentPlayingQueue.toMutableList().apply {
+                addAll(it)
+            }
+            currentPlayingQueue = new
+        }
+    }
 }

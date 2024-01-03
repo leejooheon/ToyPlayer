@@ -10,16 +10,16 @@ sealed interface MediaId {
     data object Root : MediaId
 
     @Serializable
-    @SerialName("automotive_root")
-    data object AutomotiveRoot : MediaId
-
-    @Serializable
     @SerialName("all_songs")
     data object AllSongs : MediaId
 
     @Serializable
+    @SerialName("album_root")
+    data object AlbumRoot : MediaId
+
+    @Serializable
     @SerialName("album")
-    data object Album : MediaId
+    data class Album(val id: String) : MediaId
 
     @Serializable
     @SerialName("playlist")

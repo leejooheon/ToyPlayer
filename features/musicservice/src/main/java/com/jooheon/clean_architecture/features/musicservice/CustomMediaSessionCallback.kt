@@ -25,7 +25,6 @@ import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.guava.future
 import timber.log.Timber
 
-
 @OptIn(UnstableApi::class)
 class CustomMediaSessionCallback(
     private val context: Context,
@@ -45,13 +44,30 @@ class CustomMediaSessionCallback(
         scope.cancel()
     }
 
+    override fun onGetLibraryRoot(
+        session: MediaLibrarySession,
+        browser: MediaSession.ControllerInfo,
+        params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<MediaItem>> {
+        Timber.d("onGetLibraryRoot (packageName: ${browser.packageName}), (isRecent = ${params?.isRecent == true}")
+        if(session.isAutomotiveController(browser) || session.isAutoCompanionController(browser)) {
+            val rootItem = mediaItemProvider.rootItem()
+            return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
+        }
+
+        return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED))
+    }
+
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
         Timber.d("onConnect: packageName: ${controller.packageName}")
 
-        if(!MusicService.allowedCaller(controller.packageName)) {
+        if(!MusicService.allowedCaller(controller.packageName) ||
+            !session.isAutoCompanionController(controller) ||
+            !session.isAutomotiveController(controller)
+        ) {
             return MediaSession.ConnectionResult.reject()
         }
 
@@ -83,27 +99,13 @@ class CustomMediaSessionCallback(
         customCommand: SessionCommand,
         args: Bundle
     ): ListenableFuture<SessionResult> {
+        Timber.d("onCustomCommand: ${customCommand.customAction}")
         when (customCommand.customAction) {
             MusicService.CYCLE_REPEAT -> onCustomEvent?.invoke(CustomEvent.OnRepeatIconPressed)
             MusicService.TOGGLE_SHUFFLE -> onCustomEvent?.invoke(CustomEvent.OnShuffleIconPressed)
         }
 
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
-    }
-
-    override fun onGetLibraryRoot(
-        session: MediaLibrarySession,
-        browser: MediaSession.ControllerInfo,
-        params: MediaLibraryService.LibraryParams?
-    ): ListenableFuture<LibraryResult<MediaItem>> {
-        if(!MusicService.allowedCaller(browser.packageName)) {
-            Timber.d("onGetLibraryRoot - not allowed caller: ${browser.packageName}")
-            return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED))
-        }
-
-        val rootItem = mediaItemProvider.rootItem()
-        Timber.d("onGetLibraryRoot (isRecent = ${params?.isRecent == true}, rootItemId = ${rootItem.mediaId})")
-        return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
     }
 
     override fun onGetChildren(
@@ -115,8 +117,10 @@ class CustomMediaSessionCallback(
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> = scope.future {
         val childBrowsableItems = mediaItemProvider.getChildBrowsableItems(parentId)
-        Timber.d("onGetChildren for $parentId, children: ${childBrowsableItems.size}")
+        Timber.d("onGetChildren for $parentId, children: ${childBrowsableItems.map { it.mediaMetadata.title }}")
+
         if (childBrowsableItems.isNotEmpty()) {
+            mediaItemProvider.setCurrentDisplayedSongList(childBrowsableItems)
             LibraryResult.ofItemList(childBrowsableItems, params)
         } else {
             LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
@@ -128,7 +132,6 @@ class CustomMediaSessionCallback(
         browser: MediaSession.ControllerInfo,
         mediaId: String
     ): ListenableFuture<LibraryResult<MediaItem>> = scope.future {
-        Timber.d("onGetItem")
         val item = mediaItemProvider.getItem(mediaId)
         Timber.d("onGetItem (mediaId = $mediaId, ${item?.mediaMetadata?.title})")
         if (item != null) {
@@ -145,14 +148,28 @@ class CustomMediaSessionCallback(
         startIndex: Int,
         startPositionMs: Long
     ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        Timber.d("onSetMediaItems: ${mediaItems.map { it.mediaId }}")
         val item = mediaItems.singleOrNull()
+
         return if (startIndex == C.INDEX_UNSET && startPositionMs == C.TIME_UNSET && item != null) {
             scope.future {
-                mediaItemProvider.mediaItemsWithStartPosition(item.mediaId)
-                    ?: super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs).await()
+                mediaItemProvider.mediaItemsWithStartPosition(item.mediaId) ?: run {
+                    super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs).await()
+                }
             }
         } else {
             super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
         }
+    }
+
+    override fun onAddMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: MutableList<MediaItem>
+    ): ListenableFuture<MutableList<MediaItem>> {
+        val items = mediaItems.map { item ->
+            mediaItemProvider.getItem(item.mediaId) ?: item
+        }.toMutableList()
+        return Futures.immediateFuture(items)
     }
 }

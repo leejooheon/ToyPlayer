@@ -28,8 +28,8 @@ class MusicListUseCaseImpl(
         _musicListType.tryEmit(getMusicListType())
     }
 
-    override suspend fun initialize(storageUrl: String) {
-        val localSongList = getLocalSongList(storageUrl)
+    override suspend fun initialize() {
+        val localSongList = getLocalSongList()
         val streamingSongList = getStreamingUrlList()
         val assetSongList = getSongListFromAsset()
 
@@ -38,8 +38,8 @@ class MusicListUseCaseImpl(
         _assetSongList.tryEmit(assetSongList)
     }
 
-    override suspend fun getLocalSongList(storageUrl: String): List<Song> {
-        val resource = musicListRepository.getLocalMusicList(storageUrl)
+    override suspend fun getLocalSongList(): List<Song> {
+        val resource = musicListRepository.getLocalMusicList()
 
         return if (resource is Resource.Success) resource.value.toList()
         else emptyList()

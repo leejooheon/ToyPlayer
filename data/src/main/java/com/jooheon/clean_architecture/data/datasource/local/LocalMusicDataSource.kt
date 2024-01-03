@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.BaseColumns
 import android.provider.MediaStore
@@ -42,7 +43,13 @@ class LocalMusicDataSource @Inject constructor(
         return songs
     }
 
-    fun getLocalMusicList(uri: Uri): MutableList<Song> {
+    fun getLocalMusicList(): MutableList<Song> {
+        val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
+        } else {
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        }
+
         val cursor = makeSongCursor(applicationContext, uri)
         val songs = mutableListOf<Song>()
         if (cursor != null && cursor.moveToFirst()) {
@@ -62,7 +69,7 @@ class LocalMusicDataSource @Inject constructor(
         )
         val album = MediaFolder(
             title = applicationContext.getString(R.string.media_folder_album),
-            mediaId = MediaId.Album,
+            mediaId = MediaId.AlbumRoot,
             mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
         )
         val playlist = MediaFolder(
