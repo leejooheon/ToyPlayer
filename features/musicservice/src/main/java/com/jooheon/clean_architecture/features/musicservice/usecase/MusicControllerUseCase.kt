@@ -61,9 +61,9 @@ class MusicControllerUseCase(
     private fun collectShuffleMode() = applicationScope.launch {
         musicStateHolder.shuffleMode.collectLatest { shuffleMode ->
             Timber.tag(TAG).d( "collectShuffleMode - $shuffleMode")
-            shuffle(
-                playWhenReady = musicStateHolder.isPlaying.value
-            )
+//            shuffle(
+//                playWhenReady = musicStateHolder.isPlaying.value
+//            )
         }
     }
 

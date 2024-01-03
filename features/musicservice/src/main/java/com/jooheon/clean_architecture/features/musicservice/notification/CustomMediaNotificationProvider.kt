@@ -18,43 +18,23 @@ import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 
 @UnstableApi
 class CustomMediaNotificationProvider(
-    private val context: Context,
+    context: Context,
     notificationIdProvider: NotificationIdProvider,
     channelId: String,
     channelNameResourceId: Int,
 ) : DefaultMediaNotificationProvider(context, notificationIdProvider, channelId, channelNameResourceId) {
-    override fun addNotificationActions (
-        mediaSession: MediaSession,
-        mediaButtons: ImmutableList<CommandButton>,
-        builder: NotificationCompat.Builder,
-        actionFactory: MediaNotification. ActionFactory
-    ): IntArray {
-        val defaultPlayPauseCommandButton = mediaButtons.getOrNull( 0 )
-        val notificationMediaButtons = if (defaultPlayPauseCommandButton != null ) {
-            ImmutableList.builder<CommandButton>().apply {
-                add(
-                    CustomMediaNotificationCommandButton.repeatButton(
-                        context = context,
-                        repeatMode = mediaSession.player.repeatMode
-                    ).commandButton
-                )
-                mediaButtons.forEach { add(it) }
-                add(
-                    CustomMediaNotificationCommandButton.shuffleButton(
-                        context = context,
-                        shuffleMode = mediaSession.player.shuffleModeEnabled
-                    ).commandButton
-                )
-            }.build()
-        } else {
-            mediaButtons
-        }
-
-        return super.addNotificationActions(
-            mediaSession,
-            notificationMediaButtons,
-            builder,
-            actionFactory
-        )
+    override fun getMediaButtons(
+        session: MediaSession,
+        playerCommands: Player.Commands,
+        customLayout: ImmutableList<CommandButton>,
+        showPauseButton: Boolean,
+    ): ImmutableList<CommandButton> {
+        return super.getMediaButtons(session, playerCommands, customLayout, showPauseButton)
+            .apply {
+                forEachIndexed { index, commandButton ->
+                    // This shows the previous / next icons in compact mode for Android < 13
+                    commandButton?.extras?.putInt(COMMAND_KEY_COMPACT_VIEW_INDEX, index)
+                }
+            }
     }
 }

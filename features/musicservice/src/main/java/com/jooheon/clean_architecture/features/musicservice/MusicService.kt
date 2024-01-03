@@ -10,12 +10,9 @@ import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSourceBitmapLoader
@@ -26,18 +23,20 @@ import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.clean_architecture.domain.entity.music.MediaId
 import com.jooheon.clean_architecture.features.musicservice.data.MediaItemProvider
+import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.clean_architecture.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicPlayerListener
 import com.jooheon.clean_architecture.features.musicservice.usecase.MusicControllerUseCase
+import com.jooheon.clean_architecture.features.musicservice.usecase.MusicStateHolder
 import com.jooheon.clean_architecture.toyproject.features.musicservice.BuildConfig
 import com.jooheon.clean_architecture.toyproject.features.musicservice.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -64,9 +63,13 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var mediaItemProvider: MediaItemProvider
 
+    @Inject
+    lateinit var musicStateHolder: MusicStateHolder
+
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
+    private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -90,6 +93,8 @@ class MusicService: MediaLibraryService() {
         initNotification()
         initMediaSession()
         initListener()
+
+        collectNotificationState()
     }
 
     override fun onLowMemory() {
@@ -158,21 +163,21 @@ class MusicService: MediaLibraryService() {
 
     private fun initNotification() {
         notificationManager = getSystemService()
-        CustomMediaNotificationProvider(
+
+        customMediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
             channelId = NOTIFICATION_CHANNEL_ID,
             channelNameResourceId = R.string.playing_notification_name,
-        ).also {
-            setMediaNotificationProvider(it)
-        }
-
+        )
+        setMediaNotificationProvider(customMediaNotificationProvider)
+    }
+    private fun initMediaSession() {
         customMediaSessionCallback = CustomMediaSessionCallback(
             context = this,
             mediaItemProvider = mediaItemProvider,
         )
-    }
-    private fun initMediaSession() {
+
         mediaSession = MediaLibrarySession.Builder(
             /** service  **/this,
             /** player   **/ customForwardingPlayer,
@@ -182,7 +187,6 @@ class MusicService: MediaLibraryService() {
 //        .setBitmapLoader(CoilBitmapLoader(this, serviceScope))
         .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
         .build()
-
     }
     private fun initListener() {
         musicPlayerListener.setPlayer(exoPlayer)
@@ -191,7 +195,25 @@ class MusicService: MediaLibraryService() {
             when(event) {
                 is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed()
                 is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed()
-                else -> {}
+            }
+        }
+    }
+
+    private fun collectNotificationState() {
+        serviceScope.launch {
+            combine(
+                musicStateHolder.repeatMode,
+                musicStateHolder.shuffleMode
+            ) { repeatMode, shuffleMode ->
+                repeatMode to shuffleMode
+            }.collectLatest { (repeatMode, shuffleMode) ->
+                mediaSession.setCustomLayout(
+                    CustomMediaNotificationCommand.layout(
+                        context = this@MusicService,
+                        shuffleMode = shuffleMode,
+                        repeatMode = repeatMode
+                    )
+                )
             }
         }
     }
@@ -259,6 +281,19 @@ class MusicService: MediaLibraryService() {
             getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
         }
     }
+
+    private val MediaSession.invokeIsReleased: Boolean
+        get() = try {
+            // temporarily checked to debug
+            // https://github.com/androidx/media/issues/422
+            MediaSession::class.java.getDeclaredMethod("isReleased")
+                .apply { isAccessible = true }
+                .invoke(this) as Boolean
+        } catch (e: Exception) {
+            Timber.tag(TAG).e("Couldn't check if it's released")
+            false
+        }
+
     private inner class MediaSessionServiceListener : Listener {
         /**
          * This method is only required to be implemented on Android 12 or above when an attempt is made
@@ -296,19 +331,6 @@ class MusicService: MediaLibraryService() {
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }
-
-    private val MediaSession.invokeIsReleased: Boolean
-        get() = try {
-            // temporarily checked to debug
-            // https://github.com/androidx/media/issues/422
-            MediaSession::class.java.getDeclaredMethod("isReleased")
-                .apply { isAccessible = true }
-                .invoke(this) as Boolean
-        } catch (e: Exception) {
-            Timber.tag(TAG).e("Couldn't check if it's released")
-            false
-        }
-
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
 

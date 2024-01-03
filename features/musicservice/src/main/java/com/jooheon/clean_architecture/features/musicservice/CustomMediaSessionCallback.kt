@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.clean_architecture.features.musicservice.data.MediaItemProvider
-import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationCommandButton
+import com.jooheon.clean_architecture.features.musicservice.notification.CustomMediaNotificationCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,30 +63,11 @@ class CustomMediaSessionCallback(
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
         Timber.d("onConnect: packageName: ${controller.packageName}")
-
-        if(!MusicService.allowedCaller(controller.packageName) ||
-            !session.isAutoCompanionController(controller) ||
-            !session.isAutomotiveController(controller)
-        ) {
-            return MediaSession.ConnectionResult.reject()
-        }
-
         val connectionResult = super.onConnect(session, controller)
         val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
-
-        CustomMediaNotificationCommandButton.shuffleButton(
-            context = context,
-            shuffleMode = session.player.shuffleModeEnabled,
-        ).commandButton.sessionCommand?.let {
-            availableSessionCommands.add(it)
-        }
-
-        CustomMediaNotificationCommandButton.repeatButton(
-            context = context,
-            repeatMode = session.player.repeatMode,
-        ).commandButton.sessionCommand?.let {
-            availableSessionCommands.add(it)
-        }
+            .add(SessionCommand(MusicService.TOGGLE_SHUFFLE, Bundle.EMPTY)).also {
+                it.add(SessionCommand(MusicService.CYCLE_REPEAT, Bundle.EMPTY))
+            }
 
         return MediaSession.ConnectionResult.accept(
             availableSessionCommands.build(), connectionResult.availablePlayerCommands
@@ -171,5 +152,17 @@ class CustomMediaSessionCallback(
             mediaItemProvider.getItem(item.mediaId) ?: item
         }.toMutableList()
         return Futures.immediateFuture(items)
+    }
+
+    override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
+        super.onPostConnect(session, controller)
+
+        session.setCustomLayout(
+            CustomMediaNotificationCommand.layout(
+                context = context,
+                shuffleMode = session.player.shuffleModeEnabled,
+                repeatMode = session.player.repeatMode
+            )
+        )
     }
 }
