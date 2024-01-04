@@ -5,21 +5,23 @@
 </div>
 
 This project is my digital playground where I am learning.
+
 I'm testing new technologies and ideas here.
+
 If you like to contribute, that is very appreciated.
 
 ---
 
 ## Features
-- play (almost) any song (local, remote, assets)
-- android Auto
-- background playback
-- cache audio with AES encryption and decrypt and play the file.
-- late init media url when preparing playback. (ResolvingDataSource.Resolver)
-- using Media3 - MediaLibraryService
-- local playlist management
-- light/dark/dynamic theme
-- multiple language (eng, kor)
+- Play (almost) any song (local, remote, assets)
+- Media3 : MediaLibraryService
+- Background playback
+- Cache audio with AES encryption and decrypt and play the file.
+- Late init media url when preparing playback. (ResolvingDataSource.Resolver)
+- Android Auto
+- Local playlist management
+- Multiple Theme light/dark/dynamic
+- Multiple language (Eng, Kor)
 
 ## Preview
 <p float="left">
@@ -31,7 +33,7 @@ If you like to contribute, that is very appreciated.
 </p>
 
 ## Architecture
-Alkaa architecture is strongly based on
+Architecture is strongly based on
 the [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) by Alistair
 Cockburn.
 
