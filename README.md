@@ -1,16 +1,44 @@
-## 스터디 목표
-- Kotlin 언어를 학습한다.
-- github API를 이용한 간단한 프로젝트를 통해 주요 기술들을 순차적으로 적용해보며 이해를 돕는다.
-- Rx → MVVM → Clean Architecture를 스터디하며 순차적으로 적용해본다.
-- 회사 프로젝트에 적용할 수 있는 수준의 공통 Framework를 구축한다.
+<div align="center">
+    <img src="./app/src/main/res/mipmap-hdpi/ic_launcher.png" width="128" height="128" style="display: block; margin: 0 auto"/>
+    <h1>ToyPlayer</h1>
+    <p>An Android application for play music</p>
+</div>
 
+This project is my digital playground where I am learning.
+I'm testing new technologies and ideas here.
+If you like to contribute, that is very appreciated.
 
-## 스터디 문서
-- Reactive Extension(Rx)
-- MVVM 패턴 학습
-- CleanArchitecture 학습
-- Compose 학습
+---
 
-## 샘플 프로젝트 목표
-- TextView에 표시할 데이터를 API를 통해 가져온다.
-- Image를 API를 통해 전송하고, 받아온다.
+## Features
+- play (almost) any song (local, remote, assets)
+- android Auto
+- background playback
+- cache audio with AES encryption and decrypt and play the file.
+- late init media url when preparing playback. (ResolvingDataSource.Resolver)
+- using Media3 - MediaLibraryService
+- local playlist management
+- light/dark/dynamic theme
+- multiple language (eng, kor)
+
+## Preview
+<p float="left">
+  <img src="./screenshot/screen_main.png" height="600" width="270" >
+  <img src="./screenshot/screen_full_player.png" height="600" width="270" >
+  <img src="./screenshot/screen_playing_queue.png" height="600" width="270" >
+  <img src="./screenshot/screen_album.png" height="600" width="270" >
+  <img src="./screenshot/screen_artist.png" height="600" width="270" >
+</p>
+
+## Architecture
+Alkaa architecture is strongly based on
+the [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) by Alistair
+Cockburn.
+
+* **app** - The Application module. It contains all the initialization logic for the Android
+  environment.
+* **features** - The module/folder containing all the features (visual or not) from the application.
+* **domain** - The modules containing the most important part of the application: the business
+  logic. This module depends only on itself and all interaction it does is via _dependency
+  inversion_.
+* **data** - The module containing the data (local, remote, light etc) from the app.

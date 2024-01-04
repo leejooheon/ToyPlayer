@@ -6,6 +6,6 @@
 .idea
 .DS_Store
 /build
-/RxTest/buildSrc/build
+/ToyPlayer/buildSrc/build
 /captures
 .externalNativeBuild

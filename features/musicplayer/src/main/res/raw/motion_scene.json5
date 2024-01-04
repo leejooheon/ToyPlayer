@@ -1,0 +1,67 @@
+{
+  ConstraintSets: {
+    start: {
+      mediaColumn: {
+        width: 'spread',
+        height: 'spread',
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+        end: ['parent', 'end']
+      },
+      albumImage: {
+        height: 60,
+        width: 80,
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+      },
+      details: {
+        width: 'spread',
+        height: 'spread',
+        start: ['albumImage', 'end'],
+        end: ['parent', 'end'],
+        top: ['albumImage', 'top'],
+        bottom: ['albumImage', 'bottom'],
+      },
+      content: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['albumImage', 'bottom'],
+        bottom: ['parent', 'bottom'],
+      }
+    },
+    end: {
+      mediaColumn: {
+        width: 'spread',
+        height: 'spread',
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom'],
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+      },
+      albumImage: {
+        width: 'spread',
+        height: 250,
+        top: ['parent', 'top'],
+        start: ['parent', 'start'],
+        end: ['parent', 'end']
+      },
+      details: {
+        height: 'spread',
+        start: ['parent', 'end'],
+        top: ['albumImage', 'top'],
+        bottom: ['albumImage', 'bottom'],
+      },
+      content: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['albumImage', 'bottom'],
+        bottom: ['parent', 'bottom']
+      }
+    }
+  }
+}

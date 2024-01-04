@@ -1,0 +1,17 @@
+<resources>
+    <!--    -->
+    <string name="app_name">ToyPlayer</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+
+    <!-- error -->
+    <string name="some_error">Some error occurred, try again later</string>
+
+    <!-- exoPlayer test   -->
+    <string name="test_mp3">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
+    <string name="media_url_mp4">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
+
+    <!-- widget -->
+    <string name="glance_widget_description">Subway info widget</string>
+    <string name="glance_widget_loading">Loading</string>
+</resources>

@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">musicplayer</string>
+    <string name="tab_name_song">Song</string>
+    <string name="tab_name_album">Album</string>
+    <string name="tab_name_artist">Artist</string>
+    <string name="tab_name_playlist">Playlist</string>
+
+    <string name="n_song">%1$d Song</string>
+    <string name="n_album">%1$d Album</string>
+    <string name="song_list">Song List</string>
+    <string name="current_playing_queue">Current playing song</string>
+    <string name="cached_song">Cached Song</string>
+
+    <string name="dialog_new_playlist">New Playlist</string>
+    <string name="dialog_new_playlist_label">Playlist</string>
+    <string name="dialog_new_playlist_placeholder">Playlist Name</string>
+    <string name="dialog_edit_playlist_name">Edit Playlist Name</string>
+
+    <string name="option_see_more">option see more</string>
+    <string name="option_only_local">Only Local</string>
+    <string name="option_only_streaming">Only Streaming</string>
+    <string name="option_include_all">Include All</string>
+    <string name="option_add_playlist">Add Playlist</string>
+    <string name="option_sort_by">sort by</string>
+
+    <string name="action_play_all">Play All</string>
+    <string name="action_play_all_shuffle">Play All with Shuffle</string>
+    <string name="action_add_to_playing_queue">Add to playing queue</string>
+    <string name="action_add_playlist">"Add to playlist</string>
+    <string name="action_tag_editor">Tag editor</string>
+    <string name="action_details">Details</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_change_name">Change Name</string>
+    <string name="action_save_as_file">Save as File</string>
+
+    <string name="action_album_sort_by_artist_name">Artist name</string>
+    <string name="action_album_sort_by_album_name">Album name</string>
+
+    <string name="action_arist_sort_by_artist_name">Artist name</string>
+    <string name="action_arist_sort_by_number_of_song">Number of song</string>
+    <string name="action_arist_sort_by_number_of_album">Number of album</string>
+
+    <string name="label_file_name">File name</string>
+    <string name="label_file_path">File path</string>
+    <string name="label_last_modified">Last Modified</string>
+    <string name="label_file_size">Size</string>
+    <string name="label_file_format">Format</string>
+    <string name="label_track_length">Length</string>
+    <string name="label_bit_rate">Bitrate</string>
+    <string name="label_sampling_rate">Sampling rate</string>
+</resources>
