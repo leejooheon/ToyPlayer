@@ -1,5 +1,8 @@
 package com.jooheon.toyplayer.features.main.presentation
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,6 +34,7 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.main.MainViewModel
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.navigation.BottomNavigationHost
@@ -50,6 +54,12 @@ fun MainScreen(
     MainScreen(
         navController = navController,
         onEvent = viewModel::dispatch
+    )
+
+    MaybeRequestMediaPermission(
+        onPermissionGranted = {
+            viewModel.dispatch(MainScreenEvent.OnPermissionGranted)
+        }
     )
 }
 
@@ -185,6 +195,27 @@ fun TopBar(
             }
         }
     )
+}
+
+@Composable
+private fun MaybeRequestMediaPermission(
+    onPermissionGranted: () -> Unit,
+) {
+    val permission = if(VersionUtil.hasTiramisu()) {
+        Manifest.permission.READ_MEDIA_AUDIO
+    } else {
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    }
+
+    val storagePermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if(isGranted) onPermissionGranted()
+        }
+    )
+    SideEffect {
+        storagePermissionResultLauncher.launch(permission)
+    }
 }
 
 @Preview

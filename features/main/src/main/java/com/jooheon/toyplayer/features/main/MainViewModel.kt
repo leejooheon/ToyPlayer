@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.main
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
+import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.model.MainScreenState
@@ -18,7 +19,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(): com.jooheon.toyplayer.features.common.base.BaseViewModel() {
+class MainViewModel @Inject constructor(): BaseViewModel() {
     override val TAG: String = MainViewModel::class.java.simpleName
 
     private val _mainScreenState = MutableStateFlow(MainScreenState.default)
@@ -41,6 +42,7 @@ class MainViewModel @Inject constructor(): com.jooheon.toyplayer.features.common
             is MainScreenEvent.OnSettingIconClick -> _navigateToSettingScreen.send(Unit)
             is MainScreenEvent.OnFavoriteIconCLick -> { /** TODO **/ }
             is MainScreenEvent.OnSearchIconClick -> { /** TODO **/ }
+            is MainScreenEvent.OnPermissionGranted -> { /** TODO **/ }
         }
     }
 
