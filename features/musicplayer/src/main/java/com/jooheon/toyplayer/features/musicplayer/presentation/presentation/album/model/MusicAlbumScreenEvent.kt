@@ -4,8 +4,8 @@ import com.jooheon.toyplayer.domain.entity.music.Album
 
 sealed class MusicAlbumScreenEvent {
     data class OnAlbumItemClick(val album: Album): MusicAlbumScreenEvent()
-    object OnSortByAlbumName: MusicAlbumScreenEvent()
-    object OnSortByArtistName: MusicAlbumScreenEvent()
+    data object OnSortByAlbumName: MusicAlbumScreenEvent()
+    data object OnSortByArtistName: MusicAlbumScreenEvent()
 
     companion object {
 

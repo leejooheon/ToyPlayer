@@ -37,7 +37,7 @@ import com.jooheon.toyplayer.features.musicplayer.R
 @Composable
 internal fun MusicAlbumDetailHeader(
     album: Album,
-    onActionPlayAll: (shuffle: Boolean) -> Unit,
+    onPlayAllClick: (shuffle: Boolean) -> Unit,
 ) {
     val albumDuration = album.songs.fastSumBy { it.duration.toInt() }.toLong()
 
@@ -94,7 +94,7 @@ internal fun MusicAlbumDetailHeader(
                 .padding(12.dp)
         ) {
             OutlinedButton(
-                onClick = { onActionPlayAll(false) },
+                onClick = { onPlayAllClick(false) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
@@ -110,7 +110,7 @@ internal fun MusicAlbumDetailHeader(
             Spacer(modifier = Modifier.width(12.dp))
 
             OutlinedButton(
-                onClick = { onActionPlayAll(true) },
+                onClick = { onPlayAllClick(true) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ),
@@ -136,7 +136,7 @@ private fun MusicAlbumDetailHeaderPreview() {
                 name = Resource.longStringPlaceholder,
                 artist = Resource.mediumStringPlaceholder
             ),
-            onActionPlayAll = {},
+            onPlayAllClick = {},
         )
     }
 }

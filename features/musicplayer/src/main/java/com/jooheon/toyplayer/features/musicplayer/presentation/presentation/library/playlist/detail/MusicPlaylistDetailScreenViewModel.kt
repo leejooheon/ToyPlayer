@@ -41,6 +41,17 @@ class MusicPlaylistDetailScreenViewModel @Inject constructor(
     fun dispatch(event: MusicPlaylistDetailScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlaylistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
+            is MusicPlaylistDetailScreenEvent.OnPlayAllClick -> {
+                val playlist = musicPlaylistDetailScreenState.value.playlist
+                val songs = if(event.shuffle) playlist.songs.shuffled()
+                            else playlist.songs
+
+                musicControllerUsecase.enqueue(
+                    songs = songs,
+                    addNext = false,
+                    playWhenReady = true,
+                )
+            }
             is MusicPlaylistDetailScreenEvent.OnSongClick ->  {
                 musicControllerUsecase.enqueue(
                     song = event.song,

@@ -59,9 +59,9 @@ internal fun MusicAlbumDetailMediaColumn(
             item {
                 MusicAlbumDetailHeader(
                     album = album,
-                    onActionPlayAll = {
+                    onPlayAllClick = {
                         onEvent(
-                            MusicAlbumDetailScreenEvent.OnActionPlayAll(
+                            MusicAlbumDetailScreenEvent.OnPlayAllClick(
                                 album = album,
                                 shuffle = it
                             )

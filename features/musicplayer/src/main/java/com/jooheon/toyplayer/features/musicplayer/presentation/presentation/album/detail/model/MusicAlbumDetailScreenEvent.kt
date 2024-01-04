@@ -6,7 +6,7 @@ import com.jooheon.toyplayer.domain.entity.music.Song
 sealed class MusicAlbumDetailScreenEvent {
     data object OnBackClick: MusicAlbumDetailScreenEvent()
     data class OnSongClick(val song: Song): MusicAlbumDetailScreenEvent()
-    data class OnActionPlayAll(
+    data class OnPlayAllClick(
         val album: Album,
         val shuffle: Boolean
     ): MusicAlbumDetailScreenEvent()

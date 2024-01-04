@@ -105,6 +105,11 @@ class MusicService: MediaLibraryService() {
         Timber.tag(TAG).d( "onTaskRemoved - 1")
         if (!exoPlayer.playWhenReady) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
+
+            // If the player isn't set to play when ready, the service is stopped and resources released.
+            // This is done because if the app is swiped away from recent apps without this check,
+            // the notification would remain in an unresponsive state.
+            // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
             release()
             stopSelf()
         }
@@ -170,6 +175,7 @@ class MusicService: MediaLibraryService() {
         )
         setMediaNotificationProvider(customMediaNotificationProvider)
     }
+
     private fun initMediaSession() {
         customMediaSessionCallback = CustomMediaSessionCallback(
             context = this,
@@ -337,13 +343,5 @@ class MusicService: MediaLibraryService() {
 
         const val CYCLE_REPEAT = "$PACKAGE_NAME.cycle_repeat"
         const val TOGGLE_SHUFFLE = "$PACKAGE_NAME.toggle_shuffle"
-
-        fun allowedCaller(caller: String): Boolean {
-            val me = "com.jooheon.toyplayer"
-            val wearOs = "com.google.android.wearable.app"
-
-            val validPackageNames = listOf(me, wearOs)
-            return validPackageNames.contains(caller)
-        }
     }
 }

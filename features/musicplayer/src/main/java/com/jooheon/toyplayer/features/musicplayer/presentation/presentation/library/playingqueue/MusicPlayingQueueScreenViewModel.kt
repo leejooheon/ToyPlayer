@@ -49,7 +49,7 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
             is MusicPlayingQueueScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
             is MusicPlayingQueueScreenEvent.OnSongClick ->  musicControllerUsecase.onPlay(event.song)
             is MusicPlayingQueueScreenEvent.OnDeleteClick -> musicControllerUsecase.onDeleteAtPlayingQueue(listOf(event.song))
-            is MusicPlayingQueueScreenEvent.OnActionPlayAll -> onActionPlayAll(event.shuffle)
+            is MusicPlayingQueueScreenEvent.OnPlayAllClick -> onPlayAllClick(event.shuffle)
         }
     }
 
@@ -57,8 +57,8 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         musicMediaItemEventUseCase.dispatch(event)
     }
 
-    private fun onActionPlayAll(shuffle: Boolean) {
-        Timber.d("OnActionPlayAll: $shuffle")
+    private fun onPlayAllClick(shuffle: Boolean) {
+        Timber.d("onPlayAllClick: $shuffle")
         val currentPlayingQueue = musicPlayingQueueScreenState.value.playlist.songs
 
         val songs = if(shuffle) currentPlayingQueue.shuffled()

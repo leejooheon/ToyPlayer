@@ -41,7 +41,7 @@ internal fun BottomNavigationHost(
                 MusicCacheScreen(navigator)
             }
             composable(ScreenNavigation.BottomSheet.Playlist.route) {
-                MusicPlaylistScreen(navController)
+                MusicPlaylistScreen(navigator)
             }
         }
     }

@@ -137,7 +137,7 @@ private fun MusicPlayingQueueScreen(
                     listState = rememberLazyListState(),
                     playlist = musicPlayingQueueScreenState.playlist,
                     onPlayClick = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnSongClick(it)) },
-                    onActionPlayAll = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnActionPlayAll(it)) },
+                    onPlayAllClick = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnPlayAllClick(it)) },
                     onDropDownEvent = { index, song ->
                         when(index) {
                             0 -> onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnDeleteClick(song))
@@ -157,7 +157,7 @@ private fun PlayingQueueMediaColumn(
     listState: LazyListState,
     playlist: Playlist,
     onPlayClick: (Song) -> Unit,
-    onActionPlayAll: (Boolean) -> Unit,
+    onPlayAllClick: (Boolean) -> Unit,
     onDropDownEvent: (Int, Song) -> Unit,
 ) {
     LazyColumn(
@@ -169,8 +169,8 @@ private fun PlayingQueueMediaColumn(
             item {
                 MusicPlaylistDetailHeader(
                     playlist = playlist,
-                    onPlayAllClick = { onActionPlayAll(false) },
-                    onPlayAllWithShuffleClick = { onActionPlayAll(true) },
+                    onPlayAllClick = { onPlayAllClick(false) },
+                    onPlayAllWithShuffleClick = { onPlayAllClick(true) },
                 )
             }
 

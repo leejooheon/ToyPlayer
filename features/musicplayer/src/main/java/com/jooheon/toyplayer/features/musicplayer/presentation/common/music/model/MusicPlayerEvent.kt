@@ -3,12 +3,12 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mod
 import com.jooheon.toyplayer.domain.entity.music.Song
 
 sealed class MusicPlayerEvent {
-    object OnPlayingQueueClick: MusicPlayerEvent()
-    object OnPause: MusicPlayerEvent()
-    object OnNextClick: MusicPlayerEvent()
-    object OnPreviousClick: MusicPlayerEvent()
-    object OnShuffleClick: MusicPlayerEvent()
-    object OnRepeatClick: MusicPlayerEvent()
+    data object OnPlayingQueueClick: MusicPlayerEvent()
+    data object OnPause: MusicPlayerEvent()
+    data object OnNextClick: MusicPlayerEvent()
+    data object OnPreviousClick: MusicPlayerEvent()
+    data object OnShuffleClick: MusicPlayerEvent()
+    data object OnRepeatClick: MusicPlayerEvent()
 
     data class OnPlayPauseClick(val song: Song): MusicPlayerEvent()
     data class OnPlayClick(val song: Song): MusicPlayerEvent()

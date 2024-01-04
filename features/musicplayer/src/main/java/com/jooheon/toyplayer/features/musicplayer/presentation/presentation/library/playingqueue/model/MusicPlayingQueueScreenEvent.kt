@@ -3,8 +3,8 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 import com.jooheon.toyplayer.domain.entity.music.Song
 
 sealed class MusicPlayingQueueScreenEvent {
-    object OnBackClick: MusicPlayingQueueScreenEvent()
-    data class OnActionPlayAll(
+    data object OnBackClick: MusicPlayingQueueScreenEvent()
+    data class OnPlayAllClick(
         val shuffle: Boolean
     ): MusicPlayingQueueScreenEvent()
     data class OnSongClick(val song: Song): MusicPlayingQueueScreenEvent()

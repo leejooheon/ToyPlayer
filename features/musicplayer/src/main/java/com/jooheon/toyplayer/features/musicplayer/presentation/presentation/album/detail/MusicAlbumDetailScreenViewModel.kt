@@ -55,8 +55,8 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
                     playWhenReady = true
                 )
             }
-            is MusicAlbumDetailScreenEvent.OnActionPlayAll -> {
-                Timber.d("OnActionPlayAll: ${event.album.name}, ${event.shuffle}")
+            is MusicAlbumDetailScreenEvent.OnPlayAllClick -> {
+                Timber.d("onPlayAllClick: ${event.album.name}, ${event.shuffle}")
 
                 val songs = if(event.shuffle) event.album.songs.shuffled()
                             else event.album.songs

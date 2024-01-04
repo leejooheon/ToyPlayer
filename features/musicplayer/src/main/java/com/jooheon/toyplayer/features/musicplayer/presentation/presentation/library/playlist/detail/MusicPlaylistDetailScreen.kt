@@ -161,8 +161,8 @@ private fun PlaylistDetailMediaColumn(
             item {
                 MusicPlaylistDetailHeader(
                     playlist = playlist,
-                    onPlayAllClick = {},
-                    onPlayAllWithShuffleClick = {},
+                    onPlayAllClick = { onEvent(MusicPlaylistDetailScreenEvent.OnPlayAllClick(false)) },
+                    onPlayAllWithShuffleClick = { onEvent(MusicPlaylistDetailScreenEvent.OnPlayAllClick(true)) },
                 )
             }
 
