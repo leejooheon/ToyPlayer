@@ -125,7 +125,8 @@ private fun MusicArtistDetailScreen(
                     musicArtistDetailScreenState = musicArtistDetailScreenState,
                     listState = listState,
                     onEvent = onMusicArtistDetailScreenEvent,
-                    onMediaItemEvent = onMusicMediaItemEvent
+                    onMediaItemEvent = onMusicMediaItemEvent,
+                    onMusicPlayerEvent = onMusicPlayerEvent,
                 )
             }
         )

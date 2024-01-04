@@ -12,6 +12,9 @@ dependencies {
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.constraintlayout.compose)
 
-    implementation(libs.androidx.media3.exoplayer) // Media3
+    // media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
+
     implementation(libs.jaudiotagger) // AudioFileIO
 }

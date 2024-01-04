@@ -28,6 +28,7 @@ dependencies {
     implementation(projects.data)
     implementation(projects.domain)
     implementation(projects.features.main)
+    implementation(projects.features.common)
     implementation(projects.features.musicservice)
     implementation(projects.features.musicplayer)
 
@@ -36,6 +37,7 @@ dependencies {
 
     // media3
     implementation(libs.androidx.media3.common)
+    implementation(libs.androidx.media3.session)
 
     // log
     implementation(libs.jakewharton.timber)

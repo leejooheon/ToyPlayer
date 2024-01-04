@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.domain.usecase.setting.ThemeStateFlow
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.theme.themes.ApplicationTheme
 import com.jooheon.toyplayer.features.main.navigation.FullScreenNavigationHost
 import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
@@ -29,6 +30,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var musicStateHolder: MusicStateHolder
+    
+    @Inject
+    lateinit var playerController: PlayerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +47,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppContent()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            playerController.connectFuture()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        lifecycleScope.launch {
+            playerController.release()
         }
     }
 

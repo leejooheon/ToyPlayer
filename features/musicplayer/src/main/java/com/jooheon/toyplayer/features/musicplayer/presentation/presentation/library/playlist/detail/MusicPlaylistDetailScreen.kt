@@ -138,6 +138,7 @@ private fun MusicPlaylistDetailScreen(
                     listState = rememberLazyListState(),
                     playlist = musicPlaylistDetailScreenState.playlist,
                     onEvent = onMusicPlaylistScreenEvent,
+                    onMusicPlayerEvent = onMusicPlayerEvent,
                     onDropDownEvent = onMediaDropDownMenuEvent,
                 )
             }
@@ -150,6 +151,7 @@ private fun PlaylistDetailMediaColumn(
     listState: LazyListState,
     playlist: Playlist,
     onEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
     onDropDownEvent: (MusicMediaItemEvent) -> Unit,
 ) {
     LazyColumn(
@@ -161,8 +163,15 @@ private fun PlaylistDetailMediaColumn(
             item {
                 MusicPlaylistDetailHeader(
                     playlist = playlist,
-                    onPlayAllClick = { onEvent(MusicPlaylistDetailScreenEvent.OnPlayAllClick(false)) },
-                    onPlayAllWithShuffleClick = { onEvent(MusicPlaylistDetailScreenEvent.OnPlayAllClick(true)) },
+                    onPlayAllClick = {
+                        onMusicPlayerEvent(
+                            MusicPlayerEvent.OnEnqueue(
+                                songs = playlist.songs,
+                                shuffle = it,
+                                playWhenReady = true
+                            )
+                        )
+                    },
                 )
             }
 
@@ -181,7 +190,7 @@ private fun PlaylistDetailMediaColumn(
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
                     dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistMediaItems),
-                    onItemClick = { onEvent(MusicPlaylistDetailScreenEvent.OnSongClick(song)) },
+                    onItemClick = { onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(song))},
                     onDropDownMenuClick = {
                         val event = MusicDropDownMenuState.indexToEvent(index, song)
                         onDropDownEvent(event)

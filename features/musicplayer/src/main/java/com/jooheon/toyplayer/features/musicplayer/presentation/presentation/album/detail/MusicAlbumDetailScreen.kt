@@ -157,6 +157,7 @@ private fun MusicAlbumDetailScreen(
                     musicAlbumDetailScreenState = musicAlbumDetailScreenState,
                     listState = listState,
                     onEvent = onMusicAlbumDetailScreenEvent,
+                    onMusicPlayerEvent = onMusicPlayerEvent,
                     onMediaItemEvent = onMusicMediaItemEvent,
                 )
             }

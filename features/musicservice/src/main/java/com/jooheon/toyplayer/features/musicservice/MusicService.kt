@@ -64,7 +64,7 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var musicStateHolder: MusicStateHolder
 
-    private lateinit var exoPlayer: ExoPlayer
+    private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
@@ -103,7 +103,7 @@ class MusicService: MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).d( "onTaskRemoved - 1")
-        if (!exoPlayer.playWhenReady) {
+        if (!player.playWhenReady) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
 
             // If the player isn't set to play when ready, the service is stopped and resources released.
@@ -128,7 +128,7 @@ class MusicService: MediaLibraryService() {
 
         mediaSession.setSessionActivity(getBackStackedActivity())
         mediaSession.release()
-        exoPlayer.release()
+        player.release()
 
         serviceScope.cancel()
     }
@@ -156,7 +156,7 @@ class MusicService: MediaLibraryService() {
             .setUsage(C.USAGE_MEDIA)
             .build()
 
-        exoPlayer = ExoPlayer.Builder(applicationContext)
+        player = ExoPlayer.Builder(applicationContext)
             .setMediaSourceFactory(mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
@@ -193,12 +193,16 @@ class MusicService: MediaLibraryService() {
         .build()
     }
     private fun initListener() {
-        musicPlayerListener.setPlayer(exoPlayer)
+        musicControllerUseCase.initialize(player)
+        musicPlayerListener.setPlayer(player)
+
         setListener(MediaSessionServiceListener())
         customMediaSessionCallback.initEventListener { event ->
-            when(event) {
-                is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed()
-                is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed()
+            serviceScope.launch {
+                when(event) {
+                    is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed(player)
+                    is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed(player)
+                }
             }
         }
     }
@@ -231,7 +235,7 @@ class MusicService: MediaLibraryService() {
     }
 
     private val customForwardingPlayer by lazy {
-        object : ForwardingPlayer(exoPlayer) {
+        object : ForwardingPlayer(player) {
             override fun getAvailableCommands(): Player.Commands {
                 return super.getAvailableCommands().buildUpon()
                     .add(Player.COMMAND_SEEK_TO_NEXT)
@@ -251,21 +255,31 @@ class MusicService: MediaLibraryService() {
             }
 
             override fun play() {
-                if(fromSystemUi()) musicControllerUseCase.onPlay()
-                else super.play()
+                serviceScope.launch {
+                    if (fromSystemUi()) musicControllerUseCase.onPlay(player)
+                    else super.play()
+                }
             }
             override fun pause() {
-                if(fromSystemUi()) musicControllerUseCase.onPause()
-                else super.pause()
+                serviceScope.launch {
+                    if(fromSystemUi()) musicControllerUseCase.onPause(player)
+                    else super.pause()
+                }
             }
             override fun seekToNext() {
-                musicControllerUseCase.onNext()
+                serviceScope.launch {
+                    musicControllerUseCase.onNext(player)
+                }
             }
             override fun seekToPrevious() {
-                musicControllerUseCase.onPrevious()
+                serviceScope.launch {
+                    musicControllerUseCase.onPrevious(player)
+                }
             }
             override fun stop() {
-                musicControllerUseCase.onStop()
+                serviceScope.launch {
+                    musicControllerUseCase.onStop(player)
+                }
             }
 
             private fun fromSystemUi(): Boolean {

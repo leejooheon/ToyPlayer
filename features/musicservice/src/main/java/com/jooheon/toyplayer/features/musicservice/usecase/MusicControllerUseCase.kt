@@ -25,14 +25,11 @@ import kotlinx.coroutines.guava.asDeferred
 import timber.log.Timber
 
 class MusicControllerUseCase(
-    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder,
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
     private val TAG = MusicService::class.java.simpleName + "@" + MusicControllerUseCase::class.java.simpleName
-
-    private var _controller: Deferred<MediaController> = newControllerAsync()
     private val immediate = Dispatchers.Main.immediate
 
     init {
@@ -40,22 +37,10 @@ class MusicControllerUseCase(
         collectCurrentWindow()
     }
 
-    private fun newControllerAsync() = MediaController
-        .Builder(context, SessionToken(context, ComponentName(context, MusicService::class.java)))
-        .buildAsync()
-        .asDeferred()
-
-    private val controller: Deferred<MediaController>
-        get() {
-            if (_controller.isCompleted) {
-                val completedController = _controller.getCompleted()
-                if (!completedController.isConnected) {
-                    completedController.release()
-                    _controller = newControllerAsync()
-                }
-            }
-            return _controller
-        }
+    fun initialize(player: Player) = applicationScope.launch(immediate) {
+        initPlayingQueue(player)
+        initPlaybackOptions(player)
+    }
 
     private fun collectShuffleMode() = applicationScope.launch {
         musicStateHolder.shuffleMode.collectLatest { shuffleMode ->
@@ -74,10 +59,11 @@ class MusicControllerUseCase(
         }
     }
 
-    fun enqueue(
+    suspend fun enqueue(
+        player: Player,
         song: Song,
         playWhenReady: Boolean
-    ) = executeAfterPrepare { controller ->
+    ) = withContext(immediate){
         val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val index = playingQueue.indexOfFirst {
@@ -85,21 +71,21 @@ class MusicControllerUseCase(
         }
 
         if(index != C.INDEX_UNSET) {
-            controller.removeMediaItem(index)
+            player.removeMediaItem(index)
         }
         musicStateHolder.enqueueSongLibrary(listOf(song))
-        controller.enqueue(
+        player.enqueue(
             mediaItem = song.toMediaItem(),
             playWhenReady = playWhenReady
         )
     }
 
-    fun enqueue(
+    suspend fun enqueue(
+        player: Player,
         songs: List<Song>,
         addNext: Boolean,
         playWhenReady: Boolean
-    ) = executeAfterPrepare { controller ->
-
+    ) = withContext(immediate){
         if (addNext) { // TabToSelect
             musicStateHolder.enqueueSongLibrary(songs)
 
@@ -109,7 +95,7 @@ class MusicControllerUseCase(
                 it.toMediaItem()
             }
 
-            controller.enqueue(
+            player.enqueue(
                 mediaItems = newMediaItems,
                 playWhenReady = playWhenReady
             )
@@ -117,7 +103,7 @@ class MusicControllerUseCase(
             musicStateHolder.enqueueSongLibrary(songs)
             val newMediaItems = songs.map { it.toMediaItem() }
 
-            controller.forceEnqueue(
+            player.forceEnqueue(
                 mediaItems = newMediaItems,
                 startIndex = 0,
                 startPositionMs = C.TIME_UNSET,
@@ -126,7 +112,10 @@ class MusicControllerUseCase(
         }
     }
 
-    fun onDeleteAtPlayingQueue(songs: List<Song>) = executeAfterPrepare { controller ->
+    suspend fun onDeleteAtPlayingQueue(
+        player: Player,
+        songs: List<Song>
+    ) = withContext(immediate){
         val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val songIndexList = songs.filter {
@@ -138,13 +127,14 @@ class MusicControllerUseCase(
         }
 
         songIndexList.forEach {
-            controller.removeMediaItem(it)
+            player.removeMediaItem(it)
         }
     }
 
-    fun onPlay(
+    suspend fun onPlay(
+        player: Player,
         song: Song = musicStateHolder.musicState.value.currentPlayingMusic
-    ) = executeAfterPrepare { controller ->
+    ) = withContext(immediate){
         val playingQueue = playingQueueUseCase.getPlayingQueue()
 
         val index = playingQueue.indexOfFirst {
@@ -152,63 +142,58 @@ class MusicControllerUseCase(
         }
 
         if(index != C.INDEX_UNSET) {
-            controller.playAtIndex(
+            player.playAtIndex(
                 index = index,
-                duration = controller.currentPosition
+                duration = player.currentPosition
             )
         } else {
             enqueue(
+                player = player,
                 song = song,
                 playWhenReady = true
             )
         }
     }
 
-    fun shuffle(playWhenReady: Boolean) = executeAfterPrepare { controller ->
-        val shuffledItems = controller.shuffledItems()
+    suspend fun shuffle(
+        player: Player,
+        playWhenReady: Boolean
+    ) = withContext(immediate){
+        val shuffledItems = player.shuffledItems()
 
-        controller.forceEnqueue(
+        player.forceEnqueue(
             mediaItems = shuffledItems,
             startIndex = 0,
             startPositionMs = musicStateHolder.musicState.value.timePassed,
             playWhenReady = playWhenReady
         )
     }
-    fun onPause() = executeAfterPrepare { controller ->
-        controller.pause()
+    suspend fun onPause(player: Player) = withContext(immediate){
+        player.pause()
     }
-    fun onStop() = executeAfterPrepare { controller ->
-        controller.stop()
+    suspend fun onStop(player: Player) = withContext(immediate){
+        player.stop()
     }
-    fun onNext() = executeAfterPrepare { controller ->
-        controller.forceSeekToNext()
+    suspend fun onNext(player: Player) = withContext(immediate){
+        player.forceSeekToNext()
     }
-    fun onPrevious() = executeAfterPrepare { controller ->
-        controller.forceSeekToPrevious()
+    suspend fun onPrevious(player: Player) = withContext(immediate){
+        player.forceSeekToPrevious()
     }
-    fun snapTo(duration: Long) = executeAfterPrepare { controller ->
-        controller.seekTo(duration)
+    suspend fun snapTo(player: Player, duration: Long) = withContext(immediate){
+        player.seekTo(duration)
     }
 
-    fun onShuffleButtonPressed() = executeAfterPrepare { controller ->
+    suspend fun onShuffleButtonPressed(player: Player) = withContext(immediate){
         val shuffleMode = musicStateHolder.shuffleMode.value
-        controller.shuffleModeEnabled = !shuffleMode
+        player.shuffleModeEnabled = !shuffleMode
     }
-    fun onRepeatButtonPressed() = executeAfterPrepare { controller ->
-        val value = (controller.repeatMode.defaultZero() + 1) % 3
-        controller.repeatMode = value
-    }
-
-    private fun maybePrepare(controller: MediaController): Boolean {
-        if(controller.currentMediaItem != null &&
-           controller.playbackState in listOf(Player.STATE_READY, Player.STATE_BUFFERING)
-        ) {
-           return true
-        }
-        return false
+    suspend fun onRepeatButtonPressed(player: Player) = withContext(immediate){
+        val value = (player.repeatMode.defaultZero() + 1) % 3
+        player.repeatMode = value
     }
 
-    private suspend fun initPlayingQueue(controller: MediaController) = withContext(Dispatchers.IO) {
+    private suspend fun initPlayingQueue(player: Player) = withContext(Dispatchers.IO) {
         playingQueueUseCase.playingQueue().onEach {
             if(it is Resource.Success) {
                 val playingQueue = it.value
@@ -220,7 +205,7 @@ class MusicControllerUseCase(
                     val index = newMediaItems.indexOfFirst {
                         it.mediaId == key.toString()
                     }
-                    controller.forceEnqueue(
+                    player.forceEnqueue(
                         mediaItems = newMediaItems,
                         startIndex = index,
                         startPositionMs = C.TIME_UNSET,
@@ -231,32 +216,11 @@ class MusicControllerUseCase(
         }.launchIn(this)
     }
 
-    private suspend fun initPlaybackOptions(controller: MediaController) = withContext(immediate) {
+    private suspend fun initPlaybackOptions(player: Player) = withContext(immediate) {
         val repeatMode = playingQueueUseCase.repeatMode()
         val shuffleMode = playingQueueUseCase.shuffleMode()
 
-        controller.repeatMode = repeatMode.ordinal
-        controller.shuffleModeEnabled = shuffleMode == ShuffleMode.SHUFFLE
-    }
-
-    private inline fun executeAfterPrepare(crossinline action: suspend (MediaController) -> Unit) {
-        applicationScope.launch(immediate) {
-            val controller = awaitConnect() ?: return@launch
-            if (!maybePrepare(controller)) {
-                initPlayingQueue(controller)
-                initPlaybackOptions(controller)
-            }
-            action(controller)
-        }
-    }
-
-    suspend fun awaitConnect(): MediaController? {
-        return try {
-            controller.await()
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            Timber.e("Error while connecting to media controller")
-            null
-        }
+        player.repeatMode = repeatMode.ordinal
+        player.shuffleModeEnabled = shuffleMode == ShuffleMode.SHUFFLE
     }
 }

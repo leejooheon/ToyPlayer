@@ -39,8 +39,7 @@ import com.jooheon.toyplayer.features.musicplayer.R
 @Composable
 internal fun MusicPlaylistDetailHeader(
     playlist: Playlist,
-    onPlayAllClick: () -> Unit,
-    onPlayAllWithShuffleClick: () -> Unit,
+    onPlayAllClick: (shuffle: Boolean) -> Unit,
 ) {
     val allDuration = MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
     val songCount = UiText.StringResource(R.string.n_song, playlist.songs.size).asString()
@@ -91,7 +90,7 @@ internal fun MusicPlaylistDetailHeader(
                     .padding(vertical = 8.dp),
             ) {
                 TextButton(
-                    onClick = onPlayAllClick,
+                    onClick = { onPlayAllClick(false) },
                     modifier = Modifier
                         .clip(RoundedCornerShape(25))
                         .background(MaterialTheme.colorScheme.tertiaryContainer)
@@ -105,7 +104,7 @@ internal fun MusicPlaylistDetailHeader(
                 }
                 Spacer(modifier = Modifier.width(18.dp))
                 TextButton(
-                    onClick = onPlayAllWithShuffleClick,
+                    onClick = { onPlayAllClick(true) },
                     modifier = Modifier
                         .aspectRatio(1f)
                         .clip(CircleShape)
@@ -130,7 +129,6 @@ private fun MusicPlaylistDetailHeaderPreview() {
         MusicPlaylistDetailHeader(
             playlist = Playlist.default,
             onPlayAllClick = {},
-            onPlayAllWithShuffleClick = {},
         )
     }
 }

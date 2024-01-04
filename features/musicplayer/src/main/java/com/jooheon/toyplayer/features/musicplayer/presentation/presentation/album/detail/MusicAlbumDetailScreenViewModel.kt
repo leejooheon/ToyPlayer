@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.alb
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenEvent
@@ -24,11 +25,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicAlbumDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
+    playerController: PlayerController,
+    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
+): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
     override val TAG = MusicAlbumDetailScreenViewModel::class.java.simpleName
 
     private val _musicAlbumDetailScreenState = MutableStateFlow(MusicAlbumDetailScreenState.default)
@@ -49,24 +51,6 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
     fun dispatch(event: MusicAlbumDetailScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicAlbumDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
-            is MusicAlbumDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.enqueue(
-                    song = event.song,
-                    playWhenReady = true
-                )
-            }
-            is MusicAlbumDetailScreenEvent.OnPlayAllClick -> {
-                Timber.d("onPlayAllClick: ${event.album.name}, ${event.shuffle}")
-
-                val songs = if(event.shuffle) event.album.songs.shuffled()
-                            else event.album.songs
-
-                musicControllerUsecase.enqueue(
-                    songs = songs,
-                    addNext = false,
-                    playWhenReady = true
-                )
-            }
         }
     }
 

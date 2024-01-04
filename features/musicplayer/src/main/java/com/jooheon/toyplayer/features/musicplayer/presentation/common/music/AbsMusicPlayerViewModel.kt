@@ -1,8 +1,10 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music
 
 import androidx.lifecycle.viewModelScope
+import androidx.media3.session.MediaController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.ext.isPlaying
@@ -18,9 +20,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
+    private val controller: PlayerController,
     private val musicControllerUsecase: MusicControllerUseCase,
     private val musicStateHolder: MusicStateHolder,
-): com.jooheon.toyplayer.features.common.base.BaseViewModel() {
+): BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
 
     private val _musicPlayerState = MutableStateFlow(MusicPlayerState.default)
@@ -37,26 +40,44 @@ open class AbsMusicPlayerViewModel (
         when(event) {
             is MusicPlayerEvent.OnPlayingQueueClick -> onPlayingQueueClick()
             is MusicPlayerEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
-            is MusicPlayerEvent.OnPlayClick -> onPlay(event.song)
             is MusicPlayerEvent.OnSnapTo -> snapTo(event.duration)
             is MusicPlayerEvent.OnNextClick -> onNextClicked()
             is MusicPlayerEvent.OnPreviousClick -> onPreviousClicked()
             is MusicPlayerEvent.OnPause -> { /** Nothing **/}
             is MusicPlayerEvent.OnRepeatClick -> onRepeatClicked()
             is MusicPlayerEvent.OnShuffleClick -> onShuffleClicked()
+            is MusicPlayerEvent.OnSongClick -> onSongClick(event.song)
+            is MusicPlayerEvent.OnEnqueue -> onEnqueue(event.songs, event.shuffle, event.playWhenReady)
+            is MusicPlayerEvent.OnDeleteClick -> onDeleteClick(event.song)
         }
     }
 
-    private fun onPlay(song: Song) {
-        musicControllerUsecase.onPlay(song)
+    private fun onEnqueue(
+        songs: List<Song>,
+        shuffle: Boolean,
+        playWhenReady: Boolean
+    ) = executeAfterPrepare { player ->
+        musicControllerUsecase.enqueue(
+            player = player,
+            songs = songs,
+            addNext = false,
+            playWhenReady = playWhenReady,
+        )
     }
 
-    private fun onNextClicked() {
-        musicControllerUsecase.onNext()
+    private fun onSongClick(song: Song) = executeAfterPrepare { player ->
+        musicControllerUsecase.onPlay(player, song)
     }
 
-    private fun onPreviousClicked() {
-        musicControllerUsecase.onPrevious()
+    private fun onNextClicked() = executeAfterPrepare { player ->
+        musicControllerUsecase.onNext(player)
+    }
+
+    private fun onPreviousClicked() = executeAfterPrepare { player ->
+        musicControllerUsecase.onPrevious(player)
+    }
+    private fun onDeleteClick(song: Song) = executeAfterPrepare { player ->
+        musicControllerUsecase.onDeleteAtPlayingQueue(player, listOf(song))
     }
 
     private suspend fun onPlayingQueueClick() {
@@ -67,24 +88,24 @@ open class AbsMusicPlayerViewModel (
         )
     }
 
-    private fun onPlayPauseButtonClicked(song: Song) {
+    private fun onPlayPauseButtonClicked(song: Song) = executeAfterPrepare { player ->
         if(musicPlayerState.value.musicState.playbackState.isPlaying) {
-            musicControllerUsecase.onPause()
+            musicControllerUsecase.onPause(player)
         } else {
-            musicControllerUsecase.onPlay(song = song)
+            musicControllerUsecase.onPlay(player, song)
         }
     }
 
-    private fun onShuffleClicked() {
-        musicControllerUsecase.onShuffleButtonPressed()
+    private fun onShuffleClicked() = executeAfterPrepare { player ->
+        musicControllerUsecase.onShuffleButtonPressed(player)
     }
 
-    private fun onRepeatClicked() {
-        musicControllerUsecase.onRepeatButtonPressed()
+    private fun onRepeatClicked() = executeAfterPrepare { player ->
+        musicControllerUsecase.onRepeatButtonPressed(player)
     }
 
-    private fun snapTo(duration: Long) {
-        musicControllerUsecase.snapTo(duration)
+    private fun snapTo(duration: Long) = executeAfterPrepare { player ->
+        musicControllerUsecase.snapTo(player, duration)
     }
     private fun collectMusicState() = viewModelScope.launch {
         musicStateHolder.musicState.collectLatest { musicState ->
@@ -93,6 +114,13 @@ open class AbsMusicPlayerViewModel (
                     musicState = musicState
                 )
             }
+        }
+    }
+
+    private inline fun executeAfterPrepare(crossinline action: suspend (MediaController) -> Unit) {
+        viewModelScope.launch {
+            val controller = controller.awaitConnect() ?: return@launch
+            action(controller)
         }
     }
 }

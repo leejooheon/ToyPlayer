@@ -5,6 +5,5 @@ import com.jooheon.toyplayer.domain.entity.music.Song
 
 sealed class MusicArtistDetailScreenEvent {
     data object OnBackClick: MusicArtistDetailScreenEvent()
-    data class OnSongClick(val song: Song): MusicArtistDetailScreenEvent()
     data class OnAlbumClick(val album: Album): MusicArtistDetailScreenEvent()
 }

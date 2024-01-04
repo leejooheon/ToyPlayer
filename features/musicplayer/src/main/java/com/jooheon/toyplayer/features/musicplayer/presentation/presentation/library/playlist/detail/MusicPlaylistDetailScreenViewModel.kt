@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
@@ -19,9 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlaylistDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUseCase,
+    playerController: PlayerController,
+    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
+): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
     override val TAG = MusicPlaylistDetailScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistDetailScreenState = MutableStateFlow(MusicPlaylistDetailScreenState.default)
@@ -41,23 +43,6 @@ class MusicPlaylistDetailScreenViewModel @Inject constructor(
     fun dispatch(event: MusicPlaylistDetailScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlaylistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
-            is MusicPlaylistDetailScreenEvent.OnPlayAllClick -> {
-                val playlist = musicPlaylistDetailScreenState.value.playlist
-                val songs = if(event.shuffle) playlist.songs.shuffled()
-                            else playlist.songs
-
-                musicControllerUsecase.enqueue(
-                    songs = songs,
-                    addNext = false,
-                    playWhenReady = true,
-                )
-            }
-            is MusicPlaylistDetailScreenEvent.OnSongClick ->  {
-                musicControllerUsecase.enqueue(
-                    song = event.song,
-                    playWhenReady = true
-                )
-            }
         }
     }
 }

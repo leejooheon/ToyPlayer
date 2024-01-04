@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.bumptech.glide)
     kapt(libs.bumptech.glide.compiler)
 
+    // media3
+    implementation(libs.androidx.media3.session)
+
     //hiltViewModel
     implementation(libs.hilt.androidx.navigation.compose)
 }

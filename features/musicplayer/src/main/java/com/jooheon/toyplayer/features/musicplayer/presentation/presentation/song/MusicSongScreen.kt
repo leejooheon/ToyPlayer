@@ -111,7 +111,7 @@ private fun MusicSongScreen(
                 onSongClick = {
                     if (swipeableState.currentValue == 0) {
                         if (musicState.currentPlayingMusic != it) {
-                            onMusicPlayerEvent(MusicPlayerEvent.OnPlayClick(it))
+                            onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(it))
                         } else {
                             scope.launch {
                                 swipeableState.animateTo(1)

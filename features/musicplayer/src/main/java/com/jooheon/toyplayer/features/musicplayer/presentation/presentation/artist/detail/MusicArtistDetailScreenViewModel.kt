@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.art
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
@@ -23,11 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
-    private val musicControllerUsecase: MusicControllerUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
+    playerController: PlayerController,
+    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(musicControllerUsecase, musicStateHolder) {
+): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
     override val TAG = MusicArtistDetailScreenViewModel::class.java.simpleName
 
     private val _musicArtistDetailScreenState = MutableStateFlow(MusicArtistDetailScreenState.default)
@@ -48,12 +50,6 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     fun dispatch(event: MusicArtistDetailScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicArtistDetailScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
-            is MusicArtistDetailScreenEvent.OnSongClick -> {
-                musicControllerUsecase.enqueue(
-                    song = event.song,
-                    playWhenReady = true
-                )
-            }
             is MusicArtistDetailScreenEvent.OnAlbumClick -> {
                 val route = ScreenNavigation.Music.AlbumDetail.createRoute(event.album)
                 _navigateTo.send(route)

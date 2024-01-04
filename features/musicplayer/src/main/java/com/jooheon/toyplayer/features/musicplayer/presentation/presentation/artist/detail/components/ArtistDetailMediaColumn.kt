@@ -31,6 +31,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.Med
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 
 
 @Composable
@@ -39,6 +40,7 @@ internal fun ArtistDetailMediaColumn(
     listState: LazyListState = rememberLazyListState(),
     onEvent: (MusicArtistDetailScreenEvent) -> Unit,
     onMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val artist = musicArtistDetailScreenState.artist
     val playlists = musicArtistDetailScreenState.playlists
@@ -79,7 +81,7 @@ internal fun ArtistDetailMediaColumn(
                         subTitle = "${song.artist} • ${song.album}",
                         duration = MusicUtil.toReadableDurationString(song.duration),
                         dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
-                        onItemClick = { onEvent(MusicArtistDetailScreenEvent.OnSongClick(song)) },
+                        onItemClick = { onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(song)) },
                         onDropDownMenuClick = {
                             val event = MusicDropDownMenuState.indexToEvent(it, song)
                             musicMediaItemEventState = event
@@ -107,6 +109,7 @@ private fun ArtistDetailMediaColumnPreview() {
             listState = rememberLazyListState(),
             onEvent = {},
             onMediaItemEvent = {},
+            onMusicPlayerEvent = {},
         )
     }
 }

@@ -4,22 +4,23 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
-import com.jooheon.toyplayer.domain.usecase.setting.ThemeStateFlow
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val settingUseCase: SettingUseCase,
-    private val themeStateFlow: ThemeStateFlow
-): com.jooheon.toyplayer.features.common.base.BaseViewModel() {
+    private val settingUseCase: SettingUseCase
+): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
     val _sharedState = MutableStateFlow(SettingScreenState.default)

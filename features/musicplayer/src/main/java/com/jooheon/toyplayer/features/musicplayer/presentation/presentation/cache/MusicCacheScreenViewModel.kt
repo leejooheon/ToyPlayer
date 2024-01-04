@@ -5,6 +5,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheSpan
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cache.model.MusicCacheScreenEvent
@@ -25,10 +26,11 @@ import javax.inject.Inject
 @UnstableApi
 class MusicCacheScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
-    private val musicStateHolder: MusicStateHolder,
     private val playbackCacheManager: PlaybackCacheManager,
+    playerController: PlayerController,
     musicControllerUseCase: MusicControllerUseCase,
-): AbsMusicPlayerViewModel(musicControllerUseCase, musicStateHolder) {
+    musicStateHolder: MusicStateHolder,
+): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
 
     private val _musicCacheScreenState = MutableStateFlow(MusicCacheScreenState.default)
     val musicCacheScreenState = _musicCacheScreenState.asStateFlow()

@@ -2,7 +2,6 @@ package com.jooheon.toyplayer.features.main
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.model.MainScreenState
