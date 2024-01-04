@@ -1,20 +1,34 @@
 <div align="center">
     <img src="./app/src/main/res/mipmap-hdpi/ic_launcher.png" width="128" height="128" style="display: block; margin: 0 auto"/>
-    <h1>MusicToyProject</h1>
+    <h1>ToyPlayer</h1>
     <p>An Android application for play music</p>
 </div>
+
+This project is my digital playground where I am learning.
+I'm testing new technologies and ideas here.
+If you like to contribute, that is very appreciated.
 
 ---
 
 ## Features
-- Play (almost) any song (local, remote, assets)
-- Background playback
-- Cache audio with AES encryption and decrypt and play the file.
-- load the URL of the MediaItem when preparing for playback. (ResolvingDataSource.Resolver)
+- play (almost) any song (local, remote, assets)
+- android Auto
+- background playback
+- cache audio with AES encryption and decrypt and play the file.
+- late init media url when preparing playback. (ResolvingDataSource.Resolver)
 - using Media3 - MediaLibraryService
-- Local playlist management
-- Light/Dark/Dynamic theme
-- Android Auto (it will be later)
+- local playlist management
+- light/dark/dynamic theme
+- multiple language (eng, kor)
+
+## Preview
+<p float="left">
+  <img src="./screenshot/screen_main.png" height="600" width="270" >
+  <img src="./screenshot/screen_full_player.png" height="600" width="270" >
+  <img src="./screenshot/screen_playing_queue.png" height="600" width="270" >
+  <img src="./screenshot/screen_album.png" height="600" width="270" >
+  <img src="./screenshot/screen_artist.png" height="600" width="270" >
+</p>
 
 ## Architecture
 Alkaa architecture is strongly based on
@@ -28,6 +42,3 @@ Cockburn.
   logic. This module depends only on itself and all interaction it does is via _dependency
   inversion_.
 * **data** - The module containing the data (local, remote, light etc) from the app.
-
-## Disclaimer
-This project is an app that only simplifies playback.
