@@ -1,6 +1,10 @@
 <resources>
     <string name="playing_notification_description">The playing notification provides actions for play/pause etc.</string>
     <string name="playing_notification_name">Playing Notification</string>
+
+    <string name="playing_notification_error_title">Playback cannot be resumed</string>
+    <string name="playing_notification_error_content">Press on the play button on the media notification if it is still present, otherwise please open the app to start the playback and re-connect the session to the controller</string>
+
     <string name="action_quit">Quit</string>
     <string name="action_next">Next</string>
     <string name="action_play">Play</string>
@@ -13,4 +17,6 @@
     <string name="action_cycle_repeat">Cycle repeat mode</string>
     <string name="action_toggle_shuffle">Toggle shuffle mode</string>
     <string name="action_refresh">Refresh</string>
+
+    <string name="media_folder_root">Root Folder</string>
 </resources>

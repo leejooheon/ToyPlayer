@@ -6,6 +6,6 @@
 .idea
 .DS_Store
 /build
-/ToyProject/buildSrc/build
+/ToyPlayer/buildSrc/build
 /captures
 .externalNativeBuild

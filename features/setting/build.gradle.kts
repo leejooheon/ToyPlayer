@@ -1,9 +1,9 @@
 plugins {
-    id("toyproject.android.feature")
+    id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.setting"
+    namespace = "com.jooheon.toyplayer.features.setting"
 }
 
 dependencies {

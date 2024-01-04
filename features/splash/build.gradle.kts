@@ -1,7 +1,7 @@
 plugins {
-    id("toyproject.android.feature")
+    id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.splash"
+    namespace = "com.jooheon.toyplayer.features.splash"
 }

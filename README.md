@@ -1,29 +1,44 @@
-## Commit message  
-- `✅Feat`: 새로운 기능 추가  
-- `🔨Fix`: 버그 수정  
-- `📝Docs`: 문서 수정  
-- `🧐Style`: 코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우  
-- `♻️Refactor`: 코드 리팩토링  
-- `💡Test`: 테스트 코드, 리팩토링 테스트 코드 추가  
-- `🔧Chore`: 빌드 업무 수정, 패키지 매니저 수정  
-- `⬆️Update`: 버전 네임, 버전 코드 수정시  
-- `🔖Release`: 릴리즈
-- Reference  
-  - https://www.conventionalcommits.org/  
-  - https://seesparkbox.com/foundry/semantic_commit_messages  
-  - http://karma-runner.github.io/1.0/dev/git-commit-msg.html  
-  
-## * 형상 관리 (Git)  
-<img src= https://d2908q01vomqb2.cloudfront.net/7719a1c782a1ba91c031a682a0a2f8658209adbf/2019/02/12/gitflow-Page-1-3.png width=800>  
+<div align="center">
+    <img src="./app/src/main/res/mipmap-hdpi/ic_launcher.png" width="128" height="128" style="display: block; margin: 0 auto"/>
+    <h1>ToyPlayer</h1>
+    <p>An Android application for play music</p>
+</div>
 
-- `feature`  
-     - 요구사항이나  특정  작업을  이  브랜치를  통해  진행한다.  
-- `develop`  
-     - feature 작업이  끝나면  이  브랜치로  통합한다.  
-- `release`  
-     - 여러 feature의 작업이 끝나면, develop 브랜치에서 이 브랜치로 통합한다.  
-      - QA 등  무결성이  필요한  작업은  이  브랜치를  통해  진행한다.  
-- `hotfix`  
-     - master를  통해  브랜치를  생성한다. 배포된  버전에서  문제가  발생했을  경우  사용한다.  
-- `master`  
-     - 스토어에  배포된  버전 
+This project is my digital playground where I am learning.
+I'm testing new technologies and ideas here.
+If you like to contribute, that is very appreciated.
+
+---
+
+## Features
+- play (almost) any song (local, remote, assets)
+- android Auto
+- background playback
+- cache audio with AES encryption and decrypt and play the file.
+- late init media url when preparing playback. (ResolvingDataSource.Resolver)
+- using Media3 - MediaLibraryService
+- local playlist management
+- light/dark/dynamic theme
+- multiple language (eng, kor)
+
+## Preview
+<p float="left">
+  <img src="./screenshot/screen_main.png" height="600" width="270" >
+  <img src="./screenshot/screen_full_player.png" height="600" width="270" >
+  <img src="./screenshot/screen_playing_queue.png" height="600" width="270" >
+  <img src="./screenshot/screen_album.png" height="600" width="270" >
+  <img src="./screenshot/screen_artist.png" height="600" width="270" >
+</p>
+
+## Architecture
+Alkaa architecture is strongly based on
+the [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) by Alistair
+Cockburn.
+
+* **app** - The Application module. It contains all the initialization logic for the Android
+  environment.
+* **features** - The module/folder containing all the features (visual or not) from the application.
+* **domain** - The modules containing the most important part of the application: the business
+  logic. This module depends only on itself and all interaction it does is via _dependency
+  inversion_.
+* **data** - The module containing the data (local, remote, light etc) from the app.

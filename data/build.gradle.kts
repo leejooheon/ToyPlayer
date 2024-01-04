@@ -1,11 +1,11 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("toyproject.android.library")
+    id("toyplayer.android.library")
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.data"
+    namespace = "com.jooheon.toyplayer.data"
 }
 
 dependencies {
@@ -14,6 +14,9 @@ dependencies {
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)
+
+    // media3
+    implementation(libs.androidx.media3.common)
 
     // Network
     implementation(libs.squareup.retrofit)

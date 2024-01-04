@@ -17,14 +17,14 @@
     <string name="action_cycle_repeat">재생 모드</string>
     <string name="action_toggle_shuffle">셔플 모드</string>
 
-    <!--    -->
-    <string name="title_github">깃허브</string>
-    <string name="title_cd_github">깃허브</string>
-    <string name="title_wikipedia">위키피디아</string>
-    <string name="title_cd_wikipedia">위키피디아</string>
-    <string name="title_map">지도</string>
-    <string name="title_cd_map">지도</string>
-    <string name="title_music">음악</string>
-    <string name="title_cd_music">음악</string>
-
+    <string name="title_song">음악</string>
+    <string name="title_cd_song">음악</string>
+    <string name="title_album">앨범</string>
+    <string name="title_cd_album">앨범</string>
+    <string name="title_artist">아티스트</string>
+    <string name="title_cd_artist">아티스트</string>
+    <string name="title_cache">캐시</string>
+    <string name="title_cd_cache">캐시</string>
+    <string name="title_playlist">재생목록</string>
+    <string name="title_cd_playlist">재생목록</string>
 </resources>

@@ -1,14 +1,14 @@
 plugins {
-    id("toyproject.android.library")
-    id("toyproject.android.compose")
+    id("toyplayer.android.library")
+    id("toyplayer.android.compose")
     id("org.jetbrains.kotlin.kapt")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.common"
+    namespace = "com.jooheon.toyplayer.features.common"
 
     defaultConfig {
-        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.clean_architecture.toyproject\"")
+        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.toyplayer\"")
         buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
     }
 }
@@ -32,6 +32,9 @@ dependencies {
     // glide
     implementation(libs.bumptech.glide)
     kapt(libs.bumptech.glide.compiler)
+
+    // media3
+    implementation(libs.androidx.media3.session)
 
     //hiltViewModel
     implementation(libs.hilt.androidx.navigation.compose)

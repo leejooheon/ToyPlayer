@@ -1,9 +1,9 @@
 plugins {
-    id("toyproject.android.feature")
+    id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.clean_architecture.toyproject.features.musicplayer"
+    namespace = "com.jooheon.toyplayer.features.musicplayer"
 }
 
 dependencies {
@@ -12,6 +12,9 @@ dependencies {
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.constraintlayout.compose)
 
-    implementation(libs.androidx.media3.exoplayer) // Media3
+    // media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
+
     implementation(libs.jaudiotagger) // AudioFileIO
 }

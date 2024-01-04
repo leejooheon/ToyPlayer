@@ -20,13 +20,14 @@
     <string name="action_cycle_repeat">Cycle repeat mode</string>
     <string name="action_toggle_shuffle">Toggle shuffle mode</string>
 
-    <!--    -->
-    <string name="title_github">Github</string>
-    <string name="title_cd_github">Github</string>
-    <string name="title_wikipedia">Wikipedia</string>
-    <string name="title_cd_wikipedia">Wikipedia</string>
-    <string name="title_map">Map</string>
-    <string name="title_cd_map">Map</string>
-    <string name="title_music">Music</string>
-    <string name="title_cd_music">Music</string>
+    <string name="title_song">Song</string>
+    <string name="title_cd_song">Song</string>
+    <string name="title_album">Album</string>
+    <string name="title_cd_album">Album</string>
+    <string name="title_artist">Artist</string>
+    <string name="title_cd_artist">Artist</string>
+    <string name="title_cache">Cache</string>
+    <string name="title_cd_cache">Cache</string>
+    <string name="title_playlist">Playlist</string>
+    <string name="title_cd_playlist">Playlist</string>
 </resources>
