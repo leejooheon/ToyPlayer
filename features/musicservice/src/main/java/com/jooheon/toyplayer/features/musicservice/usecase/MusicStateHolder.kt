@@ -72,9 +72,6 @@ class MusicStateHolder(
     private val _playbackError = Channel<PlaybackException>()
     val playbackError = _playbackError.receiveAsFlow()
 
-    private val _browserConnected = MutableStateFlow(false)
-    val browserConnected = _browserConnected.asStateFlow()
-
     init {
         collectDuration()
         collectCurrentWindow()
@@ -209,8 +206,5 @@ class MusicStateHolder(
     }
     fun onPlaybackErrorChannel(exception: PlaybackException) {
         _playbackError.trySend(exception)
-    }
-    fun onBrowserConnectionChanged(connection: Boolean) {
-        _browserConnected.tryEmit(connection)
     }
 }

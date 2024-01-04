@@ -16,7 +16,6 @@ import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,46 +42,27 @@ class MusicCacheScreenViewModel @Inject constructor(
 
 
     init {
-        collectBrowserConnected()
-        collectMediaItems()
-
+        addCacheListener()
+        loadData()
     }
 
     override fun onCleared() {
-        if(musicStateHolder.browserConnected.value) {
-            playbackCacheManager.removeListener(
-                key = MusicCacheScreenViewModel::class.java.simpleName,
-                listener = cacheListener,
-            )
-        }
+        playbackCacheManager.removeListener(
+            key = MusicCacheScreenViewModel::class.java.simpleName,
+            listener = cacheListener,
+        )
         super.onCleared()
     }
 
-    private fun collectBrowserConnected() = viewModelScope.launch {
-        musicStateHolder.browserConnected.collect { connected ->
-            if(connected) {
-                playbackCacheManager.addListener(
-                    key = MusicCacheScreenViewModel::class.java.simpleName,
-                    listener = cacheListener,
-                )
-            } else {
-                playbackCacheManager.removeListener(
-                    key = MusicCacheScreenViewModel::class.java.simpleName,
-                    listener = cacheListener,
-                )
-            }
-        }
+    private fun addCacheListener() = viewModelScope.launch {
+        playbackCacheManager.addListener(
+            key = MusicCacheScreenViewModel::class.java.simpleName,
+            listener = cacheListener,
+        )
+        loadData()
     }
 
-    private fun collectMediaItems() = viewModelScope.launch {
-        musicStateHolder.mediaItems.collectLatest {
-            loadData()
-        }
-    }
-
-    private fun loadData() = viewModelScope.launch {
-        if(!musicStateHolder.browserConnected.value) return@launch
-
+    fun loadData() = viewModelScope.launch {
         val library = musicListUseCase.assetSongList.firstOrNull() ?: emptyList()
 
         val cachedSongs = library.filter {

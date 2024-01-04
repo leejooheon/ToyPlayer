@@ -7,7 +7,7 @@ data class MusicCacheScreenState(
 ) {
     companion object {
         val default = MusicCacheScreenState(
-            songs = Song.defaultList,
+            songs = emptyList(),
         )
     }
 }
