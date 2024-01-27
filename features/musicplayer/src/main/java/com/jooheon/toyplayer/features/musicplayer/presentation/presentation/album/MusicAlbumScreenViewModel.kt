@@ -6,12 +6,11 @@ import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.common.PlayerController
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.model.MusicAlbumScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -29,9 +28,8 @@ import javax.inject.Inject
 class MusicAlbumScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
     playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
     override val TAG = MusicAlbumScreenViewModel::class.java.simpleName
 
     private val _musicAlbumScreenState = MutableStateFlow(MusicAlbumScreenState.default)

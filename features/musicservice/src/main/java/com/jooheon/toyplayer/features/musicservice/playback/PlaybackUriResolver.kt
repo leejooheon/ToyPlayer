@@ -10,6 +10,8 @@ import com.jooheon.toyplayer.domain.common.extension.defaultFalse
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.automotive.AutomotiveUseCase
 import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder.Companion.URI_BUFFER_SIZE
 import com.jooheon.toyplayer.features.musicservice.data.RingBuffer
 import com.jooheon.toyplayer.features.musicservice.data.TestLogKey
 import com.jooheon.toyplayer.features.musicservice.ext.uri
@@ -23,14 +25,11 @@ import kotlin.random.Random
 
 @OptIn(UnstableApi::class)
 class PlaybackUriResolver(
-    private val playingQueueUseCase: PlayingQueueUseCase,
-    private val automotiveUseCase: AutomotiveUseCase,
+    private val musicStateHolder: MusicStateHolder,
 ) : ResolvingDataSource.Resolver {
     private val TAG = PlaybackUriResolver::class.java.simpleName
 
     private var playbackCacheManager: PlaybackCacheManager? = null
-
-    private val ringBuffer = RingBuffer<Pair<String, Uri>?>(URI_BUFFER_SIZE) { null }
     private val random = Random(System.currentTimeMillis())
 
     fun init(playbackCacheManager: PlaybackCacheManager) {
@@ -45,12 +44,18 @@ class PlaybackUriResolver(
             Timber.tag(TAG).e("dataSpec key is null")
             error("A key must be set")
         }
-
-        val (playingQueue, automotiveQueue) = runBlocking {
-            Pair(playingQueueUseCase.getPlayingQueue(), automotiveUseCase.getCurrentPlayingSongs())
+        val library = musicStateHolder.songLibrary.value
+        val song = library.firstOrNull { it.key() == customCacheKey } ?: run {
+            Timber.tag(TAG).d("resolveDataSpec: $customCacheKey is not found in playlist.")
+            throw PlaybackException("$customCacheKey not found in playlist." , null, PlaybackException.ERROR_CODE_FAILED_RUNTIME_CHECK)
         }
 
-        val song = findSong(customCacheKey, playingQueue + automotiveQueue)
+        val uri = runBlocking(Dispatchers.IO) {
+            val streamResult = musicStateHolder.getStreamResultOrNull(song.key())
+            streamResult ?: getStreamUri(song)
+        } ?: run {
+            throw PlaybackException("StreamResult is null. [${song.title}]" , null, PlaybackException.CUSTOM_ERROR_CODE_BASE)
+        }
 
         isCached(
             dataSpec = dataSpec,
@@ -59,17 +64,6 @@ class PlaybackUriResolver(
             Timber.tag(TAG).d("resolveDataSpec: isCached: $cached")
             if(cached) return dataSpec.withCustomData(song.key())
         }
-
-        repeat(URI_BUFFER_SIZE) { index ->
-            val (key, uri) = ringBuffer.getOrNull(index) ?: return@repeat
-            if(customCacheKey == key) {
-                Timber.tag(TAG).d("resolveDataSpec: inside ringBuffer: $customCacheKey, $uri")
-                return dataSpec.withUri(uri).withCustomData(song.key())
-            }
-        }
-
-        val uri = getStreamUri(song)
-        ringBuffer.append(customCacheKey to uri)
 
         val newDataSpec = dataSpec
             .withUri(uri)
@@ -89,14 +83,6 @@ class PlaybackUriResolver(
         return super.resolveReportedUri(uri)
     }
 
-    private fun findSong(customCacheKey: String, playingQueue: List<Song>): Song {
-        val song = playingQueue.firstOrNull { it.key() == customCacheKey } ?: run {
-            Timber.tag(TAG).d("resolveDataSpec: $customCacheKey is not found in playlist.")
-            throw PlaybackException("key not found in playlist.", null, PlaybackException.ERROR_CODE_REMOTE_ERROR)
-        }
-        return song
-    }
-
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
         if(song.useCache) {
             val cached = playbackCacheManager?.isCached(song.key(), dataSpec.position, chunkLength).defaultFalse()
@@ -107,29 +93,28 @@ class PlaybackUriResolver(
         return false
     }
 
-    private fun getStreamUri(song: Song): Uri {
-        val defaultUri = song.uri
+    private suspend fun getStreamUri(song: Song): Uri? {
         val overwriteSession = true
 
         val (musicStreamUri, logKey) = runBlocking(Dispatchers.IO) {
             getMusicStream(song, overwriteSession)
         } ?: run {
             Timber.tag(TAG).e("musicStreamUri is null")
-            return defaultUri
+            return null
         }
 
         if(musicStreamUri == null || musicStreamUri.toString().isEmpty()) {
             Timber.tag(TAG).e("musicStreamUri is invalid: $musicStreamUri")
-            return defaultUri
+            return null
         }
 
         if(logKey == null) {
             Timber.tag(TAG).d("streamResult is null: ${song.uri}")
-            return defaultUri
+            return null
         }
 
         Timber.tag(TAG).d("getMusicStream success. title: ${song.title}, id: ${song.key()}, overwriteSession: $overwriteSession, logKey: $logKey")
-
+        musicStateHolder.appendToRingBuffer(song.key() to song.uri)
         return musicStreamUri
     }
 
@@ -156,9 +141,5 @@ class PlaybackUriResolver(
             .setFlags(flags)
             .setCustomData(customData)
             .build()
-    }
-
-    companion object {
-        private const val URI_BUFFER_SIZE = 2
     }
 }

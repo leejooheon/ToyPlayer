@@ -15,6 +15,7 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import kotlinx.coroutines.CoroutineScope
@@ -26,21 +27,13 @@ import kotlinx.coroutines.guava.future
 import timber.log.Timber
 
 @OptIn(UnstableApi::class)
-class CustomMediaSessionCallback(
+class MediaLibrarySessionCallback(
     private val context: Context,
     private val mediaItemProvider: MediaItemProvider,
 ): MediaLibrarySession.Callback {
     private val scope = CoroutineScope(Dispatchers.Main + Job())
-    private var onCustomEvent: ((CustomEvent) -> Unit)? = null
-    sealed class CustomEvent {
-        data object OnRepeatIconPressed: CustomEvent()
-        data object OnShuffleIconPressed: CustomEvent()
-    }
-    fun initEventListener(listener: (CustomEvent) -> Unit) {
-        onCustomEvent = listener
-    }
+
     fun release() {
-        onCustomEvent = null
         scope.cancel()
     }
 
@@ -82,8 +75,13 @@ class CustomMediaSessionCallback(
     ): ListenableFuture<SessionResult> {
         Timber.d("onCustomCommand: ${customCommand.customAction}")
         when (customCommand.customAction) {
-            MusicService.CYCLE_REPEAT -> onCustomEvent?.invoke(CustomEvent.OnRepeatIconPressed)
-            MusicService.TOGGLE_SHUFFLE -> onCustomEvent?.invoke(CustomEvent.OnShuffleIconPressed)
+            MusicService.CYCLE_REPEAT -> {
+                val value = (session.player.repeatMode.defaultZero() + 1) % 3
+                session.player.repeatMode = value
+            }
+            MusicService.TOGGLE_SHUFFLE -> {
+                session.player.shuffleModeEnabled = !(session.player.shuffleModeEnabled)
+            }
         }
 
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))

@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicservice.usecase
+package com.jooheon.toyplayer.features.musicservice.playback
 
 import android.media.session.PlaybackState
 import androidx.media3.common.*
@@ -15,21 +15,22 @@ import com.jooheon.toyplayer.features.musicservice.ext.mediaItemsIndices
 import com.jooheon.toyplayer.features.musicservice.ext.playbackState
 import com.jooheon.toyplayer.features.musicservice.ext.playerState
 import com.jooheon.toyplayer.features.musicservice.ext.timelineChangeReason
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import kotlinx.coroutines.*
 import timber.log.Timber
 
-class MusicPlayerListener(
+class PlaybackListener(
     private val applicationScope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder
 ) : Player.Listener {
-    private val TAG = MusicService::class.java.simpleName + "@" + MusicPlayerListener::class.java.simpleName
+    private val TAG = MusicService::class.java.simpleName + "@" + PlaybackListener::class.java.simpleName
     private var player: Player? = null
     private var durationJob: Job? = null
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
         Timber.tag(TAG).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
-        musicStateHolder.onCurrentWindowChanged(player?.currentWindow)
+        musicStateHolder.onMediaItemChanged(mediaItem)
     }
 
     override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -40,7 +41,6 @@ class MusicPlayerListener(
             musicStateHolder.onMediaItemsChanged(player?.mediaItems ?: emptyList())
             Timber.tag("shuffle_test").d("onTimelineChanged: ${player?.shuffleModeEnabled}, ${player?.mediaItemsIndices}")
         }
-        musicStateHolder.onCurrentWindowChanged(player?.currentWindow)
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -94,7 +94,16 @@ class MusicPlayerListener(
     override fun onPlayerError(error: PlaybackException) {
         super.onPlayerError(error)
         Timber.tag(TAG).d("onPlayerError: ${error.message}")
-        musicStateHolder.onPlaybackErrorChannel(error)
+        musicStateHolder.onPlaybackException(error)
+    }
+
+    override fun onPositionDiscontinuity(
+        oldPosition: Player.PositionInfo,
+        newPosition: Player.PositionInfo,
+        reason: Int
+    ) {
+        super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+        musicStateHolder.onPositionDiscontinuity(oldPosition.positionMs, newPosition.positionMs)
     }
 
     override fun onEvents(player: Player, events: Player.Events) {
@@ -128,8 +137,8 @@ class MusicPlayerListener(
 
     fun setPlayer(player: Player) {
         this.player = player.apply {
-            removeListener(this@MusicPlayerListener)
-            addListener(this@MusicPlayerListener)
+            removeListener(this@PlaybackListener)
+            addListener(this@PlaybackListener)
         }
     }
 

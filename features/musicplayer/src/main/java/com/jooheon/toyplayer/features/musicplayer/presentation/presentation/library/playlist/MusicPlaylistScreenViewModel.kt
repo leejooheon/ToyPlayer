@@ -6,14 +6,13 @@ import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.features.common.PlayerController
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -31,12 +30,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicPlaylistScreenViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val playingQueueUseCase: PlayingQueueUseCase,
     private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
     playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
-    musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+    private val musicStateHolder: MusicStateHolder,
+): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
     override val TAG = MusicPlaylistScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
@@ -87,20 +84,17 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        playingQueueUseCase.playingQueue().onEach {
-            if(it !is Resource.Success) return@onEach
-
-            val playingQueue = it.value
+        musicStateHolder.playingQueue.collectLatest {  playingQueue ->
             val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
                 it.id == Playlist.PlayingQueuePlaylistId
-            } ?: return@onEach
+            } ?: return@collectLatest
 
             if(playingQueue == oldPlayingQueue.songs) {
-                return@onEach
+                return@collectLatest
             }
 
             playlistUseCase.update()
-        }.launchIn(this)
+        }
     }
 
     private fun collectPlaylist() = viewModelScope.launch {

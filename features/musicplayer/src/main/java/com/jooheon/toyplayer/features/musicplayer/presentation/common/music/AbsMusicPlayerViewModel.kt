@@ -4,12 +4,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.session.MediaController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.PlayerController
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.ext.isPlaying
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 open class AbsMusicPlayerViewModel (
-    private val controller: PlayerController,
-    private val musicControllerUsecase: MusicControllerUseCase,
+    private val playerController: PlayerController,
     private val musicStateHolder: MusicStateHolder,
 ): BaseViewModel() {
     override val TAG = AbsMusicPlayerViewModel::class.java.simpleName
@@ -56,28 +54,29 @@ open class AbsMusicPlayerViewModel (
         songs: List<Song>,
         shuffle: Boolean,
         playWhenReady: Boolean
-    ) = executeAfterPrepare { player ->
-        musicControllerUsecase.enqueue(
-            player = player,
-            songs = songs,
+    ) {
+        val shuffled = if(shuffle) songs.shuffled() else songs
+
+        playerController.enqueue(
+            songs = shuffled,
             addNext = false,
             playWhenReady = playWhenReady,
         )
     }
 
-    private fun onSongClick(song: Song) = executeAfterPrepare { player ->
-        musicControllerUsecase.onPlay(player, song)
+    private fun onSongClick(song: Song) {
+        playerController.play(song)
     }
 
-    private fun onNextClicked() = executeAfterPrepare { player ->
-        musicControllerUsecase.onNext(player)
+    private fun onNextClicked() {
+        playerController.seekToNext()
     }
 
-    private fun onPreviousClicked() = executeAfterPrepare { player ->
-        musicControllerUsecase.onPrevious(player)
+    private fun onPreviousClicked() {
+        playerController.seekToPrevious()
     }
-    private fun onDeleteClick(song: Song) = executeAfterPrepare { player ->
-        musicControllerUsecase.onDeleteAtPlayingQueue(player, listOf(song))
+    private fun onDeleteClick(song: Song) {
+        playerController.onDeleteAtPlayingQueue(listOf(song))
     }
 
     private suspend fun onPlayingQueueClick() {
@@ -88,24 +87,24 @@ open class AbsMusicPlayerViewModel (
         )
     }
 
-    private fun onPlayPauseButtonClicked(song: Song) = executeAfterPrepare { player ->
+    private fun onPlayPauseButtonClicked(song: Song) {
         if(musicPlayerState.value.musicState.playbackState.isPlaying) {
-            musicControllerUsecase.onPause(player)
+            playerController.pause()
         } else {
-            musicControllerUsecase.onPlay(player, song)
+            playerController.play(song)
         }
     }
 
-    private fun onShuffleClicked() = executeAfterPrepare { player ->
-        musicControllerUsecase.onShuffleButtonPressed(player)
+    private fun onShuffleClicked() {
+        playerController.shuffle()
     }
 
-    private fun onRepeatClicked() = executeAfterPrepare { player ->
-        musicControllerUsecase.onRepeatButtonPressed(player)
+    private fun onRepeatClicked() {
+        playerController.repeat()
     }
 
-    private fun snapTo(duration: Long) = executeAfterPrepare { player ->
-        musicControllerUsecase.snapTo(player, duration)
+    private fun snapTo(duration: Long) {
+        playerController.snapTo(duration)
     }
     private fun collectMusicState() = viewModelScope.launch {
         musicStateHolder.musicState.collectLatest { musicState ->
@@ -114,13 +113,6 @@ open class AbsMusicPlayerViewModel (
                     musicState = musicState
                 )
             }
-        }
-    }
-
-    private inline fun executeAfterPrepare(crossinline action: suspend (MediaController) -> Unit) {
-        viewModelScope.launch {
-            val controller = controller.awaitConnect() ?: return@launch
-            action(controller)
         }
     }
 }
