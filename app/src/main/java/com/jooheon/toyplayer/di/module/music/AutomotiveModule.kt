@@ -11,12 +11,14 @@ import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 object AutomotiveModule {
     @Provides
     fun provideAutomotiveRepository(
@@ -24,7 +26,7 @@ object AutomotiveModule {
     ): AutomotiveRepository = AutomotiveRepositoryImpl(localMusicDataSource)
 
     @Provides
-    @Singleton
+    @ServiceScoped
     fun provideAutomotiveUseCase(
         automotiveRepository: AutomotiveRepository,
         musicListUseCase: MusicListUseCase,

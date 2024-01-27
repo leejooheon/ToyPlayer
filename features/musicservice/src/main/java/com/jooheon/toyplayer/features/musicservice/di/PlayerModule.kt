@@ -1,26 +1,24 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
+import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
-import com.jooheon.toyplayer.domain.usecase.music.automotive.AutomotiveUseCase
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ServiceComponent
+import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Singleton
 
-
+@OptIn(UnstableApi::class)
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 object PlayerModule {
     @Provides
-    @Singleton
-    @UnstableApi
-    fun provideMusicPlayerListener(
+    @ServiceScoped
+    fun providePlaybackListener(
         applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
     ) = PlaybackListener(
@@ -29,15 +27,8 @@ object PlayerModule {
     )
 
     @Provides
-    @Singleton
-    @UnstableApi
+    @ServiceScoped
     fun providePlaybackUriResolver(
         musicStateHolder: MusicStateHolder
     ): PlaybackUriResolver = PlaybackUriResolver(musicStateHolder)
-
-    @Provides
-    @Singleton
-    fun provideMusicStateHolder(
-        applicationScope: CoroutineScope,
-    ) = MusicStateHolder(applicationScope)
 }

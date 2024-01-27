@@ -8,8 +8,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class MusicMediaItemEventUseCase @Inject constructor(
+class MusicMediaItemEventUseCase(
     private val playlistUseCase: PlaylistUseCase,
 ) {
     suspend fun dispatch(event: MusicMediaItemEvent) {

@@ -12,11 +12,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
 @InstallIn(ServiceComponent::class)
 object PlaybackUseCaseModule {
     @Provides
+    @ServiceScoped
     fun providePlaybackLogUseCase(
         @ApplicationContext context: Context,
         musicStateHolder: MusicStateHolder,
@@ -28,6 +30,7 @@ object PlaybackUseCaseModule {
     )
 
     @Provides
+    @ServiceScoped
     fun providePlaybackUseCase(
         musicStateHolder: MusicStateHolder,
         playingQueueUseCase: PlayingQueueUseCase,
@@ -37,6 +40,7 @@ object PlaybackUseCaseModule {
     )
 
     @Provides
+    @ServiceScoped
     fun providePlaybackErrorUseCase(
         @ApplicationContext context: Context,
         musicStateHolder: MusicStateHolder,

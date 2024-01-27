@@ -12,8 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MusicStateModule {
-
+object MusicStateHolderModule {
     @Provides
     @Singleton
     fun provideMusicStateHolder(
