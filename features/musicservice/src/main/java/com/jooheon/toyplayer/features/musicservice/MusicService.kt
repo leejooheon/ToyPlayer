@@ -21,7 +21,6 @@ import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
