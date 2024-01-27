@@ -12,8 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
-import androidx.media3.common.ForwardingPlayer
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSourceBitmapLoader
 import androidx.media3.datasource.ResolvingDataSource
@@ -28,9 +26,11 @@ import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotif
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicPlayerListener
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
+import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
+import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -44,10 +44,7 @@ class MusicService: MediaLibraryService() {
     private val TAG = MusicService::class.java.simpleName + "@" + "Main"
 
     @Inject
-    lateinit var musicControllerUseCase: MusicControllerUseCase
-
-    @Inject
-    lateinit var musicPlayerListener: MusicPlayerListener
+    lateinit var playbackListener: PlaybackListener
 
     @Inject
     lateinit var singleTopActivityIntent: Intent
@@ -64,9 +61,18 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var musicStateHolder: MusicStateHolder
 
-    private lateinit var player: ExoPlayer
+    @Inject
+    lateinit var playbackLogUseCase : PlaybackLogUseCase
+
+    @Inject
+    lateinit var playbackUseCase : PlaybackUseCase
+
+    @Inject
+    lateinit var playbackErrorUseCase : PlaybackErrorUseCase
+
+    private lateinit var player: ToyPlayer
     private lateinit var mediaSession: MediaLibrarySession
-    private lateinit var customMediaSessionCallback: CustomMediaSessionCallback
+    private lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
 
     private val serviceJob = Job()
@@ -91,8 +97,9 @@ class MusicService: MediaLibraryService() {
         initNotification()
         initMediaSession()
         initListener()
+        initUseCase()
 
-        collectNotificationState()
+        collectStates()
     }
 
     override fun onLowMemory() {
@@ -115,15 +122,15 @@ class MusicService: MediaLibraryService() {
         }
     }
 
-
     private fun release() {
         notificationManager?.cancel(NOTIFICATION_ID)
+
         playbackUriResolver.release()
         playbackCacheManager.release()
 
         // clear listener
-        customMediaSessionCallback.release()
-        musicPlayerListener.release()
+        mediaLibrarySessionCallback.release()
+        playbackListener.release()
         clearListener()
 
         mediaSession.setSessionActivity(getBackStackedActivity())
@@ -156,12 +163,14 @@ class MusicService: MediaLibraryService() {
             .setUsage(C.USAGE_MEDIA)
             .build()
 
-        player = ExoPlayer.Builder(applicationContext)
+        val exoPlayer = ExoPlayer.Builder(applicationContext)
             .setMediaSourceFactory(mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
             .setWakeMode(C.WAKE_MODE_NETWORK) // 잠금화면에서 Wifi를 이용한 백그라운드 재생 허용
             .build()
+
+        player = ToyPlayer(exoPlayer)
     }
 
     private fun initNotification() {
@@ -177,51 +186,56 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initMediaSession() {
-        customMediaSessionCallback = CustomMediaSessionCallback(
+        mediaLibrarySessionCallback = MediaLibrarySessionCallback(
             context = this,
             mediaItemProvider = mediaItemProvider,
         )
 
         mediaSession = MediaLibrarySession.Builder(
             /** service  **/this,
-            /** player   **/ customForwardingPlayer,
-            /** callback **/ customMediaSessionCallback,
+            /** player   **/ player,
+            /** callback **/ mediaLibrarySessionCallback,
         )
         .setSessionActivity(getSingleTopActivity())
 //        .setBitmapLoader(CoilBitmapLoader(this, serviceScope))
         .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
         .build()
     }
-    private fun initListener() {
-        musicControllerUseCase.initialize(player)
-        musicPlayerListener.setPlayer(player)
 
+    private fun initListener() {
+        playbackListener.setPlayer(player)
         setListener(MediaSessionServiceListener())
-        customMediaSessionCallback.initEventListener { event ->
-            serviceScope.launch {
-                when(event) {
-                    is CustomMediaSessionCallback.CustomEvent.OnRepeatIconPressed -> musicControllerUseCase.onRepeatButtonPressed(player)
-                    is CustomMediaSessionCallback.CustomEvent.OnShuffleIconPressed -> musicControllerUseCase.onShuffleButtonPressed(player)
-                }
-            }
-        }
     }
 
-    private fun collectNotificationState() {
+    private fun initUseCase() = serviceScope.launch {
+        playbackUseCase.initialize(player, serviceScope)
+        playbackLogUseCase.initialize(serviceScope)
+        playbackErrorUseCase.initialize(serviceScope)
+    }
+
+    private fun collectStates() {
         serviceScope.launch {
-            combine(
-                musicStateHolder.repeatMode,
-                musicStateHolder.shuffleMode
-            ) { repeatMode, shuffleMode ->
-                repeatMode to shuffleMode
-            }.collectLatest { (repeatMode, shuffleMode) ->
-                mediaSession.setCustomLayout(
-                    CustomMediaNotificationCommand.layout(
-                        context = this@MusicService,
-                        shuffleMode = shuffleMode,
-                        repeatMode = repeatMode
+            launch {
+                combine(
+                    musicStateHolder.repeatMode,
+                    musicStateHolder.shuffleMode
+                ) { repeatMode, shuffleMode ->
+                    repeatMode to shuffleMode
+                }.collectLatest { (repeatMode, shuffleMode) ->
+                    mediaSession.setCustomLayout(
+                        CustomMediaNotificationCommand.layout(
+                            context = this@MusicService,
+                            shuffleMode = shuffleMode,
+                            repeatMode = repeatMode
+                        )
                     )
-                )
+                }
+            }
+
+            launch {
+                playbackErrorUseCase.autoPlayChannel.collectLatest {
+                    if(!player.isPlaying) player.play()
+                }
             }
         }
     }
@@ -232,65 +246,6 @@ class MusicService: MediaLibraryService() {
             0,
             singleTopActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-    }
-
-    private val customForwardingPlayer by lazy {
-        object : ForwardingPlayer(player) {
-            override fun getAvailableCommands(): Player.Commands {
-                return super.getAvailableCommands().buildUpon()
-                    .add(Player.COMMAND_SEEK_TO_NEXT)
-                    .add(Player.COMMAND_SEEK_TO_PREVIOUS)
-                    .build()
-            }
-
-            override fun isCommandAvailable(command: Int): Boolean {
-                // https://github.com/androidx/media/issues/140
-                val available = when(command) {
-                    COMMAND_SEEK_TO_NEXT -> true
-                    COMMAND_SEEK_TO_PREVIOUS -> true
-                    else -> super.isCommandAvailable(command)
-                }
-
-                return available
-            }
-
-            override fun play() {
-                serviceScope.launch {
-                    if (fromSystemUi()) musicControllerUseCase.onPlay(player)
-                    else super.play()
-                }
-            }
-            override fun pause() {
-                serviceScope.launch {
-                    if(fromSystemUi()) musicControllerUseCase.onPause(player)
-                    else super.pause()
-                }
-            }
-            override fun seekToNext() {
-                serviceScope.launch {
-                    musicControllerUseCase.onNext(player)
-                }
-            }
-            override fun seekToPrevious() {
-                serviceScope.launch {
-                    musicControllerUseCase.onPrevious(player)
-                }
-            }
-            override fun stop() {
-                serviceScope.launch {
-                    musicControllerUseCase.onStop(player)
-                }
-            }
-
-            private fun fromSystemUi(): Boolean {
-                try {
-                    val controllerInfo = mediaSession.controllerForCurrentRequest ?: return false
-                    return mediaSession.isMediaNotificationController(controllerInfo)
-                } catch (e: NullPointerException) {
-                    return false
-                }
-            }
-        }
     }
 
     private fun getBackStackedActivity(): PendingIntent {
@@ -349,6 +304,7 @@ class MusicService: MediaLibraryService() {
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }
+    
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
 

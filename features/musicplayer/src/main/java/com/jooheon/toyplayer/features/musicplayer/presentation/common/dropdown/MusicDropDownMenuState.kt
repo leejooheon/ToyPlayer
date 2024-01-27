@@ -4,8 +4,8 @@ import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
 
 data class MusicDropDownMenuState(
     val items: List<UiText>,
@@ -45,25 +45,25 @@ data class MusicDropDownMenuState(
             index: Int,
             song: Song,
             playlist: Playlist? = null,
-        ): MusicMediaItemEvent {
+        ): SongItemEvent {
             return when(index) {
-                0 -> MusicMediaItemEvent.OnAddToPlayingQueueClick(song)
-                1 -> MusicMediaItemEvent.OnAddPlaylistClick(song, playlist)
-                2 -> MusicMediaItemEvent.OnTagEditorClick(song)
-                3 -> MusicMediaItemEvent.OnDetailsClick(song)
-                else -> MusicMediaItemEvent.Placeholder
+                0 -> SongItemEvent.OnAddToPlayingQueueClick(song)
+                1 -> SongItemEvent.OnAddPlaylistClick(song, playlist)
+                2 -> SongItemEvent.OnTagEditorClick(song)
+                3 -> SongItemEvent.OnDetailsClick(song)
+                else -> SongItemEvent.Placeholder
             }
         }
 
         fun indexToEvent(
             index: Int,
             playlist: Playlist,
-        ): MusicPlaylistItemEvent{
+        ): PlaylistEvent {
             return when(index) {
-                0 -> MusicPlaylistItemEvent.OnDelete(playlist)
-                1 -> MusicPlaylistItemEvent.OnChangeName(playlist)
-                2 -> MusicPlaylistItemEvent.OnSaveAsFile(playlist)
-                else -> MusicPlaylistItemEvent.Placeholder
+                0 -> PlaylistEvent.OnDelete(playlist)
+                1 -> PlaylistEvent.OnChangeName(playlist)
+                2 -> PlaylistEvent.OnSaveAsFile(playlist)
+                else -> PlaylistEvent.Placeholder
             }
         }
     }

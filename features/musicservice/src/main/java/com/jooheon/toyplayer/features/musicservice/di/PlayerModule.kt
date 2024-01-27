@@ -1,45 +1,34 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
+import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
-import com.jooheon.toyplayer.domain.usecase.music.automotive.AutomotiveUseCase
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicPlayerListener
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
+import dagger.hilt.android.components.ServiceComponent
+import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
-import javax.inject.Singleton
 
-
+@OptIn(UnstableApi::class)
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 object PlayerModule {
     @Provides
-    @Singleton
-    @UnstableApi
-    fun provideMusicPlayerListener(
+    @ServiceScoped
+    fun providePlaybackListener(
         applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
-    ) = MusicPlayerListener(
+    ) = PlaybackListener(
         applicationScope = applicationScope,
         musicStateHolder = musicStateHolder,
     )
 
     @Provides
-    @Singleton
-    @UnstableApi
+    @ServiceScoped
     fun providePlaybackUriResolver(
-        playingQueueUseCase: PlayingQueueUseCase,
-        automotiveUseCase: AutomotiveUseCase,
-    ): PlaybackUriResolver = PlaybackUriResolver(playingQueueUseCase, automotiveUseCase)
-
-    @Provides
-    @Singleton
-    fun provideMusicStateHolder(
-        applicationScope: CoroutineScope,
-        playingQueueUseCase: PlayingQueueUseCase,
-    ) = MusicStateHolder(applicationScope, playingQueueUseCase)
+        musicStateHolder: MusicStateHolder
+    ): PlaybackUriResolver = PlaybackUriResolver(musicStateHolder)
 }

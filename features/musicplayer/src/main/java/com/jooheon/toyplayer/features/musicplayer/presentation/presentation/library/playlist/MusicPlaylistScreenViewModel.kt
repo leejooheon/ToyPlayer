@@ -1,27 +1,22 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist
 
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.features.common.PlayerController
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaylistEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,12 +26,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicPlaylistScreenViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val playingQueueUseCase: PlayingQueueUseCase,
-    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-    playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
-    musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+    private val playlistEventUseCase: PlaylistEventUseCase,
+    private val musicStateHolder: MusicStateHolder,
+    playbackEventUseCase: PlaybackEventUseCase,
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicPlaylistScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
@@ -58,8 +51,8 @@ class MusicPlaylistScreenViewModel @Inject constructor(
         }
     }
 
-    fun onMusicMediaItemEvent(event: MusicPlaylistItemEvent) = viewModelScope.launch {
-        musicMediaItemEventUseCase.dispatch(event)
+    fun onPlaylistEvent(event: PlaylistEvent) = viewModelScope.launch {
+        playlistEventUseCase.dispatch(event)
     }
 
     private suspend fun onPlaylistClick(playlist: Playlist) {
@@ -87,20 +80,17 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        playingQueueUseCase.playingQueue().onEach {
-            if(it !is Resource.Success) return@onEach
-
-            val playingQueue = it.value
+        musicStateHolder.playingQueue.collectLatest {  playingQueue ->
             val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
                 it.id == Playlist.PlayingQueuePlaylistId
-            } ?: return@onEach
+            } ?: return@collectLatest
 
             if(playingQueue == oldPlayingQueue.songs) {
-                return@onEach
+                return@collectLatest
             }
 
             playlistUseCase.update()
-        }.launchIn(this)
+        }
     }
 
     private fun collectPlaylist() = viewModelScope.launch {

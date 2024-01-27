@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 
 
@@ -30,14 +30,14 @@ internal fun MusicSongMediaColumn(
     songMediaColumnItemType: Boolean,
 
     onSongClick: (song: Song) -> Unit,
-    onMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    onMediaItemEvent: (SongItemEvent) -> Unit,
 
     modifier: Modifier,
 ) {
     val playlists = musicSongScreenState.playlists
 
-    var musicMediaItemEventState by remember {
-        mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
+    var songItemEventState by remember {
+        mutableStateOf<SongItemEvent>(SongItemEvent.Placeholder)
     }
 
     LazyColumn(
@@ -54,15 +54,15 @@ internal fun MusicSongMediaColumn(
                 song = song,
                 viewType = songMediaColumnItemType,
                 onMediaItemClick = { onSongClick(song) }, // FIXME
-                onMediaItemEvent = { musicMediaItemEventState = it }
+                onMediaItemEvent = { songItemEventState = it }
             )
         }
     }
 
     MediaDropDownMenuDialogEvents(
         playlists = playlists,
-        event = musicMediaItemEventState,
-        onDismiss = { musicMediaItemEventState = MusicMediaItemEvent.Placeholder },
+        event = songItemEventState,
+        onDismiss = { songItemEventState = SongItemEvent.Placeholder },
         onRedirectEvent = onMediaItemEvent
     )
 }
