@@ -28,7 +28,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 
 
@@ -37,14 +37,14 @@ internal fun MusicAlbumDetailMediaColumn(
     musicAlbumDetailScreenState: MusicAlbumDetailScreenState,
     listState: LazyListState = rememberLazyListState(),
     onEvent: (MusicAlbumDetailScreenEvent) -> Unit,
-    onMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    onMediaItemEvent: (SongItemEvent) -> Unit,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val album = musicAlbumDetailScreenState.album
     val playlists = musicAlbumDetailScreenState.playlists
 
-    var musicMediaItemEventState by remember {
-        mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
+    var songItemEventState by remember {
+        mutableStateOf<SongItemEvent>(SongItemEvent.Placeholder)
     }
 
     Box(
@@ -96,7 +96,7 @@ internal fun MusicAlbumDetailMediaColumn(
                     onItemClick = { onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(song)) },
                     onDropDownMenuClick = {
                         val event = MusicDropDownMenuState.indexToEvent(it, song)
-                        musicMediaItemEventState = event
+                        songItemEventState = event
                     }
                 )
             }
@@ -107,8 +107,8 @@ internal fun MusicAlbumDetailMediaColumn(
 
         MediaDropDownMenuDialogEvents(
             playlists = playlists,
-            event = musicMediaItemEventState,
-            onDismiss = { musicMediaItemEventState = MusicMediaItemEvent.Placeholder },
+            event = songItemEventState,
+            onDismiss = { songItemEventState = SongItemEvent.Placeholder },
             onRedirectEvent = onMediaItemEvent
         )
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
@@ -19,9 +20,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlaylistDetailScreenViewModel @Inject constructor(
-    playerController: PlayerController,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicPlaylistDetailScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistDetailScreenState = MutableStateFlow(MusicPlaylistDetailScreenState.default)

@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 object PlayerControllerModule {
-
     @Provides
     @ActivityRetainedScoped
     fun providePlayerController(

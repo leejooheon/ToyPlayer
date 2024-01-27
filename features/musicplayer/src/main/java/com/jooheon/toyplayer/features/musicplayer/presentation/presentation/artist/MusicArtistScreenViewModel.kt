@@ -7,6 +7,7 @@ import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenState
@@ -28,9 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicArtistScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
-    playerController: PlayerController,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicArtistScreenViewModel::class.java.simpleName
 
     private val _musicArtistScreenState = MutableStateFlow(MusicArtistScreenState.default)

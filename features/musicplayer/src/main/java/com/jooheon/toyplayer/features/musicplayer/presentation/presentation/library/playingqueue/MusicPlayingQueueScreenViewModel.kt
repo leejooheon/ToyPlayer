@@ -2,10 +2,10 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.features.musicservice.player.PlayerController
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
@@ -22,10 +22,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlayingQueueScreenViewModel @Inject constructor(
-    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-    playerController: PlayerController,
+    private val songItemEventUseCase: SongItemEventUseCase,
     private val musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase,
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
 
     private val _musicPlayingQueueScreenState = MutableStateFlow(MusicPlayingQueueScreenState.default)
@@ -44,9 +44,10 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
         }
     }
 
-    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
-        musicMediaItemEventUseCase.dispatch(event)
+    fun onSongItemEvent(event: SongItemEvent) = viewModelScope.launch {
+        songItemEventUseCase.dispatch(event)
     }
+    
     private fun collectPlayingQueue() = viewModelScope.launch {
         musicStateHolder.playingQueue.collectLatest { playingQueue ->
             _musicPlayingQueueScreenState.update {

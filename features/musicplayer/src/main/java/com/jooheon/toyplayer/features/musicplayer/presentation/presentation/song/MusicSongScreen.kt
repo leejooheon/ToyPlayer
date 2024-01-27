@@ -27,7 +27,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components.MusicSongOptionDialog
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components.MusicSongMediaColumn
@@ -54,7 +54,7 @@ fun MusicSongScreen(
     MusicSongScreen(
         musicSongState = screenState,
         onMusicSongEvent = viewModel::dispatch,
-        onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+        onMusicMediaItemEvent = viewModel::onSongItemEvent,
 
         musicPlayerState = musicPlayerState,
         onMusicPlayerEvent = viewModel::dispatch,
@@ -66,7 +66,7 @@ fun MusicSongScreen(
 private fun MusicSongScreen(
     musicSongState: MusicSongScreenState,
     onMusicSongEvent: (MusicSongScreenEvent) -> Unit,
-    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    onMusicMediaItemEvent: (SongItemEvent) -> Unit,
 
     musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,

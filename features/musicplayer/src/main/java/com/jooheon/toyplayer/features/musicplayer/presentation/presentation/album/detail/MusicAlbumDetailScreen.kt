@@ -54,7 +54,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.albu
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
@@ -87,7 +87,7 @@ fun MusicAlbumDetailScreen(
     MusicAlbumDetailScreen(
         musicAlbumDetailScreenState = state,
         onMusicAlbumDetailScreenEvent = viewModel::dispatch,
-        onMusicMediaItemEvent = viewModel::onMusicMediaItemEvent,
+        onMusicMediaItemEvent = viewModel::onSongItemEvent,
 
         musicPlayerState = musicPlayerState,
         onMusicPlayerEvent = viewModel::dispatch,
@@ -99,7 +99,7 @@ fun MusicAlbumDetailScreen(
 private fun MusicAlbumDetailScreen(
     musicAlbumDetailScreenState: MusicAlbumDetailScreenState,
     onMusicAlbumDetailScreenEvent: (MusicAlbumDetailScreenEvent) -> Unit,
-    onMusicMediaItemEvent: (MusicMediaItemEvent) -> Unit,
+    onMusicMediaItemEvent: (SongItemEvent) -> Unit,
 
     musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
@@ -116,8 +116,8 @@ private fun MusicAlbumDetailScreen(
     val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
 
-    var musicMediaItemEventState by remember {
-        mutableStateOf<MusicMediaItemEvent>(MusicMediaItemEvent.Placeholder)
+    var songItemEventState by remember {
+        mutableStateOf<SongItemEvent>(SongItemEvent.Placeholder)
     }
 
     Column(

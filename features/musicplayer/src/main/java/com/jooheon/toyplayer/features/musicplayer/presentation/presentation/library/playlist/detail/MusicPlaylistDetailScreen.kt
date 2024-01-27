@@ -40,7 +40,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
@@ -85,7 +85,7 @@ fun MusicPlaylistDetailScreen(
 private fun MusicPlaylistDetailScreen(
     musicPlaylistDetailScreenState: MusicPlaylistDetailScreenState,
     onMusicPlaylistScreenEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
-    onMediaDropDownMenuEvent: (MusicMediaItemEvent) -> Unit,
+    onMediaDropDownMenuEvent: (SongItemEvent) -> Unit,
 
     musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
@@ -152,7 +152,7 @@ private fun PlaylistDetailMediaColumn(
     playlist: Playlist,
     onEvent: (MusicPlaylistDetailScreenEvent) -> Unit,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
-    onDropDownEvent: (MusicMediaItemEvent) -> Unit,
+    onDropDownEvent: (SongItemEvent) -> Unit,
 ) {
     LazyColumn(
         state = listState,

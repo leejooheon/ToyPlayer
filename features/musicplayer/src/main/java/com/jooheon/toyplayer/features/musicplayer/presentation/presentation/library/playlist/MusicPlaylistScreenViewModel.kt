@@ -1,14 +1,12 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist
 
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.features.musicservice.player.PlayerController
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicPlaylistItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaylistEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.PlaylistEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
@@ -19,8 +17,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,10 +26,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicPlaylistScreenViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-    playerController: PlayerController,
+    private val playlistEventUseCase: PlaylistEventUseCase,
     private val musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase,
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicPlaylistScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
@@ -55,8 +51,8 @@ class MusicPlaylistScreenViewModel @Inject constructor(
         }
     }
 
-    fun onMusicMediaItemEvent(event: MusicPlaylistItemEvent) = viewModelScope.launch {
-        musicMediaItemEventUseCase.dispatch(event)
+    fun onPlaylistEvent(event: PlaylistEvent) = viewModelScope.launch {
+        playlistEventUseCase.dispatch(event)
     }
 
     private suspend fun onPlaylistClick(playlist: Playlist) {
