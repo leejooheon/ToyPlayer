@@ -4,9 +4,9 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.SongItemEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState

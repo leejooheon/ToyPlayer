@@ -5,7 +5,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheSpan
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent

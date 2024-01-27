@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase
+package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase
 
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent

@@ -4,8 +4,8 @@ import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.PlaylistEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
 
 data class MusicDropDownMenuState(
     val items: List<UiText>,
@@ -58,7 +58,7 @@ data class MusicDropDownMenuState(
         fun indexToEvent(
             index: Int,
             playlist: Playlist,
-        ): PlaylistEvent{
+        ): PlaylistEvent {
             return when(index) {
                 0 -> PlaylistEvent.OnDelete(playlist)
                 1 -> PlaylistEvent.OnChangeName(playlist)

@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 
 

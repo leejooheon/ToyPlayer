@@ -1,9 +1,9 @@
 package com.jooheon.toyplayer.di.module.music
 
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaylistEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.SongItemEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaylistEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.Module

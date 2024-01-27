@@ -12,7 +12,7 @@ import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemLarge
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemSmall
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 
 
 @Composable

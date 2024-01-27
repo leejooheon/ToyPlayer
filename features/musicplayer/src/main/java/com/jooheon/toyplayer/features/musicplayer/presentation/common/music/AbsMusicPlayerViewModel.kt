@@ -6,7 +6,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

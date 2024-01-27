@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model
+package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model
 
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 

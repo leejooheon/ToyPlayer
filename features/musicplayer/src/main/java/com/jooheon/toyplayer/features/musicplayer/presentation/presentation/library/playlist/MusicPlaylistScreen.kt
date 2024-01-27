@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.PlaylistEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.components.PlaylistMediaColumn

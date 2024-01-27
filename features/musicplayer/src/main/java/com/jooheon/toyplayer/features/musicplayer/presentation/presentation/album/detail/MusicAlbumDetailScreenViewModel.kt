@@ -6,9 +6,9 @@ import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.model.MusicAlbumDetailScreenState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.PlaybackEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.usecase.SongItemEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel

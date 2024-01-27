@@ -30,7 +30,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.arti
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
