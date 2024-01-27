@@ -47,9 +47,11 @@
             </intent-filter>
         </service>
 
+        <!-- https://devkshull.github.io/android/2023/11/06/work-manager-with-hilt.html-->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
             tools:node="remove">
         </provider>
     </application>
