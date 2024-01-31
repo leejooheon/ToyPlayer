@@ -51,6 +51,10 @@ class MediaLibrarySessionCallback(
         return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED))
     }
 
+    override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
+        super.onDisconnected(session, controller)
+        Timber.d("onDisconnected")
+    }
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo

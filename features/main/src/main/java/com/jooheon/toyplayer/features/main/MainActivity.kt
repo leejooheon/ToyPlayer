@@ -16,6 +16,8 @@ import com.jooheon.toyplayer.features.main.navigation.FullScreenNavigationHost
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,9 +28,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var settingUseCase: SettingUseCase
-
-    @Inject
-    lateinit var playerController: PlayerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,25 +43,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppContent()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        lifecycleScope.launch {
-            playerController.connectFuture()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        lifecycleScope.launch {
-            playerController.release()
-        }
-    }
-
-    override fun onDestroy() {
-        Timber.d("onDestroy")
-        super.onDestroy()
     }
 
     @Composable

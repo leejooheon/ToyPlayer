@@ -19,12 +19,8 @@ object PlayerModule {
     @Provides
     @ServiceScoped
     fun providePlaybackListener(
-        applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
-    ) = PlaybackListener(
-        applicationScope = applicationScope,
-        musicStateHolder = musicStateHolder,
-    )
+    ) = PlaybackListener(musicStateHolder)
 
     @Provides
     @ServiceScoped

@@ -2,7 +2,6 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel

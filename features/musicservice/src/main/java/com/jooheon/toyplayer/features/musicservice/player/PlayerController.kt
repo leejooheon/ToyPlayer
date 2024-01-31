@@ -32,13 +32,7 @@ class PlayerController(
 ) {
     private val immediate = Dispatchers.Main.immediate
     private var _controller: Deferred<MediaController> = newControllerAsync()
-
-    private fun newControllerAsync() = MediaController
-        .Builder(context, SessionToken(context, ComponentName(context, MusicService::class.java)))
-        .buildAsync()
-        .asDeferred()
-
-    private val future: Deferred<MediaController>
+    private val controller: Deferred<MediaController>
         get() {
             if (_controller.isCompleted) {
                 val completedController = _controller.getCompleted()
@@ -49,6 +43,11 @@ class PlayerController(
             }
             return _controller
         }
+
+    private fun newControllerAsync() = MediaController
+        .Builder(context, SessionToken(context, ComponentName(context, MusicService::class.java)))
+        .buildAsync()
+        .asDeferred()
 
     fun snapTo(position: Long) = executeAfterPrepare {
         it.seekTo(position)
@@ -167,20 +166,10 @@ class PlayerController(
             player.removeMediaItem(it)
         }
     }
-    suspend fun connectFuture() {
-        Timber.d("connectFuture start")
-        awaitConnect()?.let {
-            if(it.isConnected) it.release()
-        }
-        _controller = newControllerAsync()
-        Timber.d("connectFuture end")
-    }
 
     suspend fun release() {
         try {
-            future.await().also {
-                it.release()
-            }
+            awaitConnect()?.release()
             Timber.d("release player")
         } catch (e: Exception) {
             if (e is CancellationException) throw e
@@ -188,9 +177,10 @@ class PlayerController(
         }
     }
 
-    suspend fun awaitConnect(): MediaController? {
+
+    private suspend fun awaitConnect(): MediaController? {
         return try {
-            future.await()
+            controller.await()
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             Timber.e(e, "Error while connecting to media controller")

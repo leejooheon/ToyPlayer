@@ -7,6 +7,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,6 +30,13 @@ open class AbsMusicPlayerViewModel (
 
     init {
         collectMusicState()
+    }
+
+    override fun onCleared() {
+        viewModelScope.launch {
+            playbackEventUseCase.release()
+        }
+        super.onCleared()
     }
 
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {

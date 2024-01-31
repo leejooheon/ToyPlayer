@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSourceBitmapLoader
 import androidx.media3.datasource.ResolvingDataSource
@@ -35,8 +36,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
@@ -70,7 +74,6 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var playbackErrorUseCase : PlaybackErrorUseCase
 
-    private lateinit var player: ToyPlayer
     private lateinit var mediaSession: MediaLibrarySession
     private lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
@@ -93,9 +96,9 @@ class MusicService: MediaLibraryService() {
     override fun onCreate() {
         Timber.tag(TAG).d( "onCreate")
         super.onCreate()
-        initPlayer()
-        initNotification()
+
         initMediaSession()
+        initNotification()
         initListener()
         initUseCase()
 
@@ -110,7 +113,7 @@ class MusicService: MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         Timber.tag(TAG).d( "onTaskRemoved - 1")
-        if (!player.playWhenReady) {
+        if (!mediaSession.player.playWhenReady) {
             Timber.tag(TAG).d( "onTaskRemoved - 2")
 
             // If the player isn't set to play when ready, the service is stopped and resources released.
@@ -122,31 +125,44 @@ class MusicService: MediaLibraryService() {
         }
     }
 
-    private fun release() {
-        notificationManager?.cancel(NOTIFICATION_ID)
-
-        playbackUriResolver.release()
-        playbackCacheManager.release()
-
-        // clear listener
-        mediaLibrarySessionCallback.release()
-        playbackListener.release()
-        clearListener()
-
-        mediaSession.setSessionActivity(getBackStackedActivity())
-        mediaSession.release()
-        player.release()
-
-        serviceScope.cancel()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         release()
         Timber.tag(TAG).d( "onDestroy")
     }
 
-    private fun initPlayer() {
+    private fun release() {
+        playbackUriResolver.release()
+        playbackCacheManager.release()
+        mediaLibrarySessionCallback.release()
+
+        with(mediaSession) {
+            player.stop()
+            player.clearMediaItems()
+            player.removeListener(playbackListener)
+            player.release()
+            release()
+        }
+
+        clearListener()
+        serviceScope.cancel()
+
+        handleMedia3Bug()
+    }
+
+    private fun handleMedia3Bug() { // TODO: CleanUp
+        /**
+         * process가 종료되지 않는 버그.. 짱난다 demo-session도 동일
+         * we should have something else instead\
+         * https://github.com/androidx/media/issues/370
+         * https://github.com/androidx/media/issues/976
+         * https://github.com/androidx/media/issues/1042
+         **/
+        notificationManager?.cancelAll()
+        exitProcess(0)
+    }
+
+    private fun initPlayer(): Player {
         playbackCacheManager.init()
         playbackUriResolver.init(playbackCacheManager)
 
@@ -170,7 +186,7 @@ class MusicService: MediaLibraryService() {
             .setWakeMode(C.WAKE_MODE_NETWORK) // 잠금화면에서 Wifi를 이용한 백그라운드 재생 허용
             .build()
 
-        player = ToyPlayer(exoPlayer)
+        return ToyPlayer(exoPlayer)
     }
 
     private fun initNotification() {
@@ -186,6 +202,8 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initMediaSession() {
+        val player = initPlayer()
+
         mediaLibrarySessionCallback = MediaLibrarySessionCallback(
             context = this,
             mediaItemProvider = mediaItemProvider,
@@ -203,12 +221,12 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initListener() {
-        playbackListener.setPlayer(player)
+        mediaSession.player.addListener(playbackListener)
         setListener(MediaSessionServiceListener())
     }
 
     private fun initUseCase() = serviceScope.launch {
-        playbackUseCase.initialize(player, serviceScope)
+        playbackUseCase.initialize(mediaSession.player, serviceScope)
         playbackLogUseCase.initialize(serviceScope)
         playbackErrorUseCase.initialize(serviceScope)
     }
@@ -233,12 +251,32 @@ class MusicService: MediaLibraryService() {
             }
 
             launch {
+                musicStateHolder.isPlaying.collectLatest { isPlaying ->
+                    if(isPlaying) {
+                        withContext(Dispatchers.Main) {
+                            pollCurrentDuration(mediaSession.player).collect {
+                                    value -> musicStateHolder.onCurrentDurationChanged(value)
+                            }
+                        }
+                    }
+                }
+            }
+
+            launch {
                 playbackErrorUseCase.autoPlayChannel.collectLatest {
+                    val player = mediaSession.player
                     if(!player.isPlaying) player.play()
                 }
             }
         }
     }
+
+    private fun pollCurrentDuration(player: Player) = flow {
+        while (player.isPlaying && (player.currentPosition + POLL_INTERVAL_MSEC <= player.duration)) {
+            emit(player.currentPosition)
+            delay(POLL_INTERVAL_MSEC)
+        }
+    }.conflate()
 
     private fun getSingleTopActivity(): PendingIntent {
         return PendingIntent.getActivity(
@@ -307,6 +345,7 @@ class MusicService: MediaLibraryService() {
     
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
+        private const val POLL_INTERVAL_MSEC = 500L
 
         const val NOTIFICATION_ID = 234
         const val NOTIFICATION_CHANNEL_ID = "Jooheon_player_notification"

@@ -9,7 +9,7 @@ class PlaybackEventUseCase(
     private val playerController: PlayerController,
     private val musicStateHolder: MusicStateHolder,
 ) {
-    suspend fun dispatch(event: MusicPlayerEvent) {
+    fun dispatch(event: MusicPlayerEvent) {
         when(event) {
             is MusicPlayerEvent.OnPlayPauseClick -> onPlayPauseButtonClicked(event.song)
             is MusicPlayerEvent.OnSnapTo -> snapTo(event.duration)
@@ -23,6 +23,10 @@ class PlaybackEventUseCase(
             is MusicPlayerEvent.OnDeleteClick -> onDeleteClick(event.song)
             else -> { /** Nothing **/ }
         }
+    }
+
+    suspend fun release() {
+        playerController.release()
     }
 
     private fun onEnqueue(

@@ -79,9 +79,6 @@ class MusicStateHolder(
     private val _playbackState = MutableStateFlow(Player.STATE_IDLE)
     val playbackState = _playbackState.asStateFlow()
 
-    private val _playerState = MutableStateFlow<@Player.State Int>(Player.STATE_IDLE)
-    val playerState = _playerState.asStateFlow()
-
     private val _disContinuation = MutableStateFlow(Pair(0L, 0L))
     val disContinuation = _disContinuation.asStateFlow()
 
@@ -90,7 +87,6 @@ class MusicStateHolder(
         collectMediaItem()
         collectMediaItemsState()
         collectPlaybackState()
-        collectPlayerState()
     }
 
     private fun collectMediaItemsState() = applicationScope.launch {
@@ -141,21 +137,6 @@ class MusicStateHolder(
         }
     }
 
-    private fun collectPlayerState() = applicationScope.launch {
-        combine(
-            playWhenReady,
-            playerState,
-        ) { playWhenReady, playerState ->
-            Pair(playWhenReady, playerState)
-        }.collectLatest { (playWhenReady, playerState) ->
-            _musicState.update {
-                it.copy(
-                    playbackState = playerState.toPlaybackState(playWhenReady)
-                )
-            }
-        }
-    }
-
     internal fun enqueueSongLibrary(songs: List<Song>) {
         val songLibrary = songLibrary.value
 
@@ -189,9 +170,6 @@ class MusicStateHolder(
     }
     internal fun onPlaybackStateChanged(playbackState: Int) {
         _playbackState.tryEmit(playbackState)
-    }
-    internal fun onPlayerStateChanged(playerState: Int) {
-        _playerState.tryEmit(playerState)
     }
     internal fun onPlaybackException(exception: PlaybackException) {
         Timber.e("onPlaybackException: ${PlaybackException.getErrorCodeName(exception.errorCode)}, ${exception.message}")
