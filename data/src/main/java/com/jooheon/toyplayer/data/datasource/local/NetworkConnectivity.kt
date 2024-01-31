@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import com.jooheon.toyplayer.domain.observer.NetworkConnectivityObserver
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -42,7 +43,15 @@ class NetworkConnectivity @Inject constructor(
                 }
             }
 
-            connectivityManager.registerDefaultNetworkCallback(callback)
+            connectivityManager.registerNetworkCallback(
+                NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                    .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
+                    .build(),
+                callback
+            )
+
             awaitClose {
                 connectivityManager.unregisterNetworkCallback(callback)
             }
