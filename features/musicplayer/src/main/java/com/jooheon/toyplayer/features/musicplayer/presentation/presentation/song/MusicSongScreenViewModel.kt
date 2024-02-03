@@ -44,6 +44,7 @@ class MusicSongScreenViewModel @Inject constructor(
         when(event) {
             is MusicSongScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
             is MusicSongScreenEvent.OnItemViewTypeChanged -> {}
+            is MusicSongScreenEvent.ReloadSongList -> musicListUseCase.initialize()
         }
     }
 

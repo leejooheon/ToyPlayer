@@ -1,10 +1,16 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,11 +20,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.extensions.scrollEnabled
@@ -36,6 +46,14 @@ import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.features.essential.base.UiText
+import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.features.common.compose.components.PermissionRequestItem
+import com.jooheon.toyplayer.features.common.compose.components.appDetailSettings
+import com.jooheon.toyplayer.features.common.compose.components.isPermissionRequestBlocked
+import com.jooheon.toyplayer.features.common.compose.components.savePermissionRequested
+import com.jooheon.toyplayer.features.common.extension.findAnyActivity
+import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import kotlinx.coroutines.launch
 import java.lang.Float
 import kotlin.math.max
@@ -61,7 +79,7 @@ fun MusicSongScreen(
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
 private fun MusicSongScreen(
     musicSongState: MusicSongScreenState,
@@ -87,6 +105,47 @@ private fun MusicSongScreen(
 
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+
+    val permission = if (VersionUtil.hasTiramisu()) Manifest.permission.READ_MEDIA_AUDIO
+                     else Manifest.permission.READ_EXTERNAL_STORAGE
+
+    val permissionState = rememberPermissionState(permission)
+    val rememberLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = {}
+    )
+    val activity = LocalContext.current as Activity
+
+    var isPermissionRequestBlockedState by remember {
+        mutableStateOf(isPermissionRequestBlocked(activity, permission))
+    }
+
+    LaunchedEffect(permissionState.status) {
+        if(permissionState.status.isGranted) {
+            onMusicSongEvent(MusicSongScreenEvent.ReloadSongList)
+        }
+        isPermissionRequestBlockedState = isPermissionRequestBlocked(activity, permission)
+    }
+
+    if(!permissionState.status.isGranted) {
+        PermissionRequestItem(
+            resId = R.drawable.folder_search_base_256_blu_glass,
+            description = UiText.StringResource(R.string.description_permission_read_storage),
+            isPermissionRequestBlocked = isPermissionRequestBlockedState,
+            launchPermissionRequest = {
+                if (permissionState.status.isGranted) {
+                    return@PermissionRequestItem
+                }
+                if (isPermissionRequestBlocked(activity, permission)) {
+                    rememberLauncher.launch(appDetailSettings(activity))
+                    return@PermissionRequestItem
+                }
+                permissionState.launchPermissionRequest()
+                savePermissionRequested(activity, permission)
+            }
+        )
+        return
+    }
 
     MediaSwipeableLayout(
         musicPlayerState = musicPlayerState,

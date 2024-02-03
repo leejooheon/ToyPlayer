@@ -32,13 +32,6 @@ open class AbsMusicPlayerViewModel (
         collectMusicState()
     }
 
-    override fun onCleared() {
-        viewModelScope.launch {
-            playbackEventUseCase.release()
-        }
-        super.onCleared()
-    }
-
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {
         when(event) {
             is MusicPlayerEvent.OnPlayingQueueClick -> onPlayingQueueClick()

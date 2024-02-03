@@ -109,4 +109,10 @@
     <string name="media_folder_all_songs">모든 음악</string>
     <string name="media_folder_album">앨범</string>
     <string name="media_folder_playlist">플레이리스트</string>
+
+    <!-- permission -->
+    <string name="action_request_permission">권한 요청하기</string>
+    <string name="action_navigate_app_settings">앱 설정으로 이동</string>
+    <string name="description_permission_blocked">이전 권한 요청에서 거부되었습니다.\n수동으로 권한을 부여해 주세요.</string>
+    <string name="description_permission_read_storage">내부 저장소 접근 권한이 필요합니다.</string>
 </resources>

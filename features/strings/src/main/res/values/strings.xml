@@ -110,6 +110,13 @@
     <string name="media_folder_album">Album</string>
     <string name="media_folder_playlist">Playlist</string>
 
+    <!-- permission -->
+    <string name="action_request_permission">Grant Permission</string>
+    <string name="action_navigate_app_settings">Navigate App Settings</string>
+    <string name="description_permission_blocked">Denied it in the previous request,\nplease grant permission manually.</string>
+    <string name="description_permission_read_storage">Read Storage Permission is Required.</string>
+
+
     <!-- playback test -->
     <string name="test_mp3" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
     <string name="media_url_mp4" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
