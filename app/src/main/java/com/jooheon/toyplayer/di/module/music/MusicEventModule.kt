@@ -19,18 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 @InstallIn(ViewModelComponent::class)
 object MusicEventModule {
     @Provides
-    @ViewModelScoped
-    fun providePlayerController(
-        @ApplicationContext context: Context,
-        applicationScope: CoroutineScope,
-        musicStateHolder: MusicStateHolder,
-    ) = PlayerController(
-        context = context,
-        applicationScope = applicationScope,
-        musicStateHolder = musicStateHolder,
-    )
-
-    @Provides
     fun providePlaybackEventUseCase(
         playerController: PlayerController,
         musicStateHolder: MusicStateHolder,

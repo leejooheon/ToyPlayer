@@ -6,10 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -94,7 +96,7 @@ class MusicService: MediaLibraryService() {
     }
 
     override fun onCreate() {
-        Timber.tag(TAG).d( "onCreate")
+        Timber.tag(LifecycleTAG).d( "onCreate")
         super.onCreate()
 
         initMediaSession()
@@ -105,30 +107,24 @@ class MusicService: MediaLibraryService() {
         collectStates()
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-        Timber.tag(TAG).d( "onLowMemory")
-    }
-
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        Timber.tag(TAG).d( "onTaskRemoved - 1")
+        Timber.tag(LifecycleTAG).d( "onTaskRemoved - 1")
         if (!mediaSession.player.playWhenReady) {
-            Timber.tag(TAG).d( "onTaskRemoved - 2")
+            Timber.tag(LifecycleTAG).d( "onTaskRemoved - 2")
 
             // If the player isn't set to play when ready, the service is stopped and resources released.
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
             // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
-            release()
             stopSelf()
         }
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        Timber.tag(LifecycleTAG).d( "onDestroy")
         release()
-        Timber.tag(TAG).d( "onDestroy")
+        super.onDestroy()
     }
 
     private fun release() {
@@ -342,10 +338,25 @@ class MusicService: MediaLibraryService() {
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }
-    
+
+    override fun onBind(intent: Intent?): IBinder? {
+        Timber.tag(LifecycleTAG).d("onBind: ${intent?.data}")
+        return super.onBind(intent)
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Timber.tag(LifecycleTAG).d("onUnbind: ${intent?.data}")
+        return super.onUnbind(intent)
+    }
+    override fun onRebind(intent: Intent?) {
+        Timber.tag(LifecycleTAG).d("onRebind: ${intent?.data}")
+        super.onRebind(intent)
+    }
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
         private const val POLL_INTERVAL_MSEC = 500L
+
+        private const val LifecycleTAG = "ServiceLifecycle"
 
         const val NOTIFICATION_ID = 234
         const val NOTIFICATION_CHANNEL_ID = "Jooheon_player_notification"

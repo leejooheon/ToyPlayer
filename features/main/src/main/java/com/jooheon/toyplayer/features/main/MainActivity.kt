@@ -29,9 +29,12 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingUseCase: SettingUseCase
 
+    @Inject
+    lateinit var playerController: PlayerController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("onCreate")
+        Timber.tag(LifecycleTAG).d("onCreate")
 
         lifecycleScope.launch {
             SettingScreenEvent.changeLanguage(
@@ -45,6 +48,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStop() {
+        Timber.tag(LifecycleTAG).d("onStop")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Timber.tag(LifecycleTAG).d("onDestroy")
+        lifecycleScope.launch {
+            playerController.release()
+        }
+        super.onDestroy()
+    }
+
     @Composable
     private fun AppContent() {
         val themeState = themeStateFlow.themeState.collectAsState()
@@ -54,5 +70,9 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+
+    companion object {
+        private const val LifecycleTAG = "ActivityLifecycle"
     }
 }

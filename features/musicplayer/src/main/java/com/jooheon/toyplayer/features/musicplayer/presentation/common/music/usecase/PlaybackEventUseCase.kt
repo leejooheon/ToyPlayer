@@ -25,10 +25,6 @@ class PlaybackEventUseCase(
         }
     }
 
-    suspend fun release() {
-        playerController.release()
-    }
-
     private fun onEnqueue(
         songs: List<Song>,
         shuffle: Boolean,
