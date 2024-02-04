@@ -113,11 +113,14 @@ class MusicArtistScreenViewModel @Inject constructor(
             musicListUseCase.streamingSongList,
             musicListUseCase.musicListType,
         ) { localSongList, assetSongList, streamingSongList, musicListType ->
-            Triple(localSongList + assetSongList, streamingSongList, musicListType)
-        }.collect { (localSongList, streamingSongList, musicListType) ->
-
+            Pair(listOf(localSongList, assetSongList, streamingSongList), musicListType)
+        }.collect { (dataSet, musicListType) ->
+            val localSongList = dataSet[0]
+            val assetSongList = dataSet[1]
+            val streamingSongList = dataSet[2]
             songList = when(musicListType) {
-                MusicListType.All -> localSongList + streamingSongList
+                MusicListType.All -> localSongList + assetSongList + streamingSongList
+                MusicListType.Asset -> assetSongList
                 MusicListType.Local -> localSongList
                 MusicListType.Streaming -> streamingSongList
             }

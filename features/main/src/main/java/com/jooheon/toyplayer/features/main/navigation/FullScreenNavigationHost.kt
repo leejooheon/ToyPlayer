@@ -28,6 +28,7 @@ import com.jooheon.toyplayer.features.setting.presentation.language.LanguageScre
 import com.jooheon.toyplayer.features.setting.presentation.main.SettingScreen
 import com.jooheon.toyplayer.features.setting.presentation.theme.ThemeScreen
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.MusicListDetailScreen
 import com.jooheon.toyplayer.features.splash.SplashScreen
 
 
@@ -153,6 +154,16 @@ internal fun FullScreenNavigationHost(
                 MusicPlaylistDetailScreen(
                     navController = navController,
                     playlist = playlist
+                )
+            }
+
+            composable(ScreenNavigation.Music.MusicListDetail.route) {
+                val arguments = requireNotNull(it.arguments)
+                val musicListType = ScreenNavigation.Music.MusicListDetail.parseType(arguments)
+
+                MusicListDetailScreen(
+                    navController = navController,
+                    musicListType = musicListType
                 )
             }
         }

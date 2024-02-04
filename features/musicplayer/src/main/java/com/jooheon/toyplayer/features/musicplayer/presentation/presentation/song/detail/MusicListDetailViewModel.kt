@@ -1,70 +1,60 @@
-package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song
+package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicComponentModel
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.model.MusicListDetailScreenEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.model.MusicListDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MusicSongScreenViewModel @Inject constructor(
+class MusicListDetailViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
-    private val songItemEventUseCase: SongItemEventUseCase,
     private val playlistUseCase: PlaylistUseCase,
     musicStateHolder: MusicStateHolder,
-    playbackEventUseCase: PlaybackEventUseCase
+    playbackEventUseCase: PlaybackEventUseCase,
 ): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
-    override val TAG: String = MusicSongScreenViewModel::class.java.simpleName
 
-    private val _musicSongScreenState = MutableStateFlow(MusicSongScreenState.default)
-    val musicPlayerScreenState = _musicSongScreenState.asStateFlow()
-
-    private val _navigateToSongList = Channel<MusicListType>()
-    val navigateToSongList = _navigateToSongList.receiveAsFlow()
+    private val _musicListDetailScreenState = MutableStateFlow(MusicListDetailScreenState.default)
+    val musicListDetailScreenState = _musicListDetailScreenState.asStateFlow()
 
     init {
         collectPlaylist()
         collectMusicList()
 
+    }
+
+    fun initMusicListType(musicListType: MusicListType) {
+        musicListUseCase.setMusicListType(musicListType)
         loadMusicList()
     }
 
-    fun dispatch(event: MusicSongScreenEvent) = viewModelScope.launch {
+    fun dispatch(event: MusicListDetailScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicSongScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
-            is MusicSongScreenEvent.OnItemViewTypeChanged -> {}
-            is MusicSongScreenEvent.ReloadSongList -> musicListUseCase.initialize()
-            is MusicSongScreenEvent.OnMusicComponentClick -> _navigateToSongList.send(event.type)
+            is MusicListDetailScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
         }
     }
 
-    fun onSongItemEvent(event: SongItemEvent) = viewModelScope.launch {
-        songItemEventUseCase.dispatch(event)
-    }
 
     private fun onMusicListTypeChanged(musicListType: MusicListType) {
         musicListUseCase.setMusicListType(musicListType)
     }
     private fun collectPlaylist() = viewModelScope.launch {
         playlistUseCase.allPlaylist().collectLatest { playlists ->
-            _musicSongScreenState.update {
+            _musicListDetailScreenState.update {
                 it.copy(
                     playlists = playlists
                 )
@@ -91,7 +81,7 @@ class MusicSongScreenViewModel @Inject constructor(
                 MusicListType.Streaming -> streamingSongList
             }
 
-            _musicSongScreenState.update {
+            _musicListDetailScreenState.update {
                 it.copy(
                     songList = songList,
                     musicListType = musicListType
@@ -101,7 +91,6 @@ class MusicSongScreenViewModel @Inject constructor(
     }
 
     private fun loadMusicList() = viewModelScope.launch {
-        musicListUseCase.setMusicListType(MusicListType.All)
         musicListUseCase.initialize()
     }
 }

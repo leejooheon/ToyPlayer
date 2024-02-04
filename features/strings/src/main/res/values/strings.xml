@@ -39,6 +39,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_change_name">Change Name</string>
     <string name="action_save_as_file">Save as File</string>
+    <string name="action_see_more">See more</string>
 
     <string name="title_song">Song</string>
     <string name="title_cd_song">Song</string>
@@ -69,6 +70,7 @@
 
     <string name="option_see_more">option see more</string>
     <string name="option_only_local">Only Local</string>
+    <string name="option_only_asset">Only Asset</string>
     <string name="option_only_streaming">Only Streaming</string>
     <string name="option_include_all">Include All</string>
     <string name="option_add_playlist">Add Playlist</string>

@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.TabPosition
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
@@ -13,7 +14,10 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.lerp
 
 fun Modifier.offsetGradientBackground(
@@ -88,4 +92,10 @@ fun Modifier.pagerTabIndicatorOffset(
             )
         }
     }
+}
+
+
+@Composable
+fun Int.toDp(density: Density = LocalDensity.current): Dp {
+    return with(density) { toDp() }
 }

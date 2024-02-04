@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components
+package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +16,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 
 
 @Composable
-internal fun MusicSongMediaColumnItem(
+internal fun MusicListDetailColumnItem(
     song: Song,
     viewType: Boolean,
 
@@ -56,7 +56,7 @@ internal fun MusicSongMediaColumnItem(
 @Composable
 private fun MusicSongMediaColumnItemPreview() {
     PreviewTheme(true) {
-        MusicSongMediaColumnItem(
+        MusicListDetailColumnItem(
             song = Song.default,
             viewType = true,
             onMediaItemEvent = {},
@@ -69,7 +69,7 @@ private fun MusicSongMediaColumnItemPreview() {
 @Composable
 private fun MusicSongMediaColumnItemPreview2() {
     PreviewTheme(true) {
-        MusicSongMediaColumnItem(
+        MusicListDetailColumnItem(
             song = Song.default,
             viewType = false,
             onMediaItemEvent = {},

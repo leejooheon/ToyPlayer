@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components
+package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,16 +16,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
+import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.model.MusicListDetailScreenState
 
 
 @Composable
-internal fun MusicSongMediaColumn(
-    musicSongScreenState: MusicSongScreenState,
+internal fun MusicListDetailComponent(
+    playlists: List<Playlist>,
+    songList: List<Song>,
     listState: LazyListState,
     songMediaColumnItemType: Boolean,
 
@@ -34,8 +36,6 @@ internal fun MusicSongMediaColumn(
 
     modifier: Modifier,
 ) {
-    val playlists = musicSongScreenState.playlists
-
     var songItemEventState by remember {
         mutableStateOf<SongItemEvent>(SongItemEvent.Placeholder)
     }
@@ -47,10 +47,10 @@ internal fun MusicSongMediaColumn(
         modifier = modifier,
     ) {
         items(
-            items = musicSongScreenState.songList,
+            items = songList,
             key = { song: Song -> song.hashCode() }
         ) { song ->
-            MusicSongMediaColumnItem(
+            MusicListDetailColumnItem(
                 song = song,
                 viewType = songMediaColumnItemType,
                 onMediaItemClick = { onSongClick(song) }, // FIXME
@@ -74,8 +74,9 @@ private fun MusicSongMediaColumnPreview() {
             modifier = Modifier.width(400.dp)
         ) {
 
-            MusicSongMediaColumn(
-                musicSongScreenState = MusicSongScreenState.default,
+            MusicListDetailComponent(
+                playlists = MusicListDetailScreenState.default.playlists,
+                songList = MusicListDetailScreenState.default.songList,
                 listState = rememberLazyListState(),
                 songMediaColumnItemType = true,
                 onSongClick = {},
@@ -92,8 +93,9 @@ private fun MusicSongMediaColumnPreview2() {
         Column(
             modifier = Modifier.width(400.dp)
         ) {
-            MusicSongMediaColumn(
-                musicSongScreenState = MusicSongScreenState.default,
+            MusicListDetailComponent(
+                playlists = MusicListDetailScreenState.default.playlists,
+                songList = MusicListDetailScreenState.default.songList,
                 listState = rememberLazyListState(),
                 songMediaColumnItemType = false,
                 onSongClick = {},
