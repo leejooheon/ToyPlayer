@@ -2,10 +2,8 @@ package com.jooheon.toyplayer.features.musicservice.player
 
 import android.content.ComponentName
 import android.content.Context
-import androidx.core.content.ContextCompat
 import androidx.media3.common.C
 import androidx.media3.session.MediaBrowser
-import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
@@ -162,7 +160,7 @@ class PlayerController(
         }
     }
 
-    private suspend fun awaitConnect(): MediaController? {
+    private suspend fun awaitConnect(): MediaBrowser? {
         return try {
             controller.await()
         } catch (e: Exception) {
@@ -172,7 +170,7 @@ class PlayerController(
         }
     }
 
-    private inline fun executeAfterPrepare(crossinline action: suspend (MediaController) -> Unit) {
+    private inline fun executeAfterPrepare(crossinline action: suspend (MediaBrowser) -> Unit) {
         applicationScope.launch(immediate) {
             val controller = awaitConnect() ?: return@launch
             action(controller)
