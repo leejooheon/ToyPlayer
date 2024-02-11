@@ -2,13 +2,12 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicPlaylistDetailScreenViewModel @Inject constructor(
-    playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicPlaylistDetailScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistDetailScreenState = MutableStateFlow(MusicPlaylistDetailScreenState.default)

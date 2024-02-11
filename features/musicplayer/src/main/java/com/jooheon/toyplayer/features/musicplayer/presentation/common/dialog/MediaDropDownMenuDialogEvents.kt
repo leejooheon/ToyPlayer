@@ -2,29 +2,29 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog
 
 import androidx.compose.runtime.Composable
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 
 
 @Composable
 fun MediaDropDownMenuDialogEvents(
     playlists: List<Playlist>,
-    event: MusicMediaItemEvent,
+    event: SongItemEvent,
     onDismiss: () -> Unit,
-    onRedirectEvent: (MusicMediaItemEvent) -> Unit
+    onRedirectEvent: (SongItemEvent) -> Unit
 ) {
     when(event) {
-        is MusicMediaItemEvent.OnDetailsClick -> {
+        is SongItemEvent.OnDetailsClick -> {
             MediaDetailsDialog(
                 song = event.song,
                 onDismiss = onDismiss
             )
         }
-        is MusicMediaItemEvent.OnAddPlaylistClick -> {
+        is SongItemEvent.OnAddPlaylistClick -> {
             AddSongIntoPlaylistDialog(
                 song = event.song,
                 playlists = playlists,
                 onPlaylistClick = { playlist ->
-                    onRedirectEvent(MusicMediaItemEvent.OnAddPlaylistClick(event.song ,playlist))
+                    onRedirectEvent(SongItemEvent.OnAddPlaylistClick(event.song ,playlist))
                 },
                 onDismiss = onDismiss
             )

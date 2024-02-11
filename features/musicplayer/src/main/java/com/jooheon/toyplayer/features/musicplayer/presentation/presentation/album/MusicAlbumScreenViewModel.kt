@@ -6,12 +6,11 @@ import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.common.PlayerController
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.model.MusicAlbumScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -28,10 +27,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicAlbumScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
-    playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicAlbumScreenViewModel::class.java.simpleName
 
     private val _musicAlbumScreenState = MutableStateFlow(MusicAlbumScreenState.default)
@@ -99,10 +97,14 @@ class MusicAlbumScreenViewModel @Inject constructor(
             musicListUseCase.streamingSongList,
             musicListUseCase.musicListType,
         ) { localSongList, assetSongList, streamingSongList, musicListType ->
-            Triple(localSongList + assetSongList, streamingSongList, musicListType)
-        }.collect { (localSongList, streamingSongList, musicListType) ->
+            Pair(listOf(localSongList, assetSongList, streamingSongList), musicListType)
+        }.collect { (dataSet, musicListType) ->
+            val localSongList = dataSet[0]
+            val assetSongList = dataSet[1]
+            val streamingSongList = dataSet[2]
             songList = when(musicListType) {
-                MusicListType.All -> localSongList + streamingSongList
+                MusicListType.All -> localSongList + assetSongList + streamingSongList
+                MusicListType.Asset -> assetSongList
                 MusicListType.Local -> localSongList
                 MusicListType.Streaming -> streamingSongList
             }

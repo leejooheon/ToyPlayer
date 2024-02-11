@@ -3,15 +3,14 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.art
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.features.common.PlayerController
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicControllerUseCase
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,11 +24,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val musicMediaItemEventUseCase: MusicMediaItemEventUseCase,
-    playerController: PlayerController,
-    musicControllerUseCase: MusicControllerUseCase,
+    private val songItemEventUseCase: SongItemEventUseCase,
     musicStateHolder: MusicStateHolder,
-): AbsMusicPlayerViewModel(playerController, musicControllerUseCase, musicStateHolder) {
+    playbackEventUseCase: PlaybackEventUseCase,
+): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
     override val TAG = MusicArtistDetailScreenViewModel::class.java.simpleName
 
     private val _musicArtistDetailScreenState = MutableStateFlow(MusicArtistDetailScreenState.default)
@@ -56,8 +54,8 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
             }
         }
     }
-    fun onMusicMediaItemEvent(event: MusicMediaItemEvent) = viewModelScope.launch {
-        musicMediaItemEventUseCase.dispatch(event)
+    fun onSongItemEvent(event: SongItemEvent) = viewModelScope.launch {
+        songItemEventUseCase.dispatch(event)
     }
 
     private fun collectPlaylistState() = viewModelScope.launch{

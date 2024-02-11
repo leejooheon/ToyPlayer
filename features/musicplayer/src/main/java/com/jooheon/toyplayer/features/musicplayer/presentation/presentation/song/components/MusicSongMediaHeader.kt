@@ -8,10 +8,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.PlayCircle
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,6 +34,7 @@ internal fun MusicSongMediaHeader(
     viewType: Boolean,
     onSeeMoreButtonClick: () -> Unit,
     onViewTypeClick: (Boolean) -> Unit,
+    onPlayAllClick: () -> Unit,
     modifier: Modifier,
 ) {
     Row(
@@ -59,11 +65,21 @@ internal fun MusicSongMediaHeader(
             }
         )
 
+
+        IconButton(
+            modifier = Modifier,
+            onClick = { onPlayAllClick() },
+            content = {
+                Icon(
+                    imageVector = if(viewType) Icons.Filled.PlayCircle else Icons.Outlined.PlayCircle,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = UiText.StringResource(R.string.option_see_more).asString()
+                )
+            }
+        )
         IconButton(
             modifier = Modifier.padding(horizontal = 16.dp),
-            onClick = {
-                onViewTypeClick(!viewType)
-            },
+            onClick = { onViewTypeClick(!viewType) },
             content = {
                 Icon(
                     imageVector = if(viewType) Icons.Filled.List else Icons.Outlined.Image,
@@ -82,6 +98,7 @@ private fun MusicSongMediaHeaderPreview() {
             viewType = true,
             onSeeMoreButtonClick = {},
             onViewTypeClick = {},
+            onPlayAllClick = {},
             modifier = Modifier.width(300.dp).background(MaterialTheme.colorScheme.background)
         )
     }

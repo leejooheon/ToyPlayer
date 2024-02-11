@@ -49,6 +49,21 @@ internal fun MusicSongOptionDialog(
                     }
                 )
                 TextButton(
+                    onClick = { playlistTypeState = MusicListType.Asset },
+                    content = {
+
+                        RadioButton(
+                            selected = playlistTypeState == MusicListType.Asset,
+                            onClick = { playlistTypeState = MusicListType.Asset },
+                        )
+                        Text(
+                            text = UiText.StringResource(R.string.option_only_asset).asString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                )
+                TextButton(
                     onClick = { playlistTypeState = MusicListType.Streaming },
                     content = {
                         RadioButton(

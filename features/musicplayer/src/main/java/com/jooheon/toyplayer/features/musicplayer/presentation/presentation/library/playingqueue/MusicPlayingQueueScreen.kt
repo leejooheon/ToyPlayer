@@ -41,7 +41,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.MediaItemSmallNoImage
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.mediaitem.model.MusicMediaItemEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
@@ -73,7 +73,7 @@ fun MusicPlayingQueueScreen(
     MusicPlayingQueueScreen(
         musicPlayingQueueScreenState = screenState,
         onMusicPlayingQueueScreenEvent = viewModel::dispatch,
-        onMediaDropDownMenuEvent = viewModel::onMusicMediaItemEvent,
+        onMediaDropDownMenuEvent = viewModel::onSongItemEvent,
         musicPlayerState = musicPlayerState,
         onMusicPlayerEvent = viewModel::dispatch,
     )
@@ -84,7 +84,7 @@ fun MusicPlayingQueueScreen(
 private fun MusicPlayingQueueScreen(
     musicPlayingQueueScreenState: MusicPlayingQueueScreenState,
     onMusicPlayingQueueScreenEvent: (MusicPlayingQueueScreenEvent) -> Unit,
-    onMediaDropDownMenuEvent: (MusicMediaItemEvent) -> Unit,
+    onMediaDropDownMenuEvent: (SongItemEvent) -> Unit,
 
     musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,

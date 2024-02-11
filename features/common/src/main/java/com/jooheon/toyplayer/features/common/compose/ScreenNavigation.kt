@@ -17,8 +17,10 @@ import androidx.compose.material.icons.outlined.PlaylistPlay
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.Artist
+import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.features.common.R
 import kotlinx.serialization.encodeToString
@@ -88,6 +90,23 @@ sealed class ScreenNavigation(open val route: String) {
             fun parsePlaylist(bundle: Bundle): Playlist {
                 val playlist = bundle.getSerializable(PlaylistDetail.playlist) as Playlist
                 return playlist
+            }
+        }
+
+        data object MusicListDetail: ScreenNavigation("music_list_detail?item={type}") {
+            const val type = "type"
+            val arguments = listOf(
+                navArgument(type) {
+                    type = createSerializableNavType<MusicListType>()
+                }
+            )
+            fun createRoute(type: MusicListType): String {
+                return "music_list_detail?item=${type.ordinal}"
+            }
+            fun parseType(bundle: Bundle): MusicListType {
+                val ordinal = bundle.getSerializable(type) as String
+                val type = MusicListType.entries.getOrNull(ordinal.toIntOrNull().defaultZero()) ?: MusicListType.All
+                return type
             }
         }
     }

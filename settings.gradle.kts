@@ -8,6 +8,7 @@ include(":features:common")
 include(":features:main")
 include(":features:setting")
 include(":features:splash")
+include(":features:strings")
 
 pluginManagement {
     repositories {

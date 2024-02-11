@@ -34,10 +34,11 @@ class LocalMusicDataSource @Inject constructor(
 
         val songs = mutableListOf<Song>()
         for(i in 0 until mediaList.length()) {
-            val mediaObject =  mediaList.getJSONObject(i)
-            if(mediaObject.getString("genre") == "Video") continue
-            val song = getSongFromJsonObject(mediaObject) ?: continue
-            songs.add(song)
+            val mediaObject = mediaList.getJSONObject(i)
+            if(mediaObject.getString("source").contains(".mp3")) {
+                val song = getSongFromJsonObject(mediaObject) ?: continue
+                songs.add(song)
+            }
         }
 
         return songs

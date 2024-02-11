@@ -10,13 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.domain.usecase.setting.ThemeStateFlow
-import com.jooheon.toyplayer.features.common.PlayerController
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.common.compose.theme.themes.ApplicationTheme
 import com.jooheon.toyplayer.features.main.navigation.FullScreenNavigationHost
-import com.jooheon.toyplayer.features.musicservice.usecase.MusicStateHolder
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -29,14 +30,11 @@ class MainActivity : ComponentActivity() {
     lateinit var settingUseCase: SettingUseCase
 
     @Inject
-    lateinit var musicStateHolder: MusicStateHolder
-    
-    @Inject
     lateinit var playerController: PlayerController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("onCreate")
+        Timber.tag(LifecycleTAG).d("onCreate")
 
         lifecycleScope.launch {
             SettingScreenEvent.changeLanguage(
@@ -52,21 +50,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
-            playerController.connectFuture()
-        }
+        Timber.tag(LifecycleTAG).d("onStart")
+        playerController.connect(this)
     }
 
     override fun onStop() {
+        Timber.tag(LifecycleTAG).d("onStop")
+        playerController.release()
         super.onStop()
-        lifecycleScope.launch {
-            playerController.release()
-        }
-    }
-
-    override fun onDestroy() {
-        Timber.d("onDestroy")
-        super.onDestroy()
     }
 
     @Composable
@@ -78,5 +69,9 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+
+    companion object {
+        private const val LifecycleTAG = "ActivityLifecycle"
     }
 }

@@ -21,11 +21,11 @@ class PlayingQueueUseCaseImpl(
 
     override suspend fun shuffleMode() = playingQueueRepository.getShuffleMode()
 
-    override suspend fun getPlayingQueueKey(): Long {
+    override suspend fun getRecentMediaItemKey(): Long {
         return playingQueueRepository.getPlayingQueueKey()
     }
 
-    override suspend fun setPlayingQueueKey(key: Long) {
+    override suspend fun setRecentMediaItemKey(key: Long) {
         playingQueueRepository.setPlayingQueueKey(key)
     }
 
@@ -42,7 +42,7 @@ class PlayingQueueUseCaseImpl(
         return@withContext (resource as? Resource.Success)?.value.defaultEmpty()
     }
 
-    override suspend fun updatePlayingQueue(songs: List<Song>): Boolean {
+    override suspend fun setPlayingQueue(songs: List<Song>): Boolean {
         clear()
         playingQueueRepository.updatePlayingQueue(songs)
 
@@ -50,7 +50,7 @@ class PlayingQueueUseCaseImpl(
     }
 
     override suspend fun clear() {
-        setPlayingQueueKey(-1L)
+        setRecentMediaItemKey(-1L)
         playingQueueRepository.clear()
     }
 }
