@@ -325,10 +325,9 @@ internal fun PlayPauseButton(
                 .padding(all = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            // TODO: compose bom 라이브러리 버전 올리니 여기서 죽네..
-//            CircularProgressIndicator(
-//                color = MaterialTheme.colorScheme.tertiary
-//            )
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.tertiary
+            )
         }
     } else {
         RoundImageButton(
