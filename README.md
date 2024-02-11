@@ -20,12 +20,14 @@ If you like to contribute, that is very appreciated.
 - Late init media url when preparing playback. (ResolvingDataSource.Resolver)
 - Android Auto
 - Local playlist management
+- Motion Layout like YoutubeMusic
 - Multiple Theme light/dark/dynamic
 - Multiple language (Eng, Kor)
 
 ## Preview
 <p float="left">
   <img src="./screenshot/screen_main.png" height="600" width="270" >
+  <img src="./screenshot/screen_motion.gif" height="600" width="270" >
   <img src="./screenshot/screen_full_player.png" height="600" width="270" >
   <img src="./screenshot/screen_playing_queue.png" height="600" width="270" >
   <img src="./screenshot/screen_album.png" height="600" width="270" >
@@ -33,6 +35,7 @@ If you like to contribute, that is very appreciated.
 </p>
 
 ## Architecture
+Toyplayer Architecture is based on CleanArchitecture
 * **app** - The Application module. It contains all the initialization logic for the Android
   environment.
 * **features** - The module/folder containing all the features (visual or not) from the application.
