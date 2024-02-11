@@ -33,10 +33,6 @@ If you like to contribute, that is very appreciated.
 </p>
 
 ## Architecture
-Architecture is strongly based on
-the [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) by Alistair
-Cockburn.
-
 * **app** - The Application module. It contains all the initialization logic for the Android
   environment.
 * **features** - The module/folder containing all the features (visual or not) from the application.
