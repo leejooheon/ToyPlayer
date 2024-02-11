@@ -2,10 +2,12 @@ package com.jooheon.toyplayer.features.musicservice.player
 
 import android.content.ComponentName
 import android.content.Context
+import androidx.core.content.ContextCompat
 import androidx.media3.common.C
-import androidx.media3.common.Player
+import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
@@ -21,34 +23,27 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.asDeferred
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
 class PlayerController(
-    private val context: Context,
     private val applicationScope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder,
 ) {
     private val immediate = Dispatchers.Main.immediate
-    private var _controller: Deferred<MediaController> = newControllerAsync()
-    private val controller: Deferred<MediaController>
-        get() {
-            if (_controller.isCompleted) {
-                val completedController = _controller.getCompleted()
-                if (!completedController.isConnected) {
-                    completedController.release()
-                    _controller = newControllerAsync()
-                }
-            }
-            return _controller
-        }
 
-    private fun newControllerAsync() = MediaController
+    private fun newBrowserAsync(context: Context) = MediaBrowser
         .Builder(context, SessionToken(context, ComponentName(context, MusicService::class.java)))
         .buildAsync()
-        .asDeferred()
+    private lateinit var _controller: ListenableFuture<MediaBrowser>
+    private val controller: Deferred<MediaBrowser> get() = _controller.asDeferred()
 
+    fun connect(context: Context) {
+        _controller = newBrowserAsync(context)
+    }
+    fun release() {
+        MediaBrowser.releaseFuture(_controller)
+    }
     fun snapTo(position: Long) = executeAfterPrepare {
         it.seekTo(position)
     }
@@ -166,17 +161,6 @@ class PlayerController(
             player.removeMediaItem(it)
         }
     }
-
-    suspend fun release() {
-        try {
-            awaitConnect()?.release()
-            Timber.d("release player")
-        } catch (e: Exception) {
-            if (e is CancellationException) throw e
-            Timber.e("Error while release media controller")
-        }
-    }
-
 
     private suspend fun awaitConnect(): MediaController? {
         return try {

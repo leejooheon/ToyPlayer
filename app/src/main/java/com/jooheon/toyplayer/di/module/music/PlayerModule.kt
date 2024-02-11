@@ -19,11 +19,9 @@ object PlayerModule {
     @Provides
     @ActivityRetainedScoped
     fun providePlayerController(
-        @ApplicationContext context: Context,
         applicationScope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
     ) = PlayerController(
-        context = context,
         applicationScope = applicationScope,
         musicStateHolder = musicStateHolder,
     )
