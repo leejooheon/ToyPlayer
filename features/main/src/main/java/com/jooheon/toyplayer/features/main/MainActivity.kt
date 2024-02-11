@@ -48,17 +48,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStop() {
-        Timber.tag(LifecycleTAG).d("onStop")
-        super.onStop()
+    override fun onStart() {
+        super.onStart()
+        Timber.tag(LifecycleTAG).d("onStart")
+        playerController.connect(this)
     }
 
-    override fun onDestroy() {
-        Timber.tag(LifecycleTAG).d("onDestroy")
-        lifecycleScope.launch {
-            playerController.release()
-        }
-        super.onDestroy()
+    override fun onStop() {
+        Timber.tag(LifecycleTAG).d("onStop")
+        playerController.release()
+        super.onStop()
     }
 
     @Composable

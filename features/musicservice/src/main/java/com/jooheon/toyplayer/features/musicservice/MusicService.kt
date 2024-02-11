@@ -1,17 +1,10 @@
 package com.jooheon.toyplayer.features.musicservice
 
-import android.annotation.SuppressLint
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.OptIn
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
-import androidx.lifecycle.Lifecycle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
@@ -85,15 +78,7 @@ class MusicService: MediaLibraryService() {
 
     private var notificationManager: NotificationManager? = null
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
-        return mediaSession.takeUnless { session ->
-            session.invokeIsReleased
-        }.also {
-            if (it == null) {
-                Timber.tag(TAG).e("onGetSession returns null because the session is already released")
-            }
-        }
-    }
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onCreate() {
         Timber.tag(LifecycleTAG).d( "onCreate")
@@ -132,27 +117,20 @@ class MusicService: MediaLibraryService() {
         playbackCacheManager.release()
         mediaLibrarySessionCallback.release()
 
-        with(mediaSession) {
-            player.stop()
-            player.clearMediaItems()
-            player.removeListener(playbackListener)
-            player.release()
-            release()
-        }
+        mediaSession.release()
+        mediaSession.player.release()
 
         clearListener()
         serviceScope.cancel()
 
-        handleMedia3Bug()
+//        handleMedia3Bug()
     }
 
     private fun handleMedia3Bug() { // TODO: CleanUp
         /**
          * process가 종료되지 않는 버그.. 짱난다 demo-session도 동일
          * we should have something else instead\
-         * https://github.com/androidx/media/issues/370
-         * https://github.com/androidx/media/issues/976
-         * https://github.com/androidx/media/issues/1042
+         * https://github.com/androidx/media/issues/805
          **/
         notificationManager?.cancelAll()
         exitProcess(0)
@@ -179,15 +157,12 @@ class MusicService: MediaLibraryService() {
             .setMediaSourceFactory(mediaSourceFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
-            .setWakeMode(C.WAKE_MODE_NETWORK) // 잠금화면에서 Wifi를 이용한 백그라운드 재생 허용
             .build()
 
         return ToyPlayer(exoPlayer)
     }
 
     private fun initNotification() {
-        notificationManager = getSystemService()
-
         customMediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
@@ -218,7 +193,6 @@ class MusicService: MediaLibraryService() {
 
     private fun initListener() {
         mediaSession.player.addListener(playbackListener)
-        setListener(MediaSessionServiceListener())
     }
 
     private fun initUseCase() = serviceScope.launch {
@@ -282,74 +256,17 @@ class MusicService: MediaLibraryService() {
         )
     }
 
-    private fun getBackStackedActivity(): PendingIntent {
-        return TaskStackBuilder.create(this).run {
-            addNextIntent(singleTopActivityIntent)
-            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
-        }
-    }
-
-    private val MediaSession.invokeIsReleased: Boolean
-        get() = try {
-            // temporarily checked to debug
-            // https://github.com/androidx/media/issues/422
-            MediaSession::class.java.getDeclaredMethod("isReleased")
-                .apply { isAccessible = true }
-                .invoke(this) as Boolean
-        } catch (e: Exception) {
-            Timber.tag(TAG).e("Couldn't check if it's released")
-            false
-        }
-
-    private inner class MediaSessionServiceListener : Listener {
-        /**
-         * This method is only required to be implemented on Android 12 or above when an attempt is made
-         * by a media controller to resume playback when the {@link MediaSessionService} is in the
-         * background.
-         */
-        @SuppressLint("MissingPermission") // TODO: b/280766358 - Request this permission at runtime.
-        override fun onForegroundServiceStartNotAllowedException() {
-            val notificationManagerCompat = NotificationManagerCompat.from(this@MusicService)
-            ensureNotificationChannel(notificationManagerCompat)
-            val pendingIntent = getBackStackedActivity()
-            val builder =
-                NotificationCompat.Builder(this@MusicService, NOTIFICATION_CHANNEL_ID)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.media3_notification_small_icon)
-                    .setContentTitle(getString(R.string.playing_notification_error_title))
-                    .setStyle(
-                        NotificationCompat.BigTextStyle()
-                            .bigText(getString(R.string.playing_notification_error_content))
-                    )
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true)
-            notificationManagerCompat.notify(NOTIFICATION_ID, builder.build())
-        }
-        private fun ensureNotificationChannel(notificationManagerCompat: NotificationManagerCompat) {
-            if (notificationManagerCompat.getNotificationChannel(NOTIFICATION_CHANNEL_ID) != null) {
-                return
-            }
-
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                getString(R.string.playing_notification_error_title),
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManagerCompat.createNotificationChannel(channel)
-        }
-    }
-
     override fun onBind(intent: Intent?): IBinder? {
-        Timber.tag(LifecycleTAG).d("onBind: ${intent?.data}")
+        Timber.tag(LifecycleTAG).d("onBind: ${intent?.component}")
         return super.onBind(intent)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Timber.tag(LifecycleTAG).d("onUnbind: ${intent?.data}")
+        Timber.tag(LifecycleTAG).d("onUnbind: ${intent?.component}")
         return super.onUnbind(intent)
     }
     override fun onRebind(intent: Intent?) {
-        Timber.tag(LifecycleTAG).d("onRebind: ${intent?.data}")
+        Timber.tag(LifecycleTAG).d("onRebind: ${intent?.component}")
         super.onRebind(intent)
     }
     companion object {
