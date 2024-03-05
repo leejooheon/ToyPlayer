@@ -8,6 +8,8 @@ android {
     namespace = "com.jooheon.toyplayer"
     defaultConfig {
         applicationId = "com.jooheon.toyplayer"
+
+        targetSdk = Integer.parseInt(libs.versions.android.sdk.compile.get())
         versionCode = Integer.parseInt(libs.versions.version.code.get())
         versionName = libs.versions.version.name.get()
     }

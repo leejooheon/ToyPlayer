@@ -252,7 +252,8 @@ class MusicService: MediaLibraryService() {
         return PendingIntent.getActivity(
             this,
             0,
-            singleTopActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            singleTopActivityIntent,
+            PendingIntent.FLAG_IMMUTABLE
         )
     }
 
