@@ -11,7 +11,7 @@ android {
 dependencies {
     implementation(projects.domain)
     implementation(projects.features.common)
-    testImplementation(projects.testing)
+//    testImplementation(projects.testing)
 
     // serialization
     implementation(libs.serialization.json)
