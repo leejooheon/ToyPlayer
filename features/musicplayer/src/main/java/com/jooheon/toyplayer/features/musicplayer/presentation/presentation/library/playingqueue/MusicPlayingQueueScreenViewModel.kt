@@ -10,6 +10,8 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsM
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +26,9 @@ import javax.inject.Inject
 class MusicPlayingQueueScreenViewModel @Inject constructor(
     private val songItemEventUseCase: SongItemEventUseCase,
     private val musicStateHolder: MusicStateHolder,
+    playerController: PlayerController,
     playbackEventUseCase: PlaybackEventUseCase,
-): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
+): AbsMusicPlayerViewModel(musicStateHolder, playerController, playbackEventUseCase) {
     override val TAG = MusicPlayingQueueScreenViewModel::class.java.simpleName
 
     private val _musicPlayingQueueScreenState = MutableStateFlow(MusicPlayingQueueScreenState.default)
@@ -49,11 +52,11 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
     }
     
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicStateHolder.playingQueue.collectLatest { playingQueue ->
+        musicStateHolder.mediaItems.collectLatest { mediaItems ->
             _musicPlayingQueueScreenState.update {
                 it.copy(
                     playlist = Playlist.playingQueuePlaylist.copy(
-                        songs = playingQueue
+                        songs = mediaItems.map { it.toSong() }
                     )
                 )
             }

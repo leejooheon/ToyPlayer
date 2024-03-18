@@ -8,6 +8,7 @@ import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -30,8 +31,9 @@ class PlaybackUseCase(
     }
 
     private fun collectPlayingQueue(scope: CoroutineScope) = scope.launch {
-        musicStateHolder.playingQueue.collectLatest {
-            playingQueueUseCase.setPlayingQueue(it)
+        musicStateHolder.mediaItems.collectLatest {
+            val songs = it.map { it.toSong() }
+            playingQueueUseCase.setPlayingQueue(songs)
         }
     }
 
@@ -61,7 +63,6 @@ class PlaybackUseCase(
         playingQueueUseCase.playingQueue().onEach {
             if(it is Resource.Success) {
                 val playingQueue = it.value
-                musicStateHolder.enqueueSongLibrary(playingQueue)
 
                 val newMediaItems = playingQueue.map { it.toMediaItem() }
                 withContext(Dispatchers.Main.immediate) {

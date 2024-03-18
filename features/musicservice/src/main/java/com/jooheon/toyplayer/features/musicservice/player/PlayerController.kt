@@ -2,11 +2,15 @@ package com.jooheon.toyplayer.features.musicservice.player
 
 import android.content.ComponentName
 import android.content.Context
+import androidx.core.content.ContextCompat
 import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
+import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
@@ -14,8 +18,10 @@ import com.jooheon.toyplayer.features.musicservice.ext.enqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToNext
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToPrevious
+import com.jooheon.toyplayer.features.musicservice.ext.mediaItems
 import com.jooheon.toyplayer.features.musicservice.ext.playAtIndex
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -42,6 +48,21 @@ class PlayerController(
     fun release() {
         MediaBrowser.releaseFuture(_controller)
     }
+
+    fun getMusicListFuture(
+        context: Context,
+        mediaId: MediaId,
+        listener: (List<MediaItem>) -> Unit) = executeAfterPrepare {
+        val contentFuture = it.getChildren(mediaId.serialize(), 0, Int.MAX_VALUE, null)
+        contentFuture.addListener(
+            {
+                val model = contentFuture.get().value
+                listener.invoke(model.defaultEmpty().toList())
+            },
+            ContextCompat.getMainExecutor(context)
+        )
+    }
+
     fun snapTo(position: Long) = executeAfterPrepare {
         it.seekTo(position)
     }
@@ -56,7 +77,7 @@ class PlayerController(
         it.playAtIndex(index, time)
     }
     fun play(song: Song) = executeAfterPrepare { player ->
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = player.mediaItems.map { it.toSong() }
 
         val index = playingQueue.indexOfFirst {
             it.key() == song.key()
@@ -95,7 +116,7 @@ class PlayerController(
         song: Song,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = player.mediaItems.map { it.toSong() }
 
         val index = playingQueue.indexOfFirst {
             it.key() == song.key()
@@ -105,7 +126,6 @@ class PlayerController(
             player.removeMediaItem(index)
         }
 
-        musicStateHolder.enqueueSongLibrary(listOf(song))
         player.enqueue(
             mediaItem = song.toMediaItem(),
             playWhenReady = playWhenReady
@@ -118,8 +138,6 @@ class PlayerController(
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
         if (addNext) { // TabToSelect
-            musicStateHolder.enqueueSongLibrary(songs)
-
             val newMediaItems = songs.distinctBy {
                 it.key() // remove duplicate
             }.map {
@@ -131,7 +149,6 @@ class PlayerController(
                 playWhenReady = playWhenReady
             )
         } else { // TabToPlay
-            musicStateHolder.enqueueSongLibrary(songs)
             val newMediaItems = songs.map { it.toMediaItem() }
 
             player.forceEnqueue(
@@ -145,7 +162,7 @@ class PlayerController(
     fun onDeleteAtPlayingQueue(
         songs: List<Song>
     ) = executeAfterPrepare { player ->
-        val playingQueue = musicStateHolder.playingQueue.value
+        val playingQueue = player.mediaItems.map { it.toSong() }
 
         val songIndexList = songs.filter {
             it != Song.default

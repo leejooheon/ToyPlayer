@@ -20,9 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 object MusicEventModule {
     @Provides
     fun providePlaybackEventUseCase(
-        playerController: PlayerController,
         musicStateHolder: MusicStateHolder,
-    ) = PlaybackEventUseCase(playerController, musicStateHolder)
+    ) = PlaybackEventUseCase(musicStateHolder)
 
     @Provides
     fun providePlaylistEventUseCase(

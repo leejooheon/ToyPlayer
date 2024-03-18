@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
@@ -14,8 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -60,11 +57,16 @@ fun MusicSongScreen(
     navController: NavController,
     viewModel: MusicSongScreenViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     viewModel.navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
         navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
     }
     viewModel.navigateToSongList.observeWithLifecycle {
         navController.navigate(ScreenNavigation.Music.MusicListDetail.createRoute(it))
+    }
+    viewModel.musicListType.observeWithLifecycle {
+        val event = MusicSongScreenEvent.OnRefresh(context, it)
+        viewModel.dispatch(event)
     }
 
     val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
@@ -90,6 +92,7 @@ private fun MusicSongScreen(
     musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
+    val context = LocalContext.current
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
 
@@ -118,7 +121,8 @@ private fun MusicSongScreen(
 
     LaunchedEffect(permissionState.status) {
         if(permissionState.status.isGranted) {
-            onMusicSongScreenEvent(MusicSongScreenEvent.ReloadSongList)
+            val event = MusicSongScreenEvent.OnRefresh(context, musicSongState.musicListType)
+            onMusicSongScreenEvent(event)
         }
         isPermissionRequestBlockedState = isPermissionRequestBlocked(activity, permission)
     }

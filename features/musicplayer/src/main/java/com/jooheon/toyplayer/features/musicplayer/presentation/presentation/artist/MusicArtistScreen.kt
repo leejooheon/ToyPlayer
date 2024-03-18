@@ -4,14 +4,17 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.jooheon.toyplayer.domain.entity.music.RepeatMode
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.components.ArtistMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.components.ArtistMediaHeader
@@ -23,6 +26,8 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import java.lang.Float
 import kotlin.math.max
 
@@ -31,11 +36,20 @@ fun MusicArtistScreen(
     navController: NavController,
     viewModel: MusicArtistScreenViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     viewModel.navigateToDetailScreen.observeWithLifecycle {
         navController.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
     }
     viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
         navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    }
+    combine(
+        viewModel.sortType,
+        viewModel.musicListType
+    ) { sortType, musicListType ->
+        Pair(sortType, musicListType)
+    }.observeWithLifecycle { (sortType, musicListType) ->
+        viewModel.loadData(context, sortType, musicListType)
     }
 
     val screenState by viewModel.musicArtistScreenState.collectAsStateWithLifecycle()
@@ -79,7 +93,10 @@ private fun MusicArtistScreen(
         onEvent = onMusicPlayerEvent,
         content = {
             ArtistMediaHeader(
-                onDropDownMenuClick = { onMusicArtistScreenEvent(MusicArtistScreenEvent.indexToEvent(it)) },
+                onDropDownMenuClick = {
+                    val type = MusicArtistScreenViewModel.ArtistSortType.entries[it]
+                    onMusicArtistScreenEvent(MusicArtistScreenEvent.OnSortTypeChanged(type))
+                },
                 modifier = Modifier,
             )
 

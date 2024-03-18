@@ -45,5 +45,12 @@ data class Song(
             default.copy(title = Resource.mediumStringPlaceholder),
             default.copy(title = Resource.shortStringPlaceholder),
         )
+        const val BUNDLE_USE_CACHE = "bundle_use_cache"
+        const val BUNDLE_ARTIST_ID = "bundle_artist_id"
+        const val BUNDLE_ALBUM_ID = "bundle_album_id"
+        const val BUNDLE_DURATION = "bundle_duration"
+        const val BUNDLE_IS_FAVORITE = "bundle_is_favorite"
+        const val BUNDLE_DATA = "bundle_data"
+        const val BUNDLE_PATH = "bundle_path"
     }
 }

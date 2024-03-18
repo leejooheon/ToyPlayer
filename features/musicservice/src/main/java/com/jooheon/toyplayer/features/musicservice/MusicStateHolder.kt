@@ -11,10 +11,12 @@ import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.musicservice.data.RingBuffer
 import com.jooheon.toyplayer.features.musicservice.ext.toPlaybackState
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
@@ -31,17 +33,17 @@ class MusicStateHolder(
     private val mutex = Mutex()
     private val streamBuffer = RingBuffer<Pair<String, Uri>?>(URI_BUFFER_SIZE) { null }
 
-    private val _mediaItems = MutableSharedFlow<List<MediaItem>?>(
+    private val _mediaItems = MutableSharedFlow<List<MediaItem>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
-    val mediaItems = _mediaItems
+    val mediaItems = _mediaItems.asSharedFlow()
 
     private val _mediaItem = MutableSharedFlow<MediaItem?>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    val mediaItem = _mediaItem
+    val mediaItem = _mediaItem.asSharedFlow()
 
     private val _playbackError = MutableSharedFlow<PlaybackException>(
         replay = 1,
@@ -49,17 +51,8 @@ class MusicStateHolder(
     )
     val playbackError = _playbackError
 
-    private val _playingQueue = MutableStateFlow<List<Song>>(emptyList())
-    val playingQueue = _playingQueue.asStateFlow()
-
-    private val _songLibrary = MutableStateFlow<List<Song>>(emptyList())
-    val songLibrary = _songLibrary.asStateFlow()
-
     private val _musicState = MutableStateFlow(MusicState())
     val musicState = _musicState.asStateFlow()
-
-//    private val _playingQueue = MutableStateFlow<List<Song>>(emptyList())
-//    val playingQueue = _playingQueue.asStateFlow()
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
@@ -83,67 +76,45 @@ class MusicStateHolder(
     val disContinuation = _disContinuation.asStateFlow()
 
     init {
-        collectDuration()
-        collectMediaItem()
-        collectMediaItemsState()
-        collectPlaybackState()
+        observeStates()
     }
 
-    private fun collectMediaItemsState() = applicationScope.launch {
-        mediaItems.collectLatest { mediaItems ->
-            mediaItems ?: return@collectLatest
-
-            val newPlayingQueue = mediaItems.mapNotNull { mediaItem ->
-                songLibrary.value.firstOrNull { it.key() == mediaItem.mediaId }
-            }
-            _playingQueue.emit(newPlayingQueue)
-        }
-    }
-    private fun collectDuration() = applicationScope.launch {
-        currentDuration.collectLatest { duration ->
-            _musicState.update {
-                it.copy(
-                    timePassed = duration
-                )
+    private fun observeStates() = applicationScope.launch {
+        launch {
+            currentDuration.collectLatest { duration ->
+                _musicState.update {
+                    it.copy(
+                        timePassed = duration
+                    )
+                }
             }
         }
-    }
-    private fun collectMediaItem() = applicationScope.launch {
-        mediaItem.collectLatest { mediaItem ->
-            val song = songLibrary.value.firstOrNull { it.key() == mediaItem?.mediaId } ?: Song.default
+        launch {
+            mediaItem.collectLatest { mediaItem ->
+                val song = mediaItem?.toSong() ?: Song.default
 
-            Timber.d( "collectMediaItem: ${song.title.defaultEmpty()}")
-            _musicState.update {
-                it.copy(
-                    currentPlayingMusic = song,
-                    timePassed = 0L
-                )
+                Timber.d( "collectMediaItem: ${song.title.defaultEmpty()}")
+                _musicState.update {
+                    it.copy(
+                        currentPlayingMusic = song,
+                        timePassed = 0L
+                    )
+                }
             }
         }
-    }
-
-    private fun collectPlaybackState() = applicationScope.launch {
-        combine(
-            playWhenReady,
-            playbackState,
-        ) { playWhenReady, playbackState ->
-            Pair(playWhenReady, playbackState)
-        }.collectLatest { (playWhenReady, playbackState) ->
-            _musicState.update {
-                it.copy(
-                    playbackState = playbackState.toPlaybackState(playWhenReady)
-                )
+        launch {
+            combine(
+                playWhenReady,
+                playbackState,
+            ) { playWhenReady, playbackState ->
+                Pair(playWhenReady, playbackState)
+            }.collectLatest { (playWhenReady, playbackState) ->
+                _musicState.update {
+                    it.copy(
+                        playbackState = playbackState.toPlaybackState(playWhenReady)
+                    )
+                }
             }
-        }
-    }
-
-    internal fun enqueueSongLibrary(songs: List<Song>) {
-        val songLibrary = songLibrary.value
-
-        songs.filter { song ->
-            songLibrary.none { it.key() == song.key() } // remove duplicate
-        }.also {
-            _songLibrary.tryEmit(songLibrary + it)
         }
     }
 

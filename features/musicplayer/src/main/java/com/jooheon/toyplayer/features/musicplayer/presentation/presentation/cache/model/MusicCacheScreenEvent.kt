@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cache.model
 
+import android.content.Context
+
 sealed class MusicCacheScreenEvent {
-    data object PlaceHolder: MusicCacheScreenEvent()
-    data object OnRefresh: MusicCacheScreenEvent()
+    data class OnRefresh(val context: Context): MusicCacheScreenEvent()
 }

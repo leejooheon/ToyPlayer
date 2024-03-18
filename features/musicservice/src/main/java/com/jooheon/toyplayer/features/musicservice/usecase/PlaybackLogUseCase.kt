@@ -10,6 +10,7 @@ import com.jooheon.toyplayer.features.common.extension.showToast
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicservice.BuildConfig
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.ext.uri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,15 +61,7 @@ class PlaybackLogUseCase(
                         duration = musicStateHolder.currentDuration.value
                     )
 
-                    val track = musicStateHolder.songLibrary.value.firstOrNull() {
-                        it.key() == mediaItem.mediaId
-                    } ?: run {
-                        startTimeMs = C.TIME_UNSET
-                        targetSong = Song.default
-                        return@collectLatest
-                    }
-
-                    targetSong = track
+                    targetSong = mediaItem.toSong()
                 }
             }
         }

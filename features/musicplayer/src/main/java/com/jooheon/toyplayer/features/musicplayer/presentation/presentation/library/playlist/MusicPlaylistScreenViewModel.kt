@@ -11,6 +11,8 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsM
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -28,8 +30,9 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
     private val playlistEventUseCase: PlaylistEventUseCase,
     private val musicStateHolder: MusicStateHolder,
+    playerController: PlayerController,
     playbackEventUseCase: PlaybackEventUseCase,
-): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
+): AbsMusicPlayerViewModel(musicStateHolder, playerController, playbackEventUseCase) {
     override val TAG = MusicPlaylistScreenViewModel::class.java.simpleName
 
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
@@ -80,12 +83,13 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private fun collectPlayingQueue() = viewModelScope.launch {
-        musicStateHolder.playingQueue.collectLatest {  playingQueue ->
+        musicStateHolder.mediaItems.collectLatest {  mediaItems ->
             val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
                 it.id == Playlist.PlayingQueuePlaylistId
             } ?: return@collectLatest
 
-            if(playingQueue == oldPlayingQueue.songs) {
+            val songs = mediaItems.map { it.toSong() }
+            if(songs == oldPlayingQueue.songs) {
                 return@collectLatest
             }
 

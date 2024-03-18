@@ -1,9 +1,11 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.Artist
+import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
@@ -12,6 +14,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.arti
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -29,8 +32,9 @@ import javax.inject.Inject
 class MusicArtistScreenViewModel @Inject constructor(
     private val musicListUseCase: MusicListUseCase,
     musicStateHolder: MusicStateHolder,
-    playbackEventUseCase: PlaybackEventUseCase
-): AbsMusicPlayerViewModel(musicStateHolder, playbackEventUseCase) {
+    playerController: PlayerController,
+    playbackEventUseCase: PlaybackEventUseCase,
+): AbsMusicPlayerViewModel(musicStateHolder, playerController, playbackEventUseCase) {
     override val TAG = MusicArtistScreenViewModel::class.java.simpleName
 
     private val _musicArtistScreenState = MutableStateFlow(MusicArtistScreenState.default)
@@ -39,33 +43,50 @@ class MusicArtistScreenViewModel @Inject constructor(
     private val _navigateToDetailScreen = Channel<Artist>()
     val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
 
-    private val sortType = MutableStateFlow(ArtistSortType.ArtistName)
-    private var songList: List<Song> = emptyList()
+    private val _musicListType = MutableStateFlow(musicListUseCase.getMusicListType())
+    val musicListType = _musicListType.asStateFlow()
 
-    private enum class ArtistSortType {
+    private val _sortType = MutableStateFlow(ArtistSortType.ArtistName)
+    val sortType = _sortType.asStateFlow()
+
+    enum class ArtistSortType {
         ArtistName, NumberOfSong, NumberOfAlbum
     }
+
     init {
         collectMusicList()
-        collectSortType()
-        loadData()
     }
 
     fun dispatch(event: MusicArtistScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicArtistScreenEvent.OnArtistItemClick -> _navigateToDetailScreen.send(event.artist)
-            is MusicArtistScreenEvent.OnSortByArtistName -> sortType.tryEmit(ArtistSortType.ArtistName)
-            is MusicArtistScreenEvent.OnSortByNumberOfSong -> sortType.tryEmit(ArtistSortType.NumberOfSong)
-            is MusicArtistScreenEvent.OnSortByNumberOfAlbum ->sortType.tryEmit(ArtistSortType.NumberOfAlbum)
+            is MusicArtistScreenEvent.OnSortTypeChanged -> _sortType.tryEmit(event.type)
         }
     }
 
-    fun loadData() = viewModelScope.launch {
-        // TODO
+    fun loadData(
+        context: Context,
+        artistSortType: ArtistSortType,
+        musicListType: MusicListType,
+    ) = viewModelScope.launch {
+        updateArtists(context, artistSortType, musicListType)
     }
 
-    private suspend fun updateArtists() = withContext(Dispatchers.IO) {
-        val groupByAlbum = songList.groupBy {
+    private suspend fun updateArtists(
+        context: Context,
+        artistSortType: ArtistSortType,
+        musicListType: MusicListType,
+    ) = withContext(Dispatchers.IO) {
+        val mediaId = when(musicListType) {
+            MusicListType.All -> MediaId.AllSongs
+            MusicListType.Local -> MediaId.LocalSongs
+            MusicListType.Streaming -> MediaId.StreamSongs
+            MusicListType.Asset -> MediaId.AssetSongs
+        }
+
+        val musicList = getMusicList(context, mediaId)
+
+        val groupByAlbum = musicList.groupBy {
             it.albumId
         }.map { (albumId, songs) ->
             Album(
@@ -80,7 +101,7 @@ class MusicArtistScreenViewModel @Inject constructor(
             it.artistId
         }
 
-        val groupByArtist = songList.groupBy {
+        val groupByArtist = musicList.groupBy {
             it.artistId
         }.map { (artistId, songs) ->
             Artist(
@@ -90,7 +111,7 @@ class MusicArtistScreenViewModel @Inject constructor(
             )
         }
 
-        val sorted = when(sortType.value) {
+        val sorted = when(artistSortType) {
             ArtistSortType.ArtistName -> groupByArtist.sortedBy { it.name }
             ArtistSortType.NumberOfSong -> groupByArtist.sortedByDescending { it.albums.map { it.songs.size }.sum() }
             ArtistSortType.NumberOfAlbum -> groupByArtist.sortedByDescending { it.albums.size }
@@ -101,31 +122,9 @@ class MusicArtistScreenViewModel @Inject constructor(
         }
     }
 
-    private fun collectSortType() = viewModelScope.launch {
-        sortType.collectLatest {
-            updateArtists()
-        }
-    }
     private fun collectMusicList() = viewModelScope.launch {
-        combine(
-            musicListUseCase.localSongList,
-            musicListUseCase.assetSongList,
-            musicListUseCase.streamingSongList,
-            musicListUseCase.musicListType,
-        ) { localSongList, assetSongList, streamingSongList, musicListType ->
-            Pair(listOf(localSongList, assetSongList, streamingSongList), musicListType)
-        }.collect { (dataSet, musicListType) ->
-            val localSongList = dataSet[0]
-            val assetSongList = dataSet[1]
-            val streamingSongList = dataSet[2]
-            songList = when(musicListType) {
-                MusicListType.All -> localSongList + assetSongList + streamingSongList
-                MusicListType.Asset -> assetSongList
-                MusicListType.Local -> localSongList
-                MusicListType.Streaming -> streamingSongList
-            }
-
-            updateArtists()
+        musicListUseCase.musicListType.collectLatest {
+            _musicListType.emit(it)
         }
     }
 }
