@@ -14,7 +14,7 @@ dependencies {
 //    testImplementation(projects.testing)
 
     // serialization
-    implementation(libs.serialization.json)
+    implementation(libs.kotlinx.serialization.json)
 
     // media3
     implementation(libs.androidx.media3.exoplayer)
