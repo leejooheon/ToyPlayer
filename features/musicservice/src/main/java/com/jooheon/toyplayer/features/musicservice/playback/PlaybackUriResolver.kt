@@ -25,18 +25,11 @@ import kotlin.random.Random
 @OptIn(UnstableApi::class)
 class PlaybackUriResolver(
     private val musicStateHolder: MusicStateHolder,
+    private val playbackCacheManager: PlaybackCacheManager,
 ) : ResolvingDataSource.Resolver {
     private val TAG = PlaybackUriResolver::class.java.simpleName
 
-    private var playbackCacheManager: PlaybackCacheManager? = null
     private val random = Random(System.currentTimeMillis())
-
-    fun init(playbackCacheManager: PlaybackCacheManager) {
-        this.playbackCacheManager = playbackCacheManager
-    }
-    fun release() {
-        playbackCacheManager = null
-    }
 
     override fun resolveDataSpec(dataSpec: DataSpec): DataSpec {
         val customCacheKey = dataSpec.key ?: run {

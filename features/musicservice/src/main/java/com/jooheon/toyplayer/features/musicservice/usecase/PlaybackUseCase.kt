@@ -21,9 +21,12 @@ class PlaybackUseCase(
     private val musicStateHolder: MusicStateHolder,
     private val playingQueueUseCase: PlayingQueueUseCase,
 ) {
-    internal suspend fun initialize(player: Player, scope: CoroutineScope) {
-        initPlaybackOptions(player)
-        initPlayingQueue(player)
+    internal fun initialize(player: Player?, scope: CoroutineScope) {
+        scope.launch {
+            player ?: return@launch
+            initPlaybackOptions(player)
+            initPlayingQueue(player)
+        }
 
         collectMediaItem(scope)
         collectPlayingQueue(scope)

@@ -11,16 +11,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PlaylistUseCaseImpl(
-    applicationScope: CoroutineScope,
     private val playlistRepository: PlaylistRepository
 ): PlaylistUseCase {
     private val _allPlaylistState = MutableStateFlow<List<Playlist>>(emptyList())
     override fun allPlaylist() = _allPlaylistState.asStateFlow()
-    init {
-        applicationScope.launch {
-            update()
-        }
-    }
+
     override suspend fun updatePlaylists(vararg playlist: Playlist) {
         playlistRepository.updatePlaylists(*playlist)
         update()

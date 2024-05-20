@@ -29,10 +29,9 @@ import timber.log.Timber
 @OptIn(UnstableApi::class)
 class MediaLibrarySessionCallback(
     private val context: Context,
+    private val scope: CoroutineScope,
     private val mediaItemProvider: MediaItemProvider,
 ): MediaLibrarySession.Callback {
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
-
     fun release() {
         scope.cancel()
     }

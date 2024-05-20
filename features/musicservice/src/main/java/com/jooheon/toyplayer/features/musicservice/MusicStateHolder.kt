@@ -26,10 +26,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MusicStateHolder(
-    private val applicationScope: CoroutineScope,
-) {
+@Singleton
+class MusicStateHolder @Inject constructor() {
     private val mutex = Mutex()
     private val streamBuffer = RingBuffer<Pair<String, Uri>?>(URI_BUFFER_SIZE) { null }
 
@@ -75,11 +76,7 @@ class MusicStateHolder(
     private val _disContinuation = MutableStateFlow(Pair(0L, 0L))
     val disContinuation = _disContinuation.asStateFlow()
 
-    init {
-        observeStates()
-    }
-
-    private fun observeStates() = applicationScope.launch {
+    internal fun observeStates(scope: CoroutineScope) = scope.launch {
         launch {
             currentDuration.collectLatest { duration ->
                 _musicState.update {

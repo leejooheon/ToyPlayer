@@ -6,9 +6,13 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.shuffledItems
+import kotlinx.coroutines.CoroutineScope
 
 @OptIn(UnstableApi::class)
-class ToyPlayer(player: Player): ForwardingPlayer(player){
+class ToyPlayer(
+    player: Player,
+    private val scope: CoroutineScope,
+): ForwardingPlayer(player){
     override fun getAvailableCommands(): Player.Commands {
         return super.getAvailableCommands().buildUpon()
             .add(Player.COMMAND_SEEK_TO_NEXT)

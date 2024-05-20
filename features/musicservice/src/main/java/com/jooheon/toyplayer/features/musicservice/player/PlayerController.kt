@@ -32,7 +32,6 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class PlayerController(
     private val applicationScope: CoroutineScope,
-    private val musicStateHolder: MusicStateHolder,
 ) {
     private val immediate = Dispatchers.Main.immediate
 

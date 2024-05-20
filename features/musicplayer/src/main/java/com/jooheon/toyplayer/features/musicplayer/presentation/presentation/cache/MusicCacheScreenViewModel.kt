@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn(UnstableApi::class)
 class MusicCacheScreenViewModel @Inject constructor(
-    private val playbackCacheManager: PlaybackCacheManager,
+//    private val playbackCacheManager: PlaybackCacheManager,
     musicStateHolder: MusicStateHolder,
     playerController: PlayerController,
     playbackEventUseCase: PlaybackEventUseCase
@@ -55,32 +55,32 @@ class MusicCacheScreenViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        playbackCacheManager.removeListener(
-            key = MusicCacheScreenViewModel::class.java.simpleName,
-            listener = cacheListener,
-        )
+//        playbackCacheManager.removeListener(
+//            key = MusicCacheScreenViewModel::class.java.simpleName,
+//            listener = cacheListener,
+//        )
         super.onCleared()
     }
 
     private fun addCacheListener() = viewModelScope.launch {
-        playbackCacheManager.addListener(
-            key = MusicCacheScreenViewModel::class.java.simpleName,
-            listener = cacheListener,
-        )
+//        playbackCacheManager.addListener(
+//            key = MusicCacheScreenViewModel::class.java.simpleName,
+//            listener = cacheListener,
+//        )
     }
 
     fun loadData(context: Context) = viewModelScope.launch {
         val assetSongs = getMusicList(context, MediaId.AssetSongs)
 
-        val cachedSongs = assetSongs.filter {
-            playbackCacheManager.isCached(it.key(), 0, chunkLength)
-        }
-
-        _musicCacheScreenState.update {
-            it.copy(
-                songs = cachedSongs
-            )
-        }
+//        val cachedSongs = assetSongs.filter {
+//            playbackCacheManager.isCached(it.key(), 0, chunkLength)
+//        }
+//
+//        _musicCacheScreenState.update {
+//            it.copy(
+//                songs = cachedSongs
+//            )
+//        }
     }
 
     fun dispatch(event: MusicCacheScreenEvent) = viewModelScope.launch {

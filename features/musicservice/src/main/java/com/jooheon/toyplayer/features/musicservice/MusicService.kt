@@ -5,23 +5,15 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.OptIn
-import androidx.media3.common.AudioAttributes
-import androidx.media3.common.C
 import androidx.media3.common.Player
+import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSourceBitmapLoader
-import androidx.media3.datasource.ResolvingDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.extractor.DefaultExtractorsFactory
-import androidx.media3.session.CacheBitmapLoader
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
+import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
-import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
@@ -31,8 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -43,22 +33,29 @@ class MusicService: MediaLibraryService() {
     private val TAG = MusicService::class.java.simpleName + "@" + "Main"
 
     @Inject
+    @MusicServiceCoroutineScope
+    lateinit var serviceScope: CoroutineScope
+
+    @Inject
+    lateinit var musicStateHolder: MusicStateHolder
+
+    @Inject
     lateinit var playbackListener: PlaybackListener
-
-    @Inject
-    lateinit var singleTopActivityIntent: Intent
-
-    @Inject
-    lateinit var playbackUriResolver: PlaybackUriResolver
 
     @Inject
     lateinit var playbackCacheManager: PlaybackCacheManager
 
     @Inject
-    lateinit var mediaItemProvider: MediaItemProvider
+    lateinit var singleTopActivityIntent: Intent
 
     @Inject
-    lateinit var musicStateHolder: MusicStateHolder
+    lateinit var toyPlayer: ToyPlayer
+
+    @Inject
+    lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
+
+    @Inject
+    lateinit var bitmapLoader: BitmapLoader
 
     @Inject
     lateinit var playbackLogUseCase : PlaybackLogUseCase
@@ -69,12 +66,8 @@ class MusicService: MediaLibraryService() {
     @Inject
     lateinit var playbackErrorUseCase : PlaybackErrorUseCase
 
-    private lateinit var mediaSession: MediaLibrarySession
-    private lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
+    private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
-
-    private val serviceJob = Job()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
     private var notificationManager: NotificationManager? = null
 
@@ -94,10 +87,12 @@ class MusicService: MediaLibraryService() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
-        Timber.tag(LifecycleTAG).d( "onTaskRemoved - 1")
-        if (!mediaSession.player.playWhenReady) {
-            Timber.tag(LifecycleTAG).d( "onTaskRemoved - 2")
-
+        val player = mediaSession?.player ?: run {
+            stopSelf()
+            return
+        }
+        Timber.tag(LifecycleTAG).d( "onTaskRemoved - playWhenReady: ${player.playWhenReady} mediaItemCount: ${player.mediaItemCount}")
+        if (!player.playWhenReady || player.mediaItemCount == 0 || player.playbackState == Player.STATE_ENDED) {
             // If the player isn't set to play when ready, the service is stopped and resources released.
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
@@ -113,16 +108,16 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun release() {
-        playbackUriResolver.release()
         playbackCacheManager.release()
         mediaLibrarySessionCallback.release()
 
-        mediaSession.release()
-        mediaSession.player.release()
+        mediaSession?.let {
+            it.player.release()
+            release()
+        }
 
         clearListener()
         serviceScope.cancel()
-
 //        handleMedia3Bug()
     }
 
@@ -136,32 +131,6 @@ class MusicService: MediaLibraryService() {
         exitProcess(0)
     }
 
-    private fun initPlayer(): Player {
-        playbackCacheManager.init()
-        playbackUriResolver.init(playbackCacheManager)
-
-        val mediaSourceFactory = DefaultMediaSourceFactory(
-            ResolvingDataSource.Factory(
-                playbackCacheManager.cacheDataSource(),
-                playbackUriResolver
-            ),
-            DefaultExtractorsFactory()
-        )
-
-        val audioAttributes = AudioAttributes.Builder()
-            .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .setUsage(C.USAGE_MEDIA)
-            .build()
-
-        val exoPlayer = ExoPlayer.Builder(applicationContext)
-            .setMediaSourceFactory(mediaSourceFactory)
-            .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
-            .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
-            .build()
-
-        return ToyPlayer(exoPlayer)
-    }
-
     private fun initNotification() {
         customMediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
@@ -173,30 +142,31 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initMediaSession() {
-        val player = initPlayer()
-
-        mediaLibrarySessionCallback = MediaLibrarySessionCallback(
-            context = this,
-            mediaItemProvider = mediaItemProvider,
-        )
-
         mediaSession = MediaLibrarySession.Builder(
-            /** service  **/this,
-            /** player   **/ player,
-            /** callback **/ mediaLibrarySessionCallback,
-        )
-        .setSessionActivity(getSingleTopActivity())
-//        .setBitmapLoader(CoilBitmapLoader(this, serviceScope))
-        .setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
-        .build()
+            this,
+            toyPlayer,
+            mediaLibrarySessionCallback,
+        ).apply {
+            setSessionActivity(getSingleTopActivity())
+            setBitmapLoader(bitmapLoader)
+//            setBitmapLoader(CoilBitmapLoader(this, serviceScope))
+//            setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
+        }.build()
     }
 
     private fun initListener() {
-        mediaSession.player.addListener(playbackListener)
+        val player = mediaSession?.player ?: run {
+            stopSelf()
+            return
+        }
+
+        musicStateHolder.observeStates(serviceScope)
+        playbackListener.observeDuration(serviceScope, player)
+        player.addListener(playbackListener)
     }
 
-    private fun initUseCase() = serviceScope.launch {
-        playbackUseCase.initialize(mediaSession.player, serviceScope)
+    private fun initUseCase() {
+        playbackUseCase.initialize(mediaSession?.player, serviceScope)
         playbackLogUseCase.initialize(serviceScope)
         playbackErrorUseCase.initialize(serviceScope)
     }
@@ -210,7 +180,7 @@ class MusicService: MediaLibraryService() {
                 ) { repeatMode, shuffleMode ->
                     repeatMode to shuffleMode
                 }.collectLatest { (repeatMode, shuffleMode) ->
-                    mediaSession.setCustomLayout(
+                    mediaSession?.setCustomLayout(
                         CustomMediaNotificationCommand.layout(
                             context = this@MusicService,
                             shuffleMode = shuffleMode,
@@ -221,32 +191,13 @@ class MusicService: MediaLibraryService() {
             }
 
             launch {
-                musicStateHolder.isPlaying.collectLatest { isPlaying ->
-                    if(isPlaying) {
-                        withContext(Dispatchers.Main) {
-                            pollCurrentDuration(mediaSession.player).collect {
-                                    value -> musicStateHolder.onCurrentDurationChanged(value)
-                            }
-                        }
-                    }
-                }
-            }
-
-            launch {
                 playbackErrorUseCase.autoPlayChannel.collectLatest {
-                    val player = mediaSession.player
+                    val player = mediaSession?.player ?: return@collectLatest
                     if(!player.isPlaying) player.play()
                 }
             }
         }
     }
-
-    private fun pollCurrentDuration(player: Player) = flow {
-        while (player.isPlaying && (player.currentPosition + POLL_INTERVAL_MSEC <= player.duration)) {
-            emit(player.currentPosition)
-            delay(POLL_INTERVAL_MSEC)
-        }
-    }.conflate()
 
     private fun getSingleTopActivity(): PendingIntent {
         return PendingIntent.getActivity(
@@ -272,7 +223,6 @@ class MusicService: MediaLibraryService() {
     }
     companion object {
         private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
-        private const val POLL_INTERVAL_MSEC = 500L
 
         private const val LifecycleTAG = "ServiceLifecycle"
 

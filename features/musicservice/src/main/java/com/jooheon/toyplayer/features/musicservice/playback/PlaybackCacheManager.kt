@@ -1,12 +1,14 @@
 package com.jooheon.toyplayer.features.musicservice.playback
 
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.NoOpCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CipherCacheDataSinkFactory
@@ -16,20 +18,13 @@ import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@UnstableApi
-@Singleton
-class PlaybackCacheManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-    private lateinit var cache: SimpleCache
-
-    internal fun init() {
-        cache = SimpleCache(
-            cacheDirectory(context),
-            NoOpCacheEvictor(),
-            StandaloneDatabaseProvider(context)
-        )
-    }
+@OptIn(UnstableApi::class)
+class PlaybackCacheManager(private val context: Context) {
+    private val cache = SimpleCache(
+        cacheDirectory(context),
+        LeastRecentlyUsedCacheEvictor(DiskCacheMaxSize.`1GB`.bytes), // TODO: 설정에서 사용자에게 입력받자.
+        StandaloneDatabaseProvider(context)
+    )
 
     internal fun release() {
         cache.release()
