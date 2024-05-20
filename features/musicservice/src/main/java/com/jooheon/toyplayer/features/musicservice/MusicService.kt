@@ -222,7 +222,7 @@ class MusicService: MediaLibraryService() {
         super.onRebind(intent)
     }
     companion object {
-        private const val PACKAGE_NAME = BuildConfig.LIBRARY_PACKAGE_NAME
+        private const val PACKAGE_NAME = "toyplayer.musicservice"
 
         private const val LifecycleTAG = "ServiceLifecycle"
 

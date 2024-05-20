@@ -6,11 +6,6 @@ plugins {
 
 android {
     namespace = "com.jooheon.toyplayer.features.common"
-
-    defaultConfig {
-        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.toyplayer\"")
-        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
-    }
 }
 
 dependencies {

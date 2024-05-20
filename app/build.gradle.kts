@@ -24,6 +24,9 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
