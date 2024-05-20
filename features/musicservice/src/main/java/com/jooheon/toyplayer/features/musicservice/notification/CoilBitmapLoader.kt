@@ -21,13 +21,15 @@ class CoilBitmapLoader(
     private val context: Context,
     private val scope: CoroutineScope,
 ): BitmapLoader {
+    override fun supportsMimeType(mimeType: String) = false
+
     override fun decodeBitmap(data: ByteArray): ListenableFuture<Bitmap> {
         return scope.future(Dispatchers.IO) {
             BitmapFactory.decodeByteArray(data, 0, data.size) ?: error("Could not decode image data")
         }
     }
 
-    override fun loadBitmap(uri: Uri, options: BitmapFactory.Options?): ListenableFuture<Bitmap> {
+    override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
         return scope.future(Dispatchers.IO) {
             val result = context.imageLoader.execute(
                 ImageRequest.Builder(context)
