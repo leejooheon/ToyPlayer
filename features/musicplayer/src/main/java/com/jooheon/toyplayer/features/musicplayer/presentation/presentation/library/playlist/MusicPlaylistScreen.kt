@@ -20,7 +20,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.components.PlaylistMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.model.MusicPlaylistScreenState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import java.lang.Float
@@ -31,11 +30,8 @@ fun MusicPlaylistScreen(
     navController: NavController,
     viewModel: MusicPlaylistScreenViewModel = hiltViewModel()
 ) {
-    viewModel.navigateToDetailScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlaylistDetail.createRoute(it))
-    }
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    viewModel.navigateTo.observeWithLifecycle {
+        navController.navigate(it)
     }
     val state by viewModel.musicPlaylistScreenState.collectAsStateWithLifecycle()
     val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()

@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaylistEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
@@ -38,9 +39,6 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     private val _musicPlaylistScreenState = MutableStateFlow(MusicPlaylistScreenState.default)
     val musicPlaylistScreenState = _musicPlaylistScreenState.asStateFlow()
 
-    private val _navigateToDetailScreen = Channel<Playlist>()
-    val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
-
     init {
         collectPlaylist()
         collectPlayingQueue()
@@ -60,9 +58,10 @@ class MusicPlaylistScreenViewModel @Inject constructor(
 
     private suspend fun onPlaylistClick(playlist: Playlist) {
         if(playlist.id == Playlist.PlayingQueuePlaylistId) {
-            _navigateToPlayingQueueScreen.send(playlist)
+            _navigateTo.send(ScreenNavigation.Music.PlayingQueue)
         } else {
-            _navigateToDetailScreen.send(playlist)
+            val screen = ScreenNavigation.Music.PlaylistDetail(playlist.id)
+            _navigateTo.send(screen)
         }
     }
 

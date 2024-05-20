@@ -11,6 +11,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
@@ -36,26 +37,15 @@ open class AbsMusicPlayerViewModel (
     private val _musicPlayerState = MutableStateFlow(MusicPlayerState.default)
     val musicPlayerState = _musicPlayerState.asStateFlow()
 
-    protected val _navigateToPlayingQueueScreen = Channel<Playlist>()
-    val navigateToPlayingQueueScreen = _navigateToPlayingQueueScreen.receiveAsFlow()
-
     init {
         collectMusicState()
     }
 
     fun dispatch(event: MusicPlayerEvent) = viewModelScope.launch {
         when(event) {
-            is MusicPlayerEvent.OnPlayingQueueClick -> onPlayingQueueClick()
+            is MusicPlayerEvent.OnPlayingQueueClick -> _navigateTo.send(ScreenNavigation.Music.PlayingQueue)
             else -> playbackEventUseCase.dispatch(playerController, event)
         }
-    }
-
-    private suspend fun onPlayingQueueClick() {
-        _navigateToPlayingQueueScreen.send(
-            Playlist.playingQueuePlaylist.copy(
-                songs = musicPlayerState.value.playingQueue
-            )
-        )
     }
 
     private fun collectMusicState() = viewModelScope.launch {

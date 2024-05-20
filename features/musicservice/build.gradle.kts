@@ -2,6 +2,7 @@
 plugins {
     id("toyplayer.android.library.hilt")
     id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

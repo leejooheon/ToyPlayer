@@ -2,8 +2,8 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.lib
 
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
@@ -34,16 +34,13 @@ class MusicPlayingQueueScreenViewModel @Inject constructor(
     private val _musicPlayingQueueScreenState = MutableStateFlow(MusicPlayingQueueScreenState.default)
     val musicPlayingQueueScreenState = _musicPlayingQueueScreenState.asStateFlow()
 
-    private val _navigateTo = Channel<String>()
-    val navigateTo = _navigateTo.receiveAsFlow()
-
     init {
         collectPlayingQueue()
     }
 
     fun dispatch(event: MusicPlayingQueueScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicPlayingQueueScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
+            is MusicPlayingQueueScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back)
         }
     }
 

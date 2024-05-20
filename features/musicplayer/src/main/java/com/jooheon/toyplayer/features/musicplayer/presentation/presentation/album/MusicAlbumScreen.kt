@@ -22,7 +22,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.albu
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.combine
@@ -36,12 +35,10 @@ fun MusicAlbumScreen(
     viewModel: MusicAlbumScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    viewModel.navigateToDetailScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.AlbumDetail.createRoute(it))
+    viewModel.navigateTo.observeWithLifecycle {
+        navController.navigate(it)
     }
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-    }
+
     combine(
         viewModel.sortType,
         viewModel.musicListType

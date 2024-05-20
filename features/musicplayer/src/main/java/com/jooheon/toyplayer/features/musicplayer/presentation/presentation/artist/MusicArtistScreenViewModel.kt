@@ -7,8 +7,8 @@ import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenState
@@ -17,12 +17,9 @@ import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,9 +37,6 @@ class MusicArtistScreenViewModel @Inject constructor(
     private val _musicArtistScreenState = MutableStateFlow(MusicArtistScreenState.default)
     val musicArtistScreenState = _musicArtistScreenState.asStateFlow()
 
-    private val _navigateToDetailScreen = Channel<Artist>()
-    val navigateToDetailScreen = _navigateToDetailScreen.receiveAsFlow()
-
     private val _musicListType = MutableStateFlow(musicListUseCase.getMusicListType())
     val musicListType = _musicListType.asStateFlow()
 
@@ -59,7 +53,10 @@ class MusicArtistScreenViewModel @Inject constructor(
 
     fun dispatch(event: MusicArtistScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicArtistScreenEvent.OnArtistItemClick -> _navigateToDetailScreen.send(event.artist)
+            is MusicArtistScreenEvent.OnArtistItemClick -> {
+                val screen = ScreenNavigation.Music.ArtistDetail(event.artist.id)
+                _navigateTo.send(screen)
+            }
             is MusicArtistScreenEvent.OnSortTypeChanged -> _sortType.tryEmit(event.type)
         }
     }

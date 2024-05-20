@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
@@ -46,7 +47,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 
@@ -56,12 +56,12 @@ import kotlin.math.max
 @Composable
 fun MusicPlaylistDetailScreen(
     navController: NavController,
-    playlist: Playlist,
+    playlistId: Int,
     viewModel: MusicPlaylistDetailScreenViewModel = hiltViewModel()
 ) {
-    viewModel.init(playlist)
+    viewModel.init(playlistId)
     viewModel.navigateTo.observeWithLifecycle { route ->
-        if(route == ScreenNavigation.Back.route) {
+        if(route is ScreenNavigation.Back) {
             navController.popBackStack()
         } else {
             navController.navigate(route)

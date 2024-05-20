@@ -36,7 +36,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.essential.base.UiText
@@ -58,11 +57,8 @@ fun MusicSongScreen(
     viewModel: MusicSongScreenViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
-    }
-    viewModel.navigateToSongList.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.MusicListDetail.createRoute(it))
+    viewModel.navigateTo.observeWithLifecycle {
+        navController.navigate(it)
     }
     viewModel.musicListType.observeWithLifecycle {
         val event = MusicSongScreenEvent.OnRefresh(context, it)

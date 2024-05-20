@@ -20,7 +20,7 @@ data class Song(
     val imageUrl: String,
     var isFavorite: Boolean = false,
     var data: String? = null,
-): java.io.Serializable {
+) {
     fun key() = audioId.toString()
     companion object {
         val default = Song(

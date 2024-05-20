@@ -15,9 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
+import com.jooheon.toyplayer.domain.entity.music.MusicListType
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.main.presentation.MainScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.MusicAlbumDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.MusicArtistDetailScreen
@@ -27,10 +30,8 @@ import com.jooheon.toyplayer.features.setting.presentation.equalizer.EqualizerSc
 import com.jooheon.toyplayer.features.setting.presentation.language.LanguageScreen
 import com.jooheon.toyplayer.features.setting.presentation.main.SettingScreen
 import com.jooheon.toyplayer.features.setting.presentation.theme.ThemeScreen
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.MusicListDetailScreen
 import com.jooheon.toyplayer.features.splash.SplashScreen
-
 
 @OptIn(
     ExperimentalMaterialApi::class,
@@ -65,105 +66,75 @@ internal fun FullScreenNavigationHost(
     ) {
         NavHost(
             navController = navController,
-            startDestination = ScreenNavigation.Splash.route,
+            startDestination = ScreenNavigation.Splash,
             modifier = Modifier.fillMaxSize()
         ) {
 
-            composable(
-                route = ScreenNavigation.Splash.route
-            ) {
+            composable<ScreenNavigation.Splash> {
                 SplashScreen(navController)
             }
 
-            composable(
-                route = ScreenNavigation.Main.route
-            ) {
+            composable<ScreenNavigation.Main> {
                 MainScreen(navController)
             }
-            composable(
-                route = ScreenNavigation.Setting.Main.route
-            ) {
+            composable<ScreenNavigation.Setting.Main> {
                 SettingScreen(
                     navController = navController,
                     backStackEntry = it,
                 )
             }
 
-            composable(
-                route = ScreenNavigation.Setting.Language.route
-            ) {
+            composable<ScreenNavigation.Setting.Language> {
                 LanguageScreen(
                     navController = navController,
                     backStackEntry = it,
                 )
             }
 
-            composable(
-                route = ScreenNavigation.Setting.Theme.route
-            ) {
+            composable<ScreenNavigation.Setting.Theme> {
                 ThemeScreen(
                     navController = navController,
                     backStackEntry = it,
                 )
             }
 
-            composable(
-                route = ScreenNavigation.Setting.Equalizer.route
-            ) {
+            composable<ScreenNavigation.Setting.Equalizer> {
                 EqualizerScreen(navigator = navController)
             }
-            composable(
-                route = ScreenNavigation.Music.ArtistDetail.route,
-                arguments = ScreenNavigation.Music.ArtistDetail.arguments
-            ) {
-                val arguments = requireNotNull(it.arguments)
-                val artist = ScreenNavigation.Music.ArtistDetail.parseArtist(arguments)
 
-                MusicArtistDetailScreen(
-                    navController = navController,
-                    artist = artist
-                )
-            }
-
-            composable(
-                route = ScreenNavigation.Music.AlbumDetail.route,
-                arguments = ScreenNavigation.Music.AlbumDetail.arguments
-            ) {
-                val arguments = requireNotNull(it.arguments)
-                val album = ScreenNavigation.Music.AlbumDetail.parseAlbum(arguments)
-
-                MusicAlbumDetailScreen(
-                    navController = navController,
-                    album = album
-                )
-            }
-
-            composable(
-                route = ScreenNavigation.Music.PlayingQueue.route
-            ) {
+            composable<ScreenNavigation.Music.PlayingQueue> {
                 MusicPlayingQueueScreen(navController)
             }
 
-            composable(
-                route = ScreenNavigation.Music.PlaylistDetail.route,
-                arguments = ScreenNavigation.Music.PlaylistDetail.arguments
-            ) {
-                val arguments = requireNotNull(it.arguments)
-                val playlist = ScreenNavigation.Music.PlaylistDetail.parsePlaylist(arguments)
-
-                MusicPlaylistDetailScreen(
+            composable<ScreenNavigation.Music.ArtistDetail> {
+                val args = it.toRoute<ScreenNavigation.Music.ArtistDetail>()
+                MusicArtistDetailScreen(
                     navController = navController,
-                    playlist = playlist
+                    artistId = args.artistId
                 )
             }
 
-            composable(ScreenNavigation.Music.MusicListDetail.route) {
-                val arguments = requireNotNull(it.arguments)
-                val musicListType = ScreenNavigation.Music.MusicListDetail.parseType(arguments)
+            composable<ScreenNavigation.Music.AlbumDetail> {
+                val args = it.toRoute<ScreenNavigation.Music.AlbumDetail>()
+                MusicAlbumDetailScreen(
+                    navController = navController,
+                    albumId = args.albumId
+                )
+            }
 
+            composable<ScreenNavigation.Music.PlaylistDetail>{
+                val args = it.toRoute<ScreenNavigation.Music.PlaylistDetail>()
+                MusicPlaylistDetailScreen(
+                    navController = navController,
+                    playlistId = args.playlistId
+                )
+            }
+
+            composable<ScreenNavigation.Music.MusicListDetail> {
+                val args = it.toRoute<ScreenNavigation.Music.MusicListDetail>()
                 MusicListDetailScreen(
                     navController = navController,
-                    musicListType = musicListType
+                    musicListType = MusicListType.entries[args.ordinal]
                 )
             }
         }

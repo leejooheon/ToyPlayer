@@ -21,7 +21,6 @@ import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailIte
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
 import com.jooheon.toyplayer.features.setting.presentation.SettingViewModel
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.sharedViewModel
@@ -34,7 +33,7 @@ fun LanguageScreen(
 ) {
     val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
         navController = navController,
-        parentRoute = ScreenNavigation.Setting.Main.route,
+        parentRoute = "", // FIXME: 이거 고치자!!
     ).apply {
         navigateTo.observeWithLifecycle {
             SettingScreenEvent.navigateTo(navController, it)

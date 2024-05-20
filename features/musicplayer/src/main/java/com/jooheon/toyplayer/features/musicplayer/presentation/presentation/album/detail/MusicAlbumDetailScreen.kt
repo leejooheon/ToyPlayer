@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +46,7 @@ import androidx.compose.ui.util.fastSumBy
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Album
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
@@ -57,7 +59,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import java.lang.Float
@@ -66,19 +67,17 @@ import kotlin.math.max
 @Composable
 fun MusicAlbumDetailScreen(
     navController: NavController,
-    album: Album,
+    albumId: String,
     viewModel: MusicAlbumDetailScreenViewModel = hiltViewModel()
 ) {
-    viewModel.initialize(album)
+    val context = LocalContext.current
+    viewModel.initialize(context, albumId)
     viewModel.navigateTo.observeWithLifecycle { route ->
-        if(route == ScreenNavigation.Back.route) {
+        if(route is ScreenNavigation.Back) {
             navController.popBackStack()
         } else {
             navController.navigate(route)
         }
-    }
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
     }
     
     val state by viewModel.musicAlbumDetailScreenState.collectAsStateWithLifecycle()

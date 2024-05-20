@@ -23,7 +23,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.arti
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
@@ -37,11 +36,8 @@ fun MusicArtistScreen(
     viewModel: MusicArtistScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    viewModel.navigateToDetailScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.ArtistDetail.createRoute(it))
-    }
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    viewModel.navigateTo.observeWithLifecycle {
+        navController.navigate(it)
     }
     combine(
         viewModel.sortType,

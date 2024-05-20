@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.main
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.model.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,12 +34,9 @@ class MainViewModel @Inject constructor(): BaseViewModel() {
     private val _floatingButtonState = mutableStateOf(false)
     val floatingButtonState = _floatingButtonState
 
-    private val _navigateToSettingScreen = Channel<Unit>()
-    val navigateToSettingScreen = _navigateToSettingScreen.receiveAsFlow()
-
     fun dispatch(mainScreenEvent: MainScreenEvent) = viewModelScope.launch {
         when(mainScreenEvent) {
-            is MainScreenEvent.OnSettingIconClick -> _navigateToSettingScreen.send(Unit)
+            is MainScreenEvent.OnSettingIconClick -> _navigateTo.send(ScreenNavigation.Setting.Main)
             is MainScreenEvent.OnFavoriteIconCLick -> { /** TODO **/ }
             is MainScreenEvent.OnSearchIconClick -> { /** TODO **/ }
             is MainScreenEvent.OnPermissionGranted -> { /** TODO **/ }
@@ -58,7 +56,7 @@ class MainViewModel @Inject constructor(): BaseViewModel() {
     }
 
     fun onSettingClicked() = viewModelScope.launch(Dispatchers.Main) {
-        _navigateToSettingScreen.send(Unit)
+//        _navigateToSettingScreen.send(Unit)
     }
 
     fun onFloatingButtonClicked() {

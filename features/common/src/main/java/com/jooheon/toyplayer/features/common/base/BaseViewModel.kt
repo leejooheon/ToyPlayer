@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.common.Resource
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.data.AlertDialogResource
 import com.jooheon.toyplayer.features.essential.base.UiText
 import kotlinx.coroutines.channels.Channel
@@ -12,6 +13,9 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
     protected abstract val TAG: String
+
+    protected val _navigateTo = Channel<ScreenNavigation>()
+    val navigateTo = _navigateTo.receiveAsFlow()
 
     private val _loadingState = Channel<Boolean>()
     val loadingState = _loadingState.receiveAsFlow()

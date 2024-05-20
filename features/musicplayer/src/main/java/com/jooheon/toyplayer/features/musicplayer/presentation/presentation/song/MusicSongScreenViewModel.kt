@@ -6,6 +6,7 @@ import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
@@ -41,9 +42,6 @@ class MusicSongScreenViewModel @Inject constructor(
     private val _musicListType = MutableStateFlow(musicListUseCase.getMusicListType())
     val musicListType = _musicListType.asStateFlow()
 
-    private val _navigateToSongList = Channel<MusicListType>()
-    val navigateToSongList = _navigateToSongList.receiveAsFlow()
-
     init {
         collectPlaylist()
         collectMusicList()
@@ -54,8 +52,11 @@ class MusicSongScreenViewModel @Inject constructor(
     fun dispatch(event: MusicSongScreenEvent) = viewModelScope.launch {
         when(event) {
             is MusicSongScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
-            is MusicSongScreenEvent.OnMusicComponentClick -> _navigateToSongList.send(event.musicListType)
             is MusicSongScreenEvent.OnRefresh -> reload(event.context, event.musicListType)
+            is MusicSongScreenEvent.OnMusicComponentClick -> {
+                val screen = ScreenNavigation.Music.MusicListDetail(event.musicListType.ordinal)
+                _navigateTo.send(screen)
+            }
         }
     }
 

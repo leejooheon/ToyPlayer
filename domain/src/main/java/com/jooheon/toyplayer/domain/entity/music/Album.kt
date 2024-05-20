@@ -11,7 +11,7 @@ data class Album(
     val artistId: String,
     val imageUrl: String,
     val songs: List<Song>
-): java.io.Serializable {
+) {
     companion object {
         val default = Album(
             id = "-1",

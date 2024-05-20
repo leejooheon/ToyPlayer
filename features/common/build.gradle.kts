@@ -2,6 +2,7 @@ plugins {
     id("toyplayer.android.library")
     id("toyplayer.android.compose")
     id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
