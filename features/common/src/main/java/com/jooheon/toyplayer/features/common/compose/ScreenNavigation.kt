@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 sealed interface ScreenNavigation {
+    fun ScreenNavigation.route() = this.javaClass.name.replace("$", ".")
 
     @Serializable
     sealed interface Bottom : ScreenNavigation {

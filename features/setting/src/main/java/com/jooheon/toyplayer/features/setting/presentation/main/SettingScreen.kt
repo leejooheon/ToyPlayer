@@ -40,7 +40,10 @@ fun SettingScreen(
     navController: NavHostController,
     backStackEntry: NavBackStackEntry,
 ) {
-    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(navController).apply {
+    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
+        navController = navController,
+        parentRoute = null
+    ).apply {
         navigateTo.observeWithLifecycle {
             SettingScreenEvent.navigateTo(navController, it)
         }

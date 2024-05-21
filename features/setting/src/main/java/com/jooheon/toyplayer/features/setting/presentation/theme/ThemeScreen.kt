@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.domain.entity.Entity
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation.Bottom.Album.route
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.common.compose.theme.themes.getColorScheme
 import com.jooheon.toyplayer.features.essential.base.UiText
@@ -34,7 +36,7 @@ fun ThemeScreen(
 ) {
     val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
         navController = navController,
-        parentRoute = "", // FIXME: 이거 고치자!!
+        parentRoute = ScreenNavigation.Setting.Main.route()
     ).apply {
         navigateTo.observeWithLifecycle {
             SettingScreenEvent.navigateTo(navController, it)
