@@ -18,6 +18,7 @@ import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation.Bottom.Album.route
 import com.jooheon.toyplayer.features.common.compose.theme.colors.AlphaNearOpaque
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.main.navigation.BottomScreenNavigationItem
@@ -80,13 +81,12 @@ fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation.Bottom
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            val screen = destination.route.defaultEmpty().split(".").lastOrNull()
-            selectedItem.value = when(screen) {
-                ScreenNavigation.Bottom.Song.toString() -> ScreenNavigation.Bottom.Song
-                ScreenNavigation.Bottom.Album.toString() -> ScreenNavigation.Bottom.Album
-                ScreenNavigation.Bottom.Artist.toString() -> ScreenNavigation.Bottom.Artist
-                ScreenNavigation.Bottom.Cache.toString() -> ScreenNavigation.Bottom.Cache
-                ScreenNavigation.Bottom.Playlist.toString() -> ScreenNavigation.Bottom.Playlist
+            selectedItem.value = when(destination.route) {
+                ScreenNavigation.Bottom.Song.route() -> ScreenNavigation.Bottom.Song
+                ScreenNavigation.Bottom.Album.route() -> ScreenNavigation.Bottom.Album
+                ScreenNavigation.Bottom.Artist.route() -> ScreenNavigation.Bottom.Artist
+                ScreenNavigation.Bottom.Cache.route() -> ScreenNavigation.Bottom.Cache
+                ScreenNavigation.Bottom.Playlist.route() -> ScreenNavigation.Bottom.Playlist
                 else -> ScreenNavigation.Bottom.Song
             }
         }
