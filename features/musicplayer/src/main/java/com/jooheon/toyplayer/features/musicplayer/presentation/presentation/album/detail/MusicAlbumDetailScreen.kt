@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -122,7 +123,7 @@ private fun MusicAlbumDetailScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        SmallTopAppBar(
+        TopAppBar(
             title = {
                 Text(
                     text = musicAlbumDetailScreenState.album.name,
