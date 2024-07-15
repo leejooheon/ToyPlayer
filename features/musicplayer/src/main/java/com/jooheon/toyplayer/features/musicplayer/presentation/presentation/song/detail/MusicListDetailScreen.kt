@@ -16,13 +16,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.extensions.scrollEnabled
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
@@ -44,9 +44,13 @@ fun MusicListDetailScreen(
     viewModel: MusicListDetailViewModel = hiltViewModel(),
     musicListType: MusicListType,
 ) {
+    val context = LocalContext.current
     viewModel.initMusicListType(musicListType)
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
+    viewModel.navigateTo.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
+        navController.navigate(it)
+    }
+    viewModel.musicListType.observeWithLifecycle {
+        viewModel.dispatch(MusicListDetailScreenEvent.OnRefresh(context, it))
     }
 
     val screenState by viewModel.musicListDetailScreenState.collectAsStateWithLifecycle()

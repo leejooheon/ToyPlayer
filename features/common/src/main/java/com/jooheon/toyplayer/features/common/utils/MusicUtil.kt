@@ -58,8 +58,6 @@ object MusicUtil {
             val uri = path.toLongOrNull() ?: -1L
             return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, uri)
         }
-
-        return Uri.parse("")
     }
 
     // song.albumArtUri 사용하자.

@@ -1,16 +1,11 @@
 plugins {
     id("toyplayer.android.library")
     id("toyplayer.android.compose")
-    id("org.jetbrains.kotlin.kapt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
     namespace = "com.jooheon.toyplayer.features.common"
-
-    defaultConfig {
-        buildConfigField("String", "APPLICATION_ID", "\"com.jooheon.toyplayer\"")
-        buildConfigField("String", "DEEPLINK_PREFIX", ("\"" + project.findProperty("DEEPLINK_SCHEME") + "://" + project.findProperty("DEEPLINK_BASE") + "\"") ?: "")
-    }
 }
 
 dependencies {
@@ -32,7 +27,7 @@ dependencies {
 
     // glide
     implementation(libs.bumptech.glide)
-    kapt(libs.bumptech.glide.compiler)
+    annotationProcessor(libs.bumptech.glide.compiler)
 
     // media3
     implementation(libs.androidx.media3.session)

@@ -2,14 +2,13 @@ package com.jooheon.toyplayer.features.musicservice.usecase
 
 import android.content.Context
 import androidx.media3.common.C
-import androidx.media3.common.Player
 import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.observer.NetworkConnectivityObserver
 import com.jooheon.toyplayer.features.common.extension.showToast
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.musicservice.BuildConfig
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.ext.uri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,15 +59,7 @@ class PlaybackLogUseCase(
                         duration = musicStateHolder.currentDuration.value
                     )
 
-                    val track = musicStateHolder.songLibrary.value.firstOrNull() {
-                        it.key() == mediaItem.mediaId
-                    } ?: run {
-                        startTimeMs = C.TIME_UNSET
-                        targetSong = Song.default
-                        return@collectLatest
-                    }
-
-                    targetSong = track
+                    targetSong = mediaItem.toSong()
                 }
             }
         }
@@ -100,8 +91,6 @@ class PlaybackLogUseCase(
         val size = if(title.length < 16) title.length else 16
         val shortTitle = title.substring(0, size)
 
-        if (BuildConfig.DEBUG) {
-            context.showToast("$shortTitle, $duration [$startTime ~ $endTime]")
-        }
+        context.showToast("$shortTitle, $duration [$startTime ~ $endTime]")
     }
 }

@@ -5,12 +5,8 @@ import com.jooheon.toyplayer.domain.entity.music.Song
 import kotlinx.coroutines.flow.Flow
 
 interface MusicListUseCase {
-    val localSongList: Flow<List<Song>>
-    val streamingSongList: Flow<List<Song>>
-    val assetSongList: Flow<List<Song>>
     val musicListType: Flow<MusicListType>
-
-    suspend fun initialize()
+    suspend fun getAllSongList(): List<Song>
     suspend fun getLocalSongList(): List<Song>
     suspend fun getStreamingUrlList(): List<Song>
     suspend fun getSongListFromAsset(): List<Song>

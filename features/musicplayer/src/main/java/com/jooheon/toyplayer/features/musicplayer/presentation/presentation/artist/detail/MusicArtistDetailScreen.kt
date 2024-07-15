@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Artist
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.components.ArtistDetailMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
@@ -33,7 +35,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import java.lang.Float
@@ -42,19 +43,17 @@ import kotlin.math.max
 @Composable
 fun MusicArtistDetailScreen(
     navController: NavController,
-    artist: Artist,
+    artistId: String,
     viewModel: MusicArtistDetailScreenViewModel = hiltViewModel()
 ) {
-    viewModel.initialize(artist)
+    val context = LocalContext.current
+    viewModel.initialize(context, artistId)
     viewModel.navigateTo.observeWithLifecycle { route ->
-        if(route == ScreenNavigation.Back.route) {
+        if(route is ScreenNavigation.Back) {
             navController.popBackStack()
         } else {
             navController.navigate(route)
         }
-    }
-    viewModel.navigateToPlayingQueueScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Music.PlayingQueue.route)
     }
     val state by viewModel.musicArtistDetailScreenState.collectAsStateWithLifecycle()
     val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()

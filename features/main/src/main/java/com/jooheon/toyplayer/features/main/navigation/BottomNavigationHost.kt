@@ -26,21 +26,21 @@ internal fun BottomNavigationHost(
     Box(modifier = modifier) {
         NavHost(
             navController = navController,
-            startDestination = ScreenNavigation.BottomSheet.Song.route
+            startDestination = ScreenNavigation.Bottom.Song
         ) {
-            composable(ScreenNavigation.BottomSheet.Song.route) {
+            composable<ScreenNavigation.Bottom.Song> {
                 MusicSongScreen(navigator)
             }
-            composable(ScreenNavigation.BottomSheet.Album.route) {
+            composable<ScreenNavigation.Bottom.Album> {
                 MusicAlbumScreen(navigator)
             }
-            composable(ScreenNavigation.BottomSheet.Artist.route) {
+            composable<ScreenNavigation.Bottom.Artist> {
                 MusicArtistScreen(navigator)
             }
-            composable(ScreenNavigation.BottomSheet.Cache.route) {
+            composable<ScreenNavigation.Bottom.Cache> {
                 MusicCacheScreen(navigator)
             }
-            composable(ScreenNavigation.BottomSheet.Playlist.route) {
+            composable<ScreenNavigation.Bottom.Playlist> {
                 MusicPlaylistScreen(navigator)
             }
         }

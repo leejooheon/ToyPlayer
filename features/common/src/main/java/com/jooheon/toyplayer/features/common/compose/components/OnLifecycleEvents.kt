@@ -19,7 +19,7 @@ private fun OnLifecycleEvents(
     DisposableEffect(
         key1 = lifecycleOwner,
         effect = {
-            val observer = LifecycleEventObserver { lifecycleOwner, event ->
+            val observer = LifecycleEventObserver { _, event ->
                 when(event) {
                     Lifecycle.Event.ON_START -> onStart?.invoke()
                     Lifecycle.Event.ON_RESUME -> onResume?.invoke()

@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.domain.entity
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Entity: java.io.Serializable {
+sealed class Entity {
     enum class SupportLaunguages(val code: String) {
         AUTO("Auto"),
         ENGLISH("en"),

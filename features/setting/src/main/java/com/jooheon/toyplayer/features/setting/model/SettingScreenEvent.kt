@@ -39,8 +39,8 @@ sealed class SettingScreenEvent {
             context.createConfigurationContext(configuration)
         }
 
-        fun navigateTo(navController: NavController, route: String) {
-            if(route == ScreenNavigation.Back.route) {
+        fun navigateTo(navController: NavController, route: ScreenNavigation) {
+            if(route is ScreenNavigation.Back) {
                 navController.popBackStack()
             } else {
                 navController.navigate(route)

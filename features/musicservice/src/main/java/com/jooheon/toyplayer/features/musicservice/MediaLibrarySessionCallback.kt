@@ -29,10 +29,9 @@ import timber.log.Timber
 @OptIn(UnstableApi::class)
 class MediaLibrarySessionCallback(
     private val context: Context,
+    private val scope: CoroutineScope,
     private val mediaItemProvider: MediaItemProvider,
 ): MediaLibrarySession.Callback {
-    private val scope = CoroutineScope(Dispatchers.Main + Job())
-
     fun release() {
         scope.cancel()
     }
@@ -43,32 +42,51 @@ class MediaLibrarySessionCallback(
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
         Timber.d("onGetLibraryRoot (packageName: ${browser.packageName}), (isRecent = ${params?.isRecent == true}")
-        if(session.isAutomotiveController(browser) || session.isAutoCompanionController(browser)) {
-            val rootItem = mediaItemProvider.rootItem()
-            return Futures.immediateFuture(LibraryResult.ofItem(rootItem, params))
+
+        return Futures.immediateFuture(LibraryResult.ofItem(mediaItemProvider.rootItem, params))
+    }
+
+    override fun onGetChildren(
+        session: MediaLibrarySession,
+        browser: MediaSession.ControllerInfo,
+        parentId: String,
+        page: Int,
+        pageSize: Int,
+        params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+        // browsable mediaItem을 눌렀을 경우 호출
+        return scope.future {
+            Timber.d("onGetChildren: $parentId, $page, $pageSize")
+
+            val items = mediaItemProvider.getChildMediaItems(parentId)
+            val result = if (items.isEmpty()) LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
+                         else LibraryResult.ofItemList(items, params)
+
+            return@future result
+        }
+    }
+
+    override fun onSetMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: MutableList<MediaItem>,
+        startIndex: Int,
+        startPositionMs: Long
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        Timber.d("onSetMediaItems: [$startIndex, $startPositionMs], ${mediaItems.map { Pair(it.mediaId, it.mediaMetadata.title) }}")
+        val mediaItem = mediaItems.firstOrNull() ?: run {
+            return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
         }
 
-        return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_NOT_SUPPORTED))
-    }
+        return scope.future {
+            val (newMediaItems, index) = mediaItemProvider.getSongListOrNull(mediaItem)
 
-    override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
-        super.onDisconnected(session, controller)
-        Timber.d("onDisconnected")
-    }
-    override fun onConnect(
-        session: MediaSession,
-        controller: MediaSession.ControllerInfo
-    ): MediaSession.ConnectionResult {
-        Timber.d("onConnect: packageName: ${controller.packageName}")
-        val connectionResult = super.onConnect(session, controller)
-        val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
-            .add(SessionCommand(MusicService.TOGGLE_SHUFFLE, Bundle.EMPTY)).also {
-                it.add(SessionCommand(MusicService.CYCLE_REPEAT, Bundle.EMPTY))
+            if(newMediaItems.isNullOrEmpty()) {
+                MediaSession.MediaItemsWithStartPosition(mediaItems, startIndex, startPositionMs)
+            } else {
+                MediaSession.MediaItemsWithStartPosition(newMediaItems, index, C.TIME_UNSET)
             }
-
-        return MediaSession.ConnectionResult.accept(
-            availableSessionCommands.build(), connectionResult.availablePlayerCommands
-        )
+        }
     }
 
     override fun onCustomCommand(
@@ -91,71 +109,6 @@ class MediaLibrarySessionCallback(
         return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
     }
 
-    override fun onGetChildren(
-        session: MediaLibrarySession,
-        browser: MediaSession.ControllerInfo,
-        parentId: String,
-        page: Int,
-        pageSize: Int,
-        params: MediaLibraryService.LibraryParams?
-    ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> = scope.future {
-        val childBrowsableItems = mediaItemProvider.getChildBrowsableItems(parentId)
-        Timber.d("onGetChildren for $parentId, children: ${childBrowsableItems.map { it.mediaMetadata.title }}")
-
-        if (childBrowsableItems.isNotEmpty()) {
-            mediaItemProvider.setCurrentDisplayedSongList(childBrowsableItems)
-            LibraryResult.ofItemList(childBrowsableItems, params)
-        } else {
-            LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
-        }
-    }
-
-    override fun onGetItem(
-        session: MediaLibrarySession,
-        browser: MediaSession.ControllerInfo,
-        mediaId: String
-    ): ListenableFuture<LibraryResult<MediaItem>> = scope.future {
-        val item = mediaItemProvider.getItem(mediaId)
-        Timber.d("onGetItem (mediaId = $mediaId, ${item?.mediaMetadata?.title})")
-        if (item != null) {
-            LibraryResult.ofItem(item, null)
-        } else {
-            LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
-        }
-    }
-
-    override fun onSetMediaItems(
-        mediaSession: MediaSession,
-        controller: MediaSession.ControllerInfo,
-        mediaItems: MutableList<MediaItem>,
-        startIndex: Int,
-        startPositionMs: Long
-    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
-        Timber.d("onSetMediaItems: ${mediaItems.map { it.mediaId }}")
-        val item = mediaItems.singleOrNull()
-
-        return if (startIndex == C.INDEX_UNSET && startPositionMs == C.TIME_UNSET && item != null) {
-            scope.future {
-                mediaItemProvider.mediaItemsWithStartPosition(item.mediaId) ?: run {
-                    super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs).await()
-                }
-            }
-        } else {
-            super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
-        }
-    }
-
-    override fun onAddMediaItems(
-        mediaSession: MediaSession,
-        controller: MediaSession.ControllerInfo,
-        mediaItems: MutableList<MediaItem>
-    ): ListenableFuture<MutableList<MediaItem>> {
-        val items = mediaItems.map { item ->
-            mediaItemProvider.getItem(item.mediaId) ?: item
-        }.toMutableList()
-        return Futures.immediateFuture(items)
-    }
-
     override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
         super.onPostConnect(session, controller)
 
@@ -166,5 +119,26 @@ class MediaLibrarySessionCallback(
                 repeatMode = session.player.repeatMode
             )
         )
+    }
+
+    override fun onConnect(
+        session: MediaSession,
+        controller: MediaSession.ControllerInfo
+    ): MediaSession.ConnectionResult {
+        Timber.d("onConnect: packageName: ${controller.packageName}")
+        val connectionResult = super.onConnect(session, controller)
+        val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
+            .add(SessionCommand(MusicService.TOGGLE_SHUFFLE, Bundle.EMPTY)).also {
+                it.add(SessionCommand(MusicService.CYCLE_REPEAT, Bundle.EMPTY))
+            }
+
+        return MediaSession.ConnectionResult.accept(
+            availableSessionCommands.build(), connectionResult.availablePlayerCommands
+        )
+    }
+
+    override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
+        super.onDisconnected(session, controller)
+        Timber.d("onDisconnected")
     }
 }

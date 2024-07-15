@@ -29,9 +29,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingUseCase: SettingUseCase
 
-    @Inject
-    lateinit var playerController: PlayerController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.tag(LifecycleTAG).d("onCreate")
@@ -46,18 +43,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppContent()
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Timber.tag(LifecycleTAG).d("onStart")
-        playerController.connect(this)
-    }
-
-    override fun onStop() {
-        Timber.tag(LifecycleTAG).d("onStop")
-        playerController.release()
-        super.onStop()
     }
 
     @Composable

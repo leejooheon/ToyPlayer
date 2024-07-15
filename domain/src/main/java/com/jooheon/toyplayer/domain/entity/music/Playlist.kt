@@ -1,6 +1,8 @@
 package com.jooheon.toyplayer.domain.entity.music
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class Playlist(
@@ -8,8 +10,9 @@ data class Playlist(
     val name: String,
     var thumbnailUrl: String,
     var songs: List<Song> = emptyList(),
-): java.io.Serializable {
+) {
     companion object {
+
         val default = Playlist(
             id = -1,
             name = "-",

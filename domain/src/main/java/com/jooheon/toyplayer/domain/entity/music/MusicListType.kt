@@ -1,5 +1,8 @@
 package com.jooheon.toyplayer.domain.entity.music
 
-enum class MusicListType: java.io.Serializable {
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class MusicListType {
     Local, Streaming, Asset, All,;
 }

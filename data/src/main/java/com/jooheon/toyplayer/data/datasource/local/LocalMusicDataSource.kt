@@ -75,7 +75,7 @@ class LocalMusicDataSource @Inject constructor(
         )
         val playlist = MediaFolder(
             title = applicationContext.getString(R.string.media_folder_playlist),
-            mediaId = MediaId.Playlist,
+            mediaId = MediaId.PlaylistRoot,
             mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
         )
 

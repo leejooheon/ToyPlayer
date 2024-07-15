@@ -1,13 +1,14 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("toyplayer.android.application")
-//    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.jooheon.toyplayer"
     defaultConfig {
         applicationId = "com.jooheon.toyplayer"
+
+        targetSdk = Integer.parseInt(libs.versions.android.sdk.compile.get())
         versionCode = Integer.parseInt(libs.versions.version.code.get())
         versionName = libs.versions.version.name.get()
     }
@@ -21,6 +22,9 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -53,10 +57,8 @@ dependencies {
     releaseImplementation(libs.chucker.release)
 
     // Room
-    implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
-//    ksp(libs.androidx.room.compile)
-    kapt(libs.androidx.room.compile)
+    ksp(libs.androidx.room.compile)
 
     // LearkCanary
     debugImplementation(libs.squareup.leakcanary)

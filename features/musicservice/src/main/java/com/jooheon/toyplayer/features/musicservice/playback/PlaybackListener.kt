@@ -9,12 +9,38 @@ import com.jooheon.toyplayer.features.musicservice.ext.playWhenReadyChangeReason
 import com.jooheon.toyplayer.features.musicservice.ext.playerState
 import com.jooheon.toyplayer.features.musicservice.ext.timelineChangeReason
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class PlaybackListener(
     private val musicStateHolder: MusicStateHolder
 ) : Player.Listener {
     private val TAG = MusicService::class.java.simpleName + "@" + PlaybackListener::class.java.simpleName
+
+    internal fun observeDuration(scope: CoroutineScope, player: Player) = scope.launch {
+        combine(
+            musicStateHolder.mediaItem,
+            musicStateHolder.isPlaying
+        ) { _, isPlaying ->
+            isPlaying
+        }.collectLatest { isPlaying ->
+            if(isPlaying) {
+                withContext(Dispatchers.Main) {
+                    pollCurrentDuration(player).collect {
+                            value -> musicStateHolder.onCurrentDurationChanged(value)
+                    }
+                }
+            }
+        }
+    }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
@@ -94,5 +120,16 @@ class PlaybackListener(
             msg += "${it}th: event: ${events.get(it)}\n"
         }
 //        Timber.tag(TAG_PLAYER).d("====== onEvents ======\n${msg}")
+    }
+
+    private fun pollCurrentDuration(player: Player) = flow {
+        while (player.isPlaying && (player.currentPosition + POLL_INTERVAL_MSEC <= player.duration)) {
+            emit(player.currentPosition)
+            delay(POLL_INTERVAL_MSEC)
+        }
+    }.conflate()
+
+    companion object {
+        private const val POLL_INTERVAL_MSEC = 500L
     }
 }

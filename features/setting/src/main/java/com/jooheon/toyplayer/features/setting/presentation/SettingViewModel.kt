@@ -23,18 +23,11 @@ class SettingViewModel @Inject constructor(
 ): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
-    val _sharedState = MutableStateFlow(SettingScreenState.default)
+    private val _sharedState = MutableStateFlow(SettingScreenState.default)
     val sharedState = _sharedState.asStateFlow()
-
-    private val _navigateTo = Channel<String>()
-    val navigateTo = _navigateTo.receiveAsFlow()
-
-    private val _navigateToSystemEqualizer = Channel<Int>()
-    val navigateToSystemEqualizer = _navigateToSystemEqualizer.receiveAsFlow()
 
     init {
         initState()
-        Log.d(TAG, "initialize ${TAG}")
     }
 
     fun dispatch(
@@ -43,9 +36,9 @@ class SettingViewModel @Inject constructor(
     ) = viewModelScope.launch{
         when(event) {
             is SettingScreenEvent.OnEqualizerScreenClick -> { /** Nothing **/ }
-            is SettingScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back.route)
-            is SettingScreenEvent.OnThemeScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Theme.route)
-            is SettingScreenEvent.OnLanguageScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Language.route)
+            is SettingScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back)
+            is SettingScreenEvent.OnThemeScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Theme)
+            is SettingScreenEvent.OnLanguageScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Language)
             is SettingScreenEvent.OnSkipDurationScreenClick -> {
                 _sharedState.update {
                     it.copy(showSkipDurationDialog = event.isShow)
@@ -75,10 +68,5 @@ class SettingViewModel @Inject constructor(
             theme = settingUseCase.getTheme(),
             skipDuration = settingUseCase.getSkipForwardBackward()
         )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d(TAG, "onCleared")
     }
 }

@@ -278,7 +278,6 @@ internal fun EmptySongItem(modifier: Modifier = Modifier) {
 
 @Composable
 internal fun AlbumImage(
-    isPlaying: Boolean,
     song: Song,
     modifier: Modifier = Modifier
 ) {
@@ -435,14 +434,9 @@ private fun MusicItemPreviewDark() {
 private fun AlbumImagePreview() {
     PreviewTheme(false) {
         AlbumImage(
-            isPlaying = true,
             song = Song.default,
             modifier = Modifier.size(96.dp)
         )
-
-//            .fillMaxHeight()
-//            .aspectRatio(1.0f)
-//            .rotate(currentAngle)
     }
 }
 

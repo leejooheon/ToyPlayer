@@ -47,8 +47,8 @@ fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    viewModel.navigateToSettingScreen.observeWithLifecycle {
-        navController.navigate(ScreenNavigation.Setting.Main.route)
+    viewModel.navigateTo.observeWithLifecycle {
+        navController.navigate(ScreenNavigation.Setting.Main)
     }
 
     MainScreen(
@@ -127,7 +127,7 @@ fun BottomBar(
                 onNavigationSelected = { selectedScreen ->
                     Timber.d("selectedScreen: $selectedScreen")
 
-                    bottomNavController.navigate(selectedScreen.route) {
+                    bottomNavController.navigate(selectedScreen) {
                         launchSingleTop = true
                         restoreState = true
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -33,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
@@ -47,7 +50,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 
@@ -60,7 +62,7 @@ fun MusicPlayingQueueScreen(
     viewModel: MusicPlayingQueueScreenViewModel = hiltViewModel()
 ) {
     viewModel.navigateTo.observeWithLifecycle { route ->
-        if(route == ScreenNavigation.Back.route) {
+        if(route is ScreenNavigation.Back) {
             navController.popBackStack()
         } else {
             navController.navigate(route)
@@ -103,7 +105,7 @@ private fun MusicPlayingQueueScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        SmallTopAppBar(
+        TopAppBar(
             title = {
                 Text(
                     text = musicPlayingQueueScreenState.playlist.name,
@@ -120,7 +122,7 @@ private fun MusicPlayingQueueScreen(
                     onClick = { onMusicPlayingQueueScreenEvent(MusicPlayingQueueScreenEvent.OnBackClick) }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = "back",
                     )
                 }

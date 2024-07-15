@@ -4,21 +4,15 @@ import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.domain.repository.MusicListRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MusicListUseCaseImpl(
     private val musicListRepository: MusicListRepository,
 ): MusicListUseCase {
-    private val _localSongList = MutableStateFlow<List<Song>>(emptyList())
-    override val localSongList = _localSongList.asStateFlow()
-
-    private val _streamingSongList = MutableStateFlow<List<Song>>(emptyList())
-    override val streamingSongList = _streamingSongList.asStateFlow()
-
-    private val _assetSongList = MutableStateFlow<List<Song>>(emptyList())
-    override val assetSongList = _assetSongList.asStateFlow()
-
     private val _musicListType = MutableStateFlow(MusicListType.All)
     override val musicListType = _musicListType.asStateFlow()
 
@@ -26,14 +20,13 @@ class MusicListUseCaseImpl(
         _musicListType.tryEmit(getMusicListType())
     }
 
-    override suspend fun initialize() {
-        val localSongList = getLocalSongList()
-        val streamingSongList = getStreamingUrlList()
-        val assetSongList = getSongListFromAsset()
+    override suspend fun getAllSongList(): List<Song> {
+        val local = getLocalSongList()
+        val stream = getStreamingUrlList()
+        val asset = getSongListFromAsset()
+        val allSongs = local + stream + asset
 
-        _localSongList.tryEmit(localSongList)
-        _streamingSongList.tryEmit(streamingSongList)
-        _assetSongList.tryEmit(assetSongList)
+        return allSongs
     }
 
     override suspend fun getLocalSongList(): List<Song> {

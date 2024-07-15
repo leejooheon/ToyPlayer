@@ -10,24 +10,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.toyplayer.features.common.compose.BottomNavigationItem
+import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation.Bottom.Album.route
 import com.jooheon.toyplayer.features.common.compose.theme.colors.AlphaNearOpaque
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
-import com.jooheon.toyplayer.features.essential.base.UiText
+import com.jooheon.toyplayer.features.main.navigation.BottomScreenNavigationItem
+import timber.log.Timber
 
 @Composable
 internal fun MyBottomNavigation(
-    selectedNavigation: ScreenNavigation,
-    onNavigationSelected: (ScreenNavigation) -> Unit,
+    selectedNavigation: ScreenNavigation.Bottom,
+    onNavigationSelected: (ScreenNavigation.Bottom) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
@@ -36,12 +36,12 @@ internal fun MyBottomNavigation(
         contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
         modifier = modifier
     ) {
-        ScreenNavigation.BottomSheet.items.forEach { item ->
+        BottomScreenNavigationItem.items.forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Icon(
                         painter = rememberVectorPainter(item.iconImageVector),
-                        contentDescription = UiText.StringResource(item.contentDescriptionResId).asString()
+                        contentDescription = item.contentDescription.asString()
                     )
                     BottomNavigationItemIcon(
                         item = item,
@@ -50,7 +50,7 @@ internal fun MyBottomNavigation(
                 },
                 label = {
                     Text(
-                        text = UiText.StringResource(item.labelResId).asString(),
+                        text = item.label.asString(),
                         style = MaterialTheme.typography.labelMedium
                     )
                 },
@@ -62,54 +62,32 @@ internal fun MyBottomNavigation(
 }
 
 @Composable
-private fun BottomNavigationItemIcon(item: BottomNavigationItem, selected: Boolean) {
-    val painter = when (item) {
-        is BottomNavigationItem.ResourceIcon -> painterResource(item.iconResId)
-        is BottomNavigationItem.ImageVectorIcon -> rememberVectorPainter(item.iconImageVector)
-    }
-    val selectedPainter = when (item) {
-        is BottomNavigationItem.ResourceIcon -> item.selectedIconResId?.let { painterResource(it) }
-        is BottomNavigationItem.ImageVectorIcon -> item.selectedImageVector?.let { rememberVectorPainter(it) }
-    }
+private fun BottomNavigationItemIcon(item: BottomScreenNavigationItem, selected: Boolean) {
+    val painter = rememberVectorPainter(item.iconImageVector)
+    val selectedPainter = rememberVectorPainter(item.selectedImageVector)
 
-    if (selectedPainter != null) {
-        Crossfade(targetState = selected, label = "") {
-            Icon(
-                painter = if (it) selectedPainter else painter,
-                contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
-            )
-        }
-    } else {
+    Crossfade(targetState = selected, label = "") {
         Icon(
-            painter = painter,
-            contentDescription = UiText.StringResource(item.contentDescriptionResId).asString(),
+            painter = if (it) selectedPainter else painter,
+            contentDescription = item.contentDescription.asString(),
         )
     }
 }
 
 @Stable
 @Composable
-fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation> {
-    val selectedItem = remember { mutableStateOf<ScreenNavigation>(ScreenNavigation.BottomSheet.Song) }
+fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation.Bottom> {
+    val selectedItem = remember { mutableStateOf<ScreenNavigation.Bottom>(ScreenNavigation.Bottom.Song) }
 
     DisposableEffect(this) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            when {
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Song.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Song
-                }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Album.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Album
-                }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Artist.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Artist
-                }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Cache.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Cache
-                }
-                destination.hierarchy.any { it.route == ScreenNavigation.BottomSheet.Playlist.route } -> {
-                    selectedItem.value = ScreenNavigation.BottomSheet.Playlist
-                }
+            selectedItem.value = when(destination.route) {
+                ScreenNavigation.Bottom.Song.route() -> ScreenNavigation.Bottom.Song
+                ScreenNavigation.Bottom.Album.route() -> ScreenNavigation.Bottom.Album
+                ScreenNavigation.Bottom.Artist.route() -> ScreenNavigation.Bottom.Artist
+                ScreenNavigation.Bottom.Cache.route() -> ScreenNavigation.Bottom.Cache
+                ScreenNavigation.Bottom.Playlist.route() -> ScreenNavigation.Bottom.Playlist
+                else -> ScreenNavigation.Bottom.Song
             }
         }
         addOnDestinationChangedListener(listener)

@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.common.compose.components
 
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,11 +16,10 @@ fun CustomDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.outline.copy(alpha = DividerAlpha),
     thickness: Dp = 1.dp,
-    startIndent: Dp = 0.dp
 ) {
-    Divider(
+    HorizontalDivider(
         modifier = modifier,
-        color = color,
         thickness = thickness,
+        color = color
     )
 }

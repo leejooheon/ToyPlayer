@@ -80,7 +80,6 @@ fun MediaSwipeableLayout(
 
         AlbumImage(
             song = musicState.currentPlayingMusic,
-            isPlaying = musicState.playbackState.isPlaying,
             modifier = Modifier
                 .clickable {}
                 .zIndex(1f)

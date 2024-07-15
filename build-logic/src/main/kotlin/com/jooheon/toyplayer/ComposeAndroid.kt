@@ -5,6 +5,8 @@ import org.gradle.kotlin.dsl.dependencies
 
 internal fun Project.configureComposeAndroid() {
     val libs = extensions.libs
+
+    pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
     androidExtension.apply {
         buildFeatures {
             compose = true

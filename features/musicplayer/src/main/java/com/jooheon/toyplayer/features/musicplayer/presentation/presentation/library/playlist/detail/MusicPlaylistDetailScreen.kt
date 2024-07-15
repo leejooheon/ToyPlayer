@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
@@ -46,7 +49,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 
@@ -56,12 +58,12 @@ import kotlin.math.max
 @Composable
 fun MusicPlaylistDetailScreen(
     navController: NavController,
-    playlist: Playlist,
+    playlistId: Int,
     viewModel: MusicPlaylistDetailScreenViewModel = hiltViewModel()
 ) {
-    viewModel.init(playlist)
+    viewModel.init(playlistId)
     viewModel.navigateTo.observeWithLifecycle { route ->
-        if(route == ScreenNavigation.Back.route) {
+        if(route is ScreenNavigation.Back) {
             navController.popBackStack()
         } else {
             navController.navigate(route)
@@ -104,7 +106,7 @@ private fun MusicPlaylistDetailScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        SmallTopAppBar(
+        TopAppBar(
             title = {
                 Text(
                     text = musicPlaylistDetailScreenState.playlist.name,
@@ -121,7 +123,7 @@ private fun MusicPlaylistDetailScreen(
                     onClick = { onMusicPlaylistScreenEvent(MusicPlaylistDetailScreenEvent.OnBackClick) }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = "back",
                     )
                 }

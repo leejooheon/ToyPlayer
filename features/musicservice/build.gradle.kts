@@ -2,6 +2,7 @@
 plugins {
     id("toyplayer.android.library.hilt")
     id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -11,10 +12,10 @@ android {
 dependencies {
     implementation(projects.domain)
     implementation(projects.features.common)
-    testImplementation(projects.testing)
+//    testImplementation(projects.testing)
 
     // serialization
-    implementation(libs.serialization.json)
+    implementation(libs.kotlinx.serialization.json)
 
     // media3
     implementation(libs.androidx.media3.exoplayer)
