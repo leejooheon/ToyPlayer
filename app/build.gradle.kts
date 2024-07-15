@@ -1,7 +1,6 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("toyplayer.android.application")
-//    alias(libs.plugins.ksp)
 }
 
 android {
@@ -58,10 +57,8 @@ dependencies {
     releaseImplementation(libs.chucker.release)
 
     // Room
-    implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
-//    ksp(libs.androidx.room.compile)
-    kapt(libs.androidx.room.compile)
+    ksp(libs.androidx.room.compile)
 
     // LearkCanary
     debugImplementation(libs.squareup.leakcanary)

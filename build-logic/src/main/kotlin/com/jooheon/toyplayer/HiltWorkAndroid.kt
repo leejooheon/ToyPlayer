@@ -7,14 +7,14 @@ import org.gradle.kotlin.dsl.dependencies
 internal fun Project.configureHiltWorkAndroid() {
     with(pluginManager) {
         apply("dagger.hilt.android.plugin")
-        apply("org.jetbrains.kotlin.kapt")
+        apply("com.google.devtools.ksp")
     }
 
     val libs = extensions.libs
     dependencies {
         "implementation"(libs.findLibrary("androidx.work.runtime.ktx").get())
         "implementation"(libs.findLibrary("hilt.androidx.work").get())
-        "kapt"(libs.findLibrary("hilt.androidx.work.compiler").get())
+        "ksp"(libs.findLibrary("hilt.androidx.work.compiler").get())
     }
 }
 

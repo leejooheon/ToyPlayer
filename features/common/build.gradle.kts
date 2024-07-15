@@ -1,7 +1,6 @@
 plugins {
     id("toyplayer.android.library")
     id("toyplayer.android.compose")
-    id("org.jetbrains.kotlin.kapt")
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -28,7 +27,7 @@ dependencies {
 
     // glide
     implementation(libs.bumptech.glide)
-    kapt(libs.bumptech.glide.compiler)
+    annotationProcessor(libs.bumptech.glide.compiler)
 
     // media3
     implementation(libs.androidx.media3.session)
