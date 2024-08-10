@@ -57,7 +57,7 @@ room = "2.6.1"
 
 # Network
 retrofit = "2.11.0"
-retrofit-mock = "2.4.0"
+retrofit-mock = "2.11.0"
 retrofit-interceptor = "5.0.0-alpha.14"
 chucker = "3.5.2"
 retrofit-serialization-converter = "1.0.0"
