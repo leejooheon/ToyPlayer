@@ -67,7 +67,7 @@ glide = "4.16.0"
 coil = "2.6.0"
 
 # Google map
-googleMap = "2.5.3"
+googleMap = "6.1.1"
 playServiceMap = "19.0.0"
 
 # Timber
