@@ -15,7 +15,7 @@ android_sdk_min = "26"
 # Compose
 composeBom = "2024.06.00"
 compose-accompanist = "0.32.0"
-composeAnimation = "1.7.0-beta05"
+composeAnimation = "1.7.0-beta07"
 
 # Plugins
 ksp = "2.0.0-1.0.23"
