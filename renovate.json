@@ -1,0 +1,50 @@
+{
+  "extends": [
+    "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "maven"
+      ],
+      "registryUrls": [
+        "https://repo.maven.apache.org/maven2/",
+        "https://dl.google.com/dl/android/maven2/",
+        "https://plugins.gradle.org/m2/",
+        "https://jitpack.io"
+      ]
+    },
+
+    {
+      "groupName": "Kotlin, KSP",
+      "matchPackagePrefixes": [
+        "org.jetbrains.kotlin:",
+        "org.jetbrains.kotlin.",
+        "com.google.devtools.ksp"
+      ]
+    },
+    {
+      "groupName": "Ktlint",
+      "matchPackagePrefixes": [
+        "com.pinterest.ktlint",
+        "io.nlopez.compose.rules",
+        "io.github.usefulness"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "major",
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    }
+  ],
+  "baseBranch": "develop",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "configMigration": true
+}
+
