@@ -3,7 +3,7 @@
 # compose-compiler: https://developer.android.com/jetpack/androidx/releases/compose-compiler
 
 # Project
-androidGradlePlugin = "8.5.1"
+androidGradlePlugin = "8.5.2"
 gms = "4.4.2"
 kotlin = "2.0.10"
 compose_compiler = "1.5.14"
