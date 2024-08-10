@@ -86,7 +86,7 @@ fft = "2.0.0"
 jaudiotagger = "2.3.15"
 
 # Leak canary
-leakCanary = "2.10"
+leakCanary = "2.14"
 detekt = "1.23.0" # https://github.com/detekt/detekt
 
 # Test
