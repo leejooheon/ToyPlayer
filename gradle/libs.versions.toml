@@ -94,7 +94,7 @@ testJunit = "4.13.2"
 junitVintageEngine = "5.10.0"
 kotest = "5.9.1"
 mockk = "1.13.9"
-turbine = "1.0.0"
+turbine = "1.1.0"
 
 # AndroidTest
 androidxTestExt = "1.2.1"
