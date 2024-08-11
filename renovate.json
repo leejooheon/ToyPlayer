@@ -45,6 +45,7 @@
   "baseBranch": "develop",
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
-  "configMigration": true
+  "configMigration": true,
+  "ignoreTests": true
 }
 
