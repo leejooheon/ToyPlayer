@@ -93,7 +93,7 @@ detekt = "1.23.0" # https://github.com/detekt/detekt
 testJunit = "4.13.2"
 junitVintageEngine = "5.10.0"
 kotest = "5.9.1"
-mockk = "1.13.9"
+mockk = "1.13.12"
 turbine = "1.0.0"
 
 # AndroidTest
