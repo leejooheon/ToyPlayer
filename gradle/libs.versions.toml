@@ -64,7 +64,7 @@ retrofit-serialization-converter = "1.0.0"
 
 # Glide
 glide = "4.16.0"
-coil = "2.6.0"
+coil = "2.7.0"
 
 # Google map
 googleMap = "2.5.3"
