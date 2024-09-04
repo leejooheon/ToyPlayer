@@ -184,7 +184,7 @@ androidx-compose-materialWindow = { group = "androidx.compose.material3", name =
 #Compose accompanist  version.ref = "0.25.1"
 google-accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.strictly = "0.30.1"}
 google-accompanist-insets-ui = { group = "com.google.accompanist", name = "accompanist-insets-ui", version.strictly = "0.34.0"}
-google-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.strictly = "0.27.0"}
+google-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.strictly = "0.34.0"}
 google-accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "compose-accompanist"}
 google-accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "compose-accompanist"}
 google-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "compose-accompanist"}
