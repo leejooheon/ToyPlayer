@@ -30,7 +30,7 @@ splashscreen = "1.0.1"
 datastore="1.1.1"
 activityCompose = "1.9.1"
 constraintLayout = "1.0.1"
-androidxLifecycle = "2.8.4"
+androidxLifecycle = "2.8.5"
 composeNavigation = "2.8.0-rc01"
 
 # Media3
