@@ -45,7 +45,7 @@ kotlinxSerialization = "1.7.1"
 javaxInject = "1"
 
 # Hilt
-hilt = "2.51.1"
+hilt = "2.52"
 hiltCompose = "1.2.0"
 hiltWorker = "1.2.0"
 
