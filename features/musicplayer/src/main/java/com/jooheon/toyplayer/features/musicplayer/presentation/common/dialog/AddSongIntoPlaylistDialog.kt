@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.components.MusicPlaylistColumnItem
+import com.jooheon.toyplayer.core.strings.UiText
 
 
 @Composable

@@ -24,7 +24,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.compose.components.CustomDivider
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.setting.presentation.components.SkipDurationDialog
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenItem
@@ -34,6 +33,7 @@ import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.sharedViewModel
 import com.jooheon.toyplayer.features.setting.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun SettingScreen(

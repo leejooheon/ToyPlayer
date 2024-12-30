@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,11 +36,11 @@ import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MusicPlaylistDialog
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
+import com.jooheon.toyplayer.core.strings.UiText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

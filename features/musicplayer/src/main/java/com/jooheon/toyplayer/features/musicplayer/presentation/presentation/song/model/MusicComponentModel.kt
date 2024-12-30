@@ -2,7 +2,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.son
 
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.features.essential.base.UiText
+import com.jooheon.toyplayer.core.strings.UiText
 
 data class MusicComponentModel(
     val title: UiText,

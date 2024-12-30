@@ -33,8 +33,8 @@ import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 internal fun MusicPlaylistDetailHeader(

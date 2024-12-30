@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.features.common.compose.data
 
-import com.jooheon.toyplayer.features.essential.base.UiText
+import com.jooheon.toyplayer.core.strings.UiText
 import java.util.UUID
 
 data class AlertDialogResource(

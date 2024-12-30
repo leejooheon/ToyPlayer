@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
@@ -30,6 +29,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cach
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cache.model.MusicCacheScreenState
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.core.strings.UiText
 import java.lang.Float
 import kotlin.math.max
 

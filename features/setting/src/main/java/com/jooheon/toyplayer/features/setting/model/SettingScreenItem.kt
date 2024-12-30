@@ -7,8 +7,8 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.jooheon.toyplayer.domain.entity.Entity
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.setting.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 class SettingScreenItem(
     val event: SettingScreenEvent,

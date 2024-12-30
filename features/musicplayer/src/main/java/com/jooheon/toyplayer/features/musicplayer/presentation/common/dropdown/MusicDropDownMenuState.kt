@@ -2,10 +2,10 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown
 
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
+import com.jooheon.toyplayer.core.strings.UiText
 
 data class MusicDropDownMenuState(
     val items: List<UiText>,

@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,12 +35,11 @@ import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.compose.extensions.toDp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil.defaultImgaeUri
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicComponentModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun SongComponent(

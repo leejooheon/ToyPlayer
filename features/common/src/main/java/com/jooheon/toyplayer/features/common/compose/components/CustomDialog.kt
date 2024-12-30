@@ -10,8 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.AnnotatedString
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.common.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun ShowAlertDialog(

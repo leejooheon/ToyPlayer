@@ -16,7 +16,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.entity.Entity
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailItem
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
@@ -27,6 +26,7 @@ import com.jooheon.toyplayer.features.common.extension.sharedViewModel
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation.Back.route
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun LanguageScreen(

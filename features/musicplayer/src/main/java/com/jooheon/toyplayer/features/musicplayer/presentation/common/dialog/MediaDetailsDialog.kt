@@ -11,8 +11,8 @@ import androidx.compose.ui.text.withStyle
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.ShowAlertDialog
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.core.strings.UiText
 import org.jaudiotagger.audio.AudioFileIO
 import java.io.File
 

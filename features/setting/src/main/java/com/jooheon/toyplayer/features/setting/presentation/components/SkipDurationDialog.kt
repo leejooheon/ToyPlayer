@@ -16,8 +16,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.setting.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 internal fun SkipDurationDialog(

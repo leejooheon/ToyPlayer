@@ -30,7 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.R
-import com.jooheon.toyplayer.features.essential.base.UiText
+import com.jooheon.toyplayer.core.strings.UiText
 
 
 @Suppress("NOTHING_TO_INLINE")

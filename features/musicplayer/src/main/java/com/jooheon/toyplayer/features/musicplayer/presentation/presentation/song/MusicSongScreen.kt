@@ -38,7 +38,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.common.compose.components.PermissionRequestItem
 import com.jooheon.toyplayer.features.common.compose.components.appDetailSettings
@@ -48,6 +47,7 @@ import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components.MusicComponent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components.MusicSongCommonHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.components.SongComponent
+import com.jooheon.toyplayer.core.strings.UiText
 import java.lang.Float
 import kotlin.math.max
 

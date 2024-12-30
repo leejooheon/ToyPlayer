@@ -37,7 +37,6 @@ import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
@@ -49,6 +48,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
+import com.jooheon.toyplayer.core.strings.UiText
 import java.lang.Float
 import kotlin.Int
 import kotlin.OptIn

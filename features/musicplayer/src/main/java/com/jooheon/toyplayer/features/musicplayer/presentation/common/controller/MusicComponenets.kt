@@ -29,9 +29,9 @@ import com.jooheon.toyplayer.domain.entity.music.RepeatMode
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
 import com.jooheon.toyplayer.features.common.R
+import com.jooheon.toyplayer.core.strings.UiText
 
 
 @Composable

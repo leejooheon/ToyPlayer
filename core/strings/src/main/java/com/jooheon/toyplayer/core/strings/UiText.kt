@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.essential.base
+package com.jooheon.toyplayer.core.strings
 
 import android.content.Context
 import androidx.annotation.StringRes

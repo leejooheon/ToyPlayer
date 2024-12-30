@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.features.common.compose.extensions.toDp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicComponentModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
+import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun MusicComponent(
