@@ -2,50 +2,38 @@ package com.jooheon.toyplayer.features.setting.presentation.language
 
 import android.content.Context
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.strings.UiText
 import com.jooheon.toyplayer.domain.entity.Entity
-import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailItem
+import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
-import com.jooheon.toyplayer.features.setting.presentation.SettingViewModel
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.sharedViewModel
-import com.jooheon.toyplayer.features.setting.R
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation.Back.route
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailItem
 
 @Composable
 fun LanguageScreen(
-    navController: NavHostController,
-    backStackEntry: NavBackStackEntry,
 ) {
-    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
-        navController = navController,
-        parentRoute = ScreenNavigation.Setting.Main.route()
-    ).apply {
-        navigateTo.observeWithLifecycle {
-            SettingScreenEvent.navigateTo(navController, it)
-        }
-    }
-    val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
-
     LanguageScreen(
-        state = state,
-        onEvent = settingViewModel::dispatch
+        state = SettingScreenState.default,
+        onEvent = {}
     )
 }
 
@@ -53,7 +41,7 @@ fun LanguageScreen(
 @Composable
 private fun LanguageScreen(
     state: SettingScreenState,
-    onEvent: (Context, SettingScreenEvent) -> Unit
+    onEvent: (SettingScreenEvent) -> Unit
 ) {
     val context = LocalContext.current
 //    val localizeState = viewModel.localizedState.collectAsState()
@@ -72,7 +60,7 @@ private fun LanguageScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { onEvent(context, SettingScreenEvent.OnBackClick) }) {
+                IconButton(onClick = { onEvent(SettingScreenEvent.OnBackClick) }) {
                     Icon(
                         imageVector = Icons.Rounded.ArrowBack,
                         contentDescription = null
@@ -95,7 +83,7 @@ private fun LanguageScreen(
                 selected = selected,
                 title = it.parse(context),
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(context, SettingScreenEvent.OnLanguageChanged(it)) }
+                onClick = { onEvent(SettingScreenEvent.OnLanguageChanged(it)) }
             )
         }
     }
@@ -116,7 +104,7 @@ private fun PreviewLaunguageScreen() {
     ToyPlayerTheme {
         LanguageScreen(
             state = SettingScreenState.default,
-            onEvent = { _, _ -> }
+            onEvent = {}
         )
     }
 }

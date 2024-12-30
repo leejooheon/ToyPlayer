@@ -13,10 +13,7 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.setting.presentation.SettingViewModel
 
 @Composable
-fun EqualizerScreen(
-    navigator: NavController,
-    viewModel: SettingViewModel = hiltViewModel()
-) {
+fun EqualizerScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,11 +27,7 @@ fun EqualizerScreen(
 @Preview
 @Composable
 private fun PreviewEqualizerScreen() {
-    val context = LocalContext.current
     ToyPlayerTheme {
-        EqualizerScreen(
-            navigator = NavController(context),
-//            viewModel = SettingViewModel(EmptySettingUseCase())
-        )
+        EqualizerScreen()
     }
 }

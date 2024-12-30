@@ -9,13 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.MusicAlbumScreen
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.MusicArtistScreen
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cache.MusicCacheScreen
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.MusicPlaylistScreen
-import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.MusicSongScreen
+import com.jooheon.toyplayer.features.musicplayer.navigation.musicNavGraph
+import com.jooheon.toyplayer.features.musicplayer.navigation.songNavGraph
+import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -34,21 +30,17 @@ internal fun MainNavHost(
             navController = navController,
             startDestination = navigator.startDestination,
         ) {
-            composable<ScreenNavigation.Main.Song> {
-                MusicSongScreen(navController)
-            }
-            composable<ScreenNavigation.Main.Album> {
-                MusicAlbumScreen(navController)
-            }
-            composable<ScreenNavigation.Main.Artist> {
-                MusicArtistScreen(navController)
-            }
-            composable<ScreenNavigation.Main.Cache> {
-                MusicCacheScreen(navController)
-            }
-            composable<ScreenNavigation.Main.Playlist> {
-                MusicPlaylistScreen(navController)
-            }
+            songNavGraph(
+                navigate = { navigator.navController.navigate(it) }
+            )
+            musicNavGraph(
+                navigate = { navigator.navController.navigate(it) },
+                onBackClick = { navigator.navController.popBackStack() }
+            )
+            settingNavGraph(
+                navigate = { navigator.navController.navigate(it) },
+                onBackClick = { navigator.navController.popBackStack() }
+            )
         }
     }
 }

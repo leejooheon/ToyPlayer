@@ -81,11 +81,10 @@ private fun MainScreen(
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
 
-
     Scaffold(
         modifier = Modifier,
         topBar = {
-
+            // TODO
         },
         content = { padding ->
             MainNavHost(

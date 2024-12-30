@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.setting.presentation.theme
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -30,22 +31,13 @@ import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun ThemeScreen(
-    navController: NavHostController,
-    backStackEntry: NavBackStackEntry,
+    // add viewmodel, state
 ) {
-    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
-        navController = navController,
-        parentRoute = ScreenNavigation.Setting.Main.route()
-    ).apply {
-        navigateTo.observeWithLifecycle {
-            SettingScreenEvent.navigateTo(navController, it)
-        }
-    }
-    val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
-
     ThemeScreen(
-        state = state,
-        onEvent = settingViewModel::dispatch
+        state = SettingScreenState.default,
+        onEvent = { _, _ ->
+
+        }
     )
 }
 

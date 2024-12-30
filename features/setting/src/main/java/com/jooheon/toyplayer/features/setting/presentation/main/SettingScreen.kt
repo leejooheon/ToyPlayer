@@ -37,22 +37,10 @@ import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 fun SettingScreen(
-    navController: NavHostController,
-    backStackEntry: NavBackStackEntry,
 ) {
-    val settingViewModel = backStackEntry.sharedViewModel<SettingViewModel>(
-        navController = navController,
-        parentRoute = null
-    ).apply {
-        navigateTo.observeWithLifecycle {
-            SettingScreenEvent.navigateTo(navController, it)
-        }
-    }
-    val state by settingViewModel.sharedState.collectAsStateWithLifecycle()
-
     SettingScreen(
-        state = state,
-        onEvent = settingViewModel::dispatch
+        state = SettingScreenState.default,
+        onEvent = {}
     )
 }
 
@@ -60,9 +48,8 @@ fun SettingScreen(
 @Composable
 private fun SettingScreen(
     state: SettingScreenState,
-    onEvent: (Context, SettingScreenEvent) -> Unit,
+    onEvent: (SettingScreenEvent) -> Unit,
 ) {
-    val context = LocalContext.current
     val settingList = SettingScreenItem.getSettingListItems(state)
 
     Box(
@@ -74,10 +61,10 @@ private fun SettingScreen(
             SkipDurationDialog(
                 currentState = state.skipDuration,
                 onChanged = {
-                    onEvent(context, SettingScreenEvent.OnSkipDurationChanged(it))
+                    onEvent(SettingScreenEvent.OnSkipDurationChanged(it))
                 },
                 onDismiss = {
-                    onEvent(context, SettingScreenEvent.OnSkipDurationScreenClick(isShow = false))
+                    onEvent(SettingScreenEvent.OnSkipDurationScreenClick(isShow = false))
                 }
             )
         }
@@ -93,7 +80,7 @@ private fun SettingScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(context, SettingScreenEvent.OnBackClick) }) {
+                    IconButton(onClick = { onEvent(SettingScreenEvent.OnBackClick) }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = null
@@ -112,7 +99,7 @@ private fun SettingScreen(
             settingList.forEach {
                 SettingListItem(
                     item = it,
-                    onClick = { onEvent(context, it.event) }
+                    onClick = { onEvent.invoke(it.event) }
                 )
                 CustomDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -250,9 +237,6 @@ private fun PreviewSettingDetailItem() {
 @Preview
 private fun PreviewSettingScreen() {
     ToyPlayerTheme {
-        SettingScreen(
-            state = SettingScreenState.default,
-            onEvent = { _, _ -> }
-        )
+        SettingScreen()
     }
 }

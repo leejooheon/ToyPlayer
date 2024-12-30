@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Icon
@@ -28,7 +27,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.PersistentList
-
 
 @Composable
 internal fun MainBottomBar(
@@ -46,7 +44,7 @@ internal fun MainBottomBar(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(64.dp)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
@@ -55,8 +53,7 @@ internal fun MainBottomBar(
                 .background(
                     color = MaterialTheme.colorScheme.surface,
                     shape = MaterialTheme.shapes.medium,
-                )
-                .padding(horizontal = 28.dp),
+                ),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             tabs.forEach { tab ->
