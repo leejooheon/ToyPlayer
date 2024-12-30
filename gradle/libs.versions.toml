@@ -3,43 +3,43 @@
 # compose-compiler: https://developer.android.com/jetpack/androidx/releases/compose-compiler
 
 # Project
-androidGradlePlugin = "8.5.2"
+androidGradlePlugin = "8.7.2"
 gms = "4.4.2"
-kotlin = "2.0.20"
+kotlin = "2.0.21"
 compose_compiler = "1.5.14"
 version_code = "10100"
 version_name = "1.1.0"
-android_sdk_compile = "34"
+android_sdk_compile = "35"
 android_sdk_min = "26"
 
 # Compose
-composeBom = "2024.06.00"
+composeBom = "2024.12.01"
 compose-accompanist = "0.34.0"
-composeAnimation = "1.7.0-beta07"
+composeAnimation = "1.7.6"
 
 # Plugins
 ksp = "2.0.20-1.0.24"
 
 # AndroidX
-corektx = "1.13.1"
+corektx = "1.15.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-constraint = "2.1.4"
-lifecycle = "2.8.4"
+constraint = "2.2.0"
+lifecycle = "2.8.7"
 splashscreen = "1.0.1"
 datastore="1.1.1"
-activityCompose = "1.9.1"
-constraintLayout = "1.0.1"
-androidxLifecycle = "2.8.5"
-composeNavigation = "2.8.0"
+activityCompose = "1.9.3"
+constraintLayout = "1.1.0"
+androidxLifecycle = "2.8.7"
+composeNavigation = "2.8.5"
 
 # Media3
-media3 = "1.4.0"
+media3 = "1.5.1"
 mediarouter = "1.7.0"
 
 # KotlinX
-kotlinxCoroutines = "1.8.1"
-kotlinxSerialization = "1.7.1"
+kotlinxCoroutines = "1.9.0"
+kotlinxSerialization = "1.7.3"
 
 # JavaX
 javaxInject = "1"
@@ -50,7 +50,7 @@ hiltCompose = "1.2.0"
 hiltWorker = "1.2.0"
 
 # work
-work = "2.9.1"
+work = "2.10.0"
 
 # Room
 room = "2.6.1"
