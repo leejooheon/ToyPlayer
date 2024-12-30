@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.compose.components.CustomDivider
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.setting.presentation.components.SkipDurationDialog
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
@@ -182,8 +182,6 @@ private fun SettingListItem(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SettingDetailItem(
     @ColorRes color: Color,
@@ -228,7 +226,7 @@ internal fun SettingDetailItem(
 @Composable
 @Preview
 private fun PreviewSettingDetailItem() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         Column {
             SettingDetailItem(
                 color = MaterialTheme.colorScheme.primary,
@@ -251,7 +249,7 @@ private fun PreviewSettingDetailItem() {
 @Composable
 @Preview
 private fun PreviewSettingScreen() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         SettingScreen(
             state = SettingScreenState.default,
             onEvent = { _, _ -> }

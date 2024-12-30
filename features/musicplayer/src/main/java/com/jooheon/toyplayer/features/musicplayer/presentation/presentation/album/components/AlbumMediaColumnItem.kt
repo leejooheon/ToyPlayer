@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +79,7 @@ internal fun AlbumMediaColumnItem(
 @Preview
 @Composable
 private fun AlbumMediaColumnItemPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         AlbumMediaColumnItem(
             album = Album.default.copy(
                 name = Resource.longStringPlaceholder,

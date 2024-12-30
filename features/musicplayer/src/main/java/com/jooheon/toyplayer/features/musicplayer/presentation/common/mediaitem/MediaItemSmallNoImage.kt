@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
@@ -130,7 +130,7 @@ fun MediaItemSmallNoImage(
 @Preview
 @Composable
 private fun MediaItemSmallWithoutImagePreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MediaItemSmallNoImage(
             trackNumber = 1,
             title = UiText.StringResource(R.string.placeholder_long).asString(),

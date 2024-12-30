@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenState
@@ -103,7 +103,7 @@ internal fun ArtistDetailMediaColumn(
 @Preview
 @Composable
 private fun ArtistDetailMediaColumnPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         ArtistDetailMediaColumn(
             musicArtistDetailScreenState = MusicArtistDetailScreenState.default,
             listState = rememberLazyListState(),

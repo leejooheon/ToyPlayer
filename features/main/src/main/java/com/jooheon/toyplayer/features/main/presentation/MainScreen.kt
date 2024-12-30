@@ -31,9 +31,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ui.TopAppBar
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.main.MainViewModel
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
@@ -223,7 +223,7 @@ private fun MaybeRequestMediaPermission(
 private fun PreviewMainScreen() {
     val context = LocalContext.current
 
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MainScreen(
             navController = NavController(context),
             onEvent = { _ -> }

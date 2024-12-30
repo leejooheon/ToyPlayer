@@ -26,7 +26,7 @@ import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.entity.music.Album
 import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 
@@ -94,7 +94,7 @@ internal fun ArtistMediaColumnItem(
 @Preview
 @Composable
 private fun ArtistMediaColumnItemPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         ArtistMediaColumnItem(
             artist = Artist.default.copy(
                 name = Resource.longStringPlaceholder,

@@ -34,7 +34,7 @@ import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.compose.extensions.toDp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil.defaultImgaeUri
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
@@ -160,7 +160,7 @@ private fun SongComponentHorizontalItem(
 @Composable
 @Preview
 private fun PreviewSongComponent() {
-    PreviewTheme {
+    ToyPlayerTheme {
         val dataSet = Song.defaultList + Song.defaultList
         Column {
             MusicSongCommonHeader(

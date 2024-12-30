@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
@@ -127,7 +127,7 @@ fun MediaItemLarge(
 @Preview
 @Composable
 private fun MediaItemLargePreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
 //        MediaItemLarge(
 //            title = UiText.StringResource(R.string.placeholder_long).asString(),
 //            subTitle = UiText.StringResource(R.string.placeholder_medium).asString(),

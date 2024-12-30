@@ -20,7 +20,7 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.main.presentation.MainScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.detail.MusicAlbumDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.MusicArtistDetailScreen

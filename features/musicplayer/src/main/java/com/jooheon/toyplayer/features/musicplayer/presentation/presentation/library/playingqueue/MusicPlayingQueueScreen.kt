@@ -33,8 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
@@ -211,7 +211,7 @@ private fun PlayingQueueMediaColumn(
 @Preview
 @Composable
 private fun MusicPlaylistDetailScreenPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicPlayingQueueScreen(
             musicPlayingQueueScreenState = MusicPlayingQueueScreenState.default.copy(
                 playlist = Playlist.default.copy(

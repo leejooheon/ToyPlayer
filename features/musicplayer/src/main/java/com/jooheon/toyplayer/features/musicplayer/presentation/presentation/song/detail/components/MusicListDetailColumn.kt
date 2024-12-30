@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.MediaDropDownMenuDialogEvents
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.detail.model.MusicListDetailScreenState
@@ -69,7 +69,7 @@ internal fun MusicListDetailComponent(
 @Preview
 @Composable
 private fun MusicSongMediaColumnPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         Column(
             modifier = Modifier.width(400.dp)
         ) {
@@ -89,7 +89,7 @@ private fun MusicSongMediaColumnPreview() {
 @Preview
 @Composable
 private fun MusicSongMediaColumnPreview2() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         Column(
             modifier = Modifier.width(400.dp)
         ) {

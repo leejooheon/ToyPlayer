@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.features.main
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.model.MainScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel

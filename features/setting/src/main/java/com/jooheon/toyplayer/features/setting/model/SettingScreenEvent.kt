@@ -7,7 +7,7 @@ import androidx.core.os.ConfigurationCompat
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.Entity
 import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import java.util.Locale
 
 sealed class SettingScreenEvent {

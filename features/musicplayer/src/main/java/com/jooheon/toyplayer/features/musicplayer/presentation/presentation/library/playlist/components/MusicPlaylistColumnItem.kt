@@ -35,7 +35,7 @@ import androidx.compose.ui.util.fastSumBy
 import com.jooheon.toyplayer.domain.common.extension.default
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
@@ -156,7 +156,7 @@ internal fun MusicPlaylistColumnItem(
 @Preview
 @Composable
 private fun MusicPlaylistColumnItemPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicPlaylistColumnItem(
             playlist = Playlist.default,
             showContextualMenu = true,

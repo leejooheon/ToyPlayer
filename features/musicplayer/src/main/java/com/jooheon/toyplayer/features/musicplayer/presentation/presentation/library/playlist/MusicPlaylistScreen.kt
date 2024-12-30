@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.PlaylistEvent
@@ -90,7 +90,7 @@ private fun MusicPlaylistScreen(
 @Preview
 @Composable
 private fun MusicPlaylistScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicPlaylistScreen(
             musicPlaylistScreenState = MusicPlaylistScreenState.default,
             onMusicPlaylistScreenEvent = {},

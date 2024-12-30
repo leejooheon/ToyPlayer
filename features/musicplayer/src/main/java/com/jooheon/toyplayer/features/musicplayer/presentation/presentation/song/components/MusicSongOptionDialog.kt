@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 
@@ -110,7 +110,7 @@ internal fun MusicSongOptionDialog(
 @Preview
 @Composable
 private fun MusicSongOptionDialogPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicSongOptionDialog(
             musicListType = MusicListType.All,
             openDialog = true

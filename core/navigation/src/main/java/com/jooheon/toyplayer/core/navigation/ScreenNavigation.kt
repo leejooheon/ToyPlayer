@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.navigation
+package com.jooheon.toyplayer.core.navigation
 
 import kotlinx.serialization.Serializable
 

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
 import com.jooheon.toyplayer.features.common.compose.extensions.toDp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicComponentModel
@@ -155,7 +155,7 @@ private fun MusicComponentHorizontalItem(
 @Composable
 @Preview
 private fun PreviewSongComponent() {
-    PreviewTheme {
+    ToyPlayerTheme {
         Column {
             MusicSongCommonHeader(
                 title = UiText.DynamicString("Title"),

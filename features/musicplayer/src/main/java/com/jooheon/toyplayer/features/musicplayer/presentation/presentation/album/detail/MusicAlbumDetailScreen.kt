@@ -46,9 +46,9 @@ import androidx.compose.ui.util.fastSumBy
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
@@ -261,7 +261,7 @@ private fun MediaAlbumHeader(album: Album) {
 @Preview
 @Composable
 private fun MusicAlbumDetailScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicAlbumDetailScreen(
             musicAlbumDetailScreenState = MusicAlbumDetailScreenState.default.copy(
                 album = Album.default.copy(

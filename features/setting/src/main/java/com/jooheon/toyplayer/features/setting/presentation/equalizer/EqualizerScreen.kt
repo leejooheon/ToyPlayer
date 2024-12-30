@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.setting.presentation.SettingViewModel
 
 @Composable
@@ -31,7 +31,7 @@ fun EqualizerScreen(
 @Composable
 private fun PreviewEqualizerScreen() {
     val context = LocalContext.current
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         EqualizerScreen(
             navigator = NavController(context),
 //            viewModel = SettingViewModel(EmptySettingUseCase())

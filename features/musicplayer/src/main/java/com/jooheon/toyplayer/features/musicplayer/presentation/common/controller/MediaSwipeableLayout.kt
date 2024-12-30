@@ -29,7 +29,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.constraintlayout.compose.layoutId
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
@@ -177,7 +177,7 @@ private fun MediaSwipeableLayoutPreview() {
     val swipeProgress = swipeableState.offset.value / -swipeAreaHeight
     val motionProgress = max(Float.min(swipeProgress, 1f), 0f)
 
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MediaSwipeableLayout(
             musicPlayerState = MusicPlayerState.default.copy(
                 musicState = MusicState(

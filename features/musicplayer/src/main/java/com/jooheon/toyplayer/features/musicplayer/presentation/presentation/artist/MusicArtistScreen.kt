@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.RepeatMode
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.components.ArtistMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.components.ArtistMediaHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.model.MusicArtistScreenEvent
@@ -110,7 +110,7 @@ private fun MusicArtistScreen(
 @Preview
 @Composable
 private fun MusicArtistScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicArtistScreen(
             musicArtistState = MusicArtistScreenState.default,
             musicPlayerState = MusicPlayerState.default,

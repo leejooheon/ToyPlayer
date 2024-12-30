@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.R
 
 @Composable
@@ -72,7 +72,7 @@ internal fun AlbumMediaHeader(
 @Preview
 @Composable
 private fun AlbumMediaHeaderPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         AlbumMediaHeader(
             onDropDownMenuClick = {},
             modifier = Modifier

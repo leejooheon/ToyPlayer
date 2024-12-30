@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.R
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 
 
@@ -92,7 +92,7 @@ inline fun PermissionRequestItem(
 @Composable
 @Preview
 private fun PreviewPermission() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         PermissionRequestItem(
             resId = R.drawable.folder_search_base_256_blu_glass,
             description = UiText.StringResource(R.string.description_permission_read_storage),

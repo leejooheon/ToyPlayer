@@ -16,11 +16,9 @@ import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.BottomNavigation
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation.Bottom.Album.route
-import com.jooheon.toyplayer.features.common.compose.theme.colors.AlphaNearOpaque
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation.Bottom.Album.route
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.main.navigation.BottomScreenNavigationItem
 import timber.log.Timber
 
@@ -31,7 +29,7 @@ internal fun MyBottomNavigation(
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.primary.copy(alpha = AlphaNearOpaque),
+        backgroundColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
         contentPadding = rememberInsetsPaddingValues(LocalWindowInsets.current.navigationBars),
         modifier = modifier
@@ -106,7 +104,7 @@ fun NavController.currentBottomNavScreenAsState(): State<ScreenNavigation.Bottom
 fun PreviewBottomNav() {
     val bottomNavController = rememberAnimatedNavController()
     val currentSelectedItem by bottomNavController.currentBottomNavScreenAsState()
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MyBottomNavigation(
             modifier = Modifier.fillMaxWidth(),
             selectedNavigation = currentSelectedItem,

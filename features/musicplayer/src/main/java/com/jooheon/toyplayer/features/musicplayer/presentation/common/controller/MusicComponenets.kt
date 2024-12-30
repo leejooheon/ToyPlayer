@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -404,7 +404,7 @@ const val PLAY_LIST_CD = "Play list"
 @Preview
 @Composable
 private fun MusicItemPreviewLight() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicItem(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -418,7 +418,7 @@ private fun MusicItemPreviewLight() {
 @Preview
 @Composable
 private fun MusicItemPreviewDark() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicItem(
             modifier = Modifier
                 .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -432,7 +432,7 @@ private fun MusicItemPreviewDark() {
 @Preview
 @Composable
 private fun AlbumImagePreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         AlbumImage(
             song = Song.default,
             modifier = Modifier.size(96.dp)
@@ -443,7 +443,7 @@ private fun AlbumImagePreview() {
 @Preview
 @Composable
 fun PlayButtonPreviewLight() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         PlayPauseButton(
             isPlaying = true,
             isBuffering = true,
@@ -456,7 +456,7 @@ fun PlayButtonPreviewLight() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PlayButtonPreviewDark() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         RoundImageButton(
             image = R.drawable.ic_play_arrow,
             iconTint = MaterialTheme.colorScheme.primary,
@@ -471,7 +471,7 @@ fun PlayButtonPreviewDark() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PlayListButtonPreviewLight() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         RoundImageButton(
             image = R.drawable.ic_round_playlist_play_24,
             iconTint = MaterialTheme.colorScheme.tertiary,
@@ -487,7 +487,7 @@ fun PlayListButtonPreviewLight() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PlayListButtonPreviewDark() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         RoundImageButton(
             image = R.drawable.ic_round_playlist_play_24,
             iconTint = MaterialTheme.colorScheme.tertiary,
@@ -503,7 +503,7 @@ fun PlayListButtonPreviewDark() {
 @Preview
 @Composable
 private fun PreviewEmptySong() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         EmptySongItem(
             modifier = Modifier
                 .fillMaxWidth()

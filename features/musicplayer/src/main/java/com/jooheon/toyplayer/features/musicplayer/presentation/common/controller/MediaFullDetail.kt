@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
 
 @Composable
@@ -136,7 +136,7 @@ fun MediaFullDetails(
 @Preview
 @Composable
 private fun MediaFullDetailsPreviewDark() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         Surface(modifier = Modifier.width(400.dp)) {
             MediaFullDetails(
                 song = Song.default.copy(
@@ -151,7 +151,7 @@ private fun MediaFullDetailsPreviewDark() {
 @Preview
 @Composable
 private fun MediaFullDetailsPrevieLight() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         Surface(modifier = Modifier.width(400.dp)) {
             MediaFullDetails(
                 song = Song.default.copy(

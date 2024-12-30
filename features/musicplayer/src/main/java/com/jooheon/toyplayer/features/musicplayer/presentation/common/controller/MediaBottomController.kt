@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import kotlin.math.min
 
 @Composable
@@ -101,7 +101,7 @@ fun MediaBottomController(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun MediaBottomControllerPreview() {
-    PreviewTheme {
+    ToyPlayerTheme {
         Surface(modifier = Modifier.width(400.dp)) {
             MediaBottomController(
                 motionProgress = 0f,

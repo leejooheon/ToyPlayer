@@ -27,7 +27,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.song.model.MusicSongScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
@@ -218,7 +218,7 @@ private fun MusicSongScreen(
 @Preview
 @Composable
 private fun MusicScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicSongScreen(
             musicSongState = MusicSongScreenState.default,
             onMusicSongScreenEvent = { _, -> },

@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel

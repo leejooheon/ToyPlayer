@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 @Composable
 fun MusicDropDownMenu(
@@ -45,7 +45,7 @@ fun MusicDropDownMenu(
 @Preview
 @Composable
 private fun MediaDropDownMenuPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicDropDownMenu(
             expanded = true,
             dropDownMenuState = MusicDropDownMenuState(items = MusicDropDownMenuState.playlistItems),

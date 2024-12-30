@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 
@@ -93,7 +93,7 @@ internal fun MusicSongMediaHeader(
 @Preview
 @Composable
 private fun MusicSongMediaHeaderPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicSongMediaHeader(
             viewType = true,
             onSeeMoreButtonClick = {},

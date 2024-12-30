@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.MusicAlbumScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.MusicArtistScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.cache.MusicCacheScreen

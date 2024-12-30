@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Artist
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 @Composable
 internal fun ArtistMediaColumn(
@@ -48,7 +48,7 @@ internal fun ArtistMediaColumn(
 @Preview
 @Composable
 private fun ArtistMediaColumnPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         ArtistMediaColumn(
             artists = Artist.defaultList,
             listState = rememberLazyGridState(),

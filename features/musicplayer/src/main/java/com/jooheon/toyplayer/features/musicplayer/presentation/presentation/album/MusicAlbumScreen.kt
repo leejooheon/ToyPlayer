@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.components.AlbumMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.components.AlbumMediaHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.album.model.MusicAlbumScreenEvent
@@ -109,7 +109,7 @@ private fun MusicAlbumScreen(
 @Preview
 @Composable
 private fun MusicAlbumScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicAlbumScreen(
             musicAlbumState = MusicAlbumScreenState.default,
             musicPlayerState = MusicPlayerState.default,

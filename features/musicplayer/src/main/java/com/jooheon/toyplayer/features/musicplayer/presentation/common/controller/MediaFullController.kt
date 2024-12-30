@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.musicservice.ext.isPlaying
 
@@ -58,7 +58,7 @@ fun MediaFullController(
 @Preview
 @Composable
 private fun MediaFullControllerPreviewDark() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         Surface(modifier = Modifier.width(400.dp)) {
 
             MediaFullController(
@@ -77,7 +77,7 @@ private fun MediaFullControllerPreviewDark() {
 @Preview
 @Composable
 private fun MediaFullControllerPreviewLight() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         Surface(modifier = Modifier.width(400.dp)) {
 
             MediaFullController(

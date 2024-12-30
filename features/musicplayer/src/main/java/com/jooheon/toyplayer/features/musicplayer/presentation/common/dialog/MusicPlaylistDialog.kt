@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.features.common.compose.components.outlinedTextFieldColor
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 
@@ -146,7 +146,7 @@ private fun PlaylistDialogContent(
 @Preview
 @Composable
 private fun PlaylistDialogContentPreview() {
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         MusicPlaylistDialog(
             openDialog = true,
             title = UiText.StringResource(R.string.dialog_new_playlist).asString(),

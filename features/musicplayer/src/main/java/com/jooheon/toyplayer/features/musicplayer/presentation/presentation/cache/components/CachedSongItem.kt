@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
 import com.jooheon.toyplayer.features.common.compose.components.AsyncImageTest
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 @Composable
 internal fun CachedSongItem(
@@ -67,7 +67,7 @@ internal fun CachedSongItem(
 @Composable
 private fun PreviewCachedSongItem() {
     val context = LocalContext.current
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         CachedSongItem(
             song = Song.default,
             onItemClick = {},

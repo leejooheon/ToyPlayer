@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.domain.entity.music.Artist
-import com.jooheon.toyplayer.features.common.compose.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.components.ArtistDetailMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.artist.detail.model.MusicArtistDetailScreenState
@@ -139,7 +139,7 @@ private fun MusicArtistDetailScreen(
 @Preview
 @Composable
 private fun MusicArtistDetailScreenPreview() {
-    PreviewTheme(false) {
+    ToyPlayerTheme {
         MusicArtistDetailScreen(
             musicArtistDetailScreenState = MusicArtistDetailScreenState.default,
             onMusicArtistDetailScreenEvent = {},

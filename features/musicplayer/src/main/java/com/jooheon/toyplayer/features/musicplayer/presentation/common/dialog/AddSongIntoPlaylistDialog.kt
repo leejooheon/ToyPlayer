@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.entity.music.Playlist
 import com.jooheon.toyplayer.domain.entity.music.Song
-import com.jooheon.toyplayer.features.common.compose.theme.themes.PreviewTheme
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.essential.base.UiText
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.presentation.library.playlist.components.MusicPlaylistColumnItem
@@ -100,7 +100,7 @@ private fun AddSongIntoPlaylistDialogPreview() {
             )
         )
     }
-    PreviewTheme(true) {
+    ToyPlayerTheme {
         AddSongIntoPlaylistDialog(
             song = Song.default.copy(audioId =  1234L),
             playlists = playlists,

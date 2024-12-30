@@ -11,6 +11,8 @@ android {
 dependencies {
     implementation(projects.domain)
     implementation(projects.features.strings)
+    implementation(projects.core.navigation)
+    implementation(projects.core.designsystem)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.jakewharton.serialization.converter)

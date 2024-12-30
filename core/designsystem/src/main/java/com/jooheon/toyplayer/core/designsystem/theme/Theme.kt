@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.designsystem.theme
+package com.jooheon.toyplayer.core.designsystem.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -76,7 +76,7 @@ private val LightColorScheme = lightColorScheme(
 val LocalDarkTheme = compositionLocalOf { true }
 
 @Composable
-fun KnightsTheme(
+fun ToyPlayerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
@@ -87,8 +87,7 @@ fun KnightsTheme(
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                !darkTheme
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars = !darkTheme
         }
     }
 

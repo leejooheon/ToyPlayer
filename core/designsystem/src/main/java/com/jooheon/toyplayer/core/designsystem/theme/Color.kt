@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.designsystem.theme
+package com.jooheon.toyplayer.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
