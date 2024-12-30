@@ -1,6 +1,8 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    id("toyplayer.android.library.hilt")
+    id("toyplayer.android.library")
+    id("toyplayer.android.hilt")
+
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
 }

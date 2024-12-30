@@ -18,7 +18,7 @@ compose-accompanist = "0.34.0"
 composeAnimation = "1.7.6"
 
 # Plugins
-ksp = "2.0.20-1.0.24"
+ksp = "2.0.21-1.0.28"
 
 # AndroidX
 corektx = "1.15.0"

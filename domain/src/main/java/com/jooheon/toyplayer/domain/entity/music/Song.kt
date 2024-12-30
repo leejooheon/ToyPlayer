@@ -5,7 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Song(
-//    private val uniqueId: String = UUID.randomUUID().toString(),
     private val audioId: Long,
     val useCache: Boolean,
     val displayName: String,

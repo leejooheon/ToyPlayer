@@ -8,6 +8,10 @@ include(":features:main")
 include(":features:setting")
 include(":features:splash")
 include(":features:strings")
+
+include(":core:designsystem")
+include(":core:navigation")
+
 //include(":testing")
 
 pluginManagement {

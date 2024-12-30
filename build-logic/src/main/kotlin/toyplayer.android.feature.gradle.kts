@@ -2,8 +2,9 @@ import com.jooheon.toyplayer.configureHiltAndroid
 import com.jooheon.toyplayer.libs
 
 plugins {
-    id("toyplayer.android.library.hilt")
+    id("toyplayer.android.library")
     id("toyplayer.android.compose")
+    id("toyplayer.android.hilt")
 }
 
 android {
