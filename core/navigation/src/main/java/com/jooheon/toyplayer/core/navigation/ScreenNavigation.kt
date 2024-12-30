@@ -7,25 +7,25 @@ sealed interface ScreenNavigation {
     fun ScreenNavigation.route() = this.javaClass.name.replace("$", ".")
 
     @Serializable
-    sealed interface Bottom : ScreenNavigation {
+    sealed interface Main : ScreenNavigation {
         @Serializable
-        data object Song : Bottom
+        data object Song : Main
         @Serializable
-        data object Album : Bottom
+        data object Album : Main
         @Serializable
-        data object Artist : Bottom
+        data object Artist : Main
         @Serializable
-        data object Cache : Bottom
+        data object Cache : Main
         @Serializable
-        data object Playlist : Bottom
+        data object Playlist : Main
     }
 
     @Serializable
     data object Back : ScreenNavigation
     @Serializable
     data object Splash : ScreenNavigation
-    @Serializable
-    data object Main : ScreenNavigation
+//    @Serializable
+//    data object Main : ScreenNavigation
 
     @Serializable
     sealed interface Setting : ScreenNavigation {

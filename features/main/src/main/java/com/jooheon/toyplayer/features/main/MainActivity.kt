@@ -3,15 +3,12 @@ package com.jooheon.toyplayer.features.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.domain.usecase.setting.ThemeStateFlow
-import com.jooheon.toyplayer.features.main.navigation.FullScreenNavigationHost
+import com.jooheon.toyplayer.features.main.presentation.MainScreen
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -48,9 +45,7 @@ class MainActivity : ComponentActivity() {
 //        val theme = settingViewModel.themeState.collectAsState()
 
         ToyPlayerTheme {
-            FullScreenNavigationHost(
-                modifier = Modifier.fillMaxSize()
-            )
+            MainScreen()
         }
     }
 

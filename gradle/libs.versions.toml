@@ -40,6 +40,7 @@ mediarouter = "1.7.0"
 # KotlinX
 kotlinxCoroutines = "1.9.0"
 kotlinxSerialization = "1.7.3"
+kotlinxImmutable = "0.3.7"
 
 # JavaX
 javaxInject = "1"
@@ -135,6 +136,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-guava", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 
 # AndroidX
 androidx-splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen"}
