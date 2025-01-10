@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.musicplayer.di
 
-import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaylistEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
@@ -18,15 +17,4 @@ object MusicEventModule {
     fun providePlaybackEventUseCase(
         musicStateHolder: MusicStateHolder,
     ) = PlaybackEventUseCase(musicStateHolder)
-
-    @Provides
-    fun providePlaylistEventUseCase(
-        playlistUseCase: PlaylistUseCase
-    ) = PlaylistEventUseCase(playlistUseCase)
-
-    @Provides
-    @ViewModelScoped
-    fun provideSongItemEventUseCase(
-        playlistUseCase: PlaylistUseCase
-    ) = SongItemEventUseCase(playlistUseCase)
 }

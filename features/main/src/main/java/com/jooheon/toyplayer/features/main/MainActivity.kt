@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
-import com.jooheon.toyplayer.domain.usecase.setting.ThemeStateFlow
 import com.jooheon.toyplayer.features.main.presentation.MainScreen
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import dagger.hilt.android.AndroidEntryPoint

@@ -20,7 +20,7 @@ class RepositoryModule {
         return FirebaseTokenRepositoryImpl(appPreferences)
     }
     @Provides
-    fun provideSettingRepository(appPreferences: AppPreferences): SettingRepository =
-        SettingRepositoryImpl(appPreferences)
+    fun provideSettingRepository(appPreferences: AppPreferences): DefaultSettingsRepository =
+        DefaultSettingsRepositoryImpl(appPreferences)
 
 }

@@ -12,11 +12,10 @@ import com.jooheon.toyplayer.domain.entity.music.MediaFolder
 import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MediaId.Companion.toMediaIdOrNull
 import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
-import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
+import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.R
+import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 
@@ -143,7 +142,8 @@ class MediaItemProvider(
     }
 
     private suspend fun getPlaylists(): List<Playlist> {
-        return playlistUseCase.allPlaylist().firstOrNull().defaultEmpty()
+        return emptyList()
+//        return playlistUseCase.allPlaylist().firstOrNull().defaultEmpty()
     }
 
     private fun MediaFolder.toMediaBrowsableItem(): MediaItem {

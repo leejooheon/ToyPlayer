@@ -5,13 +5,12 @@ import com.jooheon.toyplayer.data.datasource.local.LocalMusicDataSource
 import com.jooheon.toyplayer.data.datasource.local.LocalPlaylistDataSource
 import com.jooheon.toyplayer.data.datasource.remote.RemoteMusicDataSource
 import com.jooheon.toyplayer.data.repository.MusicListRepositoryImpl
-import com.jooheon.toyplayer.data.repository.library.PlayingQueueRepositoryImpl
-import com.jooheon.toyplayer.data.repository.library.PlaylistRepositoryImpl
+import com.jooheon.toyplayer.data.repository.library.PlaybackSettingRepositoryImpl
+import com.jooheon.toyplayer.data.repository.PlaylistRepositoryImpl
 import com.jooheon.toyplayer.domain.repository.MusicListRepository
-import com.jooheon.toyplayer.domain.repository.library.PlayingQueueRepository
-import com.jooheon.toyplayer.domain.repository.library.PlaylistRepository
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCaseImpl
+import com.jooheon.toyplayer.domain.repository.PlaybackSettingsRepository
+import com.jooheon.toyplayer.domain.repository.PlaylistRepository
+import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +23,7 @@ object MusicLibraryModule {
     @Provides
     fun providesMusicListUseCase(
         musicListRepository: MusicListRepository,
-    ): MusicListUseCase = MusicListUseCaseImpl(musicListRepository)
+    ): MusicListUseCase = MusicListUseCase(musicListRepository)
 
     @Provides
     fun provideMusicListRepository( // 음악 리스트 (local, asset, streaming)
@@ -44,7 +43,7 @@ object MusicLibraryModule {
         applicationScope: CoroutineScope,
         localPlaylistDataSource: LocalPlaylistDataSource,
         appPreferences: AppPreferences,
-    ): PlayingQueueRepository = PlayingQueueRepositoryImpl(
+    ): PlaybackSettingsRepository = PlaybackSettingRepositoryImpl(
         applicationScope = applicationScope,
         localPlaylistDataSource = localPlaylistDataSource,
         appPreferences = appPreferences

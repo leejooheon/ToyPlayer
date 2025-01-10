@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.domain.entity.Entity
+import com.jooheon.toyplayer.domain.entity.SupportThemes
 import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailItem
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
@@ -48,7 +48,7 @@ private fun ThemeScreen(
     onEvent: (Context, SettingScreenEvent) -> Unit
 ) {
     val context = LocalContext.current
-    val supportThemes = Entity.SupportThemes.entries
+    val supportThemes = SupportThemes.entries
 
     Column(
         modifier = Modifier
@@ -91,13 +91,13 @@ private fun ThemeScreen(
     }
 }
 
-private fun Entity.SupportThemes.parse(context: Context): String {
+private fun SupportThemes.parse(context: Context): String {
     val resId = when(this) {
-        Entity.SupportThemes.AUTO -> R.string.setting_follow_system
-        Entity.SupportThemes.LIGHT -> R.string.setting_theme_light
-        Entity.SupportThemes.DARK -> R.string.setting_theme_dark
-        Entity.SupportThemes.DYNAMIC_LIGHT -> R.string.setting_theme_dynamic_light
-        Entity.SupportThemes.DYNAMIC_DARK -> R.string.setting_theme_dynamic_dark
+        SupportThemes.AUTO -> R.string.setting_follow_system
+        SupportThemes.LIGHT -> R.string.setting_theme_light
+        SupportThemes.DARK -> R.string.setting_theme_dark
+        SupportThemes.DYNAMIC_LIGHT -> R.string.setting_theme_dynamic_light
+        SupportThemes.DYNAMIC_DARK -> R.string.setting_theme_dynamic_dark
     }
 
     return UiText.StringResource(resId).asString(context)

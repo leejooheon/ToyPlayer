@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.domain.entity.music
 
-import com.jooheon.toyplayer.domain.common.Resource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,11 +38,6 @@ data class Song(
             data = null,
         )
 
-        val defaultList = listOf(
-            default.copy(title = Resource.longStringPlaceholder),
-            default.copy(title = Resource.mediumStringPlaceholder),
-            default.copy(title = Resource.shortStringPlaceholder),
-        )
         const val BUNDLE_USE_CACHE = "bundle_use_cache"
         const val BUNDLE_ARTIST_ID = "bundle_artist_id"
         const val BUNDLE_ALBUM_ID = "bundle_album_id"

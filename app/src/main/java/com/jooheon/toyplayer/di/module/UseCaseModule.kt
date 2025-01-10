@@ -3,7 +3,6 @@ package com.jooheon.toyplayer.di.module
 import com.jooheon.toyplayer.domain.repository.*
 import com.jooheon.toyplayer.domain.usecase.firebase.FirebaseTokenUseCase
 import com.jooheon.toyplayer.domain.usecase.firebase.FirebaseTokenUseCaseImpl
-import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCaseImpl
 import dagger.Module
 import dagger.Provides
@@ -21,6 +20,6 @@ class UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideSettingUseCase(settingRepository: SettingRepository): SettingUseCase =
-        SettingUseCaseImpl(settingRepository)
+    fun provideSettingUseCase(defaultSettingsRepository: DefaultSettingsRepository): SettingUseCase =
+        SettingUseCaseImpl(defaultSettingsRepository)
 }

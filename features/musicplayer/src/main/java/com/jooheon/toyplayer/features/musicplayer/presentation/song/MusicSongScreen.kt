@@ -25,7 +25,6 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.jooheon.toyplayer.domain.common.Resource
 import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
@@ -152,7 +151,6 @@ private fun MusicSongScreen(
         motionProgress = motionProgress,
         onEvent = onMusicPlayerEvent,
         content = {
-
             MusicSongCommonHeader(
                 title = UiText.StringResource(R.string.title_song),
                 resId = R.drawable.default_album_art
@@ -173,36 +171,6 @@ private fun MusicSongScreen(
                 state = musicSongState,
                 onMusicSongScreenEvent = onMusicSongScreenEvent,
             )
-
-//            MusicSongMediaHeader(
-//                viewType = viewType,
-//                onSeeMoreButtonClick = { openDialog = true },
-//                onViewTypeClick = { viewType = it} ,
-//                modifier = Modifier
-//                    .alpha(max(1f - Float.min(motionProgress * 2, 1f), 0.7f))
-//                    .fillMaxWidth()
-//            )
-//            MusicSongMediaColumn(
-//                musicSongScreenState = musicSongState,
-//                songMediaColumnItemType = viewType,
-//                listState = listState,
-//                onSongClick = {
-//                    if (swipeableState.currentValue == 0) {
-//                        if (musicState.currentPlayingMusic != it) {
-//                            onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(it))
-//                        } else {
-//                            scope.launch {
-//                                swipeableState.animateTo(1)
-//                            }
-//                        }
-//                    }
-//                },
-//                onMediaItemEvent = onMusicMediaItemEvent,
-//                modifier = Modifier
-//                    .alpha(max(1f - Float.min(motionProgress * 2, 1f), 0.7f))
-//                    .fillMaxWidth()
-//                    .scrollEnabled(motionProgress == 0f),
-//            )
         }
     )
 

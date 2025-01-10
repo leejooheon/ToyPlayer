@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.domain.entity.music
 
-import com.jooheon.toyplayer.domain.common.Resource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -14,12 +13,6 @@ data class Artist(
             id = "-1",
             name = "<unknown>",
             albums = emptyList(),
-        )
-
-        val defaultList = listOf(
-            default.copy(name = Resource.longStringPlaceholder),
-            default.copy(name = Resource.mediumStringPlaceholder),
-            default.copy(name = Resource.shortStringPlaceholder),
         )
     }
 }

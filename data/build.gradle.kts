@@ -1,32 +1,23 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
     id("toyplayer.android.library")
+    id("toyplayer.android.hilt")
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.data"
+    setNamespace("data")
 }
 
 dependencies {
     implementation(projects.domain)
     implementation(projects.core.strings)
 
-    implementation(libs.javax.inject)
+    implementation(projects.data.datastore)
+    implementation(projects.data.music)
+    implementation(projects.data.playlist)
+    implementation(projects.data.system)
+
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.jakewharton.serialization.converter)
-
-    // media3
-    implementation(libs.androidx.media3.common)
-
-    // Network
-    implementation(libs.squareup.retrofit)
-    implementation(libs.squareup.retrofit.converter)
-    implementation(libs.squareup.retrofit.mock)
-    implementation(libs.squareup.retrofit.interceptor)
-
-    // Room
-    implementation(libs.androidx.room)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compile)
 }

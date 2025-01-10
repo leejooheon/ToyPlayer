@@ -12,12 +12,11 @@ data class Playlist(
     var songs: List<Song> = emptyList(),
 ) {
     companion object {
-
         val default = Playlist(
             id = -1,
             name = "-",
             thumbnailUrl = "",
-            songs = Song.defaultList,
+            songs = emptyList(),
         )
 
         const val PlayingQueuePlaylistId = -1000

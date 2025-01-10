@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase
 
-import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

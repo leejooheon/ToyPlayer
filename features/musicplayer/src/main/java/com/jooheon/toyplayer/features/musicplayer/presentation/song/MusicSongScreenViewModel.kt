@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.SongItemEventUseCase
@@ -38,9 +38,6 @@ class MusicSongScreenViewModel @Inject constructor(
 
     private val _musicSongScreenState = MutableStateFlow(MusicSongScreenState.default)
     val musicPlayerScreenState = _musicSongScreenState.asStateFlow()
-
-    private val _musicListType = MutableStateFlow(musicListUseCase.getMusicListType())
-    val musicListType = _musicListType.asStateFlow()
 
     init {
         collectPlaylist()

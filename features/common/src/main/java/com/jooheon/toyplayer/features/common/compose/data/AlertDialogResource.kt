@@ -1,9 +1,0 @@
-package com.jooheon.toyplayer.features.common.compose.data
-
-import com.jooheon.toyplayer.core.strings.UiText
-import java.util.UUID
-
-data class AlertDialogResource(
-    val content: UiText,
-    val id: UUID = UUID.randomUUID()
-)

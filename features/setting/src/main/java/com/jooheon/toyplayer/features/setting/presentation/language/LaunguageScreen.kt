@@ -22,7 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.strings.UiText
-import com.jooheon.toyplayer.domain.entity.Entity
+import com.jooheon.toyplayer.domain.entity.SupportThemes
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
@@ -45,7 +45,6 @@ private fun LanguageScreen(
 ) {
     val context = LocalContext.current
 //    val localizeState = viewModel.localizedState.collectAsState()
-    val supportLanguages = Entity.SupportLaunguages.entries
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,30 +71,21 @@ private fun LanguageScreen(
             )
         )
         
-        supportLanguages.forEach {
-            val selected = it == state.language
-            SettingDetailItem(
-                color = if (selected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.background
-                },
-                selected = selected,
-                title = it.parse(context),
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { onEvent(SettingScreenEvent.OnLanguageChanged(it)) }
-            )
-        }
+//        supportLanguages.forEach {
+//            val selected = it == state.language
+//            SettingDetailItem(
+//                color = if (selected) {
+//                    MaterialTheme.colorScheme.primary
+//                } else {
+//                    MaterialTheme.colorScheme.background
+//                },
+//                selected = selected,
+//                title = it.parse(context),
+//                modifier = Modifier.fillMaxWidth(),
+//                onClick = { onEvent(SettingScreenEvent.OnLanguageChanged(it)) }
+//            )
+//        }
     }
-}
-
-fun Entity.SupportLaunguages.parse(context: Context): String {
-    val resId = when(this) {
-        Entity.SupportLaunguages.AUTO -> R.string.setting_follow_system
-        Entity.SupportLaunguages.ENGLISH -> R.string.setting_english
-        Entity.SupportLaunguages.KOREAN -> R.string.setting_korean
-    }
-    return UiText.StringResource(resId).asString(context)
 }
 
 @Preview

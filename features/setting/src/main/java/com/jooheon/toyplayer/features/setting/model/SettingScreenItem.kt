@@ -6,7 +6,7 @@ import androidx.compose.material.icons.outlined.Forward5
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.WbSunny
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.jooheon.toyplayer.domain.entity.Entity
+import com.jooheon.toyplayer.domain.entity.SupportThemes
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.core.strings.UiText
 
@@ -54,12 +54,12 @@ class SettingScreenItem(
             )
         }
 
-        private fun parseThemeUiText(theme: Entity.SupportThemes) =  when(theme) {
-            Entity.SupportThemes.AUTO -> UiText.StringResource(R.string.setting_follow_system)
-            Entity.SupportThemes.DARK -> UiText.StringResource(R.string.setting_theme_dark)
-            Entity.SupportThemes.LIGHT -> UiText.StringResource(R.string.setting_theme_light)
-            Entity.SupportThemes.DYNAMIC_DARK -> UiText.StringResource(R.string.setting_theme_dynamic_dark)
-            Entity.SupportThemes.DYNAMIC_LIGHT -> UiText.StringResource(R.string.setting_theme_dynamic_light)
+        private fun parseThemeUiText(theme: SupportThemes) =  when(theme) {
+            SupportThemes.AUTO -> UiText.StringResource(R.string.setting_follow_system)
+            SupportThemes.DARK -> UiText.StringResource(R.string.setting_theme_dark)
+            SupportThemes.LIGHT -> UiText.StringResource(R.string.setting_theme_light)
+            SupportThemes.DYNAMIC_DARK -> UiText.StringResource(R.string.setting_theme_dynamic_dark)
+            SupportThemes.DYNAMIC_LIGHT -> UiText.StringResource(R.string.setting_theme_dynamic_light)
         }
     }
 }

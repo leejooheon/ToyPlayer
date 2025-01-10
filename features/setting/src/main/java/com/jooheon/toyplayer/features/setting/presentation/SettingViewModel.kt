@@ -1,25 +1,22 @@
 package com.jooheon.toyplayer.features.setting.presentation
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.usecase.setting.SettingUseCase
 import com.jooheon.toyplayer.features.common.base.BaseViewModel
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.usecase.SettingsUseCase
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val settingUseCase: SettingUseCase
+    private val settingsUseCase: SettingsUseCase
 ): BaseViewModel() {
     override val TAG = SettingViewModel::class.java.simpleName
 
@@ -33,7 +30,7 @@ class SettingViewModel @Inject constructor(
     fun dispatch(
         context: Context,
         event: SettingScreenEvent,
-    ) = viewModelScope.launch{
+    ) = viewModelScope.launch {
         when(event) {
             is SettingScreenEvent.OnEqualizerScreenClick -> { /** Nothing **/ }
             is SettingScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back)
@@ -45,28 +42,19 @@ class SettingViewModel @Inject constructor(
                 }
             }
             is SettingScreenEvent.OnSkipDurationChanged -> {
-                settingUseCase.setSkipForwardBackward(event.data)
                 _sharedState.update { it.copy(skipDuration = event.data) }
             }
-            is SettingScreenEvent.OnLanguageChanged -> {
-                settingUseCase.setLanguage(event.language)
-                _sharedState.update { it.copy(language = event.language) }
-                SettingScreenEvent.changeLanguage(
-                    context = context,
-                    language = sharedState.value.language
-                )
-            }
             is SettingScreenEvent.OnThemeChanged -> {
-                settingUseCase.setTheme(event.theme)
+                settingsUseCase.setTheme(event.theme)
                 _sharedState.update { it.copy(theme = event.theme) }
             }
         }
     }
     private fun initState() = viewModelScope.launch {
-        _sharedState.value = sharedState.value.copy(
-            language = settingUseCase.getLanguage(),
-            theme = settingUseCase.getTheme(),
-            skipDuration = settingUseCase.getSkipForwardBackward()
-        )
+//        _sharedState.value = sharedState.value.copy(
+//            language = settingsUseCase.getLanguage(),
+//            theme = settingsUseCase.getTheme(),
+//            skipDuration = settingsUseCase.getSkipForwardBackward()
+//        )
     }
 }

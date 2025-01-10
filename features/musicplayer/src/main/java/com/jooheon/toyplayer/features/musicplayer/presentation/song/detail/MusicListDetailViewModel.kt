@@ -2,10 +2,11 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.song.detail
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
+import com.jooheon.toyplayer.domain.common.onSuccess
 import com.jooheon.toyplayer.domain.entity.music.MediaId
 import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.usecase.music.library.PlaylistUseCase
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.model.MusicListDetailScreenEvent
@@ -15,7 +16,9 @@ import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,28 +35,14 @@ class MusicListDetailViewModel @Inject constructor(
     private val _musicListDetailScreenState = MutableStateFlow(MusicListDetailScreenState.default)
     val musicListDetailScreenState = _musicListDetailScreenState.asStateFlow()
 
-    private val _musicListType = MutableStateFlow(musicListUseCase.getMusicListType())
-    val musicListType = _musicListType.asStateFlow()
-
     init {
         collectPlaylist()
-        collectMusicList()
-
-    }
-
-    fun initMusicListType(musicListType: MusicListType) {
-        musicListUseCase.setMusicListType(musicListType)
     }
 
     fun dispatch(event: MusicListDetailScreenEvent) = viewModelScope.launch {
         when(event) {
-            is MusicListDetailScreenEvent.OnMusicListTypeChanged -> onMusicListTypeChanged(event.musicListType)
             is MusicListDetailScreenEvent.OnRefresh -> loadMusicList(event.context, event.musicListType)
         }
-    }
-
-    private fun onMusicListTypeChanged(musicListType: MusicListType) {
-        musicListUseCase.setMusicListType(musicListType)
     }
 
     private suspend fun loadMusicList(context: Context, musicListType: MusicListType) {
@@ -74,21 +63,20 @@ class MusicListDetailViewModel @Inject constructor(
         }
     }
 
-    private fun collectPlaylist() = viewModelScope.launch {
-        playlistUseCase.allPlaylist().collectLatest { playlists ->
-            _musicListDetailScreenState.update {
-                it.copy(
-                    playlists = playlists
-                )
+    private fun collectPlaylist() {
+        flow {
+            emit(playlistUseCase.getAllPlaylist())
+        }.onEach { result ->
+            result.onSuccess { playlists ->
+                _musicListDetailScreenState.update {
+                    it.copy(
+                        playlists = playlists
+                    )
+                }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
-    private fun collectMusicList() = viewModelScope.launch {
-        musicListUseCase.musicListType.collectLatest {
-            _musicListType.emit(it)
-        }
-    }
 //    private fun collectMusicList() = viewModelScope.launch {
 //        combine(
 //            musicListUseCase.localSongList,
