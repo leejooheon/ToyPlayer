@@ -1,4 +1,7 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
+
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
     id("toyplayer.android.library")
     id("toyplayer.android.hilt")
@@ -8,11 +11,15 @@ plugins {
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.features.musicservice"
+    setNamespace("features.musicservice")
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
+    implementation(projects.domain.usecase)
+
+    implementation(projects.core.network)
+
     implementation(projects.features.common)
 //    testImplementation(projects.testing)
 

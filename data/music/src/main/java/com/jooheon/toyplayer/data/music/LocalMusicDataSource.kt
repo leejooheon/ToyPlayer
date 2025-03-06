@@ -8,9 +8,7 @@ import androidx.media3.common.MediaMetadata
 import com.jooheon.toyplayer.core.strings.Strings
 import com.jooheon.toyplayer.data.music.etc.CursorHelper
 import com.jooheon.toyplayer.data.music.etc.toSong
-import com.jooheon.toyplayer.domain.entity.music.MediaFolder
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 import org.json.JSONObject
 import java.io.BufferedReader
 import javax.inject.Inject
@@ -59,20 +57,20 @@ class LocalMusicDataSource @Inject constructor(
         return songs
     }
 
-    fun getMediaFolderList(): List<MediaFolder> {
-        val allSongs = MediaFolder(
+    fun getMediaFolderList(): List<com.jooheon.toyplayer.domain.model.music.MediaFolder> {
+        val allSongs = com.jooheon.toyplayer.domain.model.music.MediaFolder(
             title = applicationContext.getString(Strings.media_folder_all_songs),
-            mediaId = MediaId.AllSongs,
+            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.AllSongs,
             mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
         )
-        val album = MediaFolder(
+        val album = com.jooheon.toyplayer.domain.model.music.MediaFolder(
             title = applicationContext.getString(Strings.media_folder_album),
-            mediaId = MediaId.AlbumRoot,
+            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.AlbumRoot,
             mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
         )
-        val playlist = MediaFolder(
+        val playlist = com.jooheon.toyplayer.domain.model.music.MediaFolder(
             title = applicationContext.getString(Strings.media_folder_playlist),
-            mediaId = MediaId.PlaylistRoot,
+            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.PlaylistRoot,
             mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
         )
 

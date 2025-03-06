@@ -2,6 +2,7 @@ import com.jooheon.toyplayer.setNamespace
 
 plugins {
     id("toyplayer.android.library")
+    id("toyplayer.android.hilt")
 
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
@@ -12,7 +13,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
 
     implementation(libs.javax.inject)
     implementation(libs.kotlinx.serialization.json)

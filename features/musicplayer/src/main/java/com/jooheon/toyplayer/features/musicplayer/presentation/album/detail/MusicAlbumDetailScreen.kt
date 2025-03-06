@@ -17,7 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,25 +44,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.core.strings.Strings
+import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.components.MusicAlbumDetailMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import java.lang.Float
+import kotlin.OptIn
+import kotlin.String
+import kotlin.Unit
+import kotlin.let
 import kotlin.math.max
+import kotlin.with
 
 @Composable
 fun MusicAlbumDetailScreen(
@@ -99,10 +103,9 @@ fun MusicAlbumDetailScreen(
 @Composable
 private fun MusicAlbumDetailScreen(
     musicAlbumDetailScreenState: MusicAlbumDetailScreenState,
+    musicPlayerState: MusicPlayerState,
     onMusicAlbumDetailScreenEvent: (MusicAlbumDetailScreenEvent) -> Unit,
     onMusicMediaItemEvent: (SongItemEvent) -> Unit,
-
-    musicPlayerState: MusicPlayerState,
     onMusicPlayerEvent: (MusicPlayerEvent) -> Unit,
 ) {
     val density = LocalDensity.current
@@ -141,8 +144,8 @@ private fun MusicAlbumDetailScreen(
                     onClick = { onMusicAlbumDetailScreenEvent(MusicAlbumDetailScreenEvent.OnBackClick) }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = "back",
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = UiText.StringResource(Strings.back).asString(),
                     )
                 }
             }
@@ -171,7 +174,7 @@ private fun MusicAlbumDetailScreen(
 }
 
 @Composable
-private fun MediaAlbumHeader(album: Album) {
+private fun MediaAlbumHeader(album: com.jooheon.toyplayer.domain.model.music.Album) {
     val albumDuration = album.songs.fastSumBy { it.duration.toInt() }.toLong()
 
     Column(
@@ -266,7 +269,7 @@ private fun MusicAlbumDetailScreenPreview() {
     ToyPlayerTheme {
         MusicAlbumDetailScreen(
             musicAlbumDetailScreenState = MusicAlbumDetailScreenState.default.copy(
-                album = Album.default.copy(
+                album = com.jooheon.toyplayer.domain.model.music.Album.default.copy(
                     name = UiText.StringResource(R.string.placeholder_long).asString(),
                     artist = UiText.StringResource(R.string.placeholder_medium).asString(),
                 )

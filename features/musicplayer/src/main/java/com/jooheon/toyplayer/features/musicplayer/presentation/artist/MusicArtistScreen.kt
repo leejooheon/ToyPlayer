@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -14,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.music.RepeatMode
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.components.ArtistMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.components.ArtistMediaHeader
@@ -24,8 +22,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.collectLatest
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.combine
 import java.lang.Float
 import kotlin.math.max
@@ -39,13 +36,8 @@ fun MusicArtistScreen(
     viewModel.navigateTo.observeWithLifecycle {
         navController.navigate(it)
     }
-    combine(
-        viewModel.sortType,
-        viewModel.musicListType
-    ) { sortType, musicListType ->
-        Pair(sortType, musicListType)
-    }.observeWithLifecycle { (sortType, musicListType) ->
-        viewModel.loadData(context, sortType, musicListType)
+    viewModel.sortType.observeWithLifecycle {
+        viewModel.loadData(context, it)
     }
 
     val screenState by viewModel.musicArtistScreenState.collectAsStateWithLifecycle()

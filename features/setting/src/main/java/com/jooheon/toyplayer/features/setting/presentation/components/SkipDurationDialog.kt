@@ -14,15 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
+import com.jooheon.toyplayer.domain.model.music.SkipForwardBackward
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.core.strings.UiText
 
 @Composable
 internal fun SkipDurationDialog(
-    currentState: SkipForwardBackward,
-    onChanged: (SkipForwardBackward) -> Unit,
+    currentState: com.jooheon.toyplayer.domain.model.music.SkipForwardBackward,
+    onChanged: (com.jooheon.toyplayer.domain.model.music.SkipForwardBackward) -> Unit,
     onDismiss: () -> Unit,
 ) {
     Dialog(
@@ -60,7 +60,7 @@ internal fun SkipDurationDialog(
                 ) {
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    SkipForwardBackward.entries.forEach {
+                    com.jooheon.toyplayer.domain.model.music.SkipForwardBackward.entries.forEach {
                         SkipForwardBackwardItem(
                             selected = currentState == it,
                             skipForwardBackward = it,
@@ -90,9 +90,9 @@ internal fun SkipDurationDialog(
 @Composable
 private fun SkipForwardBackwardItem(
     selected: Boolean,
-    skipForwardBackward: SkipForwardBackward,
+    skipForwardBackward: com.jooheon.toyplayer.domain.model.music.SkipForwardBackward,
     modifier: Modifier = Modifier,
-    onClicked: (SkipForwardBackward) -> Unit,
+    onClicked: (com.jooheon.toyplayer.domain.model.music.SkipForwardBackward) -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -128,7 +128,7 @@ private fun SkipForwardBackwardItem(
 private fun PreviewSkipForwardPopup() {
     ToyPlayerTheme {
         SkipDurationDialog(
-            currentState = SkipForwardBackward.FIFTEEN_SECOND,
+            currentState = com.jooheon.toyplayer.domain.model.music.SkipForwardBackward.FIFTEEN_SECOND,
             onChanged = {},
             onDismiss = {},
         )

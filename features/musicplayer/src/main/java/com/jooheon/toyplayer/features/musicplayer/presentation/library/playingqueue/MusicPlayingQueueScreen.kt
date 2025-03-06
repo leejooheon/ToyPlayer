@@ -30,9 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
@@ -48,8 +45,10 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.library.playingqu
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playingqueue.model.MusicPlayingQueueScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Song
 
 import java.lang.Float
 import kotlin.math.max

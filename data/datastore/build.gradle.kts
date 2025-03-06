@@ -10,6 +10,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
     implementation(libs.androidx.datastore.preference)
 }

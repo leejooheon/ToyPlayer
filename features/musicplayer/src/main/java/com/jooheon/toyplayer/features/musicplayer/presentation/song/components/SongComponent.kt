@@ -29,8 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.compose.extensions.toDp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
@@ -40,6 +38,8 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
 import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.MusicListType
+import com.jooheon.toyplayer.domain.model.music.Song
 
 @Composable
 fun SongComponent(
@@ -159,7 +159,6 @@ private fun SongComponentHorizontalItem(
 @Preview
 private fun PreviewSongComponent() {
     ToyPlayerTheme {
-        val dataSet = Song.defaultList + Song.defaultList
         Column {
             MusicSongCommonHeader(
                 title = UiText.DynamicString("Title"),
@@ -168,7 +167,7 @@ private fun PreviewSongComponent() {
 
             SongComponent(
                 modifier = Modifier,
-                dataSet = dataSet,
+                dataSet = emptyList(),
                 onMusicSongScreenEvent = {},
                 onMusicPlayerEvent = {},
             )

@@ -2,13 +2,11 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.domain.entity.music.Artist
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.music.Album
+import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
@@ -28,7 +26,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicArtistDetailScreenViewModel @Inject constructor(
-    private val musicListUseCase: MusicListUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val songItemEventUseCase: SongItemEventUseCase,
     musicStateHolder: MusicStateHolder,
@@ -45,13 +42,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     }
 
     fun initialize(context: Context, id: String) = viewModelScope.launch(Dispatchers.IO) {
-        val type = musicListUseCase.getMusicListType()
-        val mediaId = when(type) {
-            MusicListType.All -> MediaId.AllSongs
-            MusicListType.Local -> MediaId.LocalSongs
-            MusicListType.Streaming -> MediaId.StreamSongs
-            MusicListType.Asset -> MediaId.AssetSongs
-        }
+        val mediaId = MediaId.AllSongs
         val musicList = getMusicList(context, mediaId)
 
         val albums = musicList
@@ -71,7 +62,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         val artist = musicList
             .firstOrNull { it.artistId == id }
             .run {
-                Artist(
+                com.jooheon.toyplayer.domain.model.music.Artist(
                     id = id,
                     name = this?.artist.defaultEmpty(),
                     albums = albums
@@ -96,12 +87,13 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     }
 
     private fun collectPlaylistState() = viewModelScope.launch{
-        playlistUseCase.allPlaylist().collectLatest { playlists ->
-            _musicArtistDetailScreenState.update {
-                it.copy(
-                    playlists = playlists
-                )
-            }
-        }
+        // FIXME
+//        playlistUseCase.allPlaylist().collectLatest { playlists ->
+//            _musicArtistDetailScreenState.update {
+//                it.copy(
+//                    playlists = playlists
+//                )
+//            }
+//        }
     }
 }

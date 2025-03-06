@@ -20,41 +20,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
+import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.features.common.compose.extensions.scrollEnabled
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.components.MusicListDetailComponent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicSongMediaHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicSongOptionDialog
+import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.components.MusicListDetailComponent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.model.MusicListDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.model.MusicListDetailScreenState
 import kotlinx.coroutines.launch
 import java.lang.Float
+import kotlin.OptIn
+import kotlin.Unit
+import kotlin.let
 import kotlin.math.max
+import kotlin.with
 
 @Composable
 fun MusicListDetailScreen(
     onBackClick: () -> Unit,
     navigate: (ScreenNavigation.Music) -> Unit,
     viewModel: MusicListDetailViewModel = hiltViewModel(),
-    musicListType: MusicListType,
 ) {
-    val context = LocalContext.current
-    viewModel.initMusicListType(musicListType)
     viewModel.navigateTo.observeWithLifecycle { // FIXME: 공통처리 할수있는 방법을 찾아보자
         (it as? ScreenNavigation.Music)?.let {
             navigate.invoke(it)
         }
-    }
-    viewModel.musicListType.observeWithLifecycle {
-        viewModel.dispatch(MusicListDetailScreenEvent.OnRefresh(context, it))
     }
 
     val screenState by viewModel.musicListDetailScreenState.collectAsStateWithLifecycle()
@@ -151,7 +147,6 @@ private fun MusicListDetailScreen(
         onDismiss = { openDialog = false },
         onOkButtonClicked = {
             openDialog = false
-            onMusicListDetailScreenEvent(MusicListDetailScreenEvent.OnMusicListTypeChanged(it))
         }
     )
 }

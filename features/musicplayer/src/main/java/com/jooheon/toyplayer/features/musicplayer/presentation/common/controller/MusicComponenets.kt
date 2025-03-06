@@ -1,37 +1,30 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.controller
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import com.jooheon.toyplayer.domain.entity.music.ShuffleMode
-import com.jooheon.toyplayer.domain.entity.music.RepeatMode
-import com.jooheon.toyplayer.domain.entity.music.Song
+import androidx.compose.ui.unit.dp
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.features.common.R
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
-import com.jooheon.toyplayer.features.common.R
-import com.jooheon.toyplayer.core.strings.UiText
 
 
 @Composable
@@ -76,8 +69,8 @@ internal fun MusicProgress(
 @Composable
 internal fun MusicControlButtons(
     isPlaying: Boolean,
-    shuffleMode: ShuffleMode,
-    repeatMode: RepeatMode,
+    shuffleMode: com.jooheon.toyplayer.domain.model.music.ShuffleMode,
+    repeatMode: com.jooheon.toyplayer.domain.model.music.RepeatMode,
     onShuffleModePressed: () -> Unit,
     onPrevious: () -> Unit,
     onPlayPauseButtonPressed: () -> Unit,
@@ -87,13 +80,13 @@ internal fun MusicControlButtons(
     modifier: Modifier = Modifier
 ) {
     val shuffleIconResId = when(shuffleMode) {
-        ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
-        ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
+        com.jooheon.toyplayer.domain.model.music.ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
+        com.jooheon.toyplayer.domain.model.music.ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
     }
     val repeatIconResId = when(repeatMode) {
-        RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
-        RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
-        RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
     }
 
     Row(
@@ -152,20 +145,20 @@ internal fun MusicControlButtons(
 @Composable
 internal fun OtherButtons(
     modifier: Modifier = Modifier,
-    shuffleMode: ShuffleMode,
-    repeatMode: RepeatMode,
+    shuffleMode: com.jooheon.toyplayer.domain.model.music.ShuffleMode,
+    repeatMode: com.jooheon.toyplayer.domain.model.music.RepeatMode,
     onShuffleModePressed: () -> Unit,
     onRepeatModePressed: () -> Unit,
     iconRelativeSize: Float = 0.4f,
 ) {
     val shuffleIconResId = when(shuffleMode) {
-        ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
-        ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
+        com.jooheon.toyplayer.domain.model.music.ShuffleMode.SHUFFLE -> R.drawable.ic_shuffle_on_circled
+        com.jooheon.toyplayer.domain.model.music.ShuffleMode.NONE -> R.drawable.ic_shuffle_off_circled
     }
     val repeatIconResId = when(repeatMode) {
-        RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
-        RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
-        RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_ALL -> R.drawable.ic_repeat_white_circle
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_ONE -> R.drawable.ic_repeat_one
+        com.jooheon.toyplayer.domain.model.music.RepeatMode.REPEAT_OFF -> R.drawable.ic_repeat
     }
     Row(
         modifier = modifier,
@@ -194,7 +187,6 @@ internal fun OtherButtons(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MusicItem(
     modifier: Modifier,

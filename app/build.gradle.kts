@@ -1,4 +1,5 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
+
 plugins {
     id("toyplayer.android.application")
 }
@@ -29,12 +30,11 @@ android {
 }
 
 dependencies {
-    implementation(projects.data)
-    implementation(projects.domain)
     implementation(projects.features.main)
     implementation(projects.features.common)
     implementation(projects.features.musicservice)
     implementation(projects.features.musicplayer)
+    implementation(projects.data.repository)
 
     // theme
     implementation(libs.androidx.material)

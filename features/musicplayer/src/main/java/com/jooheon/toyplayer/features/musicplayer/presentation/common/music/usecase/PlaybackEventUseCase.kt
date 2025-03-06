@@ -1,13 +1,10 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase
 
 import android.content.Context
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 class PlaybackEventUseCase(
     private val musicStateHolder: MusicStateHolder,
@@ -27,7 +24,7 @@ class PlaybackEventUseCase(
             else -> { /** Nothing **/ }
         }
     }
-    suspend fun getMusicList(context: Context, mediaId: MediaId) {
+    suspend fun getMusicList(context: Context, mediaId: com.jooheon.toyplayer.domain.model.music.MediaId) {
 //        val contents = suspendCancellableCoroutine { continuation ->
 //            playerController.getMusicListFuture(
 //                context = context,

@@ -6,17 +6,16 @@ import androidx.core.net.toUri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.domain.entity.music.MediaFolder
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.MediaId.Companion.toMediaIdOrNull
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.music.Album
+import com.jooheon.toyplayer.domain.model.music.MediaFolder
+import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.R
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
-import kotlinx.coroutines.flow.firstOrNull
 import timber.log.Timber
 
 class MediaItemProvider(
@@ -84,7 +83,7 @@ class MediaItemProvider(
                 val playlists = getPlaylists()
                 val playlist = playlists.firstOrNull { it.id.toString() == mediaId.id } ?: return emptyList()
 
-                return playlist.songs.map { it.toMediaItem(MediaId.Content(mediaId, it.key())) }
+                playlist.songs.map { it.toMediaItem(MediaId.Content(mediaId, it.key())) }
             }
             else -> emptyList()
         }

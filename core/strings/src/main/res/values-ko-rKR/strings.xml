@@ -4,7 +4,7 @@
     <string name="cancel">취소</string>
     <string name="close">닫기</string>
     <string name="ok">확인</string>
-
+    <string name="back">뒤로가기</string>
     <!-- etc -->
     <string name="media_folder_root">루트 폴더</string>
     <string name="n_second">%1$s 초</string>

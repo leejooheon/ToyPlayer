@@ -1,3 +1,5 @@
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
     id("toyplayer.android.library")
     id("toyplayer.android.compose")
@@ -5,11 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.features.common"
+    setNamespace("features.common")
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
+
     implementation(projects.core.strings)
     implementation(projects.core.navigation)
     implementation(projects.core.designsystem)

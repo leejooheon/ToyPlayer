@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model
 
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Playlist
 
 sealed class PlaylistEvent {
     object Placeholder: PlaylistEvent()

@@ -21,9 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.domain.entity.music.Artist
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.R
@@ -33,7 +32,7 @@ import com.jooheon.toyplayer.core.strings.UiText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ArtistMediaColumnItem(
-    artist: Artist,
+    artist: com.jooheon.toyplayer.domain.model.music.Artist,
     onItemClick: () -> Unit
 ) {
     val imageUrl = artist.albums.firstOrNull()?.songs?.firstOrNull()?.imageUrl.defaultEmpty()
@@ -95,9 +94,9 @@ internal fun ArtistMediaColumnItem(
 private fun ArtistMediaColumnItemPreview() {
     ToyPlayerTheme {
         ArtistMediaColumnItem(
-            artist = Artist.default.copy(
-                name = Resource.longStringPlaceholder,
-                albums = Album.defaultList,
+            artist = com.jooheon.toyplayer.domain.model.music.Artist.default.copy(
+                name = "name",
+                albums = listOf(Album.default),
             ),
             onItemClick = {}
         )

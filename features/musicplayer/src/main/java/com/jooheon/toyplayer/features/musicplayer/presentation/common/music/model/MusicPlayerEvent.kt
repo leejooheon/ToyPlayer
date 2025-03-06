@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model
 
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 
 sealed class MusicPlayerEvent {
     data class OnSongClick(val song: Song): MusicPlayerEvent()

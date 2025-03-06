@@ -24,19 +24,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
@@ -49,11 +48,11 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.detail.model.MusicPlaylistDetailScreenState
-import com.jooheon.toyplayer.core.strings.UiText
 import java.lang.Float
 import kotlin.Int
 import kotlin.OptIn
 import kotlin.Unit
+import kotlin.let
 import kotlin.math.max
 import kotlin.with
 

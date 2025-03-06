@@ -2,8 +2,8 @@ package com.jooheon.toyplayer.features.musicservice.usecase
 
 import android.content.Context
 import androidx.media3.common.PlaybackException
-import com.jooheon.toyplayer.domain.common.FailureStatus
-import com.jooheon.toyplayer.domain.observer.NetworkConnectivityObserver
+import com.jooheon.toyplayer.core.network.NetworkConnectivityObserver
+import com.jooheon.toyplayer.domain.model.common.FailureStatus
 import com.jooheon.toyplayer.features.common.extension.showToast
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import kotlinx.coroutines.CoroutineScope
@@ -32,9 +32,7 @@ class PlaybackErrorUseCase(
         musicStateHolder.playbackError.collectLatest { exception ->
             recentPlaybackError = when (exception.errorCode) {
                 PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
-                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> {
-                    FailureStatus.NO_INTERNET
-                }
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> FailureStatus.NO_INTERNET
                 else -> FailureStatus.OTHER
             }
 

@@ -8,12 +8,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import com.jooheon.toyplayer.data.datastore.di.DataStoreQualifier
 import com.jooheon.toyplayer.data.datastore.model.PlaybackData
-import com.jooheon.toyplayer.domain.common.extension.defaultFalse
-import com.jooheon.toyplayer.domain.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
+import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
+import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlin.time.Duration
 
 class PlaybackPreferencesDataSource @Inject constructor(
     @DataStoreQualifier.Playback private val dataStore: DataStore<Preferences>,

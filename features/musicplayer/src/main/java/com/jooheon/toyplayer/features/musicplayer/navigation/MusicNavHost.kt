@@ -1,11 +1,10 @@
 package com.jooheon.toyplayer.features.musicplayer.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
+import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playingqueue.MusicPlayingQueueScreen
@@ -54,7 +53,6 @@ fun NavGraphBuilder.musicNavGraph(
         MusicListDetailScreen(
             onBackClick = onBackClick,
             navigate = navigate,
-            musicListType = MusicListType.entries[args.ordinal]
         )
     }
 }

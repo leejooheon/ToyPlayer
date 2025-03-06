@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.data.music.etc
 
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 
 class TestStreamUrl {
     companion object {

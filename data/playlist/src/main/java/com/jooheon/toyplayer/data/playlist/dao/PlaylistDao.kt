@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.jooheon.toyplayer.data.dao.playlist.data.PlaylistEntity
+import com.jooheon.toyplayer.data.playlist.dao.data.PlaylistEntity
 
 @Dao
 interface PlaylistDao {

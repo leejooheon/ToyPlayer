@@ -1,8 +1,7 @@
 package com.jooheon.toyplayer.data.playlist.dao.data
 
-import com.jooheon.toyplayer.data.dao.playlist.data.PlaylistEntity
-import com.jooheon.toyplayer.domain.common.Mapper
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.common.Mapper
+import com.jooheon.toyplayer.domain.model.music.Playlist
 
 class PlaylistMapper: Mapper<PlaylistEntity, Playlist>() {
     override fun map(data: PlaylistEntity): Playlist {

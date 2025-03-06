@@ -21,49 +21,47 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenState
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicSongOptionDialog
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
-import com.jooheon.toyplayer.features.musicservice.data.MusicState
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.PermissionRequestItem
 import com.jooheon.toyplayer.features.common.compose.components.appDetailSettings
 import com.jooheon.toyplayer.features.common.compose.components.isPermissionRequestBlocked
 import com.jooheon.toyplayer.features.common.compose.components.savePermissionRequested
+import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
+import com.jooheon.toyplayer.features.musicplayer.R
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicComponent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicSongCommonHeader
+import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.MusicSongOptionDialog
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.components.SongComponent
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenState
+import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import java.lang.Float
+import kotlin.OptIn
+import kotlin.Unit
 import kotlin.math.max
+import kotlin.with
 
 @Composable
 fun MusicSongScreen(
     navigate: (ScreenNavigation.Music) -> Unit,
     viewModel: MusicSongScreenViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current
     viewModel.navigateTo.observeWithLifecycle {
         val route = it as? ScreenNavigation.Music ?: return@observeWithLifecycle
         navigate.invoke(route)
-    }
-    viewModel.musicListType.observeWithLifecycle {
-        val event = MusicSongScreenEvent.OnRefresh(context, it)
-        viewModel.dispatch(event)
     }
 
     val screenState by viewModel.musicPlayerScreenState.collectAsStateWithLifecycle()
@@ -197,8 +195,8 @@ private fun MusicScreenPreview() {
             musicPlayerState = MusicPlayerState.default.copy(
                 musicState = MusicState(
                     currentPlayingMusic = Song.default.copy(
-                        title = Resource.longStringPlaceholder,
-                        artist = Resource.mediumStringPlaceholder,
+                        title = "title",
+                        artist = "artist",
                     ),
                 )
             ),

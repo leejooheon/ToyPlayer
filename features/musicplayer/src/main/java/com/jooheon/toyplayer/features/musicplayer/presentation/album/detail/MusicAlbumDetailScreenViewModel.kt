@@ -2,12 +2,11 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.album.detail
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.usecase.music.list.MusicListUseCase
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.music.Album
+import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
@@ -18,18 +17,15 @@ import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MusicAlbumDetailScreenViewModel @Inject constructor(
-    private val musicListUseCase: MusicListUseCase,
     private val playlistUseCase: PlaylistUseCase,
     private val songItemEventUseCase: SongItemEventUseCase,
     musicStateHolder: MusicStateHolder,
@@ -46,13 +42,7 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
     }
 
     fun initialize(context: Context, id: String) = viewModelScope.launch(Dispatchers.IO) {
-        val type = musicListUseCase.getMusicListType()
-        val mediaId = when(type) {
-            MusicListType.All -> MediaId.AllSongs
-            MusicListType.Local -> MediaId.LocalSongs
-            MusicListType.Streaming -> MediaId.StreamSongs
-            MusicListType.Asset -> MediaId.AssetSongs
-        }
+        val mediaId = MediaId.AllSongs
         val musicList = getMusicList(context, mediaId)
         val album = musicList
             .filter { it.albumId == id }
@@ -83,12 +73,13 @@ class MusicAlbumDetailScreenViewModel @Inject constructor(
     }
 
     private fun collectPlaylistState() = viewModelScope.launch {
-        playlistUseCase.allPlaylist().collectLatest { playlists ->
-            _musicAlbumDetailScreenState.update {
-                it.copy(
-                    playlists = playlists
-                )
-            }
-        }
+        // FIXME
+//        playlistUseCase.allPlaylist().collectLatest { playlists ->
+//            _musicAlbumDetailScreenState.update {
+//                it.copy(
+//                    playlists = playlists
+//                )
+//            }
+//        }
     }
 }

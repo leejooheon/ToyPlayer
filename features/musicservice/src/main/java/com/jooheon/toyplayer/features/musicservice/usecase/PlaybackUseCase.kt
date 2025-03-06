@@ -1,8 +1,6 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
 import androidx.media3.common.Player
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
-import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
@@ -11,8 +9,8 @@ import kotlinx.coroutines.launch
 
 class PlaybackUseCase(
     private val musicStateHolder: MusicStateHolder,
-    private val playlistUseCase: PlaylistUseCase,
-    private val playbackSettingsUseCase: PlaybackSettingsUseCase,
+    private val playlistUseCase: com.jooheon.toyplayer.domain.usecase.PlaylistUseCase,
+    private val playbackSettingsUseCase: com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase,
 ) {
     internal fun initialize(player: Player?, scope: CoroutineScope) {
         collectMediaItem(scope)

@@ -1,8 +1,6 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
-import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
-import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
@@ -43,8 +41,8 @@ object PlaybackComponentModule {
     @Provides
     fun provideMediaItemProvider(
         @ApplicationContext context: Context,
-        musicListUseCase: MusicListUseCase,
-        playlistUseCase: PlaylistUseCase,
+        musicListUseCase: com.jooheon.toyplayer.domain.usecase.MusicListUseCase,
+        playlistUseCase: com.jooheon.toyplayer.domain.usecase.PlaylistUseCase,
     ): MediaItemProvider = MediaItemProvider(
         context = context,
         musicListUseCase = musicListUseCase,

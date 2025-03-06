@@ -1,8 +1,8 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model
 
-import com.jooheon.toyplayer.domain.entity.music.RepeatMode
-import com.jooheon.toyplayer.domain.entity.music.ShuffleMode
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.RepeatMode
+import com.jooheon.toyplayer.domain.model.music.ShuffleMode
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 
 data class MusicPlayerState(

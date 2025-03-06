@@ -1,8 +1,8 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.song.model
 
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.MusicListType
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Song
 
 data class MusicSongScreenState(
     val songList: List<Song>,
@@ -11,7 +11,7 @@ data class MusicSongScreenState(
 ) {
     companion object {
         val default = MusicSongScreenState(
-            songList = Song.defaultList,
+            songList = emptyList(),
             playlists = listOf(Playlist.default),
             musicListType = MusicListType.All,
         )

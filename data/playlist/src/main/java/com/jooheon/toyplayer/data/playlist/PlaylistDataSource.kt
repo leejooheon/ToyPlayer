@@ -2,7 +2,7 @@ package com.jooheon.toyplayer.data.playlist
 
 import com.jooheon.toyplayer.data.playlist.dao.PlaylistDao
 import com.jooheon.toyplayer.data.playlist.dao.data.PlaylistMapper
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import javax.inject.Inject
 
 class PlaylistDataSource @Inject constructor(

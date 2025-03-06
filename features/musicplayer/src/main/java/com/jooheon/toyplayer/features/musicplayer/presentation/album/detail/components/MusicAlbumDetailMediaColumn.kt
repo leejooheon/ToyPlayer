@@ -19,8 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.entity.music.Song
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.model.MusicAlbumDetailScreenState
@@ -86,7 +86,7 @@ internal fun MusicAlbumDetailMediaColumn(
             items(
                 items = album.songs,
                 key = { song: Song -> song.hashCode() }
-            ) {song ->
+            ) { song ->
                 MediaItemSmallNoImage(
                     trackNumber = song.trackNumber,
                     title = song.title,

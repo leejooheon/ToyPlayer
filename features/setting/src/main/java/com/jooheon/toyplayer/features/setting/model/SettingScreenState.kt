@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.features.setting.model
 
-import com.jooheon.toyplayer.domain.entity.SupportThemes
-import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
+import com.jooheon.toyplayer.domain.model.SupportThemes
+import com.jooheon.toyplayer.domain.model.music.SkipForwardBackward
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 
 data class SettingScreenState(

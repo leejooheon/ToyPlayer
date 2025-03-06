@@ -1,9 +1,9 @@
-package com.jooheon.toyplayer.data.dao.playlist.data
+package com.jooheon.toyplayer.data.playlist.dao.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 
 @Entity(tableName = "playlist_table")
 data class PlaylistEntity(

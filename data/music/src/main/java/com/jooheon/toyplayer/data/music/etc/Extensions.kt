@@ -1,8 +1,8 @@
 package com.jooheon.toyplayer.data.music.etc
 
 import android.database.Cursor
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.music.Song
 import org.json.JSONException
 import org.json.JSONObject
 

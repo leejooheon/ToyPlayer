@@ -16,11 +16,14 @@ android {
 configureHiltAndroid()
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":features:common"))
+    implementation(project(":domain:model"))
+    implementation(project(":domain:usecase"))
+
     implementation(project(":core:strings"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:navigation"))
+    
+    implementation(project(":features:common"))
 //    testImplementation(project(":testing"))
 
     val libs = project.extensions.libs

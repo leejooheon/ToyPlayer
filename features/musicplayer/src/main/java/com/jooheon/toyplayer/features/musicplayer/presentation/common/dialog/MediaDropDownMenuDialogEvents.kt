@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog
 
 import androidx.compose.runtime.Composable
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 
 

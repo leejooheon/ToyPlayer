@@ -15,22 +15,22 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var themeStateFlow: ThemeStateFlow
-
-    @Inject
-    lateinit var settingUseCase: SettingUseCase
+//    @Inject
+//    lateinit var themeStateFlow: ThemeStateFlow
+//
+//    @Inject
+//    lateinit var settingUseCase: SettingUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.tag(LifecycleTAG).d("onCreate")
 
-        lifecycleScope.launch {
-            SettingScreenEvent.changeLanguage(
-                context = this@MainActivity,
-                language = settingUseCase.getLanguage()
-            )
-        }
+//        lifecycleScope.launch {
+//            SettingScreenEvent.changeLanguage(
+//                context = this@MainActivity,
+//                language = settingUseCase.getLanguage()
+//            )
+//        }
 
         setContent {
             AppContent()

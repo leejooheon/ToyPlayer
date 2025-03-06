@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.song.model
 
 import android.content.Context
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
+import com.jooheon.toyplayer.domain.model.music.MusicListType
 
 sealed class MusicSongScreenEvent {
     data class OnMusicListTypeChanged(val musicListType: MusicListType): MusicSongScreenEvent()

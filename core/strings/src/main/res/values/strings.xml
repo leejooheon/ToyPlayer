@@ -4,6 +4,7 @@
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="ok">OK</string>
+    <string name="back">Back</string>
 
     <!-- etc -->
     <string name="media_folder_root">Root Folder</string>

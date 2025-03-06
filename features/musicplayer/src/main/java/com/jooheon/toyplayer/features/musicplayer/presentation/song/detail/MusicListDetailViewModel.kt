@@ -2,11 +2,10 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.song.detail
 
 import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.domain.common.onSuccess
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.MusicListType
-import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
+import com.jooheon.toyplayer.domain.model.common.onSuccess
+import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.AbsMusicPlayerViewModel
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaybackEventUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.model.MusicListDetailScreenEvent
@@ -25,7 +24,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MusicListDetailViewModel @Inject constructor(
-    private val musicListUseCase: MusicListUseCase,
     private val playlistUseCase: PlaylistUseCase,
     musicStateHolder: MusicStateHolder,
     playerController: PlayerController,
@@ -76,32 +74,4 @@ class MusicListDetailViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
-//    private fun collectMusicList() = viewModelScope.launch {
-//        combine(
-//            musicListUseCase.localSongList,
-//            musicListUseCase.assetSongList,
-//            musicListUseCase.streamingSongList,
-//            musicListUseCase.musicListType,
-//        ) { localSongList, assetSongList, streamingSongList, musicListType ->
-//            Pair(listOf(localSongList, assetSongList, streamingSongList), musicListType)
-//        }.collect { (dataSet, musicListType) ->
-//            val localSongList = dataSet[0]
-//            val assetSongList = dataSet[1]
-//            val streamingSongList = dataSet[2]
-//            val songList = when(musicListType) {
-//                MusicListType.All -> localSongList + assetSongList + streamingSongList
-//                MusicListType.Asset -> assetSongList
-//                MusicListType.Local -> localSongList
-//                MusicListType.Streaming -> streamingSongList
-//            }
-//
-//            _musicListDetailScreenState.update {
-//                it.copy(
-//                    songList = songList,
-//                    musicListType = musicListType
-//                )
-//            }
-//        }
-//    }
 }

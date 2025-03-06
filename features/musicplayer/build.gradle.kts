@@ -1,9 +1,11 @@
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
     id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.features.musicplayer"
+    setNamespace("features.musicplayer")
 }
 
 dependencies {

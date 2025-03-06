@@ -22,11 +22,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.strings.UiText
-import com.jooheon.toyplayer.domain.entity.SupportThemes
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
-import com.jooheon.toyplayer.features.setting.presentation.main.SettingDetailItem
 
 @Composable
 fun LanguageScreen(

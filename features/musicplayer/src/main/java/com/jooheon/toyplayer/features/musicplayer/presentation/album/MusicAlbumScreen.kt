@@ -13,20 +13,22 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
-import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.components.AlbumMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.components.AlbumMediaHeader
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.model.MusicAlbumScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.model.MusicAlbumScreenState
-import kotlinx.coroutines.flow.combine
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
+import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import java.lang.Float
+import kotlin.OptIn
+import kotlin.Unit
 import kotlin.math.max
+import kotlin.with
 
 
 @Composable
@@ -39,13 +41,8 @@ fun MusicAlbumScreen(
         navController.navigate(it)
     }
 
-    combine(
-        viewModel.sortType,
-        viewModel.musicListType
-    ) { sortType, musicListType ->
-        Pair(sortType, musicListType)
-    }.observeWithLifecycle { (sortType, musicListType) ->
-        viewModel.loadData(context, sortType, musicListType)
+    viewModel.sortType.observeWithLifecycle {
+        viewModel.loadData(context, it)
     }
 
     val screenState by viewModel.musicAlbumScreenState.collectAsStateWithLifecycle()

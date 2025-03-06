@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,8 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.music.Artist
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.components.ArtistDetailMediaColumn
@@ -36,7 +35,9 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.core.strings.Strings
+import com.jooheon.toyplayer.core.strings.UiText
 import java.lang.Float
 import kotlin.math.max
 
@@ -109,8 +110,8 @@ private fun MusicArtistDetailScreen(
                     onClick = { onMusicArtistDetailScreenEvent(MusicArtistDetailScreenEvent.OnBackClick) }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.ArrowBack,
-                        contentDescription = "back",
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                        contentDescription = UiText.StringResource(Strings.back).asString()
                     )
                 }
             }

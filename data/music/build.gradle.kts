@@ -9,7 +9,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
     implementation(projects.core.strings)
 
     implementation(libs.javax.inject)

@@ -20,8 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Album
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.model.MusicArtistDetailScreenEvent
@@ -62,7 +61,7 @@ internal fun ArtistDetailMediaColumn(
         ) {
             items(
                 items = artist.albums,
-                key = { album: Album -> album.hashCode() }
+                key = { album: com.jooheon.toyplayer.domain.model.music.Album -> album.hashCode() }
             ) { album ->
                 ArtistDetailAlbumItem(
                     imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),

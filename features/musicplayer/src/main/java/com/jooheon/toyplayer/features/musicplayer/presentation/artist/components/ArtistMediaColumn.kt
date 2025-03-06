@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.entity.music.Artist
+import com.jooheon.toyplayer.domain.model.music.Artist
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
 @Composable
 internal fun ArtistMediaColumn(
-    artists: List<Artist>,
+    artists: List<com.jooheon.toyplayer.domain.model.music.Artist>,
     listState: LazyGridState,
-    onItemClick: (Artist) -> Unit,
+    onItemClick: (com.jooheon.toyplayer.domain.model.music.Artist) -> Unit,
 ) {
     LazyVerticalGrid(
         state = listState,
@@ -35,7 +35,7 @@ internal fun ArtistMediaColumn(
         content = {
             items(
                 items = artists,
-                key = { artist: Artist -> artist.hashCode() }
+                key = { artist: com.jooheon.toyplayer.domain.model.music.Artist -> artist.hashCode() }
             ) { artist ->
                 ArtistMediaColumnItem(
                     artist = artist,
@@ -50,7 +50,7 @@ internal fun ArtistMediaColumn(
 private fun ArtistMediaColumnPreview() {
     ToyPlayerTheme {
         ArtistMediaColumn(
-            artists = Artist.defaultList,
+            artists = listOf(Artist.default),
             listState = rememberLazyGridState(),
             onItemClick = {},
         )

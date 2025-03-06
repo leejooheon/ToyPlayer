@@ -3,19 +3,15 @@ package com.jooheon.toyplayer.features.musicservice.ext
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.common.extension.defaultFalse
-import com.jooheon.toyplayer.domain.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.entity.music.Album
-import com.jooheon.toyplayer.domain.entity.music.MediaFolder
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.MediaId.Companion.toMediaIdOrNull
-import com.jooheon.toyplayer.domain.entity.music.Playlist
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
+import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Song
 import kotlinx.serialization.json.Json
 
 fun Song.toMediaItem(): MediaItem {
@@ -41,7 +37,7 @@ fun Song.toMediaItem(): MediaItem {
         .build()
 }
 
-fun Song.toMediaItem(mediaId: MediaId): MediaItem {
+fun Song.toMediaItem(mediaId: com.jooheon.toyplayer.domain.model.music.MediaId): MediaItem {
     val key = mediaId.serialize()
     val metadata = MediaMetadata.Builder()
         .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
@@ -73,7 +69,7 @@ fun MediaItem.toSong(): Song {
     fun getPath(extras: Bundle?): String = extras?.getString(Song.BUNDLE_PATH).defaultEmpty()
 
     val id = mediaId.toMediaIdOrNull() ?: mediaId.toLongOrNull()
-    val audioId = if(id is MediaId.Content) id.key.toLongOrNull()
+    val audioId = if(id is com.jooheon.toyplayer.domain.model.music.MediaId.Content) id.key.toLongOrNull()
                   else mediaId.toLongOrNull()
 
     return with(mediaMetadata) {
@@ -105,7 +101,7 @@ fun Playlist.toMediaItem(): MediaItem {
         .build()
 
     return MediaItem.Builder()
-        .setMediaId(MediaId.Playlist(id.toString()).serialize())
+        .setMediaId(com.jooheon.toyplayer.domain.model.music.MediaId.Playlist(id.toString()).serialize())
         .setMediaMetadata(metadata)
         .setSubtitleConfigurations(mutableListOf())
         .setUri(Uri.EMPTY)
@@ -113,7 +109,7 @@ fun Playlist.toMediaItem(): MediaItem {
 }
 
 
-fun MediaFolder.toMediaBrowsableItem(): MediaItem {
+fun com.jooheon.toyplayer.domain.model.music.MediaFolder.toMediaBrowsableItem(): MediaItem {
     val metadata = MediaMetadata.Builder()
         .setTitle(title)
         .setIsBrowsable(true)
@@ -129,8 +125,8 @@ fun MediaFolder.toMediaBrowsableItem(): MediaItem {
         .build()
 }
 
-fun Album.toMediaItem(): MediaItem {
-    val mediaId = MediaId.Album(id)
+fun com.jooheon.toyplayer.domain.model.music.Album.toMediaItem(): MediaItem {
+    val mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.Album(id)
     val metadata = MediaMetadata.Builder()
         .setTitle(name)
         .setIsBrowsable(true)
@@ -140,7 +136,7 @@ fun Album.toMediaItem(): MediaItem {
         .build()
 
     return MediaItem.Builder()
-        .setMediaId(Json.encodeToString(MediaId.serializer(), mediaId))
+        .setMediaId(Json.encodeToString(com.jooheon.toyplayer.domain.model.music.MediaId.serializer(), mediaId))
         .setMediaMetadata(metadata)
         .setSubtitleConfigurations(mutableListOf())
         .setUri(Uri.EMPTY)

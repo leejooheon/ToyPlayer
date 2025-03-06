@@ -31,8 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
-import com.jooheon.toyplayer.domain.common.extension.default
-import com.jooheon.toyplayer.domain.entity.music.Playlist
+import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
@@ -41,6 +40,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.dialog.Mus
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.domain.model.music.Playlist
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

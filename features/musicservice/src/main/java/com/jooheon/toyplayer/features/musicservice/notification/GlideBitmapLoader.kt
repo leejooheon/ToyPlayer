@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import androidx.core.graphics.createBitmap
 
 @UnstableApi
 class GlideBitmapLoader(
@@ -33,11 +34,7 @@ class GlideBitmapLoader(
 
     private fun initDefaultBitmap() {
         if(::defaultBitmap.isInitialized) return
-        defaultBitmap = Bitmap.createBitmap(
-            bitmapSize,
-            bitmapSize,
-            Bitmap.Config.ARGB_8888
-        ).applyCanvas {
+        defaultBitmap = createBitmap(bitmapSize, bitmapSize).applyCanvas {
             drawColor(Color.BLACK) // FIXME
         }
     }

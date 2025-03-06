@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.data.playlist.dao.data
 
 import androidx.room.TypeConverter
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.music.Song
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

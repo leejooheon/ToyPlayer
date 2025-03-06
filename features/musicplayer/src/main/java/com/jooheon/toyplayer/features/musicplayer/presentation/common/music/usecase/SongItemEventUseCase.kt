@@ -1,10 +1,12 @@
 package com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase
 
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.SongItemEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SongItemEventUseCase(
+class SongItemEventUseCase @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
 ) {
     suspend fun dispatch(event: SongItemEvent) {

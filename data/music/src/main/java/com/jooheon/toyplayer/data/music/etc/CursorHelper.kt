@@ -9,8 +9,8 @@ import android.provider.MediaStore
 import com.jooheon.toyplayer.data.music.LocalMusicDataSource.Companion.DATA
 import com.jooheon.toyplayer.data.music.LocalMusicDataSource.Companion.IS_MUSIC
 import com.jooheon.toyplayer.data.music.LocalMusicDataSource.Companion.baseProjection
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.music.Song
 import java.io.File
 
 class CursorHelper {

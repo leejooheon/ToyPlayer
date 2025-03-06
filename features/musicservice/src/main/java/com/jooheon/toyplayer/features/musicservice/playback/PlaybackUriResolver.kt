@@ -6,9 +6,9 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.ResolvingDataSource
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.common.extension.defaultFalse
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.data.TestLogKey
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
@@ -78,7 +78,7 @@ class PlaybackUriResolver(
 
     private fun isCached(dataSpec: DataSpec, song: Song): Boolean {
         if(song.useCache) {
-            val cached = playbackCacheManager?.isCached(song.key(), dataSpec.position, chunkLength).defaultFalse()
+            val cached = playbackCacheManager.isCached(song.key(), dataSpec.position, chunkLength).defaultFalse()
             Timber.tag(PlaybackCacheManager.CACHE_TAG).d("isCached: ${cached}, [${song.title} key: ${song.key()}, position: ${dataSpec.position}, length: $chunkLength]")
             return cached
         }

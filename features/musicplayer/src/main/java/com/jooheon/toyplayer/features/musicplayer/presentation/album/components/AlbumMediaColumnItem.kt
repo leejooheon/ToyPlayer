@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.domain.entity.music.Album
+import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 
@@ -29,8 +29,8 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AlbumMediaColumnItem(
-    album: Album,
-    onItemClick: (Album) -> Unit,
+    album: com.jooheon.toyplayer.domain.model.music.Album,
+    onItemClick: (com.jooheon.toyplayer.domain.model.music.Album) -> Unit,
 ) {
     Card(
         onClick = { onItemClick(album) },
@@ -80,9 +80,9 @@ internal fun AlbumMediaColumnItem(
 private fun AlbumMediaColumnItemPreview() {
     ToyPlayerTheme {
         AlbumMediaColumnItem(
-            album = Album.default.copy(
-                name = Resource.longStringPlaceholder,
-                artist = Resource.mediumStringPlaceholder,
+            album = com.jooheon.toyplayer.domain.model.music.Album.default.copy(
+                name = "name",
+                artist = "artist",
             ),
             onItemClick = {}
         )

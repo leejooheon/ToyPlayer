@@ -1,7 +1,9 @@
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
     id("toyplayer.android.feature")
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.features.splash"
+    setNamespace("features.splash")
 }

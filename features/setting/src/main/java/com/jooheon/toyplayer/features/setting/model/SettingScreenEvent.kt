@@ -1,14 +1,9 @@
 package com.jooheon.toyplayer.features.setting.model
 
-import android.content.Context
-import android.content.res.Resources
-import android.os.LocaleList
-import androidx.core.os.ConfigurationCompat
 import androidx.navigation.NavController
-import com.jooheon.toyplayer.domain.entity.SupportThemes
-import com.jooheon.toyplayer.domain.entity.music.SkipForwardBackward
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import java.util.Locale
+import com.jooheon.toyplayer.domain.model.SupportThemes
+import com.jooheon.toyplayer.domain.model.music.SkipForwardBackward
 
 sealed class SettingScreenEvent {
     data object OnBackClick: SettingScreenEvent()

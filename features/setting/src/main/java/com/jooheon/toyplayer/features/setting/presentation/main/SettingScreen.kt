@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.setting.presentation.main
 
-import android.content.Context
 import androidx.annotation.ColorRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,24 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.compose.components.CustomDivider
 import com.jooheon.toyplayer.features.setting.presentation.components.SkipDurationDialog
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenItem
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
-import com.jooheon.toyplayer.features.setting.presentation.SettingViewModel
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.sharedViewModel
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.core.strings.UiText
 

@@ -8,12 +8,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
-import com.jooheon.toyplayer.domain.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.entity.music.MediaId
-import com.jooheon.toyplayer.domain.entity.music.Song
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
-import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.enqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToNext
@@ -50,7 +48,7 @@ class PlayerController(
 
     fun getMusicListFuture(
         context: Context,
-        mediaId: MediaId,
+        mediaId: com.jooheon.toyplayer.domain.model.music.MediaId,
         listener: (List<MediaItem>) -> Unit) = executeAfterPrepare {
         val contentFuture = it.getChildren(mediaId.serialize(), 0, Int.MAX_VALUE, null)
         contentFuture.addListener(

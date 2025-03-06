@@ -21,7 +21,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import com.jooheon.toyplayer.features.common.extension.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import java.lang.Float
 import kotlin.math.max
 

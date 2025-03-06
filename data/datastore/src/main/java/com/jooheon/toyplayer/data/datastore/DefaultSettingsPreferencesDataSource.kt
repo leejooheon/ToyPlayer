@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.jooheon.toyplayer.data.datastore.di.DataStoreQualifier
-import com.jooheon.toyplayer.domain.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.entity.SupportThemes
+import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.SupportThemes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
