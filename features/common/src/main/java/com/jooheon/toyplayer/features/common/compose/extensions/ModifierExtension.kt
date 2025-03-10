@@ -93,9 +93,3 @@ fun Modifier.pagerTabIndicatorOffset(
         }
     }
 }
-
-
-@Composable
-fun Int.toDp(density: Density = LocalDensity.current): Dp {
-    return with(density) { toDp() }
-}

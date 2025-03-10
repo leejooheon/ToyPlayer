@@ -4,7 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.detail.MusicAlbumDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.artist.detail.MusicArtistDetailScreen
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playingqueue.MusicPlayingQueueScreen
@@ -28,7 +27,6 @@ fun NavGraphBuilder.musicNavGraph(
             navigate = navigate,
             artistId = args.artistId
         )
-
     }
     composable<ScreenNavigation.Music.AlbumDetail> {
         val args = it.toRoute<ScreenNavigation.Music.AlbumDetail>()

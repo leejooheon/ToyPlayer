@@ -25,7 +25,7 @@ import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenItem
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
 import com.jooheon.toyplayer.features.setting.R
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 
 @Composable
 fun SettingScreen(

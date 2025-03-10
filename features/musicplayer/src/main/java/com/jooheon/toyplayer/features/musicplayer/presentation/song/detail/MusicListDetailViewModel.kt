@@ -13,9 +13,11 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.song.detail.model
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -72,6 +74,8 @@ class MusicListDetailViewModel @Inject constructor(
                     )
                 }
             }
-        }.launchIn(viewModelScope)
+        }
+            .flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
 }

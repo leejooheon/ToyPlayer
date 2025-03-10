@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
@@ -20,6 +21,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,7 +43,7 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
     val musicArtistDetailScreenState = _musicArtistDetailScreenState.asStateFlow()
 
     init {
-        collectPlaylistState()
+        collectPlaylist()
     }
 
     fun initialize(context: Context, id: String) = viewModelScope.launch(Dispatchers.IO) {
@@ -86,14 +91,19 @@ class MusicArtistDetailScreenViewModel @Inject constructor(
         songItemEventUseCase.dispatch(event)
     }
 
-    private fun collectPlaylistState() = viewModelScope.launch{
-        // FIXME
-//        playlistUseCase.allPlaylist().collectLatest { playlists ->
-//            _musicArtistDetailScreenState.update {
-//                it.copy(
-//                    playlists = playlists
-//                )
-//            }
-//        }
+    private fun collectPlaylist() {
+        flow {
+            emit(playlistUseCase.getAllPlaylist())
+        }.onEach { result ->
+            result.onSuccess { playlists ->
+                _musicArtistDetailScreenState.update {
+                    it.copy(
+                        playlists = playlists
+                    )
+                }
+            }
+        }
+            .flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
 }

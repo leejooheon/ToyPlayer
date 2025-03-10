@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.SupportThemes
 import com.jooheon.toyplayer.features.setting.R
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent

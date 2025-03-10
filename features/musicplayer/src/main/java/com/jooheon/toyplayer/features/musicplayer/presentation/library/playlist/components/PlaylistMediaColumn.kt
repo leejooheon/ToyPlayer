@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylists
 
 
 @Composable
@@ -46,7 +47,7 @@ internal fun PlaylistMediaColumn(
             ) { playlist ->
                 MusicPlaylistColumnItem(
                     playlist = playlist,
-                    showContextualMenu = playlist.id != Playlist.PlayingQueuePlaylistId,
+                    showContextualMenu = playlist.id !in defaultPlaylists.map { it.id },
                     onItemClick = { onItemClick(playlist) },
                     onDropDownMenuClick = onDropDownMenuClick,
                 )

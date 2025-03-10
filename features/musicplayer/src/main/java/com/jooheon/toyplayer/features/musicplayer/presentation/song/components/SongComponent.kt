@@ -30,16 +30,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
-import com.jooheon.toyplayer.features.common.compose.extensions.toDp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.MusicUtil.defaultImgaeUri
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicSongScreenEvent
 import com.jooheon.toyplayer.features.musicservice.ext.albumArtUri
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.features.common.extension.toDp
 
 @Composable
 fun SongComponent(

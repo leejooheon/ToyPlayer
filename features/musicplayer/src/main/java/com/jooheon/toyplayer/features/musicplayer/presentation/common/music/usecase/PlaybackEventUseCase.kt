@@ -47,6 +47,7 @@ class PlaybackEventUseCase(
 
         playerController.enqueue(
             songs = shuffled,
+            startIndex = 0,
             addNext = false,
             playWhenReady = playWhenReady,
         )

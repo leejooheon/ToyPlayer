@@ -19,10 +19,10 @@ dependencies {
     implementation(project(":domain:model"))
     implementation(project(":domain:usecase"))
 
-    implementation(project(":core:strings"))
+    implementation(project(":core:resources"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:navigation"))
-    
+
     implementation(project(":features:common"))
 //    testImplementation(project(":testing"))
 

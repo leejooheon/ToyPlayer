@@ -10,6 +10,7 @@ import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
 import com.jooheon.toyplayer.features.musicservice.ext.enqueue
@@ -28,9 +29,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
-class PlayerController(
-    private val applicationScope: CoroutineScope,
-) {
+class PlayerController(private val scope: CoroutineScope) {
     private val immediate = Dispatchers.Main.immediate
 
     private fun newBrowserAsync(context: Context) = MediaBrowser
@@ -48,7 +47,7 @@ class PlayerController(
 
     fun getMusicListFuture(
         context: Context,
-        mediaId: com.jooheon.toyplayer.domain.model.music.MediaId,
+        mediaId: MediaId,
         listener: (List<MediaItem>) -> Unit) = executeAfterPrepare {
         val contentFuture = it.getChildren(mediaId.serialize(), 0, Int.MAX_VALUE, null)
         contentFuture.addListener(
@@ -68,6 +67,10 @@ class PlayerController(
     }
     fun seekToPrevious() = executeAfterPrepare {
         it.forceSeekToPrevious()
+    }
+    fun playPause() = executeAfterPrepare {
+        if(it.isPlaying) it.pause()
+        else it.play()
     }
     fun playAtIndex(index: Int, time: Long = C.TIME_UNSET) = executeAfterPrepare {
         if(index == C.INDEX_UNSET) return@executeAfterPrepare
@@ -131,8 +134,9 @@ class PlayerController(
 
     fun enqueue(
         songs: List<Song>,
+        startIndex: Int,
         addNext: Boolean,
-        playWhenReady: Boolean
+        playWhenReady: Boolean,
     ) = executeAfterPrepare { player ->
         if (addNext) { // TabToSelect
             val newMediaItems = songs.distinctBy {
@@ -150,12 +154,13 @@ class PlayerController(
 
             player.forceEnqueue(
                 mediaItems = newMediaItems,
-                startIndex = 0,
+                startIndex = startIndex,
                 startPositionMs = C.TIME_UNSET,
                 playWhenReady = playWhenReady
             )
         }
     }
+
     fun onDeleteAtPlayingQueue(
         songs: List<Song>
     ) = executeAfterPrepare { player ->
@@ -185,7 +190,7 @@ class PlayerController(
     }
 
     private inline fun executeAfterPrepare(crossinline action: suspend (MediaBrowser) -> Unit) {
-        applicationScope.launch(immediate) {
+        scope.launch(immediate) {
             val controller = awaitConnect() ?: return@launch
             action(controller)
         }

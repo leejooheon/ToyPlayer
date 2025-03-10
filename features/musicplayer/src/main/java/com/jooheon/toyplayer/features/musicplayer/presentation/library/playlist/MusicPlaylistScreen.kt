@@ -20,19 +20,16 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.components.PlaylistMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.model.MusicPlaylistScreenState
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import java.lang.Float
 import kotlin.math.max
 
 @Composable
 fun MusicPlaylistScreen(
-    navController: NavController,
+    navigate: (ScreenNavigation) -> Unit,
     viewModel: MusicPlaylistScreenViewModel = hiltViewModel()
 ) {
-    viewModel.navigateTo.observeWithLifecycle {
-        navController.navigate(it)
-    }
     val state by viewModel.musicPlaylistScreenState.collectAsStateWithLifecycle()
     val musicPlayerState by viewModel.musicPlayerState.collectAsStateWithLifecycle()
 

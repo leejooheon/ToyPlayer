@@ -1,5 +1,6 @@
 include(":app")
 
+include(":features:player")
 include(":features:musicservice")
 include(":features:musicplayer")
 include(":features:common")
@@ -8,7 +9,7 @@ include(":features:setting")
 include(":features:splash")
 
 include(":core:network")
-include(":core:strings")
+include(":core:resources")
 include(":core:designsystem")
 include(":core:navigation")
 

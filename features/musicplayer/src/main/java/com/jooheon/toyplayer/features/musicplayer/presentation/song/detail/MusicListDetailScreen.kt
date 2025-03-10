@@ -58,7 +58,7 @@ fun MusicListDetailScreen(
 
     MusicListDetailScreen(
         musicListDetailScreenState = screenState,
-        onMusicListDetailScreenEvent = {},
+        onMusicListDetailScreenEvent = viewModel::dispatch,
 
         musicPlayerState = musicPlayerState,
         onMusicPlayerEvent = viewModel::dispatch,

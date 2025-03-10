@@ -6,6 +6,7 @@ import androidx.core.net.toUri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.MediaFolder
@@ -141,8 +142,11 @@ class MediaItemProvider(
     }
 
     private suspend fun getPlaylists(): List<Playlist> {
-        return emptyList()
-//        return playlistUseCase.allPlaylist().firstOrNull().defaultEmpty()
+        val result = playlistUseCase.getAllPlaylist()
+        return when(result) {
+            is Result.Success -> result.data
+            is Result.Error -> emptyList()
+        }
     }
 
     private fun MediaFolder.toMediaBrowsableItem(): MediaItem {

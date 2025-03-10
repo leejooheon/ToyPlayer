@@ -3,6 +3,8 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.common.onSuccess
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.usecase.PlaylistEventUseCase
@@ -19,6 +21,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +45,6 @@ class MusicPlaylistScreenViewModel @Inject constructor(
 
     init {
         collectPlaylist()
-        collectPlayingQueue()
     }
 
     fun dispatch(event: MusicPlaylistScreenEvent) = viewModelScope.launch {
@@ -55,12 +60,12 @@ class MusicPlaylistScreenViewModel @Inject constructor(
     }
 
     private suspend fun onPlaylistClick(playlist: Playlist) {
-        if(playlist.id == Playlist.PlayingQueuePlaylistId) {
-            _navigateTo.send(ScreenNavigation.Music.PlayingQueue)
-        } else {
-            val screen = ScreenNavigation.Music.PlaylistDetail(playlist.id)
-            _navigateTo.send(screen)
-        }
+//        if(playlist.id == Playlist.PlayingQueuePlaylistId) {
+//            _navigateTo.send(ScreenNavigation.Music.PlayingQueue)
+//        } else {
+//            val screen = ScreenNavigation.Music.PlaylistDetail(playlist.id)
+//            _navigateTo.send(screen)
+//        }
     }
 
     private suspend fun insertPlaylist(event: MusicPlaylistScreenEvent.OnAddPlaylist) {
@@ -79,29 +84,18 @@ class MusicPlaylistScreenViewModel @Inject constructor(
         }
     }
 
-    private fun collectPlayingQueue() = viewModelScope.launch {
-        musicStateHolder.mediaItems.collectLatest {  mediaItems ->
-            val oldPlayingQueue = musicPlaylistScreenState.value.playlists.firstOrNull {
-                it.id == Playlist.PlayingQueuePlaylistId
-            } ?: return@collectLatest
-
-            val songs = mediaItems.map { it.toSong() }
-            if(songs == oldPlayingQueue.songs) {
-                return@collectLatest
+    private fun collectPlaylist() {
+        flow {
+            emit(playlistUseCase.getAllPlaylist())
+        }.onEach { result ->
+            result.onSuccess { playlists ->
+                _musicPlaylistScreenState.update {
+                    it.copy(
+                        playlists = playlists
+                    )
+                }
             }
-
-            playlistUseCase.update()
         }
-    }
-
-    private fun collectPlaylist() = viewModelScope.launch {
-        // FIXME
-//        playlistUseCase.allPlaylist().collectLatest { playlists ->
-//            _musicPlaylistScreenState.update {
-//                it.copy(
-//                    playlists = playlists
-//                )
-//            }
-//        }
+            .launchIn(viewModelScope)
     }
 }

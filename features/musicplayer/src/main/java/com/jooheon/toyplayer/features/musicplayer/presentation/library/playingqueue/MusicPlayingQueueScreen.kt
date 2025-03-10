@@ -46,7 +46,7 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.library.playingqu
 import com.jooheon.toyplayer.features.musicplayer.presentation.library.playlist.detail.components.MusicPlaylistDetailHeader
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 

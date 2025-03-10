@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.song
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MusicListType
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
@@ -15,8 +16,13 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.song.model.MusicS
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MusicSongScreenViewModel @Inject constructor(
     private val songItemEventUseCase: SongItemEventUseCase,
+    private val playlistUseCase: PlaylistUseCase,
     musicStateHolder: MusicStateHolder,
     playerController: PlayerController,
     playbackEventUseCase: PlaybackEventUseCase
@@ -65,42 +72,19 @@ class MusicSongScreenViewModel @Inject constructor(
         }
     }
 
-    private fun collectPlaylist() = viewModelScope.launch {
-        // FIXME
-//        playlistUseCase.allPlaylist().collectLatest { playlists ->
-//            _musicSongScreenState.update {
-//                it.copy(
-//                    playlists = playlists
-//                )
-//            }
-//        }
+    private fun collectPlaylist() {
+        flow {
+            emit(playlistUseCase.getAllPlaylist())
+        }.onEach { result ->
+            result.onSuccess { playlists ->
+                _musicSongScreenState.update {
+                    it.copy(
+                        playlists = playlists
+                    )
+                }
+            }
+        }
+            .flowOn(Dispatchers.IO)
+            .launchIn(viewModelScope)
     }
-
-//    private fun collectMusicList() = viewModelScope.launch {
-//        combine(
-//            musicListUseCase.localSongList,
-//            musicListUseCase.assetSongList,
-//            musicListUseCase.streamingSongList,
-//            musicListUseCase.musicListType,
-//        ) { localSongList, assetSongList, streamingSongList, musicListType ->
-//            Pair(listOf(localSongList, assetSongList, streamingSongList), musicListType)
-//        }.collect { (dataSet, musicListType) ->
-//            val localSongList = dataSet[0]
-//            val assetSongList = dataSet[1]
-//            val streamingSongList = dataSet[2]
-//            val songList = when(musicListType) {
-//                MusicListType.All -> localSongList + assetSongList + streamingSongList
-//                MusicListType.Asset -> assetSongList
-//                MusicListType.Local -> localSongList
-//                MusicListType.Streaming -> streamingSongList
-//            }
-//
-//            _musicSongScreenState.update {
-//                it.copy(
-//                    songList = songList,
-//                    musicListType = musicListType
-//                )
-//            }
-//        }
-//    }
 }

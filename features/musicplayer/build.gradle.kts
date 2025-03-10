@@ -10,6 +10,7 @@ android {
 
 dependencies {
     implementation(projects.features.musicservice)
+    implementation(projects.features.player)
 
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.constraintlayout.compose)

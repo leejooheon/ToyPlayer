@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.features.common.compose.components.outlinedTextFieldColor
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.musicplayer.R
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 
 @Composable
 fun MusicPlaylistDialog(

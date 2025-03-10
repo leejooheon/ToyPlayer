@@ -9,8 +9,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.jooheon.toyplayer.features.main.navigation.MainNavigator
 import com.jooheon.toyplayer.features.musicplayer.navigation.musicNavGraph
-import com.jooheon.toyplayer.features.musicplayer.navigation.songNavGraph
+import com.jooheon.toyplayer.features.musicplayer.navigation.mainTabNavGraph
 import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
 
 @Composable
@@ -30,7 +31,7 @@ internal fun MainNavHost(
             navController = navController,
             startDestination = navigator.startDestination,
         ) {
-            songNavGraph(
+            mainTabNavGraph(
                 navigate = { navigator.navController.navigate(it) }
             )
             musicNavGraph(

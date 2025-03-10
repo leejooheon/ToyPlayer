@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.main.presentation
 
 import android.Manifest
+import android.view.MotionEvent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -27,7 +28,11 @@ import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.main.MainViewModel
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
+import com.jooheon.toyplayer.features.main.navigation.MainNavigator
+import com.jooheon.toyplayer.features.main.navigation.MainTab
+import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -93,15 +98,15 @@ private fun MainScreen(
             )
         },
         bottomBar = {
-            MainBottomBar(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(start = 8.dp, end = 8.dp, bottom = 28.dp),
-                visible = navigator.shouldShowBottomBar(),
-                tabs = MainTab.entries.toPersistentList(),
-                currentTab = navigator.currentTab,
-                onTabSelected = { navigator.navigate(it) }
-            )
+//            MainBottomBar(
+//                modifier = Modifier
+//                    .navigationBarsPadding()
+//                    .padding(start = 8.dp, end = 8.dp, bottom = 28.dp),
+//                visible = navigator.shouldShowBottomBar(),
+//                tabs = MainTab.entries.toPersistentList(),
+//                currentTab = navigator.currentTab,
+//                onTabSelected = { navigator.navigate(it) }
+//            )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) }
     )

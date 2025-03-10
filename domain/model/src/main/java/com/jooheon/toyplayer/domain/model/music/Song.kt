@@ -37,6 +37,23 @@ data class Song(
             isFavorite = false,
             data = null,
         )
+        val preview = Song(
+            audioId = -1L,
+            useCache = false,
+            displayName = "preview-song-displayName",
+            title = "preview-song-title",
+            artist = "preview-song-artist",
+            artistId = "",
+            album = "-",
+            albumId = "-",
+            duration = 1L,
+            path = "-",
+            trackNumber = 1,
+            imageUrl = "",
+            isFavorite = false,
+            data = null,
+        )
+
 
         const val BUNDLE_USE_CACHE = "bundle_use_cache"
         const val BUNDLE_ARTIST_ID = "bundle_artist_id"

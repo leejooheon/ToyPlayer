@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.jooheon.toyplayer.features.main.navigation.MainTab
 import kotlinx.collections.immutable.PersistentList
 
 @Composable

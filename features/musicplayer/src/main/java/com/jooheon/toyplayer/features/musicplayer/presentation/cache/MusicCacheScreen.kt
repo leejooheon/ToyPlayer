@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerEvent
@@ -27,15 +26,16 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.cache.components.
 import com.jooheon.toyplayer.features.musicplayer.presentation.cache.model.MusicCacheScreenEvent
 import com.jooheon.toyplayer.features.musicplayer.presentation.cache.model.MusicCacheScreenState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.musicplayer.R
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Song
 import java.lang.Float
 import kotlin.math.max
 
 @Composable
 fun MusicCacheScreen(
-    navController: NavController,
+    navigate: (ScreenNavigation) -> Unit,
     viewModel: MusicCacheScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current

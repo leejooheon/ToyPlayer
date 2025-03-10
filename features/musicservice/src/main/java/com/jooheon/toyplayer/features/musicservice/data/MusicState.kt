@@ -11,4 +11,20 @@ data class MusicState(
     val currentPlayingMusic: Song = Song.default,
     val playbackState: Int = PlaybackState.STATE_NONE,
     val timePassed: Long = C.TIME_UNSET
-)
+) {
+    fun isLoading(): Boolean {
+        return playbackState in listOf(PlaybackState.STATE_BUFFERING)
+    }
+    fun isPlaying(): Boolean {
+        return playbackState in listOf(PlaybackState.STATE_PLAYING, PlaybackState.STATE_BUFFERING)
+    }
+
+    companion object {
+        val default = MusicState()
+        val preview = MusicState(
+            currentPlayingMusic = Song.preview,
+            playbackState = PlaybackState.STATE_PLAYING,
+            timePassed = 1000L
+        )
+    }
+}

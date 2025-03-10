@@ -27,14 +27,13 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.common.compose.components.PermissionRequestItem
 import com.jooheon.toyplayer.features.common.compose.components.appDetailSettings
 import com.jooheon.toyplayer.features.common.compose.components.isPermissionRequestBlocked
 import com.jooheon.toyplayer.features.common.compose.components.savePermissionRequested
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.controller.MediaSwipeableLayout

@@ -30,7 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.R
-import com.jooheon.toyplayer.core.strings.UiText
+import com.jooheon.toyplayer.core.resources.UiText
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -111,11 +111,13 @@ fun isPermissionGranted(
 }
 
 fun savePermissionRequested(activity: Activity, permissionString: String) {
+    // FIXME
     val sharedPref = activity.getSharedPreferences("perm", Context.MODE_PRIVATE)
     sharedPref.edit { putBoolean(permissionString, true) }
 }
 
 fun isPermissionRequestBlocked(activity: Activity, permission: String): Boolean {
+    // FIXME
     val sharedPref = activity.getSharedPreferences("perm", Context.MODE_PRIVATE)
     return ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED
             && !activity.shouldShowRequestPermissionRationale(permission)

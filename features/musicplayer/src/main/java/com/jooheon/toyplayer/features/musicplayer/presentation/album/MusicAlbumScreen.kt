@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.components.AlbumMediaColumn
 import com.jooheon.toyplayer.features.musicplayer.presentation.album.components.AlbumMediaHeader
@@ -33,14 +34,10 @@ import kotlin.with
 
 @Composable
 fun MusicAlbumScreen(
-    navController: NavController,
+    navigate: (ScreenNavigation) -> Unit,
     viewModel: MusicAlbumScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    viewModel.navigateTo.observeWithLifecycle {
-        navController.navigate(it)
-    }
-
     viewModel.sortType.observeWithLifecycle {
         viewModel.loadData(context, it)
     }

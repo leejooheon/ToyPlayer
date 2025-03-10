@@ -15,6 +15,10 @@ sealed interface MediaId {
     @SerialName("all_songs")
     data object AllSongs : MediaId
 
+
+    @Serializable
+    @SerialName("playing_queue")
+    data object PlayingQueue : MediaId
     @Serializable
     @SerialName("local_songs")
     data object LocalSongs : MediaId

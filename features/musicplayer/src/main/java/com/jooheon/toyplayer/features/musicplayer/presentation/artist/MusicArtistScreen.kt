@@ -23,19 +23,17 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.mode
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.music.model.MusicPlayerState
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import kotlinx.coroutines.flow.combine
 import java.lang.Float
 import kotlin.math.max
 
 @Composable
 fun MusicArtistScreen(
-    navController: NavController,
+    navigate: (ScreenNavigation) -> Unit,
     viewModel: MusicArtistScreenViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    viewModel.navigateTo.observeWithLifecycle {
-        navController.navigate(it)
-    }
     viewModel.sortType.observeWithLifecycle {
         viewModel.loadData(context, it)
     }

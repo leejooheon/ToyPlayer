@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.repositoryApi)
 
-    implementation(projects.core.strings)
+    implementation(projects.core.resources)
     implementation(projects.core.network)
 
     implementation(projects.data.datastore)

@@ -10,7 +10,7 @@ android {
 
 dependencies {
     implementation(projects.domain.model)
-    implementation(projects.core.strings)
+    implementation(projects.core.resources)
 
     implementation(libs.javax.inject)
     implementation(libs.androidx.media3.common)

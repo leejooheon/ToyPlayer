@@ -13,7 +13,7 @@ android {
 dependencies {
     implementation(projects.domain.model)
 
-    implementation(projects.core.strings)
+    implementation(projects.core.resources)
     implementation(projects.core.navigation)
     implementation(projects.core.designsystem)
 

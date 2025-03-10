@@ -1,5 +1,8 @@
 package com.jooheon.toyplayer.domain.usecase
 
+import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
@@ -10,33 +13,26 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PlaylistUseCase @Inject constructor(
-    private val playlistRepository: PlaylistRepository
+    private val playlistRepository: PlaylistRepository,
 ) {
-    suspend fun getAllPlaylist() = playlistRepository.getAllPlaylist()
+    suspend fun requireInitialize(): Boolean = withContext(Dispatchers.IO) {
+        return@withContext (getAllPlaylist() as? Result.Success)?.data.defaultEmpty().isEmpty()
+    }
 
-    suspend fun updatePlaylists(vararg playlist: Playlist) {
+    suspend fun getAllPlaylist(): Result<List<Playlist>, RootError> = withContext(Dispatchers.IO) {
+        playlistRepository.getAllPlaylist()
+    }
+
+    suspend fun updatePlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.updatePlaylists(*playlist)
-        update()
     }
 
-    suspend fun insertPlaylists(vararg playlist: Playlist) {
+    suspend fun insertPlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.insertPlaylists(*playlist)
-        update()
     }
 
-    suspend fun deletePlaylists(vararg playlist: Playlist) {
+    suspend fun deletePlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.deletePlaylists(*playlist)
-        update()
-    }
-
-    suspend fun update() {
-        val resource = withContext(Dispatchers.IO) {
-            playlistRepository.getAllPlaylist()
-        }
-//        when(resource) {
-//            is Resource.Success -> _allPlaylistState.tryEmit(resource.value)
-//            else -> _allPlaylistState.tryEmit(emptyList())
-//        }
     }
 
     fun playingQueue() = flow {

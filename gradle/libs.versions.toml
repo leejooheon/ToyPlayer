@@ -13,9 +13,9 @@ android_sdk_compile = "35"
 android_sdk_min = "26"
 
 # Compose
-composeBom = "2024.12.01"
+composeBom = "2025.02.00"
 compose-accompanist = "0.34.0"
-composeAnimation = "1.7.6"
+composeAnimation = "1.7.8"
 
 # Plugins
 ksp = "2.0.21-1.0.28"
@@ -28,7 +28,7 @@ constraint = "2.2.0"
 lifecycle = "2.8.7"
 splashscreen = "1.0.1"
 datastore="1.1.1"
-activityCompose = "1.9.3"
+activityCompose = "1.10.1"
 constraintLayout = "1.1.0"
 androidxLifecycle = "2.8.7"
 composeNavigation = "2.8.5"
@@ -65,6 +65,7 @@ retrofit-serialization-converter = "1.0.0"
 
 # Glide
 glide = "4.16.0"
+glideCompose = "1.0.0-beta01"
 coil = "2.7.0"
 
 # Google map
@@ -213,7 +214,7 @@ chucker-release = { group = "com.github.chuckerteam.chucker",name = "library-no-
 # Glide
 bumptech-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
 bumptech-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide"}
-
+bumptech-glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glideCompose"}
 # Maps
 google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "googleMap"}
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServiceMap"}
@@ -229,7 +230,8 @@ jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 
 # Lottie
-airbnb-android-lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie"}
+airbnb-android-lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"}
+airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie"}
 
 # FFT
 paramsen-noise = { module = "com.github.paramsen:noise", version.ref = "fft"}

@@ -11,12 +11,19 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
+import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylistIds
+import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylists
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
+import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -28,6 +35,7 @@ class MediaLibrarySessionCallback(
     private val context: Context,
     private val scope: CoroutineScope,
     private val mediaItemProvider: MediaItemProvider,
+    private val playlistUseCase: PlaylistUseCase,
 ): MediaLibrarySession.Callback {
     fun release() {
         scope.cancel()
@@ -39,7 +47,6 @@ class MediaLibrarySessionCallback(
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
         Timber.d("onGetLibraryRoot (packageName: ${browser.packageName}), (isRecent = ${params?.isRecent == true}")
-
         return Futures.immediateFuture(LibraryResult.ofItem(mediaItemProvider.rootItem, params))
     }
 
@@ -55,8 +62,16 @@ class MediaLibrarySessionCallback(
         return scope.future {
             Timber.d("onGetChildren: $parentId, $page, $pageSize")
 
+            if (parentId.toMediaIdOrNull() == MediaId.Root && playlistUseCase.requireInitialize()) {
+                defaultPlaylistIds.forEach { mediaId ->
+                    val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
+                    val defaultPlaylist = defaultPlaylists.first { it.id == mediaId.hashCode() }
+                    playlistUseCase.insertPlaylists(defaultPlaylist.copy(songs = songs))
+                }
+            }
+
             val items = mediaItemProvider.getChildMediaItems(parentId)
-            val result = if (items.isEmpty()) LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE)
+            val result = if (items.isEmpty()) LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
                          else LibraryResult.ofItemList(items, params)
 
             return@future result

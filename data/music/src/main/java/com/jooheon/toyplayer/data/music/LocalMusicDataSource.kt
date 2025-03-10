@@ -5,7 +5,7 @@ import android.os.Build
 import android.provider.BaseColumns
 import android.provider.MediaStore
 import androidx.media3.common.MediaMetadata
-import com.jooheon.toyplayer.core.strings.Strings
+import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.data.music.etc.CursorHelper
 import com.jooheon.toyplayer.data.music.etc.toSong
 import com.jooheon.toyplayer.domain.model.music.Song
