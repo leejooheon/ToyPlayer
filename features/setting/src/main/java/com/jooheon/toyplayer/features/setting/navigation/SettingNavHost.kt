@@ -9,8 +9,7 @@ import com.jooheon.toyplayer.features.setting.presentation.main.SettingScreen
 import com.jooheon.toyplayer.features.setting.presentation.theme.ThemeScreen
 
 fun NavGraphBuilder.settingNavGraph(
-    onBackClick: () -> Unit,
-    navigate: (ScreenNavigation.Setting) -> Unit,
+    navigateTo: (ScreenNavigation.Setting) -> Unit,
 ) {
     composable<ScreenNavigation.Setting.Main> {
         SettingScreen()

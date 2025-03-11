@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.main.navigation.graph
+package com.jooheon.toyplayer.features.artist.navigation
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable

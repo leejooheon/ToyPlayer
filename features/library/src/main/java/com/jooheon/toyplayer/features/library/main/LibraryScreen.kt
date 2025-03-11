@@ -44,8 +44,8 @@ fun LibraryScreen(
         },
         onEvent = {
             val event = when(it) {
-                is LibraryEvent.OnPlaylistClick -> ScreenNavigation.Music.PlaylistDetail(it.id)
-                is LibraryEvent.OnPlaylistMoreClick -> ScreenNavigation.Artist.More // FIXME
+                is LibraryEvent.OnPlaylistClick -> ScreenNavigation.Playlist.Details(it.id)
+                is LibraryEvent.OnPlaylistMainClick -> ScreenNavigation.Playlist.Main
                 is LibraryEvent.OnArtistClick -> ScreenNavigation.Artist.Details(it.id)
                 is LibraryEvent.OnArtistMoreClick -> ScreenNavigation.Artist.More
             }
@@ -76,7 +76,7 @@ private fun LibraryScreenInternal(
             PlaylistLibrarySection(
                 models = uiState.defaultPlaylists,
                 onClick = { onEvent.invoke(LibraryEvent.OnPlaylistClick(it)) },
-                onMoreClick = { onEvent.invoke(LibraryEvent.OnPlaylistMoreClick) }
+                onMoreClick = { onEvent.invoke(LibraryEvent.OnPlaylistMainClick) }
             )
 
             Spacer(modifier = Modifier.height(16.dp))

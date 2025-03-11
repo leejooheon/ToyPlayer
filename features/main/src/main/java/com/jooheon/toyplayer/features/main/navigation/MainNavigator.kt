@@ -14,38 +14,12 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 class MainNavigator(
     val navController: NavHostController,
 ) {
-    private val currentDestination: NavDestination?
-        @Composable get() = navController
-            .currentBackStackEntryAsState().value?.destination
-
-    val startDestination = MainTab.SONG.route
-
-    val currentTab: MainTab?
-        @Composable get() = MainTab.find { tab ->
-            currentDestination?.hasRoute(tab::class) == true
-        }
-
-    fun navigate(tab: MainTab) {
-        val navOptions = navOptions {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
-        navController.navigate(tab.route, navOptions)
-    }
+    val startDestination = ScreenNavigation.Player
 
     fun popBackStack() {
         navController.popBackStack()
     }
-
-    @Composable
-    fun shouldShowBottomBar() = MainTab.contains {
-        currentDestination?.hasRoute(it::class) == true
-    }
 }
-
 
 @Composable
 internal fun rememberMainNavigator(

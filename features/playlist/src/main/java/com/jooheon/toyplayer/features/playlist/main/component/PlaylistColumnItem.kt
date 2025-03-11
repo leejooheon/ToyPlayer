@@ -36,6 +36,8 @@ import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenu
+import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -119,18 +121,18 @@ internal fun PlaylistColumnItem(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "more" // TODO
                     )
-//                    MusicDropDownMenu(
-//                        expanded = dropDownMenuExpanded,
-//                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistItems),
-//                        onDismissRequest = { dropDownMenuExpanded = false },
-//                        onClick = {
-//                            if (it == playlistNameEditIndex) {
-//                                playlistDialogState = true
-//                            } else {
-//                                onDropDownMenuClick?.invoke(it, playlist)
-//                            }
-//                        }
-//                    )
+                    MusicDropDownMenu(
+                        expanded = dropDownMenuExpanded,
+                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistItems),
+                        onDismissRequest = { dropDownMenuExpanded = false },
+                        onClick = {
+                            if (it == playlistNameEditIndex) {
+                                playlistDialogState = true
+                            } else {
+                                onDropDownMenuClick?.invoke(it, playlist)
+                            }
+                        }
+                    )
                 }
             }
         }

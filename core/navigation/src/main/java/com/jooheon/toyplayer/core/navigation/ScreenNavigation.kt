@@ -7,19 +7,23 @@ sealed interface ScreenNavigation {
     fun ScreenNavigation.route() = this.javaClass.name.replace("$", ".")
 
     @Serializable
-    sealed interface Main : ScreenNavigation {
+    data object Player : ScreenNavigation
+
+    @Serializable
+    data object Library : ScreenNavigation
+
+    @Serializable
+    data object Back : ScreenNavigation
+
+    @Serializable
+    data object Splash : ScreenNavigation
+
+    @Serializable
+    sealed interface Album : ScreenNavigation {
         @Serializable
-        data object Song : Main
+        data object More : Album
         @Serializable
-        data object Album : Main
-        @Serializable
-        data object Artist : Main
-        @Serializable
-        data object Cache : Main
-        @Serializable
-        data object Playlist : Main
-        @Serializable
-        data object Library : Main
+        data class Details(val albumId: String) : Album
     }
 
     @Serializable
@@ -31,11 +35,12 @@ sealed interface ScreenNavigation {
     }
 
     @Serializable
-    data object Back : ScreenNavigation
-    @Serializable
-    data object Splash : ScreenNavigation
-//    @Serializable
-//    data object Main : ScreenNavigation
+    sealed interface Playlist : ScreenNavigation {
+        @Serializable
+        data object Main : Playlist
+        @Serializable
+        data class Details(val playlistId: Int) : Playlist
+    }
 
     @Serializable
     sealed interface Setting : ScreenNavigation {
@@ -47,19 +52,5 @@ sealed interface ScreenNavigation {
         data object Theme : Setting
         @Serializable
         data object Equalizer : Setting
-    }
-
-    @Serializable
-    sealed interface Music : ScreenNavigation {
-        @Serializable
-        data object PlayingQueue : Music
-        @Serializable
-        data class ArtistDetail(val artistId: String) : Music
-        @Serializable
-        data class AlbumDetail(val albumId: String) : Music
-        @Serializable
-        data class PlaylistDetail(val playlistId: Int) : Music
-        @Serializable
-        data class MusicListDetail(val ordinal: Int) : Music
     }
 }

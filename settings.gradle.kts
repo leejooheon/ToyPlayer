@@ -2,7 +2,7 @@ include(":app")
 
 include(":features:player")
 include(":features:musicservice")
-include(":features:musicplayer")
+//include(":features:musicplayer")
 include(":features:common")
 include(":features:main")
 include(":features:setting")
@@ -34,3 +34,4 @@ pluginManagement {
         includeBuild("build-logic")
     }
 }
+include(":features:album")

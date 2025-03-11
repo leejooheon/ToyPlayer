@@ -33,7 +33,6 @@ dependencies {
     implementation(projects.features.main)
     implementation(projects.features.common)
     implementation(projects.features.musicservice)
-    implementation(projects.features.musicplayer)
     implementation(projects.data.repository)
 
     // theme

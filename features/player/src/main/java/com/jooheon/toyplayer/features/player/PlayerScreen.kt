@@ -97,13 +97,13 @@ fun PlayerScreen(
                     infoSectionVisibleState = it.state
                 }
                 is PlayerEvent.OnPlaylistClick -> {
-                    navigateTo.invoke(ScreenNavigation.Main.Playlist)
+                    navigateTo.invoke(ScreenNavigation.Playlist.Main)
                 }
                 is PlayerEvent.OnSettingClick -> {
                     navigateTo.invoke(ScreenNavigation.Setting.Main)
                 }
                 is PlayerEvent.OnLibraryClick -> {
-                    navigateTo.invoke(ScreenNavigation.Main.Library)
+                    navigateTo.invoke(ScreenNavigation.Library)
                 }
                 else -> viewModel.dispatch(it)
             }

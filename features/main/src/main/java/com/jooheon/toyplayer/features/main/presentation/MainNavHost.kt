@@ -1,20 +1,15 @@
 package com.jooheon.toyplayer.features.main.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
-import com.jooheon.toyplayer.features.main.navigation.graph.artistNavGraph
-import com.jooheon.toyplayer.features.main.navigation.graph.detailsNavGraph
-import com.jooheon.toyplayer.features.main.navigation.graph.mainNavGraph
-import com.jooheon.toyplayer.features.main.navigation.graph.settingsNavGraph
+import com.jooheon.toyplayer.features.album.navigation.albumNavGraph
+import com.jooheon.toyplayer.features.artist.navigation.artistNavGraph
+import com.jooheon.toyplayer.features.main.navigation.mainNavGraph
+import com.jooheon.toyplayer.features.playlist.navigation.playlistNavGraph
+import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -41,10 +36,13 @@ internal fun MainNavHost(
         artistNavGraph(
             navigateTo = navigateTo
         )
-        detailsNavGraph(
+        albumNavGraph(
             navigateTo = navigateTo
         )
-        settingsNavGraph(
+        playlistNavGraph(
+            navigateTo = navigateTo
+        )
+        settingNavGraph(
             navigateTo = navigateTo
         )
     }
