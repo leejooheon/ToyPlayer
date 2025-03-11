@@ -31,8 +31,6 @@ import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.M
 import com.jooheon.toyplayer.features.musicplayer.presentation.common.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.core.resources.UiText
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaItemSmallNoImage(
     trackNumber: Int,

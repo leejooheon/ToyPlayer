@@ -7,7 +7,7 @@ data class MusicAlbumScreenState(
 ) {
     companion object {
         val default = MusicAlbumScreenState(
-            albums = emptyList()
+            albums = listOf(Album.default)
         )
     }
 }

@@ -57,26 +57,6 @@ class LocalMusicDataSource @Inject constructor(
         return songs
     }
 
-    fun getMediaFolderList(): List<com.jooheon.toyplayer.domain.model.music.MediaFolder> {
-        val allSongs = com.jooheon.toyplayer.domain.model.music.MediaFolder(
-            title = applicationContext.getString(Strings.media_folder_all_songs),
-            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.AllSongs,
-            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
-        )
-        val album = com.jooheon.toyplayer.domain.model.music.MediaFolder(
-            title = applicationContext.getString(Strings.media_folder_album),
-            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.AlbumRoot,
-            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
-        )
-        val playlist = com.jooheon.toyplayer.domain.model.music.MediaFolder(
-            title = applicationContext.getString(Strings.media_folder_playlist),
-            mediaId = com.jooheon.toyplayer.domain.model.music.MediaId.PlaylistRoot,
-            mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
-        )
-
-        return listOf(allSongs, album, playlist)
-    }
-
     companion object {
         const val IS_MUSIC =
             MediaStore.Audio.AudioColumns.IS_MUSIC + "=1" + " AND " + MediaStore.Audio.AudioColumns.TITLE + " != ''"

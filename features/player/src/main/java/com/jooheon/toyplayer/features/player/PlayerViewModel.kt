@@ -36,9 +36,6 @@ class PlayerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PlayerUiState.default)
     val uiState = _uiState.asStateFlow()
 
-    private val _savedContentState = MutableStateFlow(0L)
-    val savedContentState = _savedContentState.asStateFlow()
-
     val autoPlaybackProperty = AtomicBoolean(false)
     private val playlist = MutableStateFlow(Playlist.default) // FIXME
 
@@ -105,8 +102,10 @@ class PlayerViewModel @Inject constructor(
             }
             is PlayerEvent.OnPlayPauseClick -> playerController.playPause()
             is PlayerEvent.OnSwipe -> playerController.play(event.song)
-            is PlayerEvent.OnSettingClick -> {}
+            is PlayerEvent.OnSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnScreenTouched -> { /** nothing **/ }
+            is PlayerEvent.OnPlaylistClick -> { /** nothing **/ }
+            is PlayerEvent.OnLibraryClick -> { /** nothing **/ }
         }
     }
 

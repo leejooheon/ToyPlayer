@@ -29,7 +29,6 @@ import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.core.resources.UiText
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ArtistDetailAlbumItem(
     title: String,

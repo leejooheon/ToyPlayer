@@ -40,7 +40,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.min
 
@@ -54,6 +53,8 @@ fun InfoSection(
     models: List<PlayerUiState.ContentModel>,
     isLoading: Boolean,
     isShow: Boolean,
+    onLibraryClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
     onContentClick: (Int, Song) -> Unit,
@@ -119,6 +120,8 @@ fun InfoSection(
                             playlist = currentPlaylist,
                             titleAlpha = 1 - pageOffset,
                             isLoading = isLoading,
+                            onLibraryClick = onLibraryClick,
+                            onPlaylistClick = onPlaylistClick,
                             onSettingClick = onSettingClick,
                             onPlayPauseClick = onPlayPauseClick,
                         )
@@ -186,6 +189,8 @@ private fun PreviewInfoSection() {
             models = uiState.contentModels,
             isLoading = false,
             isShow = true,
+            onLibraryClick = {},
+            onPlaylistClick = {},
             onSettingClick = {},
             onPlayPauseClick = {},
             onContentClick = { _, _ -> },

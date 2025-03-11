@@ -25,6 +25,7 @@ internal fun Project.configureComposeAndroid() {
             add("implementation", libs.findLibrary("androidx.compose.ui.util").get())
             add("implementation", libs.findLibrary("androidx.compose.ui.tooling.preview.build").get())
             add("implementation", libs.findLibrary("androidx.activity.compose").get())
+            add("implementation", libs.findLibrary("androidx.compose.material.iconsExtended").get())
 
             // accompanist
             add("implementation",libs.findLibrary( "google.accompanist.permissions").get())

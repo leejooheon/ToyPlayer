@@ -60,9 +60,7 @@ class MusicSongScreenViewModel @Inject constructor(
     }
 
     private suspend fun reload(context: Context, musicListType: MusicListType) {
-        val mediaId = MediaId.AllSongs
-
-        val songList = getMusicList(context, mediaId)
+        val songList = getMusicList(context, MediaId.AllSongs)
 
         _musicSongScreenState.update {
             it.copy(

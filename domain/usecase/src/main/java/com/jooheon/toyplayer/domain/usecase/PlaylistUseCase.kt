@@ -34,6 +34,9 @@ class PlaylistUseCase @Inject constructor(
     suspend fun deletePlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.deletePlaylists(*playlist)
     }
+    suspend fun getPlaylist(playlistId: Int): Result<Playlist, RootError> = withContext(Dispatchers.IO) {
+        return@withContext playlistRepository.getPlaylist(playlistId)
+    }
 
     fun playingQueue() = flow {
         playlistRepository.getPlayingQueue()

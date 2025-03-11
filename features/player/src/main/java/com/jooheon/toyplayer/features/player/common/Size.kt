@@ -26,7 +26,7 @@ import timber.log.Timber
 fun verticalMargin(): Dp {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val verticalMargin = screenHeight * 0.03f
+    val verticalMargin = screenHeight * 0.05f
 
     return verticalMargin
 }

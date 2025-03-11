@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.player
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,16 +16,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
-import com.jooheon.toyplayer.features.player.model.PlayerAnimateState
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import com.jooheon.toyplayer.features.player.model.toChunkedModel
@@ -36,19 +38,17 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PlayerScreen(
-    onBackPressed: () -> Unit,
+    navigateTo: (ScreenNavigation) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val contentState by viewModel.savedContentState.collectAsStateWithLifecycle()
 
     var infoSectionVisibleState by remember { mutableStateOf(false) }
     var autoPlaybackStarted by remember { mutableStateOf(false) }
@@ -81,33 +81,44 @@ fun PlayerScreen(
                 infoSectionVisibleState = false
                 return@BackHandler
             }
-            else -> onBackPressed.invoke()
+            else -> {
+                navigateTo.invoke(ScreenNavigation.Back)
+                return@BackHandler
+            }
         }
     }
 
-    PlayerScreen(
+    PlayerScreenInternal(
         uiState = uiState,
-        contentState = contentState,
         infoSectionVisibleState = infoSectionVisibleState,
         onPlayerEvent = {
-            if(it is PlayerEvent.OnScreenTouched) infoSectionVisibleState = it.state
-            else viewModel.dispatch(it)
+            when(it) {
+                is PlayerEvent.OnScreenTouched -> {
+                    infoSectionVisibleState = it.state
+                }
+                is PlayerEvent.OnPlaylistClick -> {
+                    navigateTo.invoke(ScreenNavigation.Main.Playlist)
+                }
+                is PlayerEvent.OnSettingClick -> {
+                    navigateTo.invoke(ScreenNavigation.Setting.Main)
+                }
+                is PlayerEvent.OnLibraryClick -> {
+                    navigateTo.invoke(ScreenNavigation.Main.Library)
+                }
+                else -> viewModel.dispatch(it)
+            }
         },
     )
 }
 
 @OptIn(FlowPreview::class)
 @Composable
-private fun PlayerScreen(
+private fun PlayerScreenInternal(
     uiState: PlayerUiState,
-    contentState: Long,
     infoSectionVisibleState: Boolean,
     onPlayerEvent: (PlayerEvent) -> Unit,
 ) {
-    var animateState by remember { mutableStateOf(PlayerAnimateState.default) }
     val loadingState by rememberUpdatedState(uiState.isLoading())
-
-    var showSwipeGuideState by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
     var screenHideJob by remember { mutableStateOf<Job?>(null) }
@@ -122,11 +133,6 @@ private fun PlayerScreen(
         initialPage = 0,
         pageCount = { uiState.contentModels.toChunkedModel().size + 1 },
     )
-
-    LaunchedEffect(contentState) {
-        if(contentState == 0L) return@LaunchedEffect
-        animateState = PlayerAnimateState.default.copy(start = true)
-    }
 
     LaunchedEffect(infoSectionVisibleState) {
         fun restartHideJob() {
@@ -149,34 +155,6 @@ private fun PlayerScreen(
             }
         }
     }
-    LaunchedEffect(infoSectionVisibleState, animateState, loadingState) {
-        if(infoSectionVisibleState) {
-            animateState.cancel()
-            return@LaunchedEffect
-        }
-
-        if(animateState.shouldRun) {
-            while(loadingState) {
-                Timber.d("startAnimationDelay: await playback")
-                withContext(Dispatchers.IO) { delay(1.seconds) }
-            }
-            try { animateState.start(showSwipeGuideState) }
-            finally {
-                showSwipeGuideState = false
-                animateState.cancel()
-            }
-        }
-    }
-
-    LaunchedEffect(channelPagerState, animateState.swipeAnimState.value) {
-        val (state, time) = animateState.swipeAnimState.value
-        channelPagerState.animateScrollToPage(
-            page = channelPagerState.currentPage,
-            pageOffsetFraction = if(state) 0.1f else 0f,
-            animationSpec = tween(durationMillis = time)
-        )
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -195,10 +173,7 @@ private fun PlayerScreen(
             onSwipe = {
                 onPlayerEvent.invoke(PlayerEvent.OnSwipe(it))
             },
-//            onImageReady = {
-//                animateState = animateState.copy(imageReady = true)
-//            },
-            modifier = Modifier.graphicsLayer(alpha = animateState.containerAnimation.value),
+            modifier = Modifier,
         )
 
         InfoSection(
@@ -209,8 +184,11 @@ private fun PlayerScreen(
             models = uiState.contentModels,
             isLoading = uiState.isLoading(),
             isShow = infoSectionVisibleState,
-            onOffsetChanged = {
-                scope.launch { touchEventState.emit(it) }
+            onLibraryClick = {
+                onPlayerEvent.invoke(PlayerEvent.OnLibraryClick)
+            },
+            onPlaylistClick = {
+                onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick)
             },
             onSettingClick = {
                 onPlayerEvent.invoke(PlayerEvent.OnSettingClick)
@@ -219,8 +197,10 @@ private fun PlayerScreen(
                 onPlayerEvent.invoke(PlayerEvent.OnPlayPauseClick)
             },
             onContentClick = { playlistId, song ->
-                animateState = PlayerAnimateState.default
                 onPlayerEvent.invoke(PlayerEvent.OnContentClick(playlistId, song))
+            },
+            onOffsetChanged = {
+                scope.launch { touchEventState.emit(it) }
             },
         )
     }
@@ -230,12 +210,10 @@ private fun PlayerScreen(
 @Composable
 private fun PreviewLgPlayerScreen() {
     ToyPlayerTheme {
-        PlayerScreen(
+        PlayerScreenInternal(
             uiState = PlayerUiState.preview,
-            contentState = 0L,
             infoSectionVisibleState = true,
             onPlayerEvent = {},
-//            onPlayerCommonEvent = {},
         )
     }
 }

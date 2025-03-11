@@ -9,39 +9,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
-import com.jooheon.toyplayer.features.musicplayer.navigation.musicNavGraph
-import com.jooheon.toyplayer.features.musicplayer.navigation.mainTabNavGraph
-import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
+import com.jooheon.toyplayer.features.main.navigation.graph.artistNavGraph
+import com.jooheon.toyplayer.features.main.navigation.graph.detailsNavGraph
+import com.jooheon.toyplayer.features.main.navigation.graph.mainNavGraph
+import com.jooheon.toyplayer.features.main.navigation.graph.settingsNavGraph
 
 @Composable
 internal fun MainNavHost(
     navigator: MainNavigator,
-    padding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val navController = navigator.navController
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(padding)
-            .background(MaterialTheme.colorScheme.surfaceDim)
-    ) {
-        NavHost(
-            navController = navController,
-            startDestination = navigator.startDestination,
-        ) {
-            mainTabNavGraph(
-                navigate = { navigator.navController.navigate(it) }
-            )
-            musicNavGraph(
-                navigate = { navigator.navController.navigate(it) },
-                onBackClick = { navigator.navController.popBackStack() }
-            )
-            settingNavGraph(
-                navigate = { navigator.navController.navigate(it) },
-                onBackClick = { navigator.navController.popBackStack() }
-            )
+
+    val navigateTo: (ScreenNavigation) -> Unit = { destination ->
+        when (destination) {
+            is ScreenNavigation.Back -> navigator.popBackStack()
+            else -> navigator.navController.navigate(destination)
         }
+    }
+
+    NavHost(
+        navController = navController,
+        startDestination = navigator.startDestination,
+        modifier = modifier
+    ) {
+        mainNavGraph(
+            navigateTo = navigateTo
+        )
+        artistNavGraph(
+            navigateTo = navigateTo
+        )
+        detailsNavGraph(
+            navigateTo = navigateTo
+        )
+        settingsNavGraph(
+            navigateTo = navigateTo
+        )
     }
 }

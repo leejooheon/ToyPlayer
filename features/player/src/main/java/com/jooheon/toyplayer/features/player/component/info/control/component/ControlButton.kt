@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.player.component.info.control.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -30,7 +31,6 @@ internal fun ControlButton(
         modifier = modifier,
     ) {
         if(isLoading) {
-
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.primary,
                 strokeWidth = 3.dp
@@ -41,7 +41,7 @@ internal fun ControlButton(
                 else painterResource(Drawables.ic_play),
                 contentDescription = stringResource(Strings.action_play_pause),
                 tint = Color.Unspecified,
-                modifier = Modifier.bounceClick { onClick.invoke() }
+                modifier = Modifier.size(48.dp).bounceClick { onClick.invoke() }
             )
         }
     }

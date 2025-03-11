@@ -41,6 +41,7 @@
     <string name="action_save_as_file">파일로 저장</string>
     <string name="action_see_more">더보기</string>
 
+    <string name="title_library">라이브러리</string>
     <string name="title_song">음악</string>
     <string name="title_cd_song">음악</string>
     <string name="title_album">앨범</string>

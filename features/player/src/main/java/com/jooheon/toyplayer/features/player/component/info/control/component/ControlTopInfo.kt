@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.automirrored.outlined.Article
+import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
+import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +59,8 @@ internal fun ControlTopInfo(
     title: String,
     imageUrl: String,
     isPlaying: Boolean,
+    onLibraryClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -146,19 +151,30 @@ internal fun ControlTopInfo(
             Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
-                onClick = onSettingClick,
+                onClick = onLibraryClick,
                 modifier = Modifier
                     .size(36.dp)
-                    .bounceClick { onSettingClick.invoke() },
+                    .bounceClick { onLibraryClick.invoke() },
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.List,
+                    imageVector = Icons.Outlined.Album,
                     contentDescription = stringResource(Strings.title_playlist),
                     tint = MaterialTheme.colorScheme.onSecondary,
                 )
             }
 
-            Spacer(modifier = Modifier.width(4.dp))
+            IconButton(
+                onClick = onPlaylistClick,
+                modifier = Modifier
+                    .size(36.dp)
+                    .bounceClick { onPlaylistClick.invoke() },
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.FeaturedPlayList,
+                    contentDescription = stringResource(Strings.title_playlist),
+                    tint = MaterialTheme.colorScheme.onSecondary,
+                )
+            }
 
             IconButton(
                 onClick = onSettingClick,
@@ -187,6 +203,8 @@ private fun PreviewControlTopInfoSection() {
             isPlaying = true,
             title = Song.preview.title,
             imageUrl = "",
+            onLibraryClick = {},
+            onPlaylistClick = {},
             onSettingClick = {},
         )
     }

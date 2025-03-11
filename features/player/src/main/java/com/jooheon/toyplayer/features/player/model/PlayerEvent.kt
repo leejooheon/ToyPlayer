@@ -6,6 +6,8 @@ import com.jooheon.toyplayer.domain.model.music.Song
 sealed interface PlayerEvent {
     data object OnPlayPauseClick: PlayerEvent
     data object OnSettingClick: PlayerEvent
+    data object OnPlaylistClick: PlayerEvent
+    data object OnLibraryClick: PlayerEvent
 
     data class OnScreenTouched(val state: Boolean): PlayerEvent
     data class OnPlayAutomatic(val playlist: Playlist): PlayerEvent

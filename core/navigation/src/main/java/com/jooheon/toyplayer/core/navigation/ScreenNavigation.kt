@@ -18,6 +18,16 @@ sealed interface ScreenNavigation {
         data object Cache : Main
         @Serializable
         data object Playlist : Main
+        @Serializable
+        data object Library : Main
+    }
+
+    @Serializable
+    sealed interface Artist : ScreenNavigation {
+        @Serializable
+        data object More : Artist
+        @Serializable
+        data class Details(val artistId: String) : Artist
     }
 
     @Serializable

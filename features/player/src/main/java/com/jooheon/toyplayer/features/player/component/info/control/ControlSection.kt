@@ -33,6 +33,8 @@ internal fun ControlSection(
     playlist: Playlist,
     titleAlpha: Float,
     isLoading: Boolean,
+    onLibraryClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
 ) {
@@ -54,6 +56,8 @@ internal fun ControlSection(
                 title = playlist.name,
                 imageUrl = playlist.thumbnailUrl,
                 isPlaying = musicState.isPlaying(),
+                onLibraryClick = onLibraryClick,
+                onPlaylistClick = onPlaylistClick,
                 onSettingClick = onSettingClick,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -90,6 +94,8 @@ private fun PreviewControlSection() {
             ),
             titleAlpha = 1f,
             isLoading = false,
+            onLibraryClick = {},
+            onPlaylistClick = {},
             onSettingClick = {},
             onPlayPauseClick = {},
         )

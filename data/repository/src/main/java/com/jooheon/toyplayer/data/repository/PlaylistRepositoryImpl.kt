@@ -6,6 +6,7 @@ import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.ResourceError
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Song
 
@@ -27,6 +28,15 @@ class PlaylistRepositoryImpl(
 
     override suspend fun deletePlaylists(vararg playlist: Playlist) {
         playlistDataSource.deletePlaylists(*playlist)
+    }
+
+    override suspend fun getPlaylist(id: Int): Result<Playlist, RootError> {
+        val playlistOrNull = playlistDataSource.getPlaylist(id)
+        return if(playlistOrNull == null) {
+            Result.Error(ResourceError.Unknown("$id playlist not found"))
+        } else {
+            Result.Success(playlistOrNull)
+        }
     }
 
     override suspend fun getPlayingQueue(): Result<List<Song>, RootError> {

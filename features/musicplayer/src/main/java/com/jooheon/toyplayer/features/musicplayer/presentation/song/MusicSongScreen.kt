@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.musicplayer.presentation.song
 
 import android.Manifest
 import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Spacer
@@ -107,7 +108,7 @@ private fun MusicSongScreen(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {}
     )
-    val activity = LocalContext.current as Activity
+    val activity = LocalActivity.current ?: return
 
     var isPermissionRequestBlockedState by remember {
         mutableStateOf(isPermissionRequestBlocked(activity, permission))

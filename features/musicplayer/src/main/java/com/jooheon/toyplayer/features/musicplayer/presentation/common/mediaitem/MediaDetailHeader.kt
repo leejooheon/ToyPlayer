@@ -23,7 +23,7 @@ import com.jooheon.toyplayer.features.musicplayer.R
 import com.jooheon.toyplayer.core.resources.UiText
 
 @Composable
-internal fun MediaDetailHeader(
+fun MediaDetailHeader(
     count: Int
 ) {
     Row(

@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.ToyPlayer">
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
 
         <!-- https://devkshull.github.io/android/2023/11/06/work-manager-with-hilt.html-->
         <provider
