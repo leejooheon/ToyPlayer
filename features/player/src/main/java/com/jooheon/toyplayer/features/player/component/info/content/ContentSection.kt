@@ -17,8 +17,9 @@ internal fun ContentSection(
     contentAlpha: Float,
     isPlaying: Boolean,
     enableScroll: Boolean,
-    onContentAlphaChanged: (Float) -> Unit,
+    onOffsetChanged: (Float) -> Unit,
     onContentClick: (Int, Song) -> Unit,
+    onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (useScrollableItem) {
@@ -30,6 +31,7 @@ internal fun ContentSection(
             enableScroll = enableScroll,
             onContentClick = onContentClick,
             onContentAlphaChanged = onContentAlphaChanged,
+            onOffsetChanged = onOffsetChanged,
             modifier = modifier,
         )
     } else {
@@ -39,6 +41,7 @@ internal fun ContentSection(
             titleAlpha = titleAlpha,
             isPlaying = isPlaying,
             onContentClick = onContentClick,
+            onOffsetChanged = onOffsetChanged,
             modifier = modifier.alpha(contentAlpha),
         )
     }

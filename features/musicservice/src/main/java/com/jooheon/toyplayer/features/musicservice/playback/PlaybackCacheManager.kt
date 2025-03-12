@@ -11,6 +11,7 @@ import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
 import androidx.media3.datasource.cache.NoOpCacheEvictor
 import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.extractor.DefaultExtractorsFactory
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CipherCacheDataSinkFactory
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CipherCacheDataSourceFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,20 +36,11 @@ class PlaybackCacheManager(private val context: Context) {
     }
 
     internal fun cacheDataSource(): DataSource.Factory {
-        /**
-         * https://github.com/google/ExoPlayer/issues/7887
-         * https://github.com/google/ExoPlayer/issues/5083
-         * https://github.com/google/ExoPlayer/issues/6472
-         * https://github.com/google/ExoPlayer/issues/5193
-         * https://github.com/google/ExoPlayer/issues/7566
-         * https://medium.com/@eguven/you-can-use-aescipherdatasink-to-encrypt-the-downloaded-files-and-aescipherdatasource-to-read-them-a3ce4434e1dd
-         */
-
         return CacheDataSource.Factory()
             .setCache(cache)
             .setCacheReadDataSourceFactory(CipherCacheDataSourceFactory())
             .setCacheWriteDataSinkFactory(CipherCacheDataSinkFactory(cache))
-            .setUpstreamDataSourceFactory(DefaultDataSource.Factory(context)) // 캐시에 없는 미디어를 재생할때 사용
+            .setUpstreamDataSourceFactory(DefaultDataSource.Factory(context, )) // 캐시에 없는 미디어를 재생할때 사용
             .setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
     }
 

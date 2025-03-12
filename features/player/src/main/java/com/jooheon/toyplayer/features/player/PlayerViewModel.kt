@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.player
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.Result
@@ -13,18 +12,13 @@ import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
@@ -109,12 +103,10 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    internal fun loadData(context: Context) = viewModelScope.launch {
+    internal fun loadData() = viewModelScope.launch {
         _uiState.emit(
             uiState.value.copy(isLoading = true)
         )
-
-        prepareMediaItems(context, MediaId.Root)
 
         val result = playlistUseCase.getAllPlaylist()
         val playlists = when(result) {
@@ -137,21 +129,5 @@ class PlayerViewModel @Inject constructor(
                 isLoading = false,
             )
         )
-    }
-
-    private suspend fun prepareMediaItems(
-        context: Context,
-        mediaId: MediaId
-    ) = withContext(Dispatchers.IO) {
-        val mediaItems = suspendCancellableCoroutine { continuation ->
-            playerController.getMusicListFuture(
-                context = context,
-                mediaId = mediaId,
-                listener = { mediaItems ->
-                    continuation.resume(mediaItems)
-                }
-            )
-        }
-        Timber.d("prepareMediaItems: ${mediaItems.size}")
     }
 }

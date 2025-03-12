@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.musicservice.ext
 
 import androidx.core.os.bundleOf
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_ALBUM_ID
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_ARTIST_ID
@@ -12,6 +13,7 @@ import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_USE_CACHE
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 val Song.uri get() = MusicUtil.getSongFileUri(path)
+val Song.isHlsFormat get() = uri.path.defaultEmpty().endsWith(".m3u8", ignoreCase = true)
 val Song.albumArtUri get() = MusicUtil.getMediaStoreAlbumCoverUri(this.imageUrl)
 fun Song.extras() = bundleOf(
     BUNDLE_USE_CACHE to useCache,

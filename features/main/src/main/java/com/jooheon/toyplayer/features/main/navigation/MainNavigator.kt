@@ -14,7 +14,7 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 class MainNavigator(
     val navController: NavHostController,
 ) {
-    val startDestination = ScreenNavigation.Player
+    val startDestination = ScreenNavigation.Splash
 
     fun popBackStack() {
         navController.popBackStack()

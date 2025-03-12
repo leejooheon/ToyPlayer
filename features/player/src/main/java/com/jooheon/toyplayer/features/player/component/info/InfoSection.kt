@@ -40,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.min
 
@@ -142,6 +143,10 @@ fun InfoSection(
                                 contentAlpha = contentAlpha,
                                 isPlaying = musicState.isPlaying(),
                                 enableScroll = isLastPage,
+                                onOffsetChanged = {
+                                    Timber.d("onOffsetChanged: $it")
+                                    onOffsetChanged.invoke(it)
+                                },
                                 onContentClick = onContentClick,
                                 onContentAlphaChanged = { alpha -> contentAlpha = alpha },
                                 modifier = Modifier

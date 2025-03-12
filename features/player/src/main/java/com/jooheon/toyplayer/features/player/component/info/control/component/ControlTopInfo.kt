@@ -45,15 +45,14 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.jooheon.toyplayer.core.designsystem.component.CustomGlideImage
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.ext.fadingEdge
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import timber.log.Timber
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 internal fun ControlTopInfo(
     title: String,
@@ -106,7 +105,7 @@ internal fun ControlTopInfo(
                     ),
             ) {
                 CustomGlideImage(
-                    model = imageUrl,
+                    url = imageUrl,
                     contentDescription = title,
                     modifier = Modifier.fillMaxSize()
                 )

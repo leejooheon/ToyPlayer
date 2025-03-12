@@ -6,6 +6,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
@@ -64,6 +65,7 @@ class MediaLibrarySessionCallback(
 
             if (parentId.toMediaIdOrNull() == MediaId.Root && playlistUseCase.requireInitialize()) {
                 defaultPlaylistIds.forEach { mediaId ->
+                    Timber.d("onGetChildren: defaultPlaylistIds: $mediaId")
                     val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
                     val defaultPlaylist = defaultPlaylists.first { it.id == mediaId.hashCode() }
                     playlistUseCase.insertPlaylists(defaultPlaylist.copy(songs = songs))
@@ -78,6 +80,15 @@ class MediaLibrarySessionCallback(
         }
     }
 
+    override fun onAddMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: MutableList<MediaItem>
+    ): ListenableFuture<MutableList<MediaItem>> {
+        Timber.d("onAddMediaItems: ${mediaItems.map{it.mediaId}}")
+        return super.onAddMediaItems(mediaSession, controller, mediaItems)
+    }
+
     override fun onSetMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -86,19 +97,7 @@ class MediaLibrarySessionCallback(
         startPositionMs: Long
     ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
         Timber.d("onSetMediaItems: [$startIndex, $startPositionMs], ${mediaItems.map { Pair(it.mediaId, it.mediaMetadata.title) }}")
-        val mediaItem = mediaItems.firstOrNull() ?: run {
-            return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
-        }
-
-        return scope.future {
-            val (newMediaItems, index) = mediaItemProvider.getSongListOrNull(mediaItem)
-
-            if(newMediaItems.isNullOrEmpty()) {
-                MediaSession.MediaItemsWithStartPosition(mediaItems, startIndex, startPositionMs)
-            } else {
-                MediaSession.MediaItemsWithStartPosition(newMediaItems, index, C.TIME_UNSET)
-            }
-        }
+        return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
     }
 
     override fun onCustomCommand(

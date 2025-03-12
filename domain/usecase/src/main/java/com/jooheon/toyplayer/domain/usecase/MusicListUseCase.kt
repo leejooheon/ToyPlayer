@@ -43,4 +43,11 @@ class MusicListUseCase @Inject constructor(
             is Result.Error -> emptyList()
         }
     }
+    suspend fun getRadioStationList(): List<Song> {
+        val result = musicListRepository.getRadioStationList()
+        return when(result) {
+            is Result.Success -> result.data
+            is Result.Error -> emptyList()
+        }
+    }
 }

@@ -1,8 +1,8 @@
 include(":app")
 
+//include(":features:musicplayer")
 include(":features:player")
 include(":features:musicservice")
-//include(":features:musicplayer")
 include(":features:common")
 include(":features:main")
 include(":features:setting")
@@ -10,6 +10,7 @@ include(":features:splash")
 include(":features:playlist")
 include(":features:library")
 include(":features:artist")
+include(":features:album")
 
 include(":core:network")
 include(":core:resources")
@@ -20,11 +21,11 @@ include(":domain:repository-api")
 include(":domain:model")
 include(":domain:usecase")
 
-include(":data")
 include(":data:datastore")
 include(":data:music")
 include(":data:playlist")
 include(":data:repository")
+include(":data:api")
 
 pluginManagement {
     repositories {
@@ -34,4 +35,3 @@ pluginManagement {
         includeBuild("build-logic")
     }
 }
-include(":features:album")

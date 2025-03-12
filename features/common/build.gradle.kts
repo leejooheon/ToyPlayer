@@ -29,6 +29,7 @@ dependencies {
     // coil
     implementation(libs.coil)
     implementation(libs.coil.compose)
+    implementation(libs.bumptech.glide.compose)
 
     // glide
     implementation(libs.bumptech.glide)
@@ -39,4 +40,6 @@ dependencies {
 
     //hiltViewModel
     implementation(libs.hilt.androidx.navigation.compose)
+
+    implementation("androidx.palette:palette:1.0.0")
 }

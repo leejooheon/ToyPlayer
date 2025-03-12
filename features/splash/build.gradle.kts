@@ -7,3 +7,7 @@ plugins {
 android {
     setNamespace("features.splash")
 }
+dependencies {
+    implementation(projects.features.musicservice)
+    implementation(libs.androidx.media3.common)
+}

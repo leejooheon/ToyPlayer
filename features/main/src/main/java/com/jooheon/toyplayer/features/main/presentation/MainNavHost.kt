@@ -20,6 +20,14 @@ internal fun MainNavHost(
 
     val navigateTo: (ScreenNavigation) -> Unit = { destination ->
         when (destination) {
+            is ScreenNavigation.Player -> {
+                navigator.navController.navigate(ScreenNavigation.Player) {
+                    launchSingleTop = true
+                    popUpTo(ScreenNavigation.Splash) {
+                        inclusive = true
+                    }
+                }
+            }
             is ScreenNavigation.Back -> navigator.popBackStack()
             else -> navigator.navController.navigate(destination)
         }

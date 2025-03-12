@@ -107,7 +107,7 @@ class PlaybackUriResolver(
         }
 
         Timber.tag(TAG).d("getMusicStream success. title: ${song.title}, id: ${song.key()}, overwriteSession: $overwriteSession, logKey: $logKey")
-        musicStateHolder.appendToRingBuffer(song.key() to song.uri)
+        musicStateHolder.appendToRingBuffer(song.key() to musicStreamUri)
         return musicStreamUri
     }
 

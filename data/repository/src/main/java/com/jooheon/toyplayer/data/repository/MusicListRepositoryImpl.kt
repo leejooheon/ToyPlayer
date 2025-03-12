@@ -37,4 +37,13 @@ class MusicListRepositoryImpl(
             Result.Success(data)
         }
     }
+
+    override suspend fun getRadioStationList(): Result<List<Song>, MusicDataError> {
+        val data = remoteMusicDataSource.getRadioStationList()
+        return if (data.isEmpty()) {
+            Result.Error(MusicDataError.Empty)
+        } else {
+            Result.Success(data)
+        }
+    }
 }

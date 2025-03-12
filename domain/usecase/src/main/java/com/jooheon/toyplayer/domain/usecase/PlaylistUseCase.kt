@@ -30,7 +30,6 @@ class PlaylistUseCase @Inject constructor(
     suspend fun insertPlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.insertPlaylists(*playlist)
     }
-
     suspend fun deletePlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.deletePlaylists(*playlist)
     }

@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable
 internal fun ContentItem(
+    state: LazyListState,
     model: PlayerUiState.ContentModel,
     currentSong: Song,
     titleAlpha: Float,
@@ -35,7 +38,6 @@ internal fun ContentItem(
     onContentClick: (Int, Song) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -62,13 +64,14 @@ internal fun ContentItem(
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow(
+            state = state,
             horizontalArrangement = Arrangement.spacedBy(contentWidth() * 0.1f),
             contentPadding = PaddingValues(
                 horizontal = horizontalMargin()
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            itemsIndexed(model.playlist.songs) { _, item ->
+            itemsIndexed(model.playlist.songs) { index, item ->
                 ContentCardItem(
                     title = item.title,
                     imageUrl = item.imageUrl,
@@ -90,6 +93,7 @@ internal fun ContentItem(
 private fun PreviewContentItem() {
     ToyPlayerTheme {
         ContentItem(
+            state = rememberLazyListState(),
             model = PlayerUiState.ContentModel.preview,
             currentSong = Song.preview,
             titleAlpha = 1f,

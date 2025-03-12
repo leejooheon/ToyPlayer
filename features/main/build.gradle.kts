@@ -9,10 +9,10 @@ android {
 }
 
 dependencies {
-
     implementation(projects.domain.model)
     implementation(projects.domain.usecase)
 
+    implementation(projects.features.splash)
     implementation(projects.features.common)
     implementation(projects.features.musicservice)
     implementation(projects.features.setting)

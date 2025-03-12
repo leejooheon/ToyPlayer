@@ -29,12 +29,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.core.resources.Drawables
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -50,10 +49,9 @@ internal fun PlaylistDetailHeader(
     }.default("empty")
 
     Row(modifier = Modifier.fillMaxSize()) {
-        CoilImage(
+        CustomGlideImage(
             url = thumbnailUrl,
             contentDescription = playlist.name,
-            placeholderRes = Drawables.default_album_art,
             modifier = Modifier
                 .padding(12.dp)
                 .aspectRatio(1f)

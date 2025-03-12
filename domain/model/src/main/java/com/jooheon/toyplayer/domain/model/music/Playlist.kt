@@ -25,6 +25,7 @@ data class Playlist(
 
         val defaultPlaylistIds = listOf(
             MediaId.PlayingQueue,
+            MediaId.RadioSongs,
             MediaId.StreamSongs,
             MediaId.LocalSongs,
             MediaId.AssetSongs, // (maybe replace to radio)
@@ -46,9 +47,10 @@ data class Playlist(
             return playlist
         }
 
-        fun getDefaultPlaylistName(mediaIdInt: Int): String {
+        fun getDefaultPlaylistName(mediaIdInt: Int): String { // FIXME string resource 사용하자
             return when(mediaIdInt) {
                 MediaId.PlayingQueue.hashCode() -> "Playing Queue"
+                MediaId.RadioSongs.hashCode() -> "Radio Songs"
                 MediaId.LocalSongs.hashCode() -> "Local Songs"
                 MediaId.StreamSongs.hashCode() -> "Stream Songs"
                 MediaId.AssetSongs.hashCode() -> "Asset Songs"

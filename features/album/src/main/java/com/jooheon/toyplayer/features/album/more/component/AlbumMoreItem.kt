@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.music.Album
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 
 @Composable
 internal fun AlbumMoreItem(
@@ -40,7 +40,7 @@ internal fun AlbumMoreItem(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CoilImage(
+            CustomGlideImage(
                 url = album.imageUrl,
                 contentDescription = album.name,
                 contentScale = ContentScale.Crop,

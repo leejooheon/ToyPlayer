@@ -26,7 +26,7 @@ import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.Artist
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 
 @Composable
 internal fun ArtistMoreItem(
@@ -55,7 +55,7 @@ internal fun ArtistMoreItem(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            CoilImage(
+            CustomGlideImage(
                 url = imageUrl,
                 contentDescription = artist.name,
                 contentScale = ContentScale.Crop,

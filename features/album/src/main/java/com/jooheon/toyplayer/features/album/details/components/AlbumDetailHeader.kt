@@ -30,7 +30,7 @@ import com.jooheon.toyplayer.core.resources.Drawables
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Album
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -43,7 +43,7 @@ internal fun AlbumDetailHeader(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        CoilImage(
+        CustomGlideImage(
             url = album.imageUrl,
             contentDescription = album.name,
             modifier = Modifier

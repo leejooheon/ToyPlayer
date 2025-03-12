@@ -8,4 +8,5 @@ interface MusicListRepository {
     suspend fun getMusicFromAsset(): Result<List<Song>, MusicDataError>
     suspend fun getLocalMusicList(): Result<List<Song>, MusicDataError>
     suspend fun getStreamingMusicList(): Result<List<Song>, MusicDataError>
+    suspend fun getRadioStationList(): Result<List<Song>, MusicDataError>
 }

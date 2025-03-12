@@ -28,6 +28,9 @@ sealed interface MediaId {
     @Serializable
     @SerialName("asset_songs")
     data object AssetSongs : MediaId
+    @Serializable
+    @SerialName("radio_songs")
+    data object RadioSongs : MediaId
 
     @Serializable
     @SerialName("album_root")
@@ -44,10 +47,6 @@ sealed interface MediaId {
     @Serializable
     @SerialName("playlist")
     data class Playlist(val id: String) : MediaId
-
-    @Serializable
-    @SerialName("content")
-    data class Content(val parent: MediaId, val key: String) : MediaId
 
     companion object {
         fun String.toMediaIdOrNull(): MediaId? = try {

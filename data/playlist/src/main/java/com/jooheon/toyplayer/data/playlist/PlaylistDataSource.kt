@@ -9,7 +9,6 @@ class PlaylistDataSource @Inject constructor(
     private val playlistDao: PlaylistDao,
     private val playlistMapper: PlaylistMapper,
 ) {
-
     fun getAllPlaylist(): List<Playlist> {
         return playlistDao.getAllPlaylist().map {
             playlistMapper.map(it)

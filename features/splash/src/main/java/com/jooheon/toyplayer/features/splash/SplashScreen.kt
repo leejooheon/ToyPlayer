@@ -21,16 +21,47 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
+import com.jooheon.toyplayer.features.splash.model.SplashEvent
+import com.jooheon.toyplayer.features.splash.model.SplashState
+
 
 @Composable
 fun SplashScreen(
-    navcontroller: NavController,
+    navigateTo: (ScreenNavigation) -> Unit,
     viewModel: SplashViewModel = hiltViewModel(),
-    scaleInitialValue: Float = 0f
 ) {
-    val scale = remember { Animatable(scaleInitialValue) }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.initialize()
+    }
+
+    viewModel.state.observeWithLifecycle {
+        when(it) {
+            is SplashState.Default -> viewModel.dispatch(SplashEvent.CheckNetwork)
+            is SplashState.NetworkAvailable -> {
+                if(it.value) viewModel.dispatch(SplashEvent.ServiceCheck)
+                else { /** do something **/ }
+            }
+            is SplashState.ServiceAvailable -> {
+                if(it.value) viewModel.dispatch(SplashEvent.Update(context))
+                else { /** do something **/ }
+            }
+            is SplashState.Update -> { /** not reached **/ }
+            is SplashState.Done -> navigateTo.invoke(ScreenNavigation.Player)
+        }
+    }
+
+    SplashScreenInternal()
+}
+
+@Composable
+private fun SplashScreenInternal() {
+    val scale = remember { Animatable(0f) }
 
     LaunchedEffect(true) {
         scale.animateTo(
@@ -69,62 +100,10 @@ fun SplashScreen(
             fontWeight = FontWeight.Bold
         )
     }
-
-    PrepareRecomposableHandler(navcontroller, viewModel)
-}
-
-
-@Composable
-internal fun PrepareRecomposableHandler(
-    navigator: NavController,
-    viewModel: SplashViewModel
-) {
-    val step = viewModel.done.value
-
-    when(step) {
-        is SplashResult.Default -> {
-            viewModel.prepareLaunchApp(LocalContext.current)
-        }
-
-        is SplashResult.NetworkAvailable -> {
-            // it will be later
-        }
-
-        is SplashResult.ServiceAvailable -> {
-            // it will be later
-        }
-
-        is SplashResult.Update -> {
-            // it will be later
-        }
-
-        is SplashResult.Account -> {
-            // it will be later
-        }
-
-        is SplashResult.Permisison -> {
-            // it will be later
-        }
-
-        is SplashResult.Tutorial -> {
-            // it will be later
-        }
-
-        is SplashResult.Done -> {
-            navigator.navigate(ScreenNavigation.Main) {
-                launchSingleTop = true
-                popUpTo(ScreenNavigation.Splash) {
-                    inclusive = true
-                }
-            }
-        }
-    }
 }
 
 @Preview
 @Composable
 fun PreviewSplashScreen() {
-    val viewModel = SplashViewModel()
-    val context = LocalContext.current
-    SplashScreen(NavController(context), viewModel, 0.85f)
+    SplashScreenInternal()
 }

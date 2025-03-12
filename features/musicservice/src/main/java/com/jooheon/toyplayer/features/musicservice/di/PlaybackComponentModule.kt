@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicservice.di
 import android.content.Context
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
+import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
@@ -30,6 +31,12 @@ object PlaybackComponentModule {
     ): PlaybackUriResolver = PlaybackUriResolver(
         musicStateHolder = musicStateHolder,
         playbackCacheManager = playbackCacheManager,
+    )
+
+    @Provides
+    @ServiceScoped
+    fun provideHlsPlaybackUriResolver(
+    ): HlsPlaybackUriResolver = HlsPlaybackUriResolver(
     )
 
     @Provides

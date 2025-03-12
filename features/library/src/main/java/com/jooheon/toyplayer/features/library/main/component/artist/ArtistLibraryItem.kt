@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Artist
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.compose.components.OutlinedText
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -42,7 +42,7 @@ internal fun ArtistLibraryItem(
             .clickable { onClick.invoke() }
     ) {
         val albumOrNull = artist.albums.firstOrNull()
-        CoilImage(
+        CustomGlideImage(
             url = albumOrNull?.imageUrl.defaultEmpty(),
             contentDescription = albumOrNull?.name.defaultEmpty(),
             contentScale = ContentScale.Crop,

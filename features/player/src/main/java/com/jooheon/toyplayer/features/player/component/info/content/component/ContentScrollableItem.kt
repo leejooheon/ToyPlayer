@@ -23,6 +23,7 @@ import com.jooheon.toyplayer.features.player.common.contentSpace
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 internal fun ContentScrollableItem(
@@ -33,26 +34,25 @@ internal fun ContentScrollableItem(
     enableScroll: Boolean,
     onContentClick: (Int, Song) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
+    onOffsetChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val nestedScrollState = rememberNestedScrollInteropConnection()
     val listState = rememberLazyListState()
 
     LaunchedEffect(listState) {
-        combine(
-            snapshotFlow { listState.firstVisibleItemScrollOffset },
-            snapshotFlow { listState.firstVisibleItemIndex }
-        ) { scrollOffset, index ->
-            scrollOffset to index
-        }.collectLatest { (scrollOffset, index) ->
-            if(index != 0) return@collectLatest
-            val alpha = when {
-                scrollOffset < 1 -> 1f
-                scrollOffset > 100 -> 0f
-                else -> 1f - (scrollOffset / 100f)
+        snapshotFlow { listState.firstVisibleItemScrollOffset }
+            .distinctUntilChanged()
+            .collect { scrollOffset ->
+                onOffsetChanged.invoke(scrollOffset.toFloat())
+                if (listState.firstVisibleItemIndex != 0) return@collect
+                val alpha = when {
+                    scrollOffset < 1 -> 1f
+                    scrollOffset > 100 -> 0f
+                    else -> 1f - (scrollOffset / 100f)
+                }
+                onContentAlphaChanged.invoke(alpha)
             }
-            onContentAlphaChanged.invoke(alpha)
-        }
     }
 
     LazyColumn(
@@ -72,6 +72,7 @@ internal fun ContentScrollableItem(
             val model = models.getOrNull(index) ?: return@items
 
             ContentItem(
+                state = rememberLazyListState(),
                 model = model,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
@@ -105,6 +106,7 @@ private fun PreviewContentScrollableSection() {
             enableScroll = true,
             onContentAlphaChanged = {},
             onContentClick = { _, _ -> },
+            onOffsetChanged = {},
         )
     }
 }

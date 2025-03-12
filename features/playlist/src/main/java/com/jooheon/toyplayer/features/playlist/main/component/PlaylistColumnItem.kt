@@ -35,7 +35,7 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenu
 import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
@@ -78,7 +78,7 @@ internal fun PlaylistColumnItem(
                 modifier = Modifier.weight(0.1f)
             )
             Spacer(modifier = Modifier.width(4.dp))
-            CoilImage(
+            CustomGlideImage(
                 url = thumbnailUrl,
                 contentDescription = playlist.name,
                 contentScale = ContentScale.Crop,

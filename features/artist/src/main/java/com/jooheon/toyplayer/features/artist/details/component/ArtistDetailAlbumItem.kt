@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.features.common.compose.components.CoilImage
+import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 
 @Composable
 internal fun ArtistDetailAlbumItem(
@@ -50,7 +50,7 @@ internal fun ArtistDetailAlbumItem(
                 .padding(8.dp)
                 .height(72.dp)
         ) {
-            CoilImage(
+            CustomGlideImage(
                 url = imageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = title,

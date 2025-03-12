@@ -1,10 +1,12 @@
-package com.jooheon.toyplayer.core.designsystem.component
+package com.jooheon.toyplayer.features.common.compose.components
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -14,8 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.core.graphics.drawable.toBitmapOrNull
 import com.bumptech.glide.integration.compose.CrossFade
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -29,6 +32,7 @@ import com.bumptech.glide.request.target.Target
 import com.jooheon.toyplayer.core.resources.Colors
 import androidx.core.graphics.drawable.toDrawable
 import androidx.palette.graphics.Palette
+import com.jooheon.toyplayer.core.resources.Drawables
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.ResourceError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
@@ -38,25 +42,34 @@ import timber.log.Timber
 @Composable
 fun CustomGlideImage(
     modifier: Modifier,
-    model: String,
+    url: String,
     contentDescription: String,
-    colorDefault: Color = colorResource(Colors.color_default),
     contentScale: ContentScale = ContentScale.Crop,
     transition: CrossFade? = CrossFade(tween(1000)),
-    loading: Placeholder? = null,
-    failure: Placeholder? = null,
+    colorDefault: Color = MaterialTheme.colorScheme.surface,
+    loading: Drawable = colorDefault.toArgb().toDrawable(),
+    @DrawableRes errorRes: Int = Drawables.ic_broken_image,
     onResourceReady: ((Result<Int, ResourceError>) -> Unit)? = null,
 ) {
-    val placeholder = placeholder(colorDefault.toArgb().toDrawable())
     var backgroundColor by remember { mutableIntStateOf(colorDefault.toArgb())}
 
+    if(LocalInspectionMode.current) {
+        Image(
+            painter = painterResource(Drawables.placeholder_600x400),
+            contentDescription = null,
+            modifier = modifier,
+        )
+        onResourceReady?.invoke(Result.Success(backgroundColor))
+        return
+    }
+
     GlideImage(
-        model = model,
+        model = url,
         contentDescription = contentDescription,
         contentScale = contentScale,
         transition = transition,
-        loading = loading ?: placeholder,
-        failure = failure ?: placeholder,
+        loading = placeholder(loading),
+        failure = placeholder(errorRes),
         modifier = modifier.background(Color(backgroundColor)),
         requestBuilderTransform = { requestBuilder ->
             requestBuilder.listener(object : RequestListener<Drawable> {

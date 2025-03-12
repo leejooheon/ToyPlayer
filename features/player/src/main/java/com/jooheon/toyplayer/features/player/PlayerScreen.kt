@@ -1,8 +1,6 @@
 package com.jooheon.toyplayer.features.player
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
@@ -35,7 +31,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -54,7 +49,7 @@ fun PlayerScreen(
     var autoPlaybackStarted by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context)
+        viewModel.loadData()
     }
 
     LaunchedEffect(uiState.contentModels) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
@@ -149,7 +144,7 @@ private fun PlayerScreenInternal(
             restartHideJob()
         }
         launch {
-            touchEventState.debounce(500).collectLatest {
+            touchEventState.debounce(100).collect {
                 Timber.d("restartHideJob")
                 restartHideJob()
             }
