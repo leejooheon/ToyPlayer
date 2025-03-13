@@ -22,7 +22,8 @@ class CustomMediaSourceFactory(
 
     override fun createMediaSource(mediaItem: MediaItem): MediaSource {
         val mimeType = mediaItem.localConfiguration?.mimeType
-        Timber.d("createMediaSource: ${mediaItem.mediaMetadata.title}, $mimeType, ${mediaItem.localConfiguration?.uri}")
+        Timber.d("createMediaSource: ${mediaItem.mediaMetadata.title}, $mimeType")
+
         return when(mediaItem.localConfiguration?.mimeType) {
             MimeTypes.APPLICATION_M3U8 -> hlsMediaSourceFactory.createMediaSource(mediaItem)
             else -> defaultMediaSourceFactory.createMediaSource(mediaItem)

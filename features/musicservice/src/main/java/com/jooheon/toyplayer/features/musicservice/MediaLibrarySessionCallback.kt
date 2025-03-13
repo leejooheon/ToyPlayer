@@ -65,9 +65,9 @@ class MediaLibrarySessionCallback(
 
             if (parentId.toMediaIdOrNull() == MediaId.Root && playlistUseCase.requireInitialize()) {
                 defaultPlaylistIds.forEach { mediaId ->
-                    Timber.d("onGetChildren: defaultPlaylistIds: $mediaId")
                     val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
                     val defaultPlaylist = defaultPlaylists.first { it.id == mediaId.hashCode() }
+                    Timber.d("onGetChildren: defaultPlaylistIds: $mediaId, ${defaultPlaylist.songs.map { it.title }}")
                     playlistUseCase.insertPlaylists(defaultPlaylist.copy(songs = songs))
                 }
             }

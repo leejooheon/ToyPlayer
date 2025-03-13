@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.data.api.response
 
-import com.jooheon.toyplayer.domain.model.RadioRawData
+import com.jooheon.toyplayer.domain.model.radio.RadioData
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import kotlinx.serialization.SerialName
@@ -26,30 +26,11 @@ data class KbsResponse(
         @SerialName("title") val title: String?
     )
 
-    fun toSongOrNull(index: Int, rawData: RadioRawData): Song? {
-        val channelItem = parseChannelItem() ?: return null
-        val kbsId = "KBS".hashCode().toString()
-        return Song(
-            audioId = rawData.channelName.hashCode().toLong(),
-            useCache = false,
-            displayName = rawData.channelName,
-            title = rawData.channelName,
-            artist = channelMaster.ppsKindLabel.defaultEmpty(),
-            artistId = kbsId,
-            album = channelMaster.title.defaultEmpty(),
-            albumId = kbsId,
-            duration = -1,
-            path = channelItem.serviceUrl,
-            imageUrl = channelMaster.imagePathChannelLogo.defaultEmpty(),
-            trackNumber = index
-        )
-    }
-
-    private fun parseChannelItem(): ChannelItem? {
+    fun parseRadioUrl(): String? {
         val item = channelItems
             .firstOrNull { it.mediaType == "radio" }
             ?.let { channelItems.firstOrNull() }
 
-        return item
+        return item?.serviceUrl
     }
 }

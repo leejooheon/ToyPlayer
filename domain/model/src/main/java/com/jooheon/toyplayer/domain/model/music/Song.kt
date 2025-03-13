@@ -1,5 +1,7 @@
 package com.jooheon.toyplayer.domain.model.music
 
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.radio.RadioData.Companion.toRadioDataOrNull
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -20,6 +22,8 @@ data class Song(
     var data: String? = null,
 ) {
     fun key() = audioId.toString()
+    fun radioData() = data.defaultEmpty().toRadioDataOrNull()
+
     companion object {
         val default = Song(
             audioId = -1L,

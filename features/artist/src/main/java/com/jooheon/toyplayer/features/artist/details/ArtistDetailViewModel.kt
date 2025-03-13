@@ -11,7 +11,6 @@ import com.jooheon.toyplayer.domain.model.music.Artist
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.artist.details.model.ArtistDetailUiState
-import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreUiState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel

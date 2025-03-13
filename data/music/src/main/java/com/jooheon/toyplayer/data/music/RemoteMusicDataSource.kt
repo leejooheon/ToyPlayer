@@ -1,24 +1,22 @@
 package com.jooheon.toyplayer.data.music
 
-import android.net.Uri
 import com.jooheon.toyplayer.data.api.service.ApiKbsService
 import com.jooheon.toyplayer.data.api.service.ApiMbcService
 import com.jooheon.toyplayer.data.api.service.ApiSbsService
 import com.jooheon.toyplayer.data.music.etc.TestStreamUrl
+import com.jooheon.toyplayer.data.music.etc.etcStations
 import com.jooheon.toyplayer.data.music.etc.kbsStations
-import com.jooheon.toyplayer.data.music.etc.radioStations
+import com.jooheon.toyplayer.data.music.etc.mbcStations
 import com.jooheon.toyplayer.data.music.etc.sbsStations
+import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.domain.model.radio.RadioData
+import com.jooheon.toyplayer.domain.model.radio.RadioType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
-import androidx.core.net.toUri
-import com.jooheon.toyplayer.data.music.etc.mbcStations
-import com.jooheon.toyplayer.domain.model.RadioRawData
-import com.jooheon.toyplayer.domain.model.common.extension.defaultTrue
-
 
 class RemoteMusicDataSource @Inject constructor(
     private val apiKbsService: ApiKbsService,
@@ -32,84 +30,54 @@ class RemoteMusicDataSource @Inject constructor(
         return list
     }
 
-    suspend fun getRadioStationList(): List<Song> {
-//        val kbsStations = getKbsRadioList()
-//        val sbsStations = getSbsRadioList()
-        val mbcStations = getMbcRadioList()
-        return mbcStations + radioStations
-//        return kbsStations + sbsStations + mbcStations + radioStations
+    fun getRadioStationList(): List<Song> {
+        return  kbsStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
+                sbsStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
+                mbcStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
+                etcStations.mapIndexed { index, radioData -> radioData.toSong(index) }
     }
 
-    suspend fun getKbsRadioList(): List<Song> {
-        val songs = kbsStations.mapIndexedNotNull { index, data ->
-            val response = apiKbsService.getStreamUrl(
-                code = data.channelCode
-            )
+    suspend fun getKbsRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+        return try {
+            val response = apiKbsService.getStreamUrl(code = radioData.channelCode)
+            val url = response.parseRadioUrl()
 
-            response.toSongOrNull(index, data)
+            if(url.isNullOrBlank()) Result.Error(MusicDataError.Empty)
+            else Result.Success(url)
+        } catch (e: Exception) {
+            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
         }
-
-        return songs
     }
 
-    suspend fun getSbsRadioList(): List<Song> {
-        val songs = sbsStations.mapIndexedNotNull { index, data ->
+    suspend fun getSbsRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+        return try {
             val response = apiSbsService.getStreamUrl(
-                channelCode = data.channelCode,
-                channelName = data.channelSubCode.defaultEmpty(),
+                channelCode = radioData.channelCode,
+                channelName = radioData.channelSubCode.defaultEmpty(),
             )
-            Timber.d("getSbsRadioList: $response")
-            planeTextToSongOrNull(index, response, data, "SBS")
+
+            if (response.isBlank()) Result.Error(MusicDataError.Empty)
+            else Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
         }
-        songs.forEach { Timber.d("getSbsRadioList: ${it.title}") }
-        return songs
     }
 
-    suspend fun getMbcRadioList(): List<Song> {
-        val songs = mbcStations.mapIndexedNotNull { index, data ->
-            val response = apiMbcService.getStreamUrl(
-                channel = data.channelCode
-            )
-            planeTextToSongOrNull(index, response, data, "MBC")
-        }
+    suspend fun getMbcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+        return try {
+            val response = apiMbcService.getStreamUrl(channel = radioData.channelCode)
 
-        return songs
+            if (response.isBlank()) Result.Error(MusicDataError.Empty)
+            else Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
+        }
     }
-
-    private fun planeTextToSongOrNull(
-        index: Int,
-        response: String,
-        rawData: RadioRawData,
-        id: String,
-    ): Song? {
-        val oneDayLater = System.currentTimeMillis() + (3600000 * 24)
-
-        if(!response.toUri().path?.endsWith(".m3u8", ignoreCase = true).defaultTrue()) {
-            Timber.d("planeTextToSongOrNull: ${response.toUri().path}, $response, ")
-            return null
+    suspend fun getEtcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+        return if(radioData.url.isNullOrBlank()) {
+            Result.Error(MusicDataError.Empty)
+        } else {
+            Result.Success(radioData.url!!)
         }
-
-        val uri = response.toUri()
-            .buildUpon()
-            .appendQueryParameter("Expires", oneDayLater.toString())
-            .build()
-            .toString()
-
-        val sbsId = id.hashCode().toString()
-
-        return Song(
-            audioId = rawData.channelName.hashCode().toLong(),
-            useCache = false,
-            displayName = rawData.channelName,
-            title = rawData.channelName,
-            artist = rawData.channelName,
-            artistId = sbsId,
-            album = "$id Radio",
-            albumId = sbsId,
-            duration = -1,
-            path = uri,
-            imageUrl = "",
-            trackNumber = index
-        )
     }
 }

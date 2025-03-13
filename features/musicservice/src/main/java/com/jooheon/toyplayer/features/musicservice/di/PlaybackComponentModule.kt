@@ -1,12 +1,14 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
+import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.domain.usecase.RadioUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
-import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,19 +27,9 @@ object PlaybackComponentModule {
 
     @Provides
     @ServiceScoped
-    fun providePlaybackUriResolver(
-        musicStateHolder: MusicStateHolder,
-        playbackCacheManager: PlaybackCacheManager,
-    ): PlaybackUriResolver = PlaybackUriResolver(
-        musicStateHolder = musicStateHolder,
-        playbackCacheManager = playbackCacheManager,
-    )
-
-    @Provides
-    @ServiceScoped
     fun provideHlsPlaybackUriResolver(
-    ): HlsPlaybackUriResolver = HlsPlaybackUriResolver(
-    )
+        radioUseCase: RadioUseCase,
+    ): HlsPlaybackUriResolver = HlsPlaybackUriResolver(radioUseCase)
 
     @Provides
     @ServiceScoped
@@ -48,11 +40,13 @@ object PlaybackComponentModule {
     @Provides
     fun provideMediaItemProvider(
         @ApplicationContext context: Context,
-        musicListUseCase: com.jooheon.toyplayer.domain.usecase.MusicListUseCase,
-        playlistUseCase: com.jooheon.toyplayer.domain.usecase.PlaylistUseCase,
+        musicListUseCase: MusicListUseCase,
+        radioUseCase: RadioUseCase,
+        playlistUseCase: PlaylistUseCase,
     ): MediaItemProvider = MediaItemProvider(
         context = context,
         musicListUseCase = musicListUseCase,
+        radioUseCase = radioUseCase,
         playlistUseCase = playlistUseCase
     )
 }

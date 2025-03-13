@@ -17,7 +17,6 @@ import com.jooheon.toyplayer.features.musicservice.ext.enqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToNext
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToPrevious
-import com.jooheon.toyplayer.features.musicservice.ext.invalidate
 import com.jooheon.toyplayer.features.musicservice.ext.mediaItems
 import com.jooheon.toyplayer.features.musicservice.ext.playAtIndex
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
@@ -54,8 +53,7 @@ class PlayerController(private val scope: CoroutineScope) {
         contentFuture.addListener(
             {
                 val model = contentFuture.get().value
-                val mediaItems = model.defaultEmpty().map { it.invalidate() }
-                listener.invoke(mediaItems)
+                listener.invoke(model.defaultEmpty())
             },
             ContextCompat.getMainExecutor(context)
         )

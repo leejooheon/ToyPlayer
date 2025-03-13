@@ -7,6 +7,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.map
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.MediaFolder
 import com.jooheon.toyplayer.domain.model.music.MediaId
@@ -14,12 +15,14 @@ import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNul
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.domain.usecase.RadioUseCase
 import com.jooheon.toyplayer.features.musicservice.R
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 
 class MediaItemProvider(
     private val context: Context,
     private val musicListUseCase: MusicListUseCase,
+    private val radioUseCase: RadioUseCase,
     private val playlistUseCase: PlaylistUseCase,
 ) {
     val rootItem = MediaFolder(
@@ -66,7 +69,7 @@ class MediaItemProvider(
                 songs.map { it.toMediaItem() }
             }
             is MediaId.RadioSongs -> {
-                val songs = musicListUseCase.getRadioStationList()
+                val songs = radioUseCase.getRadioStationList()
                 songs.map { it.toMediaItem() }
             }
             is MediaId.AlbumRoot -> {

@@ -29,7 +29,6 @@ import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import androidx.media3.extractor.DefaultExtractorsFactory
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
-import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CustomMediaSourceFactory
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
 import dagger.Module
@@ -76,20 +75,15 @@ object PlayerComponentModule {
     fun provideDefaultMediaSourceFactory(
         @ApplicationContext context: Context,
         hlsPlaybackUriResolver: HlsPlaybackUriResolver,
-        playbackUriResolver: PlaybackUriResolver,
         playbackCacheManager: PlaybackCacheManager,
     ): CustomMediaSourceFactory {
-        val resolvingDataSource = ResolvingDataSource.Factory(
-            playbackCacheManager.cacheDataSource(),
-            playbackUriResolver
-        )
         val hlsMediaSource = ResolvingDataSource.Factory(
             DefaultDataSource.Factory(context),
             hlsPlaybackUriResolver
         )
 
         return CustomMediaSourceFactory(
-            defaultDataSource = resolvingDataSource,
+            defaultDataSource = playbackCacheManager.cacheDataSource(),
             hlsDataSource = hlsMediaSource
         )
     }

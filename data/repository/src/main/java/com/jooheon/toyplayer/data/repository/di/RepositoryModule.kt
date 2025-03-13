@@ -9,10 +9,12 @@ import com.jooheon.toyplayer.data.repository.DefaultSettingsRepositoryImpl
 import com.jooheon.toyplayer.data.repository.MusicListRepositoryImpl
 import com.jooheon.toyplayer.data.repository.PlaybackSettingsRepositoryImpl
 import com.jooheon.toyplayer.data.repository.PlaylistRepositoryImpl
+import com.jooheon.toyplayer.data.repository.RadioRepositoryImpl
 import com.jooheon.toyplayer.domain.repository.api.DefaultSettingsRepository
 import com.jooheon.toyplayer.domain.repository.api.MusicListRepository
 import com.jooheon.toyplayer.domain.repository.api.PlaybackSettingsRepository
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
+import com.jooheon.toyplayer.domain.repository.api.RadioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +23,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 @Module
 object RepositoryModule {
-
     @Provides
     fun provideDefaultSettingsRepository(
         preferencesDataSource: DefaultSettingsPreferencesDataSource
@@ -45,4 +46,11 @@ object RepositoryModule {
     fun providePlaylistRepository(
         playlistDataSource: PlaylistDataSource,
     ): PlaylistRepository = PlaylistRepositoryImpl(playlistDataSource)
+
+    @Provides
+    fun provideRadioRepository(
+        dataSource: RemoteMusicDataSource,
+    ): RadioRepository = RadioRepositoryImpl(
+        dataSource = dataSource,
+    )
 }
