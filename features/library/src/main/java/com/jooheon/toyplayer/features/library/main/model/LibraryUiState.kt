@@ -13,7 +13,7 @@ data class LibraryUiState(
             artists = emptyList(),
         )
         val preview = LibraryUiState(
-            defaultPlaylists = Playlist.defaultPlaylists.drop(1),
+            defaultPlaylists = listOf(Playlist.preview),
             artists = listOf(Artist.default, Artist.default, Artist.default),
         )
     }

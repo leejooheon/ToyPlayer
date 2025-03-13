@@ -1,14 +1,11 @@
 package com.jooheon.toyplayer.data.repository
 
 import com.jooheon.toyplayer.data.playlist.PlaylistDataSource
-import com.jooheon.toyplayer.domain.model.common.errors.RootError
-import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.ResourceError
-import com.jooheon.toyplayer.domain.model.music.MediaId
-import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 
 class PlaylistRepositoryImpl(
     private val playlistDataSource: PlaylistDataSource,
@@ -37,26 +34,5 @@ class PlaylistRepositoryImpl(
         } else {
             Result.Success(playlistOrNull)
         }
-    }
-
-    override suspend fun getPlayingQueue(): Result<List<Song>, RootError> {
-        val playingQueue = playlistDataSource.getPlaylist(MediaId.PlayingQueue.hashCode())
-        return Result.Success(playingQueue?.songs.defaultEmpty())
-    }
-
-    override suspend fun updatePlayingQueue(songs: List<Song>) {
-        playlistDataSource.updatePlaylists(
-            Playlist.getDefaultPlaylist(MediaId.PlayingQueue).copy(
-                songs = songs
-            )
-        )
-    }
-
-    override suspend fun clear() {
-        playlistDataSource.updatePlaylists(
-            Playlist.getDefaultPlaylist(MediaId.PlayingQueue).copy(
-                songs = emptyList()
-            )
-        )
     }
 }

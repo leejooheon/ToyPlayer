@@ -20,7 +20,6 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylists
 import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistColumnItem
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistHeader
@@ -89,7 +88,7 @@ private fun PlaylistScreenInternal(
                 ) { playlist ->
                     PlaylistColumnItem(
                         playlist = playlist,
-                        showContextualMenu = playlist.id !in defaultPlaylists.map { it.id },
+                        showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { it.hashCode() },
                         onItemClick = {
 //                            onItemClick(playlist)
                                       },

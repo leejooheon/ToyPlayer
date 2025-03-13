@@ -10,7 +10,7 @@ data class PlaylistUiState(
             playlists = emptyList()
         )
         val preview = PlaylistUiState(
-            playlists = Playlist.defaultPlaylists
+            playlists = listOf(Playlist.preview)
         )
     }
 }

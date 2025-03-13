@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.musicservice
 
-import android.net.Uri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -9,7 +8,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
-import com.jooheon.toyplayer.features.musicservice.data.RingBuffer
 import com.jooheon.toyplayer.features.musicservice.ext.toPlaybackState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
@@ -22,17 +20,12 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MusicStateHolder @Inject constructor() {
-    private val mutex = Mutex()
-    private val streamBuffer = RingBuffer<Pair<String, Uri>?>(URI_BUFFER_SIZE) { null }
-
     private val _mediaItems = MutableSharedFlow<List<MediaItem>>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
@@ -144,25 +137,5 @@ class MusicStateHolder @Inject constructor() {
     }
     internal fun onPositionDiscontinuity(oldPosition: Long, newPosition: Long) {
         _disContinuation.tryEmit(Pair(oldPosition, newPosition))
-    }
-
-    internal suspend fun appendToRingBuffer(data: Pair<String, Uri>) {
-        mutex.withLock {
-            streamBuffer.append(data)
-        }
-    }
-    internal suspend fun getStreamResultOrNull(id: String): Uri? {
-        mutex.withLock {
-            repeat(URI_BUFFER_SIZE) { index ->
-                val (key, uri) = streamBuffer.getOrNull(index) ?: return@repeat
-                if (key == id) {
-                    return uri
-                }
-            }
-            return null
-        }
-    }
-    companion object {
-        internal const val URI_BUFFER_SIZE = 3
     }
 }

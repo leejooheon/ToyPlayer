@@ -3,10 +3,8 @@ package com.jooheon.toyplayer.features.musicservice
 import android.content.Context
 import android.os.Bundle
 import androidx.annotation.OptIn
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
@@ -18,11 +16,15 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylistIds
-import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.defaultPlaylists
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.extension.getDefaultPlaylistName
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
@@ -63,12 +65,17 @@ class MediaLibrarySessionCallback(
         return scope.future {
             Timber.d("onGetChildren: $parentId, $page, $pageSize")
 
-            if (parentId.toMediaIdOrNull() == MediaId.Root && playlistUseCase.requireInitialize()) {
+            if (parentId.toMediaIdOrNull() == MediaId.Root) {
                 defaultPlaylistIds.forEach { mediaId ->
                     val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
-                    val defaultPlaylist = defaultPlaylists.first { it.id == mediaId.hashCode() }
-                    Timber.d("onGetChildren: defaultPlaylistIds: $mediaId, ${defaultPlaylist.songs.map { it.title }}")
-                    playlistUseCase.insertPlaylists(defaultPlaylist.copy(songs = songs))
+                    playlistUseCase.getPlaylist(mediaId.hashCode())
+                        .onSuccess {
+                            playlistUseCase.insertPlaylists(it.copy(songs = songs))
+                        }
+                        .onError {
+                            val playlist = getDefaultPlaylist(mediaId, songs)
+                            playlistUseCase.insertPlaylists(playlist)
+                        }
                 }
             }
 
@@ -151,5 +158,16 @@ class MediaLibrarySessionCallback(
     override fun onDisconnected(session: MediaSession, controller: MediaSession.ControllerInfo) {
         super.onDisconnected(session, controller)
         Timber.d("onDisconnected")
+    }
+
+    private fun getDefaultPlaylist(mediaId: MediaId, songs: List<Song>): Playlist {
+        if(mediaId !in defaultPlaylistIds) throw IllegalArgumentException("$mediaId is not default playlist.")
+
+        return Playlist(
+            id = mediaId.hashCode(),
+            name = getDefaultPlaylistName(context, mediaId),
+            thumbnailUrl = "",
+            songs = songs
+        )
     }
 }

@@ -61,8 +61,14 @@
     <string name="n_song">%1$d 곡</string>
     <string name="n_album">%1$d 앨범</string>
     <string name="song_list">음악 목록</string>
-    <string name="current_playing_queue">현재 재생중인 음악</string>
+    <string name="current_playing_song">현재 재생중인 음악</string>
     <string name="cached_song">캐시된 음악</string>
+
+    <string name="playlist_playing_queue">재생목록</string>
+    <string name="playlist_radio">라디오</string>
+    <string name="playlist_stream">스트리밍 음악</string>
+    <string name="playlist_local">로컬 음악</string>
+    <string name="playlist_asset">구글 테스트 음악</string>
 
     <string name="dialog_new_playlist">새 재생목록</string>
     <string name="dialog_new_playlist_label">재생목록</string>

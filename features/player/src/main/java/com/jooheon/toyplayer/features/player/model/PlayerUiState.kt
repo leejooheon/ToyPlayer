@@ -36,7 +36,7 @@ data class PlayerUiState(
             )
             val preview = PagerModel(
                 items = listOf(Song.preview, Song.preview.copy(audioId = 2), Song.preview.copy(audioId = 3)),
-                currentPlaylist = Playlist.getDefaultPlaylist(MediaId.LocalSongs),
+                currentPlaylist = Playlist.preview,
             )
         }
     }

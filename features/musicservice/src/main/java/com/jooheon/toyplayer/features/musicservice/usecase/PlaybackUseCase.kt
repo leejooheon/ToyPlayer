@@ -1,6 +1,8 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
 import androidx.media3.common.Player
+import com.jooheon.toyplayer.domain.model.common.onSuccess
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
@@ -21,9 +23,13 @@ class PlaybackUseCase(
     }
 
     private fun collectPlayingQueue(scope: CoroutineScope) = scope.launch {
-        musicStateHolder.mediaItems.collectLatest {
-            val songs = it.map { it.toSong() }
-            playlistUseCase.setPlayingQueue(songs)
+        musicStateHolder.mediaItems.collectLatest { mediaItems ->
+            playlistUseCase
+                .getPlaylist(MediaId.PlayingQueue.hashCode())
+                .onSuccess { playlist ->
+                    val songs = mediaItems.map { it.toSong() }
+                    playlistUseCase.insertPlaylists(playlist.copy(songs = songs))
+                }
         }
     }
 

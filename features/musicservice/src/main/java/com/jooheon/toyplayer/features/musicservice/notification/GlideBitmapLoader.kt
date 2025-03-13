@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.util.Size
+import androidx.annotation.OptIn
 import androidx.core.graphics.applyCanvas
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
@@ -18,7 +19,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import androidx.core.graphics.createBitmap
 
-@UnstableApi
+@OptIn(UnstableApi::class)
 class GlideBitmapLoader(
     private val context: Context,
     private val bitmapSize: Int,

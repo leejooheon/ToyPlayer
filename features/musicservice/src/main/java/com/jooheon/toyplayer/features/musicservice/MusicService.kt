@@ -30,8 +30,6 @@ import kotlin.system.exitProcess
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MusicService: MediaLibraryService() {
-    private val TAG = MusicService::class.java.simpleName + "@" + "Main"
-
     @Inject
     @MusicServiceCoroutineScope
     lateinit var serviceScope: CoroutineScope
@@ -69,8 +67,6 @@ class MusicService: MediaLibraryService() {
     private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
 
-    private var notificationManager: NotificationManager? = null
-
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
     override fun onCreate() {
@@ -97,8 +93,8 @@ class MusicService: MediaLibraryService() {
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
             // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
-            stopSelf()
         }
+        stopSelf()
     }
 
     override fun onDestroy() {
@@ -119,16 +115,6 @@ class MusicService: MediaLibraryService() {
         clearListener()
         serviceScope.cancel()
 //        handleMedia3Bug()
-    }
-
-    private fun handleMedia3Bug() { // TODO: CleanUp
-        /**
-         * process가 종료되지 않는 버그.. 짱난다 demo-session도 동일
-         * we should have something else instead\
-         * https://github.com/androidx/media/issues/805
-         **/
-        notificationManager?.cancelAll()
-        exitProcess(0)
     }
 
     private fun initNotification() {

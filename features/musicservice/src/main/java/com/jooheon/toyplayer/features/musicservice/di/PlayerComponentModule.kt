@@ -45,10 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 object PlayerComponentModule {
     @Provides
     @ServiceScoped
-    fun provideToyPlayer(
-        player: Player,
-        @MusicServiceCoroutineScope scope: CoroutineScope,
-    ): ToyPlayer = ToyPlayer(player, scope)
+    fun provideToyPlayer(player: Player): ToyPlayer = ToyPlayer(player)
 
     @Provides
     fun provideExoPlayer(

@@ -87,7 +87,7 @@ internal fun PlaylistLibrarySection(
 private fun PreviewPlaylistLibrarySection() {
     ToyPlayerTheme {
         PlaylistLibrarySection(
-            models = Playlist.defaultPlaylists + Playlist.defaultPlaylists,
+            models = listOf(Playlist.preview),
             onClick = {},
             onMoreClick = {},
         )

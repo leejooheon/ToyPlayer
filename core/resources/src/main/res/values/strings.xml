@@ -62,8 +62,14 @@
     <string name="n_song">%1$d Song</string>
     <string name="n_album">%1$d Album</string>
     <string name="song_list">Song List</string>
-    <string name="current_playing_queue">Current playing song</string>
     <string name="cached_song">Cached Song</string>
+    <string name="current_playing_song">Current playing song</string>
+
+    <string name="playlist_playing_queue">playing queue</string>
+    <string name="playlist_radio">Radios</string>
+    <string name="playlist_stream">Stream Songs</string>
+    <string name="playlist_local">Local Songs</string>
+    <string name="playlist_asset">Google Test Songs</string>
 
     <string name="dialog_new_playlist">New Playlist</string>
     <string name="dialog_new_playlist_label">Playlist</string>

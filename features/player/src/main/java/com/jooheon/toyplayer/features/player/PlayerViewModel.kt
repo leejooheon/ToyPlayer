@@ -110,9 +110,7 @@ class PlayerViewModel @Inject constructor(
 
         val result = playlistUseCase.getAllPlaylist()
         val playlists = when(result) {
-            is Result.Success -> result.data
-                .filterNot { it.id == MediaId.PlayingQueue.hashCode() }
-                .filter { it.songs.isNotEmpty() }
+            is Result.Success -> result.data.reversed().filter { it.songs.isNotEmpty() }
             is Result.Error -> emptyList()
         }
 
