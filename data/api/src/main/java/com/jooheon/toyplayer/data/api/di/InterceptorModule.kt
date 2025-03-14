@@ -16,7 +16,7 @@ import timber.log.Timber
 
 @Module
 @InstallIn(SingletonComponent::class)
-object InterceptorModule {
+internal object InterceptorModule {
     @Provides
     fun provideChuckerInterceptor(
         @ApplicationContext context: Context

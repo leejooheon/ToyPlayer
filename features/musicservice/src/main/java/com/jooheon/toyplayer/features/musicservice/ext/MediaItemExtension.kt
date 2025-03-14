@@ -3,7 +3,6 @@ package com.jooheon.toyplayer.features.musicservice.ext
 
 import android.net.Uri
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
@@ -20,19 +19,21 @@ import timber.log.Timber
 fun Song.toMediaItem(): MediaItem {
     val uri = if(isRadio) radioData()!!.serialize().toUri() else uri
     val customCacheKey = if(isRadio) radioData()!!.serialize() else key()
+    val imageUri = if(isRadio) radioData()!!.imageUrl.toUri() else albumArtUri
     val mimeType = if(isRadio) MimeTypes.APPLICATION_M3U8 else null
-    val mediaMetadata = if(isRadio) MediaMetadata.MEDIA_TYPE_PODCAST
-                        else MediaMetadata.MEDIA_TYPE_MUSIC
+    val mediaType = if(isRadio) MediaMetadata.MEDIA_TYPE_PODCAST else MediaMetadata.MEDIA_TYPE_MUSIC
+    val mediaMetadata = toMetadata(mediaType, imageUri)
+
     return MediaItem.Builder()
         .setUri(uri)
         .setMediaId(key())
         .setCustomCacheKey(customCacheKey)
-        .setMediaMetadata(toMetadata(mediaMetadata))
+        .setMediaMetadata(mediaMetadata)
         .setMimeType(mimeType)
         .build()
 }
 
-private fun Song.toMetadata(mediaType: Int): MediaMetadata {
+private fun Song.toMetadata(mediaType: Int, imageUri: Uri): MediaMetadata {
     val metadata = MediaMetadata.Builder()
         .setMediaType(mediaType)
         .setDisplayTitle(displayName)
@@ -40,7 +41,7 @@ private fun Song.toMetadata(mediaType: Int): MediaMetadata {
         .setAlbumTitle(album)
         .setAlbumArtist(artist)
         .setArtist(artist)
-        .setArtworkUri(albumArtUri)
+        .setArtworkUri(imageUri)
         .setTrackNumber(trackNumber)
         .setExtras(extras())
         .setIsBrowsable(false)
@@ -116,7 +117,6 @@ private fun RadioData.toMediaItem(index: Int = 0): MediaItem {
         .setTrackNumber(index)
         .setIsBrowsable(false)
         .setIsPlayable(true)
-        .setExtras(extras())
         .build()
 
     return MediaItem.Builder()

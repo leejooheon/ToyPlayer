@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.common.compose.components
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -37,6 +38,7 @@ import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.ResourceError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import timber.log.Timber
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable

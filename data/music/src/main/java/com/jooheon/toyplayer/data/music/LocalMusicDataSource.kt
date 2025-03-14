@@ -4,20 +4,19 @@ import android.content.Context
 import android.os.Build
 import android.provider.BaseColumns
 import android.provider.MediaStore
-import androidx.media3.common.MediaMetadata
-import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.data.music.etc.CursorHelper
 import com.jooheon.toyplayer.data.music.etc.toSong
 import com.jooheon.toyplayer.domain.model.music.Song
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
 import java.io.BufferedReader
 import javax.inject.Inject
 
 class LocalMusicDataSource @Inject constructor(
-    private val applicationContext: Context
+    @ApplicationContext private val context: Context
 ) {
     fun loadFromAssets(): MutableList<Song> {
-        val raw = applicationContext.assets
+        val raw = context.assets
             .open("catalog.json")
             .bufferedReader()
             .use(BufferedReader::readText)
@@ -45,7 +44,7 @@ class LocalMusicDataSource @Inject constructor(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         }
 
-        val cursor = cursorHelper.makeSongCursor(applicationContext, uri)
+        val cursor = cursorHelper.makeSongCursor(context, uri)
         val songs = mutableListOf<Song>()
         if (cursor != null && cursor.moveToFirst()) {
             do {

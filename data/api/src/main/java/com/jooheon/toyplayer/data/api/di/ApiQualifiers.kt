@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.data.api.di
 import javax.inject.Qualifier
 
 
-object RetrofitQualifier {
+internal object RetrofitQualifier {
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
     annotation class KbsServer
@@ -17,7 +17,7 @@ object RetrofitQualifier {
     annotation class SbsServer
 }
 
-object ConverterQualifier {
+internal object ConverterQualifier {
     @Qualifier
     @Retention(AnnotationRetention.RUNTIME)
     annotation class Json

@@ -17,7 +17,8 @@ class RadioRepositoryImpl(
         return if (stations.isEmpty()) {
             Result.Error(MusicDataError.Empty)
         } else {
-            Result.Success(stations)
+            val songs = stations.mapIndexed { index, radioData -> radioData.toSong(index) }
+            Result.Success(songs)
         }
     }
 

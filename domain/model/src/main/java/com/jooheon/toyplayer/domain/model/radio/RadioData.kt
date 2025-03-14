@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 data class RadioData(
     val type: RadioType,
     val url: String?,
+    val imageUrl: String,
     val channelName: String,
     val channelCode: String,
     val channelSubCode: String? = null,
@@ -30,18 +31,12 @@ data class RadioData(
         duration = -1,
         path = url.defaultEmpty(),
         trackNumber = index,
-        imageUrl = "",
+        imageUrl = "imageUrl",
         isFavorite = false,
         data = serialize()
     )
 
     companion object {
-        const val BUNDLE_TYPE = "bundle_type"
-        const val BUNDLE_URL = "bundle_url"
-        const val BUNDLE_CHANNEL_NAME = "bundle_channel_name"
-        const val BUNDLE_CHANNEL_CODE = "bundle_channel_code"
-        const val BUNDLE_CHANNEL_SUB_CODE = "bundle_channel_sub_code"
-
         fun String.toRadioDataOrNull(): RadioData? {
             return try {
                 Json.decodeFromString(serializer(), this@toRadioDataOrNull)

@@ -23,6 +23,9 @@ class PlaybackErrorUseCase(
     private val _autoPlayChannel = Channel<Unit>()
     internal val autoPlayChannel = _autoPlayChannel.receiveAsFlow()
 
+    private val _seekToDefaultChannel = Channel<Unit>()
+    internal val seekToDefaultChannel = _seekToDefaultChannel.receiveAsFlow()
+
     internal fun initialize(scope: CoroutineScope) {
         collectPlaybackError(scope)
         collectNetworkConnectivity(scope)
@@ -33,6 +36,10 @@ class PlaybackErrorUseCase(
             recentPlaybackError = when (exception.errorCode) {
                 PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
                 PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT -> FailureStatus.NO_INTERNET
+                PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW -> {
+                    _seekToDefaultChannel.send(Unit)
+                    FailureStatus.OTHER
+                }
                 else -> FailureStatus.OTHER
             }
 

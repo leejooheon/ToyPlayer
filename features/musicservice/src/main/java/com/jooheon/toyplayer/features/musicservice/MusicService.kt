@@ -182,6 +182,12 @@ class MusicService: MediaLibraryService() {
                     if(!player.isPlaying) player.play()
                 }
             }
+            launch {
+                playbackErrorUseCase.seekToDefaultChannel.collectLatest {
+                    val player = mediaSession?.player ?: return@collectLatest
+                    player.seekToDefaultPosition()
+                }
+            }
         }
     }
 

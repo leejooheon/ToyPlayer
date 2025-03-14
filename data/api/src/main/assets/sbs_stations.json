@@ -1,0 +1,29 @@
+[
+  {
+    "type": "Sbc",
+    "url": null,
+    "image": "drawable/desserts",
+    "channelName": "SBS 파워FM",
+    "channelCode": "powerpc",
+    "channelSubCode": "powerfm",
+    "updatedTime": null
+  },
+  {
+    "type": "Sbc",
+    "url": null,
+    "image": "drawable/donut",
+    "channelName": "SBS 러브FM",
+    "channelCode": "lovepc",
+    "channelSubCode": "lovefm",
+    "updatedTime": null
+  },
+  {
+    "type": "Sbc",
+    "url": null,
+    "image": "drawable/eclair",
+    "channelName": "SBS 고릴라디오M",
+    "channelCode": "sbsdmbpc",
+    "channelSubCode": "sbsdmb",
+    "updatedTime": null
+  }
+]

@@ -11,6 +11,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.resources)
     implementation(projects.domain.model)
     implementation(libs.kotlinx.serialization.json)
 

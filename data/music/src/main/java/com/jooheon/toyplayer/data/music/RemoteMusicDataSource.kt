@@ -1,40 +1,38 @@
 package com.jooheon.toyplayer.data.music
 
+import android.content.Context
 import com.jooheon.toyplayer.data.api.service.ApiKbsService
 import com.jooheon.toyplayer.data.api.service.ApiMbcService
 import com.jooheon.toyplayer.data.api.service.ApiSbsService
-import com.jooheon.toyplayer.data.music.etc.TestStreamUrl
-import com.jooheon.toyplayer.data.music.etc.etcStations
-import com.jooheon.toyplayer.data.music.etc.kbsStations
-import com.jooheon.toyplayer.data.music.etc.mbcStations
-import com.jooheon.toyplayer.data.music.etc.sbsStations
+import com.jooheon.toyplayer.data.api.service.ApiStationsService
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.radio.RadioData
-import com.jooheon.toyplayer.domain.model.radio.RadioType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class RemoteMusicDataSource @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val apiKbsService: ApiKbsService,
     private val apiSbsService: ApiSbsService,
     private val apiMbcService: ApiMbcService,
+    private val apiStationsService: ApiStationsService,
 ) {
     suspend fun getStreamingMusicList(): List<Song> {
-        val list = withContext(Dispatchers.IO) {
-            TestStreamUrl.list
-        }
-        return list
+        val stations = apiStationsService.getStreamStations()
+        return stations.map { it.toSong(context) }
     }
 
-    fun getRadioStationList(): List<Song> {
-        return  kbsStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
-                sbsStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
-                mbcStations.mapIndexed { index, radioData -> radioData.toSong(index) } +
-                etcStations.mapIndexed { index, radioData -> radioData.toSong(index) }
+    suspend fun getRadioStationList(): List<RadioData> {
+        val kbsStations = apiStationsService.getKbsStations()
+        val mbcStations = apiStationsService.getMbcStations()
+        val sbsStations = apiStationsService.getSbsStations()
+        val etcStations = apiStationsService.getEtcStations()
+        val stations = kbsStations + mbcStations + sbsStations + etcStations
+
+        return stations.map { it.toRadioData(context) }
     }
 
     suspend fun getKbsRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
@@ -73,7 +71,8 @@ class RemoteMusicDataSource @Inject constructor(
             Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
         }
     }
-    suspend fun getEtcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+
+    fun getEtcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
         return if(radioData.url.isNullOrBlank()) {
             Result.Error(MusicDataError.Empty)
         } else {

@@ -66,7 +66,8 @@ object MusicUtil {
         try {
             if (URLUtil.isHttpUrl(imageUrl) ||
                 URLUtil.isHttpsUrl(imageUrl) ||
-                URLUtil.isContentUrl(imageUrl)) {
+                URLUtil.isContentUrl(imageUrl) ||
+                imageUrl.startsWith("android.resource://")) {
                 return imageUrl.toUri()
             }
         } catch (e: Exception) {
