@@ -2,6 +2,8 @@ package com.jooheon.toyplayer.domain.usecase
 
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
@@ -29,5 +31,23 @@ class PlaylistUseCase @Inject constructor(
 
     suspend fun updatePlaylists(vararg playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.updatePlaylists(*playlist)
+    }
+
+    suspend fun checkValidName(name: String): Boolean = withContext(Dispatchers.IO) {
+        if(name.isBlank()) return@withContext false
+
+        val result = getAllPlaylist()
+        return@withContext when(result) {
+            is Result.Success -> name !in result.data.map { it.name }
+            is Result.Error -> false
+        }
+    }
+
+    suspend fun nextPlaylistIdOrNull(): Int? = withContext(Dispatchers.IO) {
+        val result = getAllPlaylist()
+        return@withContext when(result) {
+            is Result.Success -> result.data.maxOf { it.id } + 1
+            is Result.Error -> null
+        }
     }
 }

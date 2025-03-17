@@ -1,13 +1,11 @@
 package com.jooheon.toyplayer.features.player.component.info.control
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +35,8 @@ internal fun ControlSection(
     onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -72,9 +72,12 @@ internal fun ControlSection(
         ControlButton(
             isLoading = isLoading,
             isPlaying = musicState.isPlaying(),
-            onClick = onPlayPauseClick,
+            onPlayPauseClick = onPlayPauseClick,
+            onNextClick = onNextClick,
+            onPreviousClick = onPreviousClick,
             modifier = Modifier
                 .align(Alignment.Center)
+                .fillMaxWidth()
                 .padding(bottom = contentHeight() * 0.6f),
         )
     }
@@ -98,6 +101,8 @@ private fun PreviewControlSection() {
             onPlaylistClick = {},
             onSettingClick = {},
             onPlayPauseClick = {},
+            onNextClick = {},
+            onPreviousClick = {},
         )
     }
 }

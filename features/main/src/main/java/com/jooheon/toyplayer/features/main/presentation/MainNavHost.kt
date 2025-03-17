@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.main.presentation
 
+import android.view.MotionEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -10,6 +11,7 @@ import com.jooheon.toyplayer.features.artist.navigation.artistNavGraph
 import com.jooheon.toyplayer.features.main.navigation.mainNavGraph
 import com.jooheon.toyplayer.features.playlist.navigation.playlistNavGraph
 import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 internal fun MainNavHost(

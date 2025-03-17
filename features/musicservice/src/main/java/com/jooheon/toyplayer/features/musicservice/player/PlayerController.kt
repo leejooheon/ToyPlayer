@@ -5,12 +5,17 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.Error.Companion.toErrorOrNull
+import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
+import com.jooheon.toyplayer.domain.model.common.errors.RootError
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
 import com.jooheon.toyplayer.features.musicservice.ext.enqueue
@@ -133,33 +138,46 @@ class PlayerController(private val scope: CoroutineScope) {
     }
 
     fun enqueue(
-        songs: List<Song>,
+        mediaItems: List<MediaItem>,
         startIndex: Int,
-        addNext: Boolean,
         playWhenReady: Boolean,
     ) = executeAfterPrepare { player ->
-        if (addNext) { // TabToSelect
-            val newMediaItems = songs.distinctBy {
-                it.key() // remove duplicate
-            }.map {
-                it.toMediaItem()
-            }
-
-            player.enqueue(
-                mediaItems = newMediaItems,
-                playWhenReady = playWhenReady
-            )
-        } else { // TabToPlay
-            val newMediaItems = songs.map { it.toMediaItem() }
-
-            player.forceEnqueue(
-                mediaItems = newMediaItems,
-                startIndex = startIndex,
-                startPositionMs = C.TIME_UNSET,
-                playWhenReady = playWhenReady
-            )
-        }
+        player.forceEnqueue(
+            mediaItems = mediaItems,
+            startIndex = startIndex,
+            startPositionMs = C.TIME_UNSET,
+            playWhenReady = playWhenReady
+        )
     }
+
+//    fun enqueue(
+//        songs: List<Song>,
+//        startIndex: Int,
+//        addNext: Boolean,
+//        playWhenReady: Boolean,
+//    ) = executeAfterPrepare { player ->
+//        if (addNext) { // TabToSelect
+//            val newMediaItems = songs.distinctBy {
+//                it.key() // remove duplicate
+//            }.map {
+//                it.toMediaItem()
+//            }
+//
+//            player.enqueue(
+//                mediaItems = newMediaItems,
+//                playWhenReady = playWhenReady
+//            )
+//        } else { // TabToPlay
+//            val newMediaItems = songs.map { it.toMediaItem() }
+//
+//            player.forceEnqueue(
+//                mediaItems = newMediaItems,
+//                startIndex = startIndex,
+//                startPositionMs = C.TIME_UNSET,
+//                playWhenReady = playWhenReady
+//            )
+//        }
+//    }
 
     fun onDeleteAtPlayingQueue(
         songs: List<Song>
@@ -177,6 +195,25 @@ class PlayerController(private val scope: CoroutineScope) {
         songIndexList.forEach {
             player.removeMediaItem(it)
         }
+    }
+
+    fun sendCustomCommand(
+        context: Context,
+        command: CustomCommand,
+        listener: (Result<Unit, RootError>) -> Unit,
+    ) = executeAfterPrepare {
+        val listenableFuture = it.sendCustomCommand(command)
+        listenableFuture.addListener({
+            val result = listenableFuture.get()
+            if(result.resultCode == LibraryResult.RESULT_SUCCESS) {
+                listener.invoke(Result.Success(Unit))
+            } else {
+                val data = "TODO" //TODO result.extras.getString(EssentialPlaybackError.key, null)
+                val error = data.toErrorOrNull() ?: MusicDataError.InvalidData("sendCustomCommand: bundle has no data. $command")
+                Timber.e("sendCustomCommand[$command], error: $error")
+                listener.invoke(Result.Error(error))
+            }
+        }, ContextCompat.getMainExecutor(context))
     }
 
     private suspend fun awaitConnect(): MediaBrowser? {

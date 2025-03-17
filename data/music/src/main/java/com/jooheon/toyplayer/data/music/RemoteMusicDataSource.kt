@@ -31,7 +31,6 @@ class RemoteMusicDataSource @Inject constructor(
         val sbsStations = apiStationsService.getSbsStations()
         val etcStations = apiStationsService.getEtcStations()
         val stations = kbsStations + mbcStations + sbsStations + etcStations
-
         return stations.map { it.toRadioData(context) }
     }
 

@@ -10,6 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,7 +24,10 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.DropDownMenuEvent
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistColumnItem
+import com.jooheon.toyplayer.features.playlist.main.component.PlaylistDialog
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistHeader
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
@@ -43,12 +49,13 @@ fun PlaylistScreen(
         onEvent = {
             when(it) {
                 is PlaylistEvent.OnPlaylistClick -> {
-                    val destination = ScreenNavigation.Playlist.Details(it.playlist.id)
+                    val destination = ScreenNavigation.Playlist.Details(it.id)
                     navigateTo.invoke(destination)
                 }
-                else -> {}
+                else -> viewModel.dispatch(it)
             }
         },
+        onDropDownMenuEvent = {},
     )
 }
 
@@ -57,8 +64,11 @@ private fun PlaylistScreenInternal(
     uiState: PlaylistUiState,
     onBackClick: () -> Unit,
     onEvent: (PlaylistEvent) -> Unit,
+    onDropDownMenuEvent: (DropDownMenuEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
+    var playlistDialogState by remember { mutableStateOf(false to Playlist.default) }
+
     TopAppBarBox(
         title = UiText.StringResource(Strings.title_playlist).asString(),
         onClick = onBackClick,
@@ -77,7 +87,7 @@ private fun PlaylistScreenInternal(
                 item {
                     PlaylistHeader(
                         onAddPlaylistClick = {
-
+                            playlistDialogState = true to Playlist.default
                         }
                     )
                 }
@@ -88,15 +98,29 @@ private fun PlaylistScreenInternal(
                 ) { playlist ->
                     PlaylistColumnItem(
                         playlist = playlist,
-                        showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { it.hashCode() },
-                        onItemClick = {
-//                            onItemClick(playlist)
-                                      },
-                        onDropDownMenuClick = { _ ,_ ->
-//                                              onDropDownMenuClick,
+                        showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { (id, _) -> id },
+                        onItemClick = { onEvent.invoke(PlaylistEvent.OnPlaylistClick(playlist.id)) },
+                        onDropDownMenuClick = {
+                            val event = MusicDropDownMenuState.indexToEvent(it, playlist)
+
+                            when(event) {
+                                is DropDownMenuEvent.OnChangeName -> playlistDialogState = true to playlist
+                                else -> onDropDownMenuEvent.invoke(event)
+                            }
                         },
                     )
                 }
+            }
+        )
+
+        PlaylistDialog(
+            state = playlistDialogState,
+            onOkButtonClicked = {
+                playlistDialogState = false to Playlist.default
+                onEvent.invoke(PlaylistEvent.OnAddPlaylist(it))
+            },
+            onDismissRequest = {
+                playlistDialogState = false to Playlist.default
             }
         )
     }
@@ -110,6 +134,7 @@ private fun MusicPlaylistScreenPreview() {
             uiState = PlaylistUiState.preview,
             onBackClick = {},
             onEvent = {},
+            onDropDownMenuEvent = {},
         )
     }
 }

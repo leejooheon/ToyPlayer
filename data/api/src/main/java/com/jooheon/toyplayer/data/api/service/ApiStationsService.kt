@@ -17,6 +17,6 @@ interface ApiStationsService {
     @GET("/app/main/data/api/src/main/assets/etc_stations.json")
     suspend fun getEtcStations(): List<StationResponse>
 
-    @GET("/app/main/data/api/src/main/assets/etc_stations.json")
+    @GET("/app/main/data/api/src/main/assets/stream_stations.json")
     suspend fun getStreamStations(): List<StreamResponse>
 }

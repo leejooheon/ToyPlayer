@@ -26,7 +26,7 @@ import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
 import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaDetailHeader
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaItemSmallNoImage
-import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenuState
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable

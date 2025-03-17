@@ -16,13 +16,12 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
@@ -32,9 +31,8 @@ internal fun ContentScrollableItem(
     titleAlpha: Float,
     isPlaying: Boolean,
     enableScroll: Boolean,
-    onContentClick: (Int, Song) -> Unit,
+    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
-    onOffsetChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val nestedScrollState = rememberNestedScrollInteropConnection()
@@ -44,7 +42,6 @@ internal fun ContentScrollableItem(
         snapshotFlow { listState.firstVisibleItemScrollOffset }
             .distinctUntilChanged()
             .collect { scrollOffset ->
-                onOffsetChanged.invoke(scrollOffset.toFloat())
                 if (listState.firstVisibleItemIndex != 0) return@collect
                 val alpha = when {
                     scrollOffset < 1 -> 1f
@@ -106,7 +103,6 @@ private fun PreviewContentScrollableSection() {
             enableScroll = true,
             onContentAlphaChanged = {},
             onContentClick = { _, _ -> },
-            onOffsetChanged = {},
         )
     }
 }

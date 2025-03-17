@@ -11,6 +11,7 @@
 
     <!-- error -->
     <string name="some_error">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
+    <string name="error_playlist">%s는 이미 존재하는 이름입니다.</string>
 
     <!-- notification -->
     <string name="playing_notification_description">재생 알림은 재생/일시 정지 등에 대한 작업을 제공합니다.</string>
@@ -64,16 +65,16 @@
     <string name="current_playing_song">현재 재생중인 음악</string>
     <string name="cached_song">캐시된 음악</string>
 
-    <string name="playlist_playing_queue">재생목록</string>
+    <string name="playlist_playing_queue">현재 재생중인 목록</string>
     <string name="playlist_radio">라디오</string>
     <string name="playlist_stream">스트리밍 음악</string>
     <string name="playlist_local">로컬 음악</string>
     <string name="playlist_asset">구글 테스트 음악</string>
 
+    <string name="dialog_edit_playlist_name">재생목록 이름 바꾸기</string>
     <string name="dialog_new_playlist">새 재생목록</string>
     <string name="dialog_new_playlist_label">재생목록</string>
     <string name="dialog_new_playlist_placeholder">재생목록 이름</string>
-    <string name="dialog_edit_playlist_name">재생목록 이름 바꾸기</string>
 
     <string name="option_see_more">옵션 더보기</string>
     <string name="option_only_local">로컬 음악</string>

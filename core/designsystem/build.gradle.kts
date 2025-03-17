@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material)
     implementation(projects.core.resources)
     implementation(projects.domain.model)
 }

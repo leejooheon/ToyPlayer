@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
@@ -21,17 +20,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
+import com.jooheon.toyplayer.features.common.compose.TouchEventController
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import com.jooheon.toyplayer.features.player.model.toChunkedModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
@@ -42,7 +40,6 @@ fun PlayerScreen(
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var infoSectionVisibleState by remember { mutableStateOf(false) }
@@ -56,11 +53,8 @@ fun PlayerScreen(
         if(uiState.contentModels.isEmpty()) return@LaunchedEffect
         if(viewModel.autoPlaybackProperty.get()) return@LaunchedEffect
 
-        val firstPlaylist = uiState.contentModels.first().playlist
-        val event = PlayerEvent.OnPlayAutomatic(firstPlaylist)
-
         viewModel.autoPlaybackProperty.set(true)
-        viewModel.dispatch(event)
+        viewModel.dispatch(context, PlayerEvent.OnPlayAutomatic)
     }
 
     LaunchedEffect(autoPlaybackStarted, uiState.pagerModel) { // 앱 시작 시 자동 재생하는 부분 - 2: 정보 화면 표시
@@ -100,24 +94,29 @@ fun PlayerScreen(
                 is PlayerEvent.OnLibraryClick -> {
                     navigateTo.invoke(ScreenNavigation.Library)
                 }
-                else -> viewModel.dispatch(it)
+                else -> viewModel.dispatch(context, it)
             }
         },
     )
 }
 
-@OptIn(FlowPreview::class)
 @Composable
 private fun PlayerScreenInternal(
     uiState: PlayerUiState,
     infoSectionVisibleState: Boolean,
     onPlayerEvent: (PlayerEvent) -> Unit,
 ) {
-    val loadingState by rememberUpdatedState(uiState.isLoading())
-
     val scope = rememberCoroutineScope()
     var screenHideJob by remember { mutableStateOf<Job?>(null) }
-    val touchEventState = remember { MutableSharedFlow<Float>() }
+    fun restartHideJob() {
+        Timber.d("restartHideJob")
+        screenHideJob?.cancel()
+        screenHideJob = null
+        screenHideJob = scope.launch(Dispatchers.IO) {
+            delay(5.seconds)
+            onPlayerEvent.invoke(PlayerEvent.OnScreenTouched(false))
+        }
+    }
 
     val channelPagerState = rememberPagerState(
         initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.key()),
@@ -129,34 +128,30 @@ private fun PlayerScreenInternal(
         pageCount = { uiState.contentModels.toChunkedModel().size + 1 },
     )
 
-    LaunchedEffect(infoSectionVisibleState) {
-        fun restartHideJob() {
-            screenHideJob?.cancel()
-            screenHideJob = null
-            screenHideJob = scope.launch(Dispatchers.IO) {
-                delay(5.seconds)
-                onPlayerEvent.invoke(PlayerEvent.OnScreenTouched(false))
-            }
-        }
-        launch {
-            Timber.d("infoSectionVisibleState: $infoSectionVisibleState")
-            if (!infoSectionVisibleState) return@launch
+    ObserveAsEvents(
+        flow = TouchEventController.debouncedEvent,
+        key1 = infoSectionVisibleState,
+    ) {
+        if(infoSectionVisibleState) {
             restartHideJob()
         }
-        launch {
-            touchEventState.debounce(100).collect {
-                Timber.d("restartHideJob")
-                restartHideJob()
-            }
+    }
+
+    LaunchedEffect(infoSectionVisibleState) {
+        Timber.d("infoSectionVisibleState: $infoSectionVisibleState")
+        if (infoSectionVisibleState) {
+            restartHideJob()
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(infoSectionVisibleState) {
                 detectTapGestures(
                     onTap = {
-                        onPlayerEvent.invoke(PlayerEvent.OnScreenTouched(!infoSectionVisibleState))
+                        val event = PlayerEvent.OnScreenTouched(!infoSectionVisibleState)
+                        onPlayerEvent.invoke(event)
                     }
                 )
             }
@@ -165,9 +160,7 @@ private fun PlayerScreenInternal(
             pagerState = channelPagerState,
             model = uiState.pagerModel,
             currentSong = uiState.musicState.currentPlayingMusic,
-            onSwipe = {
-                onPlayerEvent.invoke(PlayerEvent.OnSwipe(it))
-            },
+            onSwipe = { onPlayerEvent.invoke(PlayerEvent.OnSwipe(it)) },
             modifier = Modifier,
         )
 
@@ -179,23 +172,14 @@ private fun PlayerScreenInternal(
             models = uiState.contentModels,
             isLoading = uiState.isLoading(),
             isShow = infoSectionVisibleState,
-            onLibraryClick = {
-                onPlayerEvent.invoke(PlayerEvent.OnLibraryClick)
-            },
-            onPlaylistClick = {
-                onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick)
-            },
-            onSettingClick = {
-                onPlayerEvent.invoke(PlayerEvent.OnSettingClick)
-            },
-            onPlayPauseClick = {
-                onPlayerEvent.invoke(PlayerEvent.OnPlayPauseClick)
-            },
-            onContentClick = { playlistId, song ->
-                onPlayerEvent.invoke(PlayerEvent.OnContentClick(playlistId, song))
-            },
-            onOffsetChanged = {
-                scope.launch { touchEventState.emit(it) }
+            onLibraryClick = { onPlayerEvent.invoke(PlayerEvent.OnLibraryClick) },
+            onPlaylistClick = { onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick) },
+            onSettingClick = { onPlayerEvent.invoke(PlayerEvent.OnSettingClick) },
+            onPlayPauseClick = { onPlayerEvent.invoke(PlayerEvent.OnPlayPauseClick) },
+            onNextClick = { onPlayerEvent.invoke(PlayerEvent.OnNextClick) },
+            onPreviousClick = { onPlayerEvent.invoke(PlayerEvent.OnPreviousClick) },
+            onContentClick = { playlist, index ->
+                onPlayerEvent.invoke(PlayerEvent.OnContentClick(playlist, index))
             },
         )
     }

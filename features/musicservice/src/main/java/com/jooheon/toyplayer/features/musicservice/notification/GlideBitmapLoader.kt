@@ -18,6 +18,7 @@ import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import androidx.core.graphics.createBitmap
+import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class GlideBitmapLoader(
@@ -53,10 +54,7 @@ class GlideBitmapLoader(
                         context = context,
                         uri = uri,
                         size = Size(bitmapSize, bitmapSize),
-                        onDone = {
-                            val bitmap = it ?: defaultBitmap
-                            continuation.resume(bitmap)
-                        }
+                        onDone = { continuation.resume(it) }
                     )
                 }
             } catch (e: Exception) {

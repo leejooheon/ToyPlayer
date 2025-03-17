@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.integerResource
@@ -38,9 +37,7 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import com.jooheon.toyplayer.features.player.model.toChunkedModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import kotlin.math.max
 import kotlin.math.min
 
@@ -58,8 +55,9 @@ fun InfoSection(
     onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
     onPlayPauseClick: () -> Unit,
-    onContentClick: (Int, Song) -> Unit,
-    onOffsetChanged: (Float) -> Unit,
+    onNextClick:() -> Unit,
+    onPreviousClick: () -> Unit,
+    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
 ) {
     val chunkedModel = models.toChunkedModel()
     var contentAlpha by remember { mutableFloatStateOf(1f) }
@@ -70,11 +68,6 @@ fun InfoSection(
                 min(max(pagerState.currentPageOffsetFraction * 2, 0f), 1f)
             } else 1f
         }
-    }
-
-    LaunchedEffect(pagerState){
-        snapshotFlow { pagerState.currentPageOffsetFraction }
-            .collectLatest { onOffsetChanged.invoke(it) }
     }
 
     LaunchedEffect(isShow) {
@@ -125,6 +118,8 @@ fun InfoSection(
                             onPlaylistClick = onPlaylistClick,
                             onSettingClick = onSettingClick,
                             onPlayPauseClick = onPlayPauseClick,
+                            onNextClick = onNextClick,
+                            onPreviousClick = onPreviousClick,
                         )
                         else -> {
 //                            Timber.d("index: $pageIndex / ${chunkedModel.size}")
@@ -143,10 +138,6 @@ fun InfoSection(
                                 contentAlpha = contentAlpha,
                                 isPlaying = musicState.isPlaying(),
                                 enableScroll = isLastPage,
-                                onOffsetChanged = {
-                                    Timber.d("onOffsetChanged: $it")
-                                    onOffsetChanged.invoke(it)
-                                },
                                 onContentClick = onContentClick,
                                 onContentAlphaChanged = { alpha -> contentAlpha = alpha },
                                 modifier = Modifier
@@ -198,8 +189,9 @@ private fun PreviewInfoSection() {
             onPlaylistClick = {},
             onSettingClick = {},
             onPlayPauseClick = {},
+            onNextClick = {},
+            onPreviousClick = {},
             onContentClick = { _, _ -> },
-            onOffsetChanged = {},
         )
     }
 }

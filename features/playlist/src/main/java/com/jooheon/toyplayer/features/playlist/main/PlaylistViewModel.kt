@@ -2,9 +2,14 @@ package com.jooheon.toyplayer.features.playlist.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.compose.SnackbarController
+import com.jooheon.toyplayer.features.common.compose.SnackbarEvent
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.DropDownMenuEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,16 +42,42 @@ class PlaylistViewModel @Inject constructor(
 
     internal fun dispatch(event: PlaylistEvent) = viewModelScope.launch {
         when(event) {
-            is PlaylistEvent.OnPlaylistClick -> onPlaylistClick(event.playlist)
+            is PlaylistEvent.OnPlaylistClick -> { /** nothing **/ }
+            is PlaylistEvent.OnDropDownMenuClick -> deletePlaylist(event.playlist)
             is PlaylistEvent.OnAddPlaylist -> insertPlaylist(event.title)
-            is PlaylistEvent.OnDropDownMenuClick -> {}
+        }
+    }
+    internal fun dispatch(event: DropDownMenuEvent) = viewModelScope.launch {
+        when(event) {
+            is DropDownMenuEvent.OnDelete -> {}
+            is DropDownMenuEvent.OnSaveAsFile -> {}
+            is DropDownMenuEvent.OnChangeName -> { /** nothing **/ }
         }
     }
 
-    private fun onPlaylistClick(playlist: Playlist) {
-
+    private suspend fun deletePlaylist(playlist: Playlist) {
+        playlistUseCase.deletePlaylists(playlist)
+        loadData()
     }
-    private fun insertPlaylist(title: String) {
 
+    private suspend fun insertPlaylist(name: String) {
+        if(playlistUseCase.checkValidName(name)) {
+            playlistUseCase.nextPlaylistIdOrNull()?.let {
+                val playlist = Playlist(
+                    id = it,
+                    name = name,
+                    thumbnailUrl = "",
+                    songs = emptyList()
+                )
+                playlistUseCase.insertPlaylists(playlist)
+                loadData()
+            } ?: run {
+                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                SnackbarController.sendEvent(event)
+            }
+        } else {
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_playlist, name))
+            SnackbarController.sendEvent(event)
+        }
     }
 }

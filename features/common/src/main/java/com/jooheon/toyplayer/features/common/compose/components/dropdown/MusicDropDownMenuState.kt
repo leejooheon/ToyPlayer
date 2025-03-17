@@ -1,9 +1,8 @@
-package com.jooheon.toyplayer.features.common.compose.components.media
+package com.jooheon.toyplayer.features.common.compose.components.dropdown
 
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.music.Song
 
 data class MusicDropDownMenuState(
     val items: List<UiText>,
@@ -52,17 +51,17 @@ data class MusicDropDownMenuState(
 //                else -> SongItemEvent.Placeholder
 //            }
 //        }
-//
-//        fun indexToEvent(
-//            index: Int,
-//            playlist: Playlist,
-//        ): PlaylistEvent {
-//            return when(index) {
-//                0 -> PlaylistEvent.OnDelete(playlist)
-//                1 -> PlaylistEvent.OnChangeName(playlist)
-//                2 -> PlaylistEvent.OnSaveAsFile(playlist)
-//                else -> PlaylistEvent.Placeholder
-//            }
-//        }
+
+        fun indexToEvent(
+            index: Int,
+            playlist: Playlist,
+        ): DropDownMenuEvent {
+            return when(index) {
+                0 -> DropDownMenuEvent.OnDelete(playlist.id)
+                1 -> DropDownMenuEvent.OnChangeName(playlist.id)
+                2 -> DropDownMenuEvent.OnSaveAsFile(playlist)
+                else -> throw IllegalArgumentException("Invalid index: $index")
+            }
+        }
     }
 }

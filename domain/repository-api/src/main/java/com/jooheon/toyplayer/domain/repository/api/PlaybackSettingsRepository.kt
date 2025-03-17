@@ -5,13 +5,14 @@ import com.jooheon.toyplayer.domain.model.music.ShuffleMode
 import kotlinx.coroutines.flow.Flow
 
 interface PlaybackSettingsRepository {
+    suspend fun setRecentPlaylistId(id: Int)
+    suspend fun setLastPlayedMediaId(mediaId: String)
     suspend fun setRepeatMode(repeatMode: Int)
     suspend fun setShuffleMode(shuffleEnabled: Boolean)
-    suspend fun setSkipDuration(duration: Long)
-    suspend fun setPlayingQueueKey(key: Long)
 
-    fun flowRepeatMode(): Flow<RepeatMode>
-    fun flowShuffleMode(): Flow<ShuffleMode>
-    fun flowSkipDuration(): Flow<Long>
-    suspend fun getPlayingQueueKey(): Long
+    fun flowPlaylistId(): Flow<Int>
+    suspend fun repeatMode(): RepeatMode
+    suspend fun shuffleMode(): ShuffleMode
+    suspend fun lastPlayedMediaId(): String
+    suspend fun playlistId(): Int
 }

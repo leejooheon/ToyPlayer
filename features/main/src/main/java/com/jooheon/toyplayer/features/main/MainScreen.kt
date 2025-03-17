@@ -1,17 +1,15 @@
 package com.jooheon.toyplayer.features.main
 
 import android.Manifest
+import android.view.MotionEvent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
@@ -19,28 +17,29 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
 import com.jooheon.toyplayer.features.common.compose.SnackbarController
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
 import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.main.model.MainScreenEvent
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
 import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator
+import com.jooheon.toyplayer.features.main.presentation.CustomSnackbarHost
 import com.jooheon.toyplayer.features.main.presentation.MainNavHost
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
     mainNavigator: MainNavigator = rememberMainNavigator(),
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -69,9 +68,9 @@ fun MainScreen(
         mainNavigator.navController.navigate(ScreenNavigation.Setting.Main)
     }
 
-    MainScreen(
+    MainScreenInternal(
         navigator = mainNavigator,
-        onEvent = viewModel::dispatch
+        snackbarHostState = snackbarHostState,
     )
 
     MaybeRequestMediaPermission(
@@ -82,14 +81,14 @@ fun MainScreen(
 }
 
 @Composable
-private fun MainScreen(
+private fun MainScreenInternal(
     navigator: MainNavigator,
-    onEvent: (MainScreenEvent) -> Unit
+    snackbarHostState: SnackbarHostState,
 ) {
-    val snackBarHostState = remember { SnackbarHostState() }
-
     Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackbarHost = {
+            CustomSnackbarHost(hostState = snackbarHostState)
+        },
         modifier = Modifier,
     ) { innerPadding ->
         MainNavHost(
@@ -130,9 +129,9 @@ private fun MaybeRequestMediaPermission(
 @Composable
 private fun PreviewMainScreen() {
     ToyPlayerTheme {
-        MainScreen(
+        MainScreenInternal(
             navigator = rememberMainNavigator(),
-            onEvent = { _ -> }
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }

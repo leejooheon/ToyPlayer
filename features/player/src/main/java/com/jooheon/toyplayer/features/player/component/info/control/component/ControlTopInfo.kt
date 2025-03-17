@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Article
 import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
-import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
@@ -44,7 +42,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.ext.fadingEdge
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
@@ -131,7 +128,7 @@ internal fun ControlTopInfo(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.labelMedium.copy(
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = androidx.compose.ui.graphics.Color.White
                     ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -158,9 +155,10 @@ internal fun ControlTopInfo(
                 Icon(
                     imageVector = Icons.Outlined.Album,
                     contentDescription = stringResource(Strings.title_playlist),
-                    tint = MaterialTheme.colorScheme.onSecondary,
+                    tint = androidx.compose.ui.graphics.Color.White,
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
                 onClick = onPlaylistClick,
@@ -171,9 +169,10 @@ internal fun ControlTopInfo(
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.FeaturedPlayList,
                     contentDescription = stringResource(Strings.title_playlist),
-                    tint = MaterialTheme.colorScheme.onSecondary,
+                    tint = androidx.compose.ui.graphics.Color.White,
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
                 onClick = onSettingClick,
@@ -184,7 +183,7 @@ internal fun ControlTopInfo(
                 Icon(
                     imageVector = Icons.Outlined.Settings,
                     contentDescription = stringResource(Strings.title_settings),
-                    tint = MaterialTheme.colorScheme.onSecondary,
+                    tint = androidx.compose.ui.graphics.Color.White,
                 )
             }
         }

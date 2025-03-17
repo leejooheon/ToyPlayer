@@ -39,7 +39,7 @@ internal fun ControlBottomInfo(
         Text(
             text = title,
             style = MaterialTheme.typography.displayMedium.copy(
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = androidx.compose.ui.graphics.Color.White,
             ),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -50,7 +50,7 @@ internal fun ControlBottomInfo(
         Text(
             text = artist,
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSecondary.copy(
+                color = androidx.compose.ui.graphics.Color.White.copy(
                     alpha = 0.5f
                 ),
             ),
@@ -74,7 +74,7 @@ internal fun ControlBottomInfo(
                 Icon(
                     imageVector = Icons.Rounded.KeyboardArrowUp,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondary,
+                    tint = androidx.compose.ui.graphics.Color.White,
                 )
             }
         }

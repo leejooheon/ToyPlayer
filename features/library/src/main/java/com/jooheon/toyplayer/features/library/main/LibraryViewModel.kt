@@ -33,10 +33,6 @@ class LibraryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LibraryUiState.default)
     val uiState = _uiState.asStateFlow()
 
-    internal fun dispatch(event: LibraryEvent) {
-
-    }
-
     internal fun loadData(context: Context) = viewModelScope.launch {
         val artists = getArtists(context)
         _uiState.update {

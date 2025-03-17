@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.Composable
+import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.features.common.compose.TouchEventController
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -33,7 +34,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return super.onTouchEvent(event)
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        lifecycleScope.launch {
+            TouchEventController.sendEvent(ev)
+        }
+        return super.dispatchTouchEvent(ev)
     }
 }

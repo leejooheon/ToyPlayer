@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.player.component.info.content
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.component.info.content.component.ContentPagerItem
 import com.jooheon.toyplayer.features.player.component.info.content.component.ContentScrollableItem
@@ -17,8 +18,7 @@ internal fun ContentSection(
     contentAlpha: Float,
     isPlaying: Boolean,
     enableScroll: Boolean,
-    onOffsetChanged: (Float) -> Unit,
-    onContentClick: (Int, Song) -> Unit,
+    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,7 +31,6 @@ internal fun ContentSection(
             enableScroll = enableScroll,
             onContentClick = onContentClick,
             onContentAlphaChanged = onContentAlphaChanged,
-            onOffsetChanged = onOffsetChanged,
             modifier = modifier,
         )
     } else {
@@ -41,7 +40,6 @@ internal fun ContentSection(
             titleAlpha = titleAlpha,
             isPlaying = isPlaying,
             onContentClick = onContentClick,
-            onOffsetChanged = onOffsetChanged,
             modifier = modifier.alpha(contentAlpha),
         )
     }

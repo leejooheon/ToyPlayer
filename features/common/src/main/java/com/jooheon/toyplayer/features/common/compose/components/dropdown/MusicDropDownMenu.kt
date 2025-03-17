@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.common.compose.components.media
+package com.jooheon.toyplayer.features.common.compose.components.dropdown
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.DropdownMenu

@@ -37,7 +37,6 @@ import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.extension.toDp
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 internal fun ContentCardItem(
     title: String,
@@ -122,7 +121,7 @@ internal fun ContentCardItem(
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = androidx.compose.ui.graphics.Color.White,
             ),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,

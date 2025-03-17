@@ -1,8 +1,13 @@
 package com.jooheon.toyplayer.features.player.component.info.control.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
+import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,27 +28,47 @@ import com.jooheon.toyplayer.core.resources.Strings
 internal fun ControlButton(
     isLoading: Boolean,
     isPlaying: Boolean,
-    onClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
     modifier: Modifier,
 ) {
-    Box(
-        contentAlignment = Alignment.Center,
+    Row(
         modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        if(isLoading) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 3.dp
-            )
-        } else {
-            Icon(
-                painter = if(isPlaying) painterResource(Drawables.ic_pause)
-                else painterResource(Drawables.ic_play),
-                contentDescription = stringResource(Strings.action_play_pause),
-                tint = Color.Unspecified,
-                modifier = Modifier.size(48.dp).bounceClick { onClick.invoke() }
-            )
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.ArrowBackIos,
+            contentDescription = stringResource(Strings.action_play_pause),
+            tint = Color.White,
+            modifier = Modifier.size(32.dp).bounceClick { onPreviousClick.invoke() }
+        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier,
+        ) {
+            if(isLoading) {
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 3.dp
+                )
+            } else {
+                Icon(
+                    painter = if(isPlaying) painterResource(Drawables.ic_pause)
+                    else painterResource(Drawables.ic_play),
+                    contentDescription = stringResource(Strings.action_play_pause),
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(64.dp).bounceClick { onPlayPauseClick.invoke() }
+                )
+            }
         }
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
+            contentDescription = stringResource(Strings.action_play_pause),
+            tint = Color.White,
+            modifier = Modifier.size(32.dp).bounceClick { onNextClick.invoke() }
+        )
     }
 }
 
@@ -54,8 +79,10 @@ private fun PreviewControlButton() {
         ControlButton(
             isPlaying = false,
             isLoading = false,
-            onClick = {},
-            modifier = Modifier.wrapContentSize(),
+            onPlayPauseClick = {},
+            onNextClick = {},
+            onPreviousClick = {},
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }

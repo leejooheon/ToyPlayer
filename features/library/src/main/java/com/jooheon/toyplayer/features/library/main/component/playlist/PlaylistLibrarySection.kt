@@ -39,9 +39,10 @@ internal fun PlaylistLibrarySection(
 
     BoxWithConstraints(modifier = modifier) {
         val childItemSize = 3
+        val columnSize = 2
         val maxWidth = constraints.maxWidth
         val childItemContentSize = (maxWidth - 48 * 2 - 16 * 2) / childItemSize
-        val chunkedItems = models.chunked(childItemSize).take(2)
+        val chunkedItems = models.chunked(childItemSize).take(columnSize)
 
         Column(
             modifier = Modifier
@@ -61,7 +62,7 @@ internal fun PlaylistLibrarySection(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     items.forEachIndexed { playlistIndex, playlist ->
-                        if(index + 1 == chunkedItems.size && playlistIndex + 1 == items.size) { // last item
+                        if(index + 1 >= columnSize && items.size >= childItemSize && playlistIndex + 1 == items.size) { // last item
                             PlaylistLibraryItem(
                                 name = UiText.StringResource(Strings.action_see_more).asString(),
                                 icon = icons[playlistIndex],
@@ -74,6 +75,9 @@ internal fun PlaylistLibrarySection(
                                 onClick = { onClick.invoke(playlist.id) }
                             )
                         }
+                    }
+                    if(items.size < 3) {
+
                     }
                 }
             }

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.common.contentWidth
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
@@ -35,7 +36,7 @@ internal fun ContentItem(
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (Int, Song) -> Unit,
+    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -53,7 +54,7 @@ internal fun ContentItem(
             Text(
                 text = model.playlist.name,
                 style = MaterialTheme.typography.titleMedium.copy(
-                    color = MaterialTheme.colorScheme.onSecondary,
+                    color = androidx.compose.ui.graphics.Color.White,
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -77,7 +78,7 @@ internal fun ContentItem(
                     imageUrl = item.imageUrl,
                     isPlaying = isPlaying,
                     isSelectedItem = item.key() == currentSong.key(),
-                    onClick = { onContentClick.invoke(model.playlist.id, item) },
+                    onClick = { onContentClick.invoke(model.playlist.id, index) },
                     modifier = Modifier.width(contentWidth())
                 )
             }

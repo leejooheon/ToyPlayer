@@ -16,6 +16,8 @@ import com.jooheon.toyplayer.domain.model.radio.RadioData
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 
+fun MediaItem.isHls(): Boolean = localConfiguration?.mimeType == MimeTypes.APPLICATION_M3U8
+
 fun Song.toMediaItem(): MediaItem {
     val uri = if(isRadio) radioData()!!.serialize().toUri() else uri
     val customCacheKey = if(isRadio) radioData()!!.serialize() else key()

@@ -24,7 +24,7 @@ internal fun InsidePager(
     pagerState: PagerState,
     model: PlayerUiState.PagerModel,
     currentSong: Song,
-    onSwipe: (Song) -> Unit,
+    onSwipe: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var userScroll by remember { mutableStateOf(false) }
@@ -48,12 +48,7 @@ internal fun InsidePager(
             page to isScrollInProgress
         }.collectLatest { (page, isScrollInProgress) ->
             if (userScroll && !isScrollInProgress) {
-                val item = model.items
-                    .getOrNull(page)
-                    .takeIf { it != currentSong }
-                    ?: return@collectLatest
-
-                onSwipe.invoke(item)
+                onSwipe.invoke(page)
             }
 
             userScroll = isScrollInProgress

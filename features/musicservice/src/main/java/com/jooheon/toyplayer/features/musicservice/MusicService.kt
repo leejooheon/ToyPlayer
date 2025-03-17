@@ -5,12 +5,17 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.OptIn
+import androidx.core.content.getSystemService
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
+import com.jooheon.toyplayer.features.musicservice.ext.isHls
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
@@ -66,6 +71,7 @@ class MusicService: MediaLibraryService() {
 
     private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
+    private var notificationManager: NotificationManager? = null
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
@@ -104,20 +110,26 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun release() {
-        playbackCacheManager.release()
-        mediaLibrarySessionCallback.release()
-
-        mediaSession?.let {
-            it.player.release()
-            release()
-        }
-
         clearListener()
         serviceScope.cancel()
+        playbackCacheManager.release()
+
+        mediaSession?.let {
+            it.player.stop()
+            it.player.clearMediaItems()
+            it.player.removeListener(playbackListener)
+            it.player.release()
+            it.release()
+        }
+        mediaSession = null
+
+        notificationManager?.cancel(NOTIFICATION_ID)
+        notificationManager = null
 //        handleMedia3Bug()
     }
 
     private fun initNotification() {
+        notificationManager = getSystemService()
         customMediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
@@ -165,14 +177,8 @@ class MusicService: MediaLibraryService() {
                     musicStateHolder.shuffleMode
                 ) { repeatMode, shuffleMode ->
                     repeatMode to shuffleMode
-                }.collectLatest { (repeatMode, shuffleMode) ->
-                    mediaSession?.setCustomLayout(
-                        CustomMediaNotificationCommand.layout(
-                            context = this@MusicService,
-                            shuffleMode = shuffleMode,
-                            repeatMode = repeatMode
-                        )
-                    )
+                }.collectLatest {
+                    mediaLibrarySessionCallback.invalidateCustomLayout(mediaSession)
                 }
             }
 
@@ -182,10 +188,14 @@ class MusicService: MediaLibraryService() {
                     if(!player.isPlaying) player.play()
                 }
             }
+
             launch {
                 playbackErrorUseCase.seekToDefaultChannel.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
-                    player.seekToDefaultPosition()
+                    if(player.currentMediaItem?.isHls().defaultFalse()) {
+                        player.seekToDefaultPosition()
+                        player.prepare()
+                    }
                 }
             }
         }
@@ -220,8 +230,5 @@ class MusicService: MediaLibraryService() {
 
         const val NOTIFICATION_ID = 234
         const val NOTIFICATION_CHANNEL_ID = "Jooheon_player_notification"
-
-        const val CYCLE_REPEAT = "$PACKAGE_NAME.cycle_repeat"
-        const val TOGGLE_SHUFFLE = "$PACKAGE_NAME.toggle_shuffle"
     }
 }

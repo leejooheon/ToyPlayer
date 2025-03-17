@@ -1,17 +1,17 @@
 package com.jooheon.toyplayer.features.playlist.main.component
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,87 +19,46 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
+import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.features.common.compose.components.DialogButton
+import com.jooheon.toyplayer.features.common.compose.components.DialogColumn
 import com.jooheon.toyplayer.features.common.compose.components.outlinedTextFieldColor
 
 @Composable
-fun PlaylistDialog(
-    openDialog: Boolean,
-    title: String,
-    name: String,
-    onConfirmButtonClicked: (String) -> Unit,
-    onDismiss: (() -> Unit),
+internal fun PlaylistDialog(
+    state: Pair<Boolean, Playlist>,
+    onOkButtonClicked: (String) -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
-    if(!openDialog) { return }
+    val (openDialog, playlist) = state
+    if(!openDialog) return
 
-    var playlistName by remember { mutableStateOf(name) }
-
-    AlertDialog(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        textContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        onDismissRequest = { onDismiss() },
-        text = {
-            PlaylistDialogContent(
-                title = title,
-                playlistName = playlistName,
-                onTextChanged = { playlistName = it }
-            )
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
-                    onConfirmButtonClicked(playlistName)
-                }
-            ) {
-                Text(
-                    text = UiText.StringResource(Strings.ok).asString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onDismiss() }
-            ) {
-                Text(
-                    text = UiText.StringResource(Strings.cancel).asString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-        }
-    )
-}
-
-@Composable
-private fun PlaylistDialogContent(
-    title: String,
-    playlistName: String,
-    onTextChanged: (String) -> Unit,
-) {
-    val maxCharacterSize = 10
+    var playlistName by remember { mutableStateOf(playlist.name) }
+    val title = if(playlist.id == Playlist.default.id) {
+        UiText.StringResource(Strings.dialog_new_playlist).asString()
+    } else {
+        UiText.StringResource(Strings.dialog_edit_playlist_name).asString()
+    }
 
     val keyboardController = LocalSoftwareKeyboardController.current
-    Column {
+
+    DialogColumn(
+        fraction = 0.7f,
+        padding = 16.dp,
+        onDismissRequest = onDismissRequest,
+    ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+            style = MaterialTheme.typography.titleMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -110,24 +69,23 @@ private fun PlaylistDialogContent(
                 .padding(horizontal = 16.dp),
             value = playlistName,
             onValueChange = {
-                if(it.length <= maxCharacterSize) {
-                    onTextChanged(it)
-                }
+                playlistName = it
             },
             singleLine = true,
             textStyle = MaterialTheme.typography.bodySmall,
             label = {
                 Text(
-                    text = UiText.StringResource(Strings.dialog_new_playlist_label).asString(),
-                    color = MaterialTheme.colorScheme.onTertiary
+                    text = stringResource(Strings.dialog_new_playlist_label),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    )
                 )
             },
             placeholder = {
                 Text(
-                    text = UiText.StringResource(Strings.dialog_new_playlist_placeholder).asString(),
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        textAlign = TextAlign.Center
+                    text = stringResource(Strings.dialog_new_playlist_placeholder),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                     )
                 )
             },
@@ -137,6 +95,32 @@ private fun PlaylistDialogContent(
                 onDone = { keyboardController?.hide() }
             )
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            DialogButton(
+                text = stringResource(Strings.ok),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                onClick = {
+                    onOkButtonClicked.invoke(playlistName)
+                }
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            DialogButton(
+                text = stringResource(Strings.cancel),
+                style = MaterialTheme.typography.labelMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                onClick = onDismissRequest
+            )
+        }
     }
 }
 
@@ -145,11 +129,9 @@ private fun PlaylistDialogContent(
 private fun PlaylistDialogContentPreview() {
     ToyPlayerTheme {
         PlaylistDialog(
-            openDialog = true,
-            title = UiText.StringResource(Strings.dialog_new_playlist).asString(),
-            name = "",
-            onDismiss = {},
-            onConfirmButtonClicked = {}
+            state = true to Playlist.default,
+            onOkButtonClicked = {},
+            onDismissRequest = {},
         )
     }
 }

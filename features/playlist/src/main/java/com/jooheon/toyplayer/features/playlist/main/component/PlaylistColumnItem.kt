@@ -36,8 +36,8 @@ import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
-import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenu
-import com.jooheon.toyplayer.features.common.compose.components.media.MusicDropDownMenuState
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -45,11 +45,9 @@ internal fun PlaylistColumnItem(
     playlist: Playlist,
     showContextualMenu: Boolean,
     onItemClick: () -> Unit,
-    onDropDownMenuClick: ((index: Int, playlist: Playlist) -> Unit)? = null,
+    onDropDownMenuClick: ((Int) -> Unit)? = null,
 ) {
-    val playlistNameEditIndex = 1
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
-    var playlistDialogState by remember { mutableStateOf(false) }
 
     val thumbnailUrl = playlist.thumbnailUrl.ifBlank {
         playlist.songs.firstOrNull()?.imageUrl
@@ -125,28 +123,12 @@ internal fun PlaylistColumnItem(
                         expanded = dropDownMenuExpanded,
                         dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistItems),
                         onDismissRequest = { dropDownMenuExpanded = false },
-                        onClick = {
-                            if (it == playlistNameEditIndex) {
-                                playlistDialogState = true
-                            } else {
-                                onDropDownMenuClick?.invoke(it, playlist)
-                            }
-                        }
+                        onClick = { onDropDownMenuClick?.invoke(it) }
                     )
                 }
             }
         }
     }
-
-    PlaylistDialog(
-        openDialog = playlistDialogState,
-        title = UiText.StringResource(Strings.dialog_edit_playlist_name).asString(),
-        name = playlist.name,
-        onConfirmButtonClicked = {
-            onDropDownMenuClick?.invoke(playlistNameEditIndex, playlist.copy(name = it))
-        },
-        onDismiss = { playlistDialogState = false }
-    )
 }
 
 @Preview
@@ -157,7 +139,7 @@ private fun MusicPlaylistColumnItemPreview() {
             playlist = Playlist.default,
             showContextualMenu = true,
             onItemClick = {},
-            onDropDownMenuClick = { _, _ -> }
+            onDropDownMenuClick = { }
         )
     }
 }

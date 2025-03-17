@@ -23,11 +23,16 @@ data class Playlist(
             songs = listOf(Song.preview, Song.preview, Song.preview, Song.preview),
         )
 
+        val PlayingQueuePlaylistId = Pair(0, MediaId.PlayingQueue)
+        val RadioPlaylistId = Pair(1, MediaId.RadioSongs)
+        val StreamPlaylistId = Pair(2, MediaId.StreamSongs)
+        val LocalPlaylistId = Pair(3, MediaId.LocalSongs)
+
         val defaultPlaylistIds = listOf(
-            MediaId.PlayingQueue,
-            MediaId.RadioSongs,
-            MediaId.StreamSongs,
-            MediaId.LocalSongs,
+            PlayingQueuePlaylistId,
+            RadioPlaylistId,
+            StreamPlaylistId,
+            LocalPlaylistId,
         )
     }
 }

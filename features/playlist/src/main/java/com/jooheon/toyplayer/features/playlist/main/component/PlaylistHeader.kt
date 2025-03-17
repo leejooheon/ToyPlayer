@@ -28,10 +28,8 @@ import com.jooheon.toyplayer.core.resources.UiText
 
 @Composable
 internal fun PlaylistHeader(
-    onAddPlaylistClick: (String) -> Unit,
+    onAddPlaylistClick: () -> Unit,
 ) {
-    var playlistDialogState by remember { mutableStateOf(false) }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -61,7 +59,7 @@ internal fun PlaylistHeader(
         )
 
         IconButton(
-            onClick = { playlistDialogState = true},
+            onClick = onAddPlaylistClick,
             content = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
@@ -71,14 +69,6 @@ internal fun PlaylistHeader(
             }
         )
     }
-
-//    MusicPlaylistDialog(
-//        openDialog = playlistDialogState,
-//        title = UiText.StringResource(Strings.dialog_new_playlist).asString(),
-//        name = "",
-//        onConfirmButtonClicked = onAddPlaylistClick,
-//        onDismiss = { playlistDialogState = false }
-//    )
 }
 @Preview
 @Composable

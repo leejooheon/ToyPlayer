@@ -10,6 +10,7 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
+import com.jooheon.toyplayer.features.musicservice.ext.isHls
 import timber.log.Timber
 
 @OptIn(UnstableApi::class)
@@ -24,9 +25,10 @@ class CustomMediaSourceFactory(
         val mimeType = mediaItem.localConfiguration?.mimeType
         Timber.d("createMediaSource: ${mediaItem.mediaMetadata.title}, $mimeType")
 
-        return when(mediaItem.localConfiguration?.mimeType) {
-            MimeTypes.APPLICATION_M3U8 -> hlsMediaSourceFactory.createMediaSource(mediaItem)
-            else -> defaultMediaSourceFactory.createMediaSource(mediaItem)
+        return if(mediaItem.isHls()) {
+            hlsMediaSourceFactory.createMediaSource(mediaItem)
+        } else {
+            defaultMediaSourceFactory.createMediaSource(mediaItem)
         }
     }
 

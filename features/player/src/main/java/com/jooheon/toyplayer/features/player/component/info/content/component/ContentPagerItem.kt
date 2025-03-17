@@ -8,18 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @Composable
@@ -28,18 +25,11 @@ internal fun ContentPagerItem(
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (Int, Song) -> Unit,
-    onOffsetChanged: (Float) -> Unit,
+    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { state.firstVisibleItemScrollOffset.toFloat() }
-            .collectLatest { offset ->
-                onOffsetChanged.invoke(offset)
-            }
-    }
     Column(
         verticalArrangement = Arrangement.Top,
         modifier = modifier.fillMaxSize()
@@ -87,7 +77,6 @@ private fun PreviewContentPagerItem() {
             titleAlpha = 1f,
             isPlaying = false,
             onContentClick = { _, _ -> },
-            onOffsetChanged = {},
         )
     }
 }

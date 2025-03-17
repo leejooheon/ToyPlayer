@@ -9,6 +9,12 @@ import javax.inject.Inject
 class PlaybackSettingsUseCase @Inject constructor(
     private val playbackSettingsRepository: PlaybackSettingsRepository,
 ) {
+    suspend fun setRecentPlaylistId(id: Int) {
+        playbackSettingsRepository.setRecentPlaylistId(id)
+    }
+    suspend fun setLastPlayedMediaId(mediaId: String) {
+        playbackSettingsRepository.setLastPlayedMediaId(mediaId)
+    }
     suspend fun repeatModeChanged(repeatMode: Int) {
         playbackSettingsRepository.setRepeatMode(repeatMode)
     }
@@ -16,15 +22,9 @@ class PlaybackSettingsUseCase @Inject constructor(
         playbackSettingsRepository.setShuffleMode(shuffleEnabled)
     }
 
-    fun repeatMode(): Flow<RepeatMode> = playbackSettingsRepository.flowRepeatMode()
-
-    fun shuffleMode(): Flow<ShuffleMode> = playbackSettingsRepository.flowShuffleMode()
-
-    suspend fun getRecentMediaItemKey(): Long {
-        return playbackSettingsRepository.getPlayingQueueKey()
-    }
-
-    suspend fun setRecentMediaItemKey(key: Long) {
-        playbackSettingsRepository.setPlayingQueueKey(key)
-    }
+    fun flowPlaylistId(): Flow<Int> = playbackSettingsRepository.flowPlaylistId()
+    suspend fun playlistId() = playbackSettingsRepository.playlistId()
+    suspend fun repeatMode(): RepeatMode = playbackSettingsRepository.repeatMode()
+    suspend fun shuffleMode(): ShuffleMode = playbackSettingsRepository.shuffleMode()
+    suspend fun lastPlayedMediaId() = playbackSettingsRepository.lastPlayedMediaId()
 }
