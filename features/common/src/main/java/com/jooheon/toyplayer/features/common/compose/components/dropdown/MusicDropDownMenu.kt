@@ -13,9 +13,9 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 @Composable
 fun MusicDropDownMenu(
     expanded: Boolean,
-    dropDownMenuState: MusicDropDownMenuState,
+    menus: List<MusicDropDownMenu>,
     onDismissRequest: () -> Unit,
-    onClick: (index: Int) -> Unit
+    onClick: (MusicDropDownMenu) -> Unit
 ) {
     DropdownMenu(
         expanded = expanded,
@@ -23,15 +23,15 @@ fun MusicDropDownMenu(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.tertiary),
         content = {
-            dropDownMenuState.items.forEachIndexed { index, item ->
+            menus.forEach { menu ->
                 DropdownMenuItem(
                     onClick = {
-                        onClick(index)
+                        onClick(menu)
                         onDismissRequest()
                     },
                     text = {
                         Text(
-                            text = item.asString(),
+                            text = menu.title.asString(),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
@@ -48,7 +48,7 @@ private fun MediaDropDownMenuPreview() {
     ToyPlayerTheme {
         MusicDropDownMenu(
             expanded = true,
-            dropDownMenuState = MusicDropDownMenuState(items = MusicDropDownMenuState.playlistItems),
+            menus = MusicDropDownMenu.playlistMenuItems,
             onDismissRequest = {},
             onClick = {}
         )

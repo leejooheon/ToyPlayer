@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.common.compose.components
+package com.jooheon.toyplayer.features.common.compose.components.dialog
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick

@@ -1,14 +1,17 @@
 package com.jooheon.toyplayer.features.album.more
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,11 +26,10 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Album
-import com.jooheon.toyplayer.features.album.more.component.AlbumMoreHeader
 import com.jooheon.toyplayer.features.album.more.component.AlbumMoreItem
 import com.jooheon.toyplayer.features.album.more.model.AlbumMoreEvent
 import com.jooheon.toyplayer.features.album.more.model.AlbumMoreUiState
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
+import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
 
 @Composable
 fun AlbumMoreScreen(
@@ -55,49 +57,47 @@ private fun AlbumMoreScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val listState = rememberLazyGridState()
-
-    TopAppBarBox(
-        title = UiText.StringResource(Strings.title_album).asString(),
-        onClick = onBackClick,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-        ) {
-            AlbumMoreHeader(
-                onDropDownMenuClick = {
-//                    val sortType = MusicAlbumScreenViewModel.AlbumSortType.entries[it]
-//                    onMusicAlbumEvent(MusicAlbumScreenEvent.OnSortTypeChanged(sortType))
-                },
-                modifier = Modifier
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = UiText.StringResource(Strings.title_album).asString(),
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
             )
-
-            LazyVerticalGrid(
-                state = listState,
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(
-                    horizontal = 12.dp,
-                    vertical = 16.dp
-                ),
+        },
+        content = { innerPadding ->
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                content = {
-                    items(
-                        items = uiState.albums,
-                        key = { album: Album -> album.hashCode() }
-                    ) { album ->
-                        AlbumMoreItem(
-                            album = album,
-                            onClick = {
+                    .padding(innerPadding)
+            ) {
+                LazyVerticalGrid(
+                    state = listState,
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(
+                        horizontal = 12.dp,
+                        vertical = 16.dp
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    content = {
+                        items(
+                            items = uiState.albums,
+                            key = { album: Album -> album.hashCode() }
+                        ) { album ->
+                            AlbumMoreItem(
+                                album = album,
+                                onClick = {
 
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
-                }
-            )
+                )
+            }
         }
-    }
+    )
 }
 
 

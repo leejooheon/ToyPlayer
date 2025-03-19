@@ -10,6 +10,11 @@ import kotlinx.coroutines.CoroutineScope
 
 @OptIn(UnstableApi::class)
 class ToyPlayer(player: Player): ForwardingPlayer(player){
+    override fun play() {
+        if(isCurrentMediaItemLive) seekToDefaultPosition()
+        super.play()
+    }
+
     override fun getAvailableCommands(): Player.Commands {
         return super.getAvailableCommands().buildUpon()
             .add(Player.COMMAND_SEEK_TO_NEXT)
@@ -26,18 +31,5 @@ class ToyPlayer(player: Player): ForwardingPlayer(player){
         }
 
         return available
-    }
-
-    override fun setShuffleModeEnabled(shuffleModeEnabled: Boolean) {
-        super.setShuffleModeEnabled(shuffleModeEnabled)
-
-        if(shuffleModeEnabled) {
-            forceEnqueue(
-                mediaItems = shuffledItems(),
-                startIndex = 0,
-                startPositionMs = currentPosition,
-                playWhenReady = playWhenReady
-            )
-        }
     }
 }

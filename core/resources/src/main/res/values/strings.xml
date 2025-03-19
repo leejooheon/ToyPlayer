@@ -5,6 +5,8 @@
     <string name="close">Close</string>
     <string name="ok">OK</string>
     <string name="back">Back</string>
+    <string name="update">Updated</string>
+    <string name="add">Added</string>
 
     <!-- etc -->
     <string name="media_folder_root">Root Folder</string>
@@ -36,11 +38,9 @@
     <string name="action_play_all_shuffle">Play All with Shuffle</string>
     <string name="action_add_to_playing_queue">Add to playing queue</string>
     <string name="action_add_playlist">"Add to playlist</string>
-    <string name="action_tag_editor">Tag editor</string>
     <string name="action_details">Details</string>
     <string name="action_delete">Delete</string>
     <string name="action_change_name">Change Name</string>
-    <string name="action_save_as_file">Save as File</string>
     <string name="action_see_more">See more</string>
 
     <string name="title_library">Library</string>
@@ -71,9 +71,11 @@
     <string name="playlist_stream">Stream Songs</string>
     <string name="playlist_local">Local Songs</string>
     <string name="playlist_asset">Google Test Songs</string>
+    <string name="playlist_inserted">Playlist created</string>
 
     <string name="dialog_edit_playlist_name">Edit Playlist</string>
     <string name="dialog_new_playlist">New Playlist</string>
+    <string name="dialog_select_playlist">Select Playlist</string>
     <string name="dialog_new_playlist_label">input playlist name</string>
     <string name="dialog_new_playlist_placeholder">Playlist Name</string>
 

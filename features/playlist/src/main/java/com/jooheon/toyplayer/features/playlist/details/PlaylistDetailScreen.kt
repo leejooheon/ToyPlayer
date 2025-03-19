@@ -1,20 +1,27 @@
 package com.jooheon.toyplayer.features.playlist.details
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
+import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.playlist.details.component.PlaylistDetailMediaColumn
 import com.jooheon.toyplayer.features.playlist.details.model.PlaylistDetailEvent
 import com.jooheon.toyplayer.features.playlist.details.model.PlaylistDetailUiState
+import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 
 @Composable
 fun PlaylistDetailScreen(
@@ -22,29 +29,17 @@ fun PlaylistDetailScreen(
     navigateTo: (ScreenNavigation) -> Unit,
     viewModel: PlaylistDetailViewModel = hiltViewModel()
 ) {
-//    viewModel.navigateTo.observeWithLifecycle { route ->
-//        if(route is ScreenNavigation.Back) {
-//            onBackClick.invoke()
-//        } else {
-//            (route as? ScreenNavigation.Music)?.let {
-//                navigate.invoke(it)
-//            }
-//        }
-//    }
+    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(Unit) {
         viewModel.loadData(playlistId)
     }
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     PlaylistDetailScreenInternal(
         uiState = uiState,
-        onBackClick = {
-            navigateTo.invoke(ScreenNavigation.Back)
-        },
-        onEvent = {
-            viewModel.dispatch(it)
-        },
+        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
+        onEvent = { viewModel.dispatch(context, it) },
 //        onMediaDropDownMenuEvent = viewModel::onSongItemEvent,
     )
 }
@@ -56,42 +51,40 @@ private fun PlaylistDetailScreenInternal(
     onEvent: (PlaylistDetailEvent) -> Unit,
 //    onMediaDropDownMenuEvent: (SongItemEvent) -> Unit,
 ) {
-    TopAppBarBox(
-        title = uiState.playlist.name,
-        onClick = onBackClick,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        PlaylistDetailMediaColumn(
-            listState = rememberLazyListState(),
-            playlist = uiState.playlist,
-            onPlayClick = {
-//                    onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(it))
-            },
-            onPlayAllClick = {
-//                    onMusicPlayerEvent(
-//                        MusicPlayerEvent.OnEnqueue(
-//                            songs = musicPlayingQueueScreenState.playlist.songs,
-//                            shuffle = it,
-//                            playWhenReady = true
-//                        )
-//                    )
-            },
-            onDropDownEvent = { index, song ->
-//                    when(index) {
-//                        0 -> onMusicPlayerEvent(MusicPlayerEvent.OnDeleteClick(song))
-//                        1 -> onMediaDropDownMenuEvent(MusicDropDownMenuState.indexToEvent(index, song))
-//                        else -> {
-//                            /** Nothing **/
-//                            /** Nothing **/
-//                            /** Nothing **/
-//                            /** Nothing **/
-//                            /** Nothing **/
-//                            /** Nothing **/
-//                            /** Nothing **/    /** Nothing **/ }
-//                    }
-            },
-        )
-    }
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = uiState.playlist.name,
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        content = { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                PlaylistDetailMediaColumn(
+                    listState = rememberLazyListState(),
+                    playlist = uiState.playlist,
+                    onPlayClick = {
+                        onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(false))
+                    },
+                    onPlayAllClick = {
+                        onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(true))
+                    },
+                    onDropDownEvent = { menu, song ->
+                        when(menu) {
+                            MusicDropDownMenu.PlaylistMediaItemDelete -> {}
+                            MusicDropDownMenu.PlaylistMediaItemDetails -> {}
+                            else -> throw IllegalArgumentException("")
+                        }
+                    },
+                )
+            }
+        }
+    )
 }
 
 @Preview

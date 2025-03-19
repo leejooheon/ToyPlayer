@@ -26,13 +26,21 @@ fun Song.toMediaItem(): MediaItem {
     val mediaType = if(isRadio) MediaMetadata.MEDIA_TYPE_PODCAST else MediaMetadata.MEDIA_TYPE_MUSIC
     val mediaMetadata = toMetadata(mediaType, imageUri)
 
-    return MediaItem.Builder()
+    val mediaItemBuilder = MediaItem.Builder()
         .setUri(uri)
         .setMediaId(key())
         .setCustomCacheKey(customCacheKey)
         .setMediaMetadata(mediaMetadata)
         .setMimeType(mimeType)
-        .build()
+
+    if(isRadio) {
+        val liveConfiguration = MediaItem.LiveConfiguration.Builder()
+            .setMaxPlaybackSpeed(1.1f)
+            .build()
+        mediaItemBuilder.setLiveConfiguration(liveConfiguration).build()
+    }
+
+    return mediaItemBuilder.build()
 }
 
 private fun Song.toMetadata(mediaType: Int, imageUri: Uri): MediaMetadata {

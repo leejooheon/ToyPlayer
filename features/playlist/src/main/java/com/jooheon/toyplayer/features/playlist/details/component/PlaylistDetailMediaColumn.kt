@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaDetailHeader
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaItemSmallNoImage
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -27,7 +27,7 @@ internal fun PlaylistDetailMediaColumn(
     playlist: Playlist,
     onPlayClick: (Song) -> Unit,
     onPlayAllClick: (Boolean) -> Unit,
-    onDropDownEvent: (Int, Song) -> Unit,
+    onDropDownEvent: (MusicDropDownMenu, Song) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -56,7 +56,7 @@ internal fun PlaylistDetailMediaColumn(
                     title = song.title,
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
-                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistMediaItems),
+                    dropDownMenus = MusicDropDownMenu.playlistMediaItemMenuItems,
                     onItemClick = { onPlayClick(song)},
                     onDropDownMenuClick = { onDropDownEvent(it, song) }
                 )

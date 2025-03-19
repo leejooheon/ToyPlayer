@@ -28,7 +28,6 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 
 @Composable
 fun MediaItemSmallNoImage(
@@ -36,9 +35,9 @@ fun MediaItemSmallNoImage(
     title: String,
     subTitle: String,
     duration: String,
-    dropDownMenuState: MusicDropDownMenuState,
+    dropDownMenus: List<MusicDropDownMenu>,
     onItemClick: () -> Unit,
-    onDropDownMenuClick: (index: Int) -> Unit,
+    onDropDownMenuClick: (MusicDropDownMenu) -> Unit,
 ) {
     Card(
         onClick = { onItemClick() },
@@ -116,7 +115,7 @@ fun MediaItemSmallNoImage(
                 )
                 MusicDropDownMenu(
                     expanded = dropDownMenuExpanded,
-                    dropDownMenuState = MusicDropDownMenuState(dropDownMenuState.items),
+                    menus = dropDownMenus,
                     onDismissRequest = { dropDownMenuExpanded = false },
                     onClick = onDropDownMenuClick
                 )
@@ -133,7 +132,7 @@ private fun MediaItemSmallWithoutImagePreview() {
             title = UiText.StringResource(Strings.placeholder_long).asString(),
             subTitle = UiText.StringResource(Strings.placeholder_medium).asString(),
             duration = "00:12",
-            dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
+            dropDownMenus = MusicDropDownMenu.mediaMenuItems,
             onItemClick = {},
             onDropDownMenuClick = {},
         )

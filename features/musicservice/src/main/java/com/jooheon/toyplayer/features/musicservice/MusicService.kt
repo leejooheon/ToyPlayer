@@ -99,8 +99,8 @@ class MusicService: MediaLibraryService() {
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
             // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
+            stopSelf()
         }
-        stopSelf()
     }
 
     override fun onDestroy() {

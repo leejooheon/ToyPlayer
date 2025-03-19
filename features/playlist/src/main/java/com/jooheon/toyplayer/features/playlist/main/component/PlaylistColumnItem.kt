@@ -37,7 +37,6 @@ import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -45,7 +44,7 @@ internal fun PlaylistColumnItem(
     playlist: Playlist,
     showContextualMenu: Boolean,
     onItemClick: () -> Unit,
-    onDropDownMenuClick: ((Int) -> Unit)? = null,
+    onDropDownMenuClick: ((MusicDropDownMenu) -> Unit),
 ) {
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
 
@@ -121,7 +120,7 @@ internal fun PlaylistColumnItem(
                     )
                     MusicDropDownMenu(
                         expanded = dropDownMenuExpanded,
-                        dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.playlistItems),
+                        menus = MusicDropDownMenu.playlistMenuItems,
                         onDismissRequest = { dropDownMenuExpanded = false },
                         onClick = { onDropDownMenuClick?.invoke(it) }
                     )

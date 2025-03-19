@@ -5,17 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.common.compose.SnackbarController
 import com.jooheon.toyplayer.features.common.compose.SnackbarEvent
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.DropDownMenuEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,57 +29,72 @@ class PlaylistViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     internal fun loadData() = viewModelScope.launch {
-        val result = playlistUseCase.getAllPlaylist()
-
-        when(result) {
-            is Result.Success -> {
-                _uiState.emit(
-                    PlaylistUiState(playlists = result.data)
-                )
+        playlistUseCase.getAllPlaylist()
+            .onSuccess {
+                _uiState.emit(PlaylistUiState(playlists = it))
             }
-            is Result.Error -> {
-                 // TODO: handle error
+            .onError {
+                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                SnackbarController.sendEvent(event)
             }
-        }
     }
 
     internal fun dispatch(event: PlaylistEvent) = viewModelScope.launch {
         when(event) {
             is PlaylistEvent.OnPlaylistClick -> { /** nothing **/ }
-            is PlaylistEvent.OnDropDownMenuClick -> deletePlaylist(event.playlist)
-            is PlaylistEvent.OnAddPlaylist -> insertPlaylist(event.title)
-        }
-    }
-    internal fun dispatch(event: DropDownMenuEvent) = viewModelScope.launch {
-        when(event) {
-            is DropDownMenuEvent.OnDelete -> {}
-            is DropDownMenuEvent.OnSaveAsFile -> {}
-            is DropDownMenuEvent.OnChangeName -> { /** nothing **/ }
+            is PlaylistEvent.OnDeletePlaylist -> deletePlaylist(event.id)
+            is PlaylistEvent.OnAddPlaylist -> {
+                if(event.id == Playlist.default.id) insertPlaylist(event.name)
+                else replacePlaylist(event.id, event.name)
+            }
         }
     }
 
-    private suspend fun deletePlaylist(playlist: Playlist) {
-        playlistUseCase.deletePlaylists(playlist)
-        loadData()
-    }
-
-    private suspend fun insertPlaylist(name: String) {
-        if(playlistUseCase.checkValidName(name)) {
-            playlistUseCase.nextPlaylistIdOrNull()?.let {
-                val playlist = Playlist(
-                    id = it,
-                    name = name,
-                    thumbnailUrl = "",
-                    songs = emptyList()
-                )
-                playlistUseCase.insertPlaylists(playlist)
+    private suspend fun deletePlaylist(id: Int) {
+        playlistUseCase.getPlaylist(id)
+            .onSuccess {
+                playlistUseCase.deletePlaylists(it)
                 loadData()
-            } ?: run {
+            }
+            .onError {
                 val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
                 SnackbarController.sendEvent(event)
             }
-        } else {
+    }
+
+    private suspend fun replacePlaylist(
+        id: Int,
+        name: String
+    ) {
+        playlistUseCase.getPlaylist(id)
+            .onSuccess {
+                playlistUseCase.updatePlaylists(it.copy(name = name))
+                loadData()
+            }
+            .onError {
+                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                SnackbarController.sendEvent(event)
+            }
+    }
+
+    private suspend fun insertPlaylist(name: String) {
+        if(!playlistUseCase.checkValidName(name)) {
             val event = SnackbarEvent(UiText.StringResource(Strings.error_playlist, name))
+            SnackbarController.sendEvent(event)
+            return
+        }
+
+        playlistUseCase.nextPlaylistIdOrNull()?.let {
+            val playlist = Playlist(
+                id = it,
+                name = name,
+                thumbnailUrl = "",
+                songs = emptyList()
+            )
+            playlistUseCase.insertPlaylists(playlist)
+            loadData()
+        } ?: run {
+            val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
             SnackbarController.sendEvent(event)
         }
     }

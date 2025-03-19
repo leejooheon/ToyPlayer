@@ -1,12 +1,20 @@
 package com.jooheon.toyplayer.features.playlist.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,12 +31,10 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.DropDownMenuEvent
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
+import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistColumnItem
-import com.jooheon.toyplayer.features.playlist.main.component.PlaylistDialog
-import com.jooheon.toyplayer.features.playlist.main.component.PlaylistHeader
+import com.jooheon.toyplayer.features.common.compose.components.dialog.PlaylistDialog
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 
@@ -55,7 +61,6 @@ fun PlaylistScreen(
                 else -> viewModel.dispatch(it)
             }
         },
-        onDropDownMenuEvent = {},
     )
 }
 
@@ -64,66 +69,87 @@ private fun PlaylistScreenInternal(
     uiState: PlaylistUiState,
     onBackClick: () -> Unit,
     onEvent: (PlaylistEvent) -> Unit,
-    onDropDownMenuEvent: (DropDownMenuEvent) -> Unit,
 ) {
     val listState = rememberLazyListState()
     var playlistDialogState by remember { mutableStateOf(false to Playlist.default) }
 
-    TopAppBarBox(
-        title = UiText.StringResource(Strings.title_playlist).asString(),
-        onClick = onBackClick,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(
-                horizontal = 12.dp,
-                vertical = 16.dp
-            ),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            content = {
-                item {
-                    PlaylistHeader(
-                        onAddPlaylistClick = {
-                            playlistDialogState = true to Playlist.default
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { playlistDialogState = true to Playlist.default }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.PlaylistAdd,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = UiText.StringResource(Strings.option_add_playlist).asString()
+                )
+            }
+        },
+        topBar = {
+            CustomTopAppBar(
+                title = UiText.StringResource(Strings.title_playlist).asString(),
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        content = { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        horizontal = 12.dp,
+                        vertical = 16.dp
+                    ),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                    content = {
+//                        item {
+//                            PlaylistHeader(
+//                                onAddPlaylistClick = {
+//                                    playlistDialogState = true to Playlist.default
+//                                }
+//                            )
+//                        }
+
+                        items(
+                            items = uiState.playlists,
+                            key = { playlist: Playlist -> playlist.hashCode() }
+                        ) { playlist ->
+                            PlaylistColumnItem(
+                                playlist = playlist,
+                                showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { (id, _) -> id },
+                                onItemClick = { onEvent.invoke(PlaylistEvent.OnPlaylistClick(playlist.id)) },
+                                onDropDownMenuClick = { menu ->
+                                    when(menu) {
+                                        MusicDropDownMenu.PlaylistChangeName -> playlistDialogState = true to playlist
+                                        MusicDropDownMenu.PlaylistDelete -> onEvent.invoke(PlaylistEvent.OnDeletePlaylist(playlist.id))
+                                        else -> throw IllegalArgumentException("")
+                                    }
+                                },
+                            )
                         }
-                    )
-                }
+                    }
+                )
 
-                items(
-                    items = uiState.playlists,
-                    key = { playlist: Playlist -> playlist.hashCode() }
-                ) { playlist ->
-                    PlaylistColumnItem(
-                        playlist = playlist,
-                        showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { (id, _) -> id },
-                        onItemClick = { onEvent.invoke(PlaylistEvent.OnPlaylistClick(playlist.id)) },
-                        onDropDownMenuClick = {
-                            val event = MusicDropDownMenuState.indexToEvent(it, playlist)
-
-                            when(event) {
-                                is DropDownMenuEvent.OnChangeName -> playlistDialogState = true to playlist
-                                else -> onDropDownMenuEvent.invoke(event)
-                            }
-                        },
-                    )
-                }
+                PlaylistDialog(
+                    state = playlistDialogState,
+                    onOkButtonClicked = {
+                        val playlistId = playlistDialogState.second.id
+                        playlistDialogState = false to Playlist.default
+                        onEvent.invoke(PlaylistEvent.OnAddPlaylist(it, playlistId))
+                    },
+                    onDismissRequest = {
+                        playlistDialogState = false to Playlist.default
+                    }
+                )
             }
-        )
-
-        PlaylistDialog(
-            state = playlistDialogState,
-            onOkButtonClicked = {
-                playlistDialogState = false to Playlist.default
-                onEvent.invoke(PlaylistEvent.OnAddPlaylist(it))
-            },
-            onDismissRequest = {
-                playlistDialogState = false to Playlist.default
-            }
-        )
-    }
+        }
+    )
 }
 
 @Preview
@@ -134,7 +160,6 @@ private fun MusicPlaylistScreenPreview() {
             uiState = PlaylistUiState.preview,
             onBackClick = {},
             onEvent = {},
-            onDropDownMenuEvent = {},
         )
     }
 }

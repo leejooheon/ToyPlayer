@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.playlist.main.component
+package com.jooheon.toyplayer.features.common.compose.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -27,12 +27,10 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.DialogButton
-import com.jooheon.toyplayer.features.common.compose.components.DialogColumn
 import com.jooheon.toyplayer.features.common.compose.components.outlinedTextFieldColor
 
 @Composable
-internal fun PlaylistDialog(
+fun PlaylistDialog(
     state: Pair<Boolean, Playlist>,
     onOkButtonClicked: (String) -> Unit,
     onDismissRequest: () -> Unit,

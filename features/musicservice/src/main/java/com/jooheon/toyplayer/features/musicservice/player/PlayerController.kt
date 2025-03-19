@@ -110,8 +110,12 @@ class PlayerController(private val scope: CoroutineScope) {
         require(speed in 0f..1f)
         it.setPlaybackSpeed(speed)
     }
-    fun shuffle() = executeAfterPrepare {
-        it.shuffleModeEnabled = !(it.shuffleModeEnabled)
+    fun shuffle(force: Boolean? = null) = executeAfterPrepare { player ->
+        force?.let {
+            player.shuffleModeEnabled = it
+        } ?: run {
+            player.shuffleModeEnabled = !(player.shuffleModeEnabled)
+        }
     }
     fun repeat() = executeAfterPrepare {
         val value = (it.repeatMode.defaultZero() + 1) % 3
@@ -135,66 +139,6 @@ class PlayerController(private val scope: CoroutineScope) {
             mediaItem = song.toMediaItem(),
             playWhenReady = playWhenReady
         )
-    }
-
-    fun enqueue(
-        mediaItems: List<MediaItem>,
-        startIndex: Int,
-        playWhenReady: Boolean,
-    ) = executeAfterPrepare { player ->
-        player.forceEnqueue(
-            mediaItems = mediaItems,
-            startIndex = startIndex,
-            startPositionMs = C.TIME_UNSET,
-            playWhenReady = playWhenReady
-        )
-    }
-
-//    fun enqueue(
-//        songs: List<Song>,
-//        startIndex: Int,
-//        addNext: Boolean,
-//        playWhenReady: Boolean,
-//    ) = executeAfterPrepare { player ->
-//        if (addNext) { // TabToSelect
-//            val newMediaItems = songs.distinctBy {
-//                it.key() // remove duplicate
-//            }.map {
-//                it.toMediaItem()
-//            }
-//
-//            player.enqueue(
-//                mediaItems = newMediaItems,
-//                playWhenReady = playWhenReady
-//            )
-//        } else { // TabToPlay
-//            val newMediaItems = songs.map { it.toMediaItem() }
-//
-//            player.forceEnqueue(
-//                mediaItems = newMediaItems,
-//                startIndex = startIndex,
-//                startPositionMs = C.TIME_UNSET,
-//                playWhenReady = playWhenReady
-//            )
-//        }
-//    }
-
-    fun onDeleteAtPlayingQueue(
-        songs: List<Song>
-    ) = executeAfterPrepare { player ->
-        val playingQueue = player.mediaItems.map { it.toSong() }
-
-        val songIndexList = songs.filter {
-            it != Song.default
-        }.map { targetSong ->
-            playingQueue.indexOfFirst { it.key() == targetSong.key() }
-        }.filter {
-            it != -1
-        }
-
-        songIndexList.forEach {
-            player.removeMediaItem(it)
-        }
     }
 
     fun sendCustomCommand(

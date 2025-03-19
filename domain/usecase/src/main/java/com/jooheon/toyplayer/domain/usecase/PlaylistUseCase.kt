@@ -43,6 +43,16 @@ class PlaylistUseCase @Inject constructor(
         }
     }
 
+    suspend fun checkValidId(id: Int): Boolean = withContext(Dispatchers.IO) {
+        if(id in Playlist.defaultPlaylistIds.map { it.first }) return@withContext false
+
+        val result = getAllPlaylist()
+        return@withContext when(result) {
+            is Result.Success -> id in result.data.map { it.id }
+            is Result.Error -> false
+        }
+    }
+
     suspend fun nextPlaylistIdOrNull(): Int? = withContext(Dispatchers.IO) {
         val result = getAllPlaylist()
         return@withContext when(result) {

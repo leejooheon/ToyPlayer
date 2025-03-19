@@ -12,6 +12,7 @@ import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
+@HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
     private val playerController: PlayerController,

@@ -44,5 +44,13 @@ data class RadioData(
                 null
             }
         }
+
+        val default = RadioData(
+            type = RadioType.Etc("default"),
+            url = null,
+            imageUrl = "",
+            channelName = "default",
+            channelCode = "default",
+        )
     }
 }

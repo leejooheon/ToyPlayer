@@ -12,7 +12,7 @@ data class Playlist(
     companion object {
         val default = Playlist(
             id = -1,
-            name = "-",
+            name = "",
             thumbnailUrl = "",
             songs = emptyList(),
         )

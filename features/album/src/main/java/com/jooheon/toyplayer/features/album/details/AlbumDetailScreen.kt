@@ -1,13 +1,17 @@
 package com.jooheon.toyplayer.features.album.details
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,10 +27,10 @@ import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.album.details.components.AlbumDetailHeader
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailEvent
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
+import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaDetailHeader
 import com.jooheon.toyplayer.features.common.compose.components.media.MediaItemSmallNoImage
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenuState
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -56,21 +60,30 @@ private fun AlbumDetailScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    TopAppBarBox(
-        title = uiState.album.name,
-        onClick = onBackClick,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            item {
-                AlbumDetailHeader(
-                    album = uiState.album,
-                    onPlayAllClick = {
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = uiState.album.name,
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        content = { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    item {
+                        AlbumDetailHeader(
+                            album = uiState.album,
+                            onPlayAllClick = {
 //                        onMusicPlayerEvent(
 //                            MusicPlayerEvent.OnEnqueue(
 //                                songs = album.songs,
@@ -78,44 +91,45 @@ private fun AlbumDetailScreenInternal(
 //                                playWhenReady = true
 //                            )
 //                        )
+                            }
+                        )
+                        MediaDetailHeader(
+                            count = uiState.album.songs.size
+                        )
                     }
-                )
-                MediaDetailHeader(
-                    count = uiState.album.songs.size
-                )
-            }
 
-            items(
-                items = uiState.album.songs,
-                key = { song: Song -> song.hashCode() }
-            ) { song ->
-                MediaItemSmallNoImage(
-                    trackNumber = song.trackNumber,
-                    title = song.title,
-                    subTitle = "${song.artist} • ${song.album}",
-                    duration = MusicUtil.toReadableDurationString(song.duration),
-                    dropDownMenuState = MusicDropDownMenuState(MusicDropDownMenuState.mediaItems),
-                    onItemClick = {
+                    items(
+                        items = uiState.album.songs,
+                        key = { song: Song -> song.hashCode() }
+                    ) { song ->
+                        MediaItemSmallNoImage(
+                            trackNumber = song.trackNumber,
+                            title = song.title,
+                            subTitle = "${song.artist} • ${song.album}",
+                            duration = MusicUtil.toReadableDurationString(song.duration),
+                            dropDownMenus = MusicDropDownMenu.mediaMenuItems,
+                            onItemClick = {
 //                        onMusicPlayerEvent(MusicPlayerEvent.OnSongClick(song))
-                                  },
-                    onDropDownMenuClick = {
+                            },
+                            onDropDownMenuClick = {
 //                        val event = MusicDropDownMenuState.indexToEvent(it, song)
 //                        songItemEventState = event
+                            }
+                        )
                     }
-                )
-            }
-            item {
-                Spacer(Modifier.height(16.dp))
+                    item {
+                        Spacer(Modifier.height(16.dp))
+                    }
+                }
             }
         }
-
-//        MediaDropDownMenuDialogEvents(
+    )
+    //        MediaDropDownMenuDialogEvents(
 //            playlists = playlists,
 //            event = songItemEventState,
 //            onDismiss = { songItemEventState = SongItemEvent.Placeholder },
 //            onRedirectEvent = onMediaItemEvent
 //        )
-    }
 }
 @Preview
 @Composable

@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.main
 
 import android.Manifest
-import android.view.MotionEvent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -21,7 +20,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
@@ -33,7 +31,6 @@ import com.jooheon.toyplayer.features.main.navigation.MainNavigator
 import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator
 import com.jooheon.toyplayer.features.main.presentation.CustomSnackbarHost
 import com.jooheon.toyplayer.features.main.presentation.MainNavHost
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @Composable

@@ -38,8 +38,11 @@ dependencies {
     // media3
     implementation(libs.androidx.media3.session)
 
-    //hiltViewModel
+    // hiltViewModel
     implementation(libs.hilt.androidx.navigation.compose)
+
+    // audioFileIO
+    implementation(libs.jaudiotagger)
 
     implementation("androidx.palette:palette:1.0.0")
 }

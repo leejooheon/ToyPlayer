@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.common.compose.components
+package com.jooheon.toyplayer.features.common.compose.components.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.ui.window.DialogProperties
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogColumn(
+    modifier: Modifier = Modifier,
     fraction: Float,
     padding: Dp,
     cancelable: Boolean = true,
@@ -28,7 +29,7 @@ fun DialogColumn(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     BasicAlertDialog(
-        modifier = Modifier.fillMaxWidth(fraction),
+        modifier = modifier.fillMaxWidth(fraction),
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(
             usePlatformDefaultWidth = false,

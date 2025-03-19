@@ -22,6 +22,7 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
 import com.jooheon.toyplayer.features.common.compose.TouchEventController
+import com.jooheon.toyplayer.features.player.component.LogoSection
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
@@ -43,7 +44,6 @@ fun PlayerScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var infoSectionVisibleState by remember { mutableStateOf(false) }
-    var autoPlaybackStarted by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadData()
@@ -52,15 +52,10 @@ fun PlayerScreen(
     LaunchedEffect(uiState.contentModels) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
         if(uiState.contentModels.isEmpty()) return@LaunchedEffect
         if(viewModel.autoPlaybackProperty.get()) return@LaunchedEffect
-
         viewModel.autoPlaybackProperty.set(true)
-        viewModel.dispatch(context, PlayerEvent.OnPlayAutomatic)
-    }
+        if(uiState.musicState.isPlaying()) return@LaunchedEffect
 
-    LaunchedEffect(autoPlaybackStarted, uiState.pagerModel) { // 앱 시작 시 자동 재생하는 부분 - 2: 정보 화면 표시
-        if(!autoPlaybackStarted) return@LaunchedEffect
-        if(uiState.pagerModel == PlayerUiState.default.pagerModel) return@LaunchedEffect
-        autoPlaybackStarted = false
+        viewModel.dispatch(context, PlayerEvent.OnPlayAutomatic)
         infoSectionVisibleState = true
     }
 
@@ -161,6 +156,11 @@ private fun PlayerScreenInternal(
             model = uiState.pagerModel,
             currentSong = uiState.musicState.currentPlayingMusic,
             onSwipe = { onPlayerEvent.invoke(PlayerEvent.OnSwipe(it)) },
+            modifier = Modifier,
+        )
+
+        LogoSection(
+            musicState = uiState.musicState,
             modifier = Modifier,
         )
 

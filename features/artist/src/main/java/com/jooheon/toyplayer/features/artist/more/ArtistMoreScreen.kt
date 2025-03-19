@@ -1,12 +1,15 @@
 package com.jooheon.toyplayer.features.artist.more
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,11 +24,10 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Artist
-import com.jooheon.toyplayer.features.artist.more.component.ArtistHeader
 import com.jooheon.toyplayer.features.artist.more.component.ArtistMoreItem
 import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreEvent
 import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreUiState
-import com.jooheon.toyplayer.features.common.compose.components.TopAppBarBox
+import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
 
 @Composable
 fun ArtistMoreScreen(
@@ -61,46 +63,45 @@ private fun ArtistMoreScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val state = rememberLazyGridState()
-
-    TopAppBarBox(
-        title = UiText.StringResource(Strings.title_artist).asString(),
-        onClick = onBackClick,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            ArtistHeader(
-                onDropDownMenuClick = {
-//                    val type = MusicArtistScreenViewModel.ArtistSortType.entries[it]
-//                    onMusicArtistScreenEvent(MusicArtistScreenEvent.OnSortTypeChanged(type))
-                },
-                modifier = Modifier,
+    Scaffold(
+        topBar = {
+            CustomTopAppBar(
+                title = UiText.StringResource(Strings.title_artist).asString(),
+                onClick = onBackClick,
+                modifier = Modifier.fillMaxWidth()
             )
-            LazyVerticalGrid(
-                state = state,
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(
-                    horizontal = 12.dp,
-                    vertical = 16.dp
-                ),
-                modifier = Modifier.fillMaxSize(),
+        },
+        content = { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
             ) {
-                items(
-                    items = uiState.artists,
-                    key = { artist: Artist -> artist.hashCode() }
-                ) { artist ->
-                    ArtistMoreItem(
-                        artist = artist,
-                        onItemClick = {
-                            val event = ArtistMoreEvent.OnArtistClick(artist.id)
-                            onEvent.invoke(event)
-                        }
-                    )
+                LazyVerticalGrid(
+                    state = state,
+                    columns = GridCells.Fixed(3),
+                    contentPadding = PaddingValues(
+                        horizontal = 12.dp,
+                        vertical = 16.dp
+                    ),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    items(
+                        items = uiState.artists,
+                        key = { artist: Artist -> artist.hashCode() }
+                    ) { artist ->
+                        ArtistMoreItem(
+                            artist = artist,
+                            onItemClick = {
+                                val event = ArtistMoreEvent.OnArtistClick(artist.id)
+                                onEvent.invoke(event)
+                            }
+                        )
+                    }
                 }
             }
         }
-    }
+    )
 }
 
 @Preview

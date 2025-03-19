@@ -23,6 +23,7 @@ import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
 import com.jooheon.toyplayer.domain.model.music.Playlist
@@ -230,6 +231,11 @@ class MediaLibrarySessionCallback(
         Playlist.defaultPlaylistIds.forEach { (id, mediaId) ->
             val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
             playlistUseCase.getPlaylist(id)
+                .onSuccess {
+                    if(it.id == Playlist.LocalPlaylistId.first) {
+                        playlistUseCase.updatePlaylists(it.copy(songs = songs))
+                    }
+                }
                 .onError {
                     val playlist = Playlist(
                         id = id,
