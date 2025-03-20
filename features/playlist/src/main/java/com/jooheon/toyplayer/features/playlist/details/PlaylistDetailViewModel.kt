@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.playlist.details.model.PlaylistDetailEvent
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PlaylistDetailViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val playbackSettingsUseCase: PlaybackSettingsUseCase,
+    private val defaultSettingsUseCase: DefaultSettingsUseCase,
     private val playerController: PlayerController,
 ): ViewModel() {
     private val _uiState = MutableStateFlow(PlaylistDetailUiState.default)
@@ -57,7 +57,7 @@ class PlaylistDetailViewModel @Inject constructor(
         val playlist = uiState.value.playlist
 
         val startIndex = if(shuffle) (playlist.songs.indices).random() else 0
-        playbackSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+        defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
         playerController.enqueue(
             songs = playlist.songs,
             startIndex = startIndex,

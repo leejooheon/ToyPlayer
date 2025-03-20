@@ -4,13 +4,13 @@
     <string name="cancel">취소</string>
     <string name="close">닫기</string>
     <string name="ok">확인</string>
+    <string name="apply">적용</string>
     <string name="back">뒤로가기</string>
     <string name="update">갱신 되었습니다.</string>
     <string name="add">추가 되었습니다.</string>
 
     <!-- etc -->
     <string name="media_folder_root">루트 폴더</string>
-    <string name="n_second">%1$s 초</string>
 
     <!-- error -->
     <string name="some_error">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
@@ -108,16 +108,10 @@
     <string name="setting_language_desc">사용할 언어를 선택하세요</string>
     <string name="setting_theme">테마</string>
     <string name="setting_equalizer">이퀄라이저</string>
-    <string name="setting_skip_duration">앞/뒤로가기 간격</string>
-    <string name="setting_theme_light">밝게</string>
-    <string name="setting_theme_dark">어둡게</string>
-    <string name="setting_theme_dynamic_dark">다이나믹 다크</string>
-    <string name="setting_theme_dynamic_light">다이나믹 라이트</string>
-    <string name="setting_follow_system">시스템 설정</string>
+    <string name="setting_volume">볼륨</string>
+    <string name="setting_opensource_license">오픈소스 라이센스</string>
     <string name="setting_english">영어</string>
     <string name="setting_korean">한국어</string>
-    <string name="no_audio_ID">"먼저 노래를 재생하고 다시 시도해 보십시오."</string>
-    <string name="no_equalizer">이퀄라이저가 없습니다.</string>
 
     <string name="media_folder_all_songs">모든 음악</string>
     <string name="media_folder_album">앨범</string>
@@ -128,4 +122,13 @@
     <string name="action_navigate_app_settings">앱 설정으로 이동</string>
     <string name="description_permission_blocked">이전 권한 요청에서 거부되었습니다.\n수동으로 권한을 부여해 주세요.</string>
     <string name="description_permission_read_storage">내부 저장소 접근 권한이 필요합니다.</string>
+
+    <!-- settings -->
+    <string name="light_mode">라이트 모드</string>
+    <string name="dark_mode">다크 모드</string>
+    <string name="equalizer_error">이퀄라이저를 지원하는 앱이 없습니다</string>
+    <string name="dialog_language_selection_title">언어 선택</string>
+    <string name="dialog_language_selection_description">사용하실 언어를 선택해 주세요.</string>
+    <string name="dialog_volume_title">볼륨 조절</string>
+    <string name="dialog_volume_description">원하는 볼륨 수준으로 조절하세요.</string>
 </resources>

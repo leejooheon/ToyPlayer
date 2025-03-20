@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.main.presentation
 
-import android.view.MotionEvent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -10,13 +9,13 @@ import com.jooheon.toyplayer.features.album.navigation.albumNavGraph
 import com.jooheon.toyplayer.features.artist.navigation.artistNavGraph
 import com.jooheon.toyplayer.features.main.navigation.mainNavGraph
 import com.jooheon.toyplayer.features.playlist.navigation.playlistNavGraph
-import com.jooheon.toyplayer.features.setting.navigation.settingNavGraph
-import kotlinx.coroutines.flow.SharedFlow
+import com.jooheon.toyplayer.features.settings.navigation.settingNavGraph
 
 @Composable
 internal fun MainNavHost(
-    navigator: MainNavigator,
     modifier: Modifier = Modifier,
+    navigator: MainNavigator,
+    onChangeDarkTheme: (Boolean) -> Unit,
 ) {
     val navController = navigator.navController
 
@@ -53,7 +52,8 @@ internal fun MainNavHost(
             navigateTo = navigateTo
         )
         settingNavGraph(
-            navigateTo = navigateTo
+            navigateTo = navigateTo,
+            onChangeDarkTheme = onChangeDarkTheme,
         )
     }
 }

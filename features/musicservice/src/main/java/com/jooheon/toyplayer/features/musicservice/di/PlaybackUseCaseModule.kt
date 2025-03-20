@@ -2,7 +2,8 @@ package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
 import com.jooheon.toyplayer.core.network.NetworkConnectivityObserver
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
@@ -14,6 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 @InstallIn(ServiceComponent::class)
@@ -33,13 +35,17 @@ object PlaybackUseCaseModule {
     @Provides
     @ServiceScoped
     fun providePlaybackUseCase(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
         playlistUseCase: PlaylistUseCase,
-        playbackSettingsUseCase: PlaybackSettingsUseCase,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+        defaultSettingsUseCase: DefaultSettingsUseCase,
     ): PlaybackUseCase = PlaybackUseCase(
+        scope = scope,
         musicStateHolder = musicStateHolder,
         playlistUseCase = playlistUseCase,
-        playbackSettingsUseCase = playbackSettingsUseCase,
+        playerSettingsUseCase = playerSettingsUseCase,
+        defaultSettingsUseCase = defaultSettingsUseCase,
     )
 
     @Provides

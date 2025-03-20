@@ -17,6 +17,11 @@ sealed interface CustomCommand {
     @Serializable
     data object ToggleShuffle: CustomCommand
 
+    @Serializable
+    data object GetAudioSessionId: CustomCommand {
+        const val KEY = "audioSessionId"
+    }
+
     companion object {
         const val CUSTOM_COMMAND_ACTION = "commandAction"
         internal const val CUSTOM_COMMAND_EXTRA = "commandExtra"

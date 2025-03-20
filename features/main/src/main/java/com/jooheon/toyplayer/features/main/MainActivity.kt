@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.commonui.controller.TouchEventController
@@ -11,25 +15,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
-//    @Inject
-//    lateinit var themeStateFlow: ThemeStateFlow
-//
-//    @Inject
-//    lateinit var settingUseCase: SettingUseCase
+class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        lifecycleScope.launch {
-//            SettingScreenEvent.changeLanguage(
-//                context = this@MainActivity,
-//                language = settingUseCase.getLanguage()
-//            )
-//        }
 
         setContent {
-            ToyPlayerTheme {
-                MainScreen()
+            val isDarkTheme by viewModel.isDarkTheme.collectAsStateWithLifecycle(false, this)
+
+            ToyPlayerTheme(isDarkTheme) {
+                MainScreen(
+                    onChangeDarkTheme = {
+                        viewModel.updateIsDarkTheme(it)
+                    }
+                )
             }
         }
     }

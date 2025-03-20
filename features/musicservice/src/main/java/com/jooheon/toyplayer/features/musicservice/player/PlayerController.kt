@@ -2,7 +2,9 @@ package com.jooheon.toyplayer.features.musicservice.player
 
 import android.content.ComponentName
 import android.content.Context
+import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.session.LibraryResult
@@ -131,13 +133,13 @@ class PlayerController(private val scope: CoroutineScope) {
     fun sendCustomCommand(
         context: Context,
         command: CustomCommand,
-        listener: (Result<Unit, RootError>) -> Unit,
+        listener: (Result<Bundle, RootError>) -> Unit,
     ) = executeAfterPrepare {
         val listenableFuture = it.sendCustomCommand(command)
         listenableFuture.addListener({
             val result = listenableFuture.get()
             if(result.resultCode == LibraryResult.RESULT_SUCCESS) {
-                listener.invoke(Result.Success(Unit))
+                listener.invoke(Result.Success(result.extras))
             } else {
                 val data = "TODO" //TODO result.extras.getString(EssentialPlaybackError.key, null)
                 val error = data.toErrorOrNull() ?: MusicDataError.InvalidData("sendCustomCommand: bundle has no data. $command")

@@ -113,6 +113,11 @@ class PlaybackListener(
         musicStateHolder.onPositionDiscontinuity(oldPosition.positionMs, newPosition.positionMs)
     }
 
+    override fun onVolumeChanged(volume: Float) {
+        super.onVolumeChanged(volume)
+        musicStateHolder.onVolumeChanged(volume)
+    }
+
     override fun onEvents(player: Player, events: Player.Events) {
         super.onEvents(player, events)
         var msg = ""

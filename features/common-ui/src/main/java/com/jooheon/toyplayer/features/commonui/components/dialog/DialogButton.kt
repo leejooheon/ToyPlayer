@@ -20,8 +20,8 @@ fun DialogButton(
     alpha: Float = 1f,
     onClick: () -> Unit,
 ) {
-    val color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-    Button (
+    val color = MaterialTheme.colorScheme.surface.copy(alpha = 0.75f)
+    Button(
         onClick = onClick,
         enabled = enable,
         colors = ButtonDefaults.buttonColors(

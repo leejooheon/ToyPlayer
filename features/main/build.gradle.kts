@@ -15,13 +15,14 @@ dependencies {
     implementation(projects.features.splash)
     implementation(projects.features.common)
     implementation(projects.features.musicservice)
-    implementation(projects.features.setting)
+    implementation(projects.features.settings)
     implementation(projects.features.player)
     implementation(projects.features.playlist)
     implementation(projects.features.library)
     implementation(projects.features.artist)
     implementation(projects.features.album)
 
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.media3.session)
 
     implementation(libs.kotlinx.serialization.json)

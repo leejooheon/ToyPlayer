@@ -1,10 +1,14 @@
 package com.jooheon.toyplayer.features.musicservice.ext
 
 import android.media.session.PlaybackState
+import androidx.annotation.OptIn
 import androidx.media3.common.C
+import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 
 val Int.isPlaying: Boolean get() = this == PlaybackState.STATE_PLAYING
 val Int.isBuffering: Boolean get() = this == PlaybackState.STATE_BUFFERING
@@ -73,6 +77,13 @@ fun Player.forceEnqueue(
 ) {
     setMediaItems(mediaItems, startIndex, startPositionMs)
     if(playWhenReady) playAtIndex(startIndex, startPositionMs)
+}
+
+@OptIn(UnstableApi::class)
+fun Player.findExoPlayer(): ExoPlayer? {
+    if(this is ExoPlayer) return this
+    if(this is ForwardingPlayer) return this.wrappedPlayer as ExoPlayer
+    return null
 }
 
 fun Player.shuffledItems(): List<MediaItem> {

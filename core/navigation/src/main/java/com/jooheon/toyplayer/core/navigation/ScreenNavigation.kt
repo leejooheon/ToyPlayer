@@ -43,14 +43,10 @@ sealed interface ScreenNavigation {
     }
 
     @Serializable
-    sealed interface Setting : ScreenNavigation {
+    sealed interface Settings : ScreenNavigation {
         @Serializable
-        data object Main : Setting
+        data object Main : Settings
         @Serializable
-        data object Language : Setting
-        @Serializable
-        data object Theme : Setting
-        @Serializable
-        data object Equalizer : Setting
+        data object Theme : Settings
     }
 }

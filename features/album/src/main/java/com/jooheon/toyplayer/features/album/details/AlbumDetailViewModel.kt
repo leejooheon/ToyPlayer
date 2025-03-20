@@ -13,7 +13,7 @@ import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailEvent
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
@@ -36,7 +36,7 @@ import kotlin.coroutines.resume
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
-    private val playbackSettingsUseCase: PlaybackSettingsUseCase,
+    private val defaultSettingsUseCase: DefaultSettingsUseCase,
     private val playerController: PlayerController,
     private val songMenuHandler: SongMenuHandler,
 ): ViewModel() {
@@ -87,7 +87,7 @@ class AlbumDetailViewModel @Inject constructor(
 
         val startIndex = if(shuffle) (album.songs.indices).random() else 0
 
-        playbackSettingsUseCase.setLastEnqueuedPlaylistName(album.name)
+        defaultSettingsUseCase.setLastEnqueuedPlaylistName(album.name)
         playerController.enqueue(
             songs = album.songs,
             startIndex = startIndex,

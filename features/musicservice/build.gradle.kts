@@ -34,9 +34,6 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.mediarouter)
 
-    // coil
-    implementation(libs.coil)
-
     // timber
     implementation(libs.jakewharton.timber)
 

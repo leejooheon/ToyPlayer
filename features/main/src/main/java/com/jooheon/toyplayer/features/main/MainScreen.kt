@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(
     mainNavigator: MainNavigator = rememberMainNavigator(),
-    viewModel: MainViewModel = hiltViewModel(),
+    onChangeDarkTheme: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -65,6 +65,7 @@ fun MainScreen(
     MainScreenInternal(
         navigator = mainNavigator,
         snackbarHostState = snackbarHostState,
+        onChangeDarkTheme = onChangeDarkTheme,
     )
 
     MaybeRequestMediaPermission(
@@ -78,6 +79,7 @@ fun MainScreen(
 private fun MainScreenInternal(
     navigator: MainNavigator,
     snackbarHostState: SnackbarHostState,
+    onChangeDarkTheme: (Boolean) -> Unit,
 ) {
     Scaffold(
         snackbarHost = {
@@ -87,6 +89,7 @@ private fun MainScreenInternal(
     ) { innerPadding ->
         MainNavHost(
             navigator = navigator,
+            onChangeDarkTheme = onChangeDarkTheme,
             modifier = Modifier
                 .fillMaxSize()
                 .padding( // FIXME: topPadding 넣으면 간격이 넓어짐..
@@ -125,7 +128,8 @@ private fun PreviewMainScreen() {
     ToyPlayerTheme {
         MainScreenInternal(
             navigator = rememberMainNavigator(),
-            snackbarHostState = remember { SnackbarHostState() }
+            snackbarHostState = remember { SnackbarHostState() },
+            onChangeDarkTheme = {},
         )
     }
 }

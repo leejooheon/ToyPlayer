@@ -10,6 +10,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.jooheon.toyplayer.domain.model.common.extension.default
@@ -164,7 +165,7 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initUseCase() {
-        playbackUseCase.initialize(mediaSession?.player, serviceScope)
+        playbackUseCase.collectStates(mediaSession?.player)
         playbackLogUseCase.initialize(serviceScope)
         playbackErrorUseCase.initialize(serviceScope)
     }
@@ -198,6 +199,7 @@ class MusicService: MediaLibraryService() {
                     }
                 }
             }
+
         }
     }
 

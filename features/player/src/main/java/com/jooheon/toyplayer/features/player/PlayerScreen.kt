@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,7 +81,7 @@ fun PlayerScreen(
                     navigateTo.invoke(ScreenNavigation.Playlist.Main)
                 }
                 is PlayerEvent.OnNavigateSettingClick -> {
-                    navigateTo.invoke(ScreenNavigation.Setting.Main)
+                    navigateTo.invoke(ScreenNavigation.Settings.Main)
                 }
                 is PlayerEvent.OnNavigateLibraryClick -> {
                     navigateTo.invoke(ScreenNavigation.Library)

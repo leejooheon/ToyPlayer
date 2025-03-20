@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
-import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
@@ -17,9 +16,6 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
-import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
@@ -27,18 +23,15 @@ import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.music.Playlist.Companion.RadioPlaylistId
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.common.extension.getDefaultPlaylistName
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
-import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
-import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
+import com.jooheon.toyplayer.features.musicservice.ext.findExoPlayer
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.guava.future
 import timber.log.Timber
 
@@ -48,7 +41,7 @@ class MediaLibrarySessionCallback(
     private val scope: CoroutineScope,
     private val mediaItemProvider: MediaItemProvider,
     private val playlistUseCase: PlaylistUseCase,
-    private val playbackSettingsUseCase: PlaybackSettingsUseCase,
+    private val playerSettingsUseCase: PlayerSettingsUseCase,
 ): MediaLibrarySession.Callback {
     override fun onGetLibraryRoot(
         session: MediaLibrarySession,
@@ -113,13 +106,25 @@ class MediaLibrarySessionCallback(
         Timber.d("onCustomCommand: $command")
         return scope.future {
             when (command) {
+                is CustomCommand.GetAudioSessionId -> {
+                    session.player.findExoPlayer()?.let {
+                        SessionResult(
+                            SessionResult.RESULT_SUCCESS,
+                            bundleOf(CustomCommand.GetAudioSessionId.KEY to it.audioSessionId)
+                        )
+                    } ?: run {
+                        SessionResult(SessionError.ERROR_NOT_SUPPORTED)
+                    }
+
+                    SessionResult(SessionResult.RESULT_SUCCESS)
+                }
                 is CustomCommand.CycleRepeat -> {
                     val repeatMode = (session.player.repeatMode.defaultZero() + 1) % 3
-                    session.player.repeatMode = repeatMode
+                    playerSettingsUseCase.setRepeatMode(repeatMode)
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
                 CustomCommand.ToggleShuffle -> {
-                    session.player.shuffleModeEnabled = !(session.player.shuffleModeEnabled)
+                    playerSettingsUseCase.setShuffleMode(!(session.player.shuffleModeEnabled))
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
                 else -> SessionResult(SessionError.ERROR_NOT_SUPPORTED)

@@ -7,7 +7,7 @@ import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
@@ -28,7 +28,7 @@ class PlayerViewModel @Inject constructor(
     private val musicStateHolder: MusicStateHolder,
     private val playerController: PlayerController,
     private val playlistUseCase: PlaylistUseCase,
-    private val playbackSettingsUseCase: PlaybackSettingsUseCase,
+    private val defaultSettingsUseCase: DefaultSettingsUseCase,
 ): ViewModel() {
     private val _uiState = MutableStateFlow(PlayerUiState.default)
     val uiState = _uiState.asStateFlow()
@@ -54,7 +54,7 @@ class PlayerViewModel @Inject constructor(
                 val state = uiState.value
                 val newPagerModel = state.pagerModel.copy(
                     items = songs,
-                    playedName = playbackSettingsUseCase.lastEnqueuedPlaylistName(),
+                    playedName = defaultSettingsUseCase.lastEnqueuedPlaylistName(),
                     playedThumbnailImage = songs.firstOrNull()?.imageUrl.defaultEmpty(),
                 )
 
@@ -117,7 +117,7 @@ class PlayerViewModel @Inject constructor(
         when(playlist.id) {
             Playlist.PlayingQueuePlaylistId.first -> playerController.playAtIndex(index)
             else -> {
-                playbackSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+                defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
                 playerController.enqueue(
                     songs = playlist.songs,
                     startIndex = index,
@@ -128,7 +128,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     private suspend fun playAutomatically() {
-        val lastPlayedMediaId = playbackSettingsUseCase.lastPlayedMediaId()
+        val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId()
         val playlistResult = playlistUseCase.getPlayingQueue()
             .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
             ?: playlistUseCase.getPlaylist(Playlist.RadioPlaylistId.first)

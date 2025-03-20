@@ -69,9 +69,10 @@ glide = "4.16.0"
 glideCompose = "1.0.0-beta01"
 coil = "2.7.0"
 
-# Google map
-googleMap = "6.1.2"
-playServiceMap = "19.0.0"
+## license
+# https://developers.google.com/android/guides/opensource
+ossLicenses = "17.1.0"
+ossLicensesPlugin = "0.10.6"
 
 # Timber
 timber ="5.0.1"
@@ -222,13 +223,6 @@ chucker-release = { group = "com.github.chuckerteam.chucker",name = "library-no-
 bumptech-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide"}
 bumptech-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide"}
 bumptech-glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glideCompose"}
-# Maps
-google-maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "googleMap"}
-play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServiceMap"}
-
-# Coil
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coil"}
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil"}
 
 # Timber
 jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
@@ -237,17 +231,17 @@ jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
 
 # Lottie
-airbnb-android-lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie"}
 airbnb-android-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie"}
-
-# FFT
-paramsen-noise = { module = "com.github.paramsen:noise", version.ref = "fft"}
 
 # tedpermission
 tedpermission-coroutine = { module = "io.github.ParkSangGwon:tedpermission-coroutine", version.ref = "tedpermission"}
 
 # audioFileIO
 jaudiotagger = { module = "com.github.Adonai:jaudiotagger", version.ref = "jaudiotagger" }
+
+# license
+oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
+oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
 
 # Test
 junit4 = { group = "junit", name = "junit", version.ref = "testJunit" }
