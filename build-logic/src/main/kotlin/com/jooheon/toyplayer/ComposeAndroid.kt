@@ -27,17 +27,6 @@ internal fun Project.configureComposeAndroid() {
             add("implementation", libs.findLibrary("androidx.activity.compose").get())
             add("implementation", libs.findLibrary("androidx.compose.material.iconsExtended").get())
 
-            // accompanist
-            add("implementation",libs.findLibrary( "google.accompanist.permissions").get())
-            add("implementation",libs.findLibrary( "google.accompanist.insets").get())
-            add("implementation",libs.findLibrary( "google.accompanist.insets.ui").get())
-            add("implementation",libs.findLibrary( "google.accompanist.systemuicontroller").get())
-            add("implementation",libs.findLibrary( "google.accompanist.navigation.animation").get())
-            add("implementation",libs.findLibrary( "google.accompanist.navigation.material").get())
-
-            // 위치 바꾸자
-            add("implementation", libs.findLibrary("jakewharton.timber").get())
-
             add("androidTestImplementation", libs.findLibrary("androidx.test.ext").get())
             add("androidTestImplementation", libs.findLibrary("androidx.test.espresso.core").get())
             add("androidTestImplementation", libs.findLibrary("androidx.compose.ui.test").get())

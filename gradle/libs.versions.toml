@@ -1,11 +1,14 @@
 [versions]
 # ksp: https://github.com/google/ksp/releases
 # compose-compiler: https://developer.android.com/jetpack/androidx/releases/compose-compiler
+# hilt: https://github.com/google/dagger/releases
 
 # Project
-androidGradlePlugin = "8.7.2"
+androidGradlePlugin = "8.8.2"
 gms = "4.4.2"
 kotlin = "2.0.21"
+ksp = "2.0.21-1.0.28"
+
 compose_compiler = "1.5.14"
 version_code = "10100"
 version_name = "1.1.0"
@@ -13,33 +16,25 @@ android_sdk_compile = "35"
 android_sdk_min = "26"
 
 # Compose
-composeBom = "2025.02.00"
-compose-accompanist = "0.34.0"
-composeAnimation = "1.7.8"
-
-# Plugins
-ksp = "2.0.21-1.0.28"
+composeBom = "2025.03.00"
 
 # AndroidX
 corektx = "1.15.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-constraint = "2.2.0"
-lifecycle = "2.8.7"
-splashscreen = "1.0.1"
-datastore="1.1.1"
+datastore="1.1.3"
 activityCompose = "1.10.1"
-constraintLayout = "1.1.0"
+constraintLayout = "1.1.1"
 androidxLifecycle = "2.8.7"
-composeNavigation = "2.8.5"
+composeNavigation = "2.8.9"
 palette = "1.0.0"
 
 # Media3
-media3 = "1.6.0-rc01"
+media3 = "1.6.0-rc02"
 mediarouter = "1.7.0"
 
 # KotlinX
-kotlinxCoroutines = "1.9.0"
+kotlinxCoroutines = "1.10.1"
 kotlinxSerialization = "1.7.3"
 kotlinxImmutable = "0.3.7"
 
@@ -67,7 +62,6 @@ retrofit-serialization-converter = "1.0.0"
 # Glide
 glide = "4.16.0"
 glideCompose = "1.0.0-beta01"
-coil = "2.7.0"
 
 ## license
 # https://developers.google.com/android/guides/opensource
@@ -81,10 +75,7 @@ timber ="5.0.1"
 tedpermission = "3.3.0"
 
 # Lottie
-lottie = "6.5.0"
-
-# FFT
-fft = "2.0.0"
+lottie = "6.6.1"
 
 # AudioFileIO
 jaudiotagger = "2.3.15"
@@ -111,6 +102,7 @@ android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", ve
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 google-gms-plugin = { module = "com.google.gms:google-services", version.ref = "gms"}
 verify-detekt-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
 
 # Hilt
 hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
@@ -142,18 +134,15 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
 
 # AndroidX
-androidx-splash = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen"}
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "corektx" }
 androidx-material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
-androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle"}
 
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraint" }
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout" }
-androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-datastore-preference = {module = "androidx.datastore:datastore-preferences", version.ref ="datastore"}
 
 # verify
@@ -171,15 +160,12 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
-# Compose animation
-androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation"}
-
 # Compose navigation
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-compose-navigation-test = { group = "androidx.navigation", name = "navigation-testing", version.ref = "composeNavigation" }
 
 # Compose Material
-androidx-compose-material = { group = "androidx.compose.material", name = "material" }
+#androidx-compose-material = { group = "androidx.compose.material", name = "material" }
 androidx-compose-material-iconsExtended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # Compose Material3
@@ -189,13 +175,8 @@ androidx-compose-materialWindow = { group = "androidx.compose.material3", name =
 # palette
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 
-#Compose accompanist  version.ref = "0.25.1"
-google-accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.strictly = "0.30.1"}
-google-accompanist-insets-ui = { group = "com.google.accompanist", name = "accompanist-insets-ui", version.strictly = "0.34.0"}
-google-accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.strictly = "0.34.0"}
-google-accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "compose-accompanist"}
-google-accompanist-navigation-material = { group = "com.google.accompanist", name = "accompanist-navigation-material", version.ref = "compose-accompanist"}
-google-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "compose-accompanist"}
+# license
+oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
 
 # Media3 - ExoPlayer
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
@@ -239,10 +220,6 @@ tedpermission-coroutine = { module = "io.github.ParkSangGwon:tedpermission-corou
 # audioFileIO
 jaudiotagger = { module = "com.github.Adonai:jaudiotagger", version.ref = "jaudiotagger" }
 
-# license
-oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
-oss-licenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "ossLicensesPlugin" }
-
 # Test
 junit4 = { group = "junit", name = "junit", version.ref = "testJunit" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
@@ -257,12 +234,9 @@ kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", vers
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
