@@ -22,7 +22,7 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Drawables
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 import com.jooheon.toyplayer.features.library.main.component.LibraryHeaderItem
 import com.jooheon.toyplayer.features.library.main.component.artist.ArtistLibrarySection
 import com.jooheon.toyplayer.features.library.main.component.playlist.PlaylistLibrarySection

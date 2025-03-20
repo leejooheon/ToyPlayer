@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Artist
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
-import com.jooheon.toyplayer.features.common.compose.components.OutlinedText
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.OutlinedText
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -60,7 +60,7 @@ internal fun ArtistLibraryItem(
                 outlineColor = MaterialTheme.colorScheme.onPrimary,
                 fillColor = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.labelMedium.copy(
-                    shadow = Shadow(Color.Black, Offset(1f,1f), 1f)
+                    shadow = Shadow(Color.Black, Offset(1f, 1f), 1f)
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

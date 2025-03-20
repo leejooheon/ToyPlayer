@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 
 @Composable
 internal fun ArtistDetailAlbumItem(

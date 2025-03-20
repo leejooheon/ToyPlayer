@@ -7,24 +7,23 @@ import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.component.info.content.component.ContentPagerItem
 import com.jooheon.toyplayer.features.player.component.info.content.component.ContentScrollableItem
-import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable
 internal fun ContentSection(
     useScrollableItem: Boolean,
-    models: List<PlayerUiState.ContentModel>,
+    playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
     contentAlpha: Float,
     isPlaying: Boolean,
     enableScroll: Boolean,
-    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
+    onContentClick: (Playlist, startIndex: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (useScrollableItem) {
         ContentScrollableItem(
-            models = models,
+            playlists = playlists,
             currentSong = currentSong,
             titleAlpha = titleAlpha,
             isPlaying = isPlaying,
@@ -35,7 +34,7 @@ internal fun ContentSection(
         )
     } else {
         ContentPagerItem(
-            models = models,
+            playlists = playlists,
             currentSong = currentSong,
             titleAlpha = titleAlpha,
             isPlaying = isPlaying,

@@ -34,7 +34,7 @@ import com.airbnb.lottie.model.KeyPath
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.radio.RadioData
-import com.jooheon.toyplayer.features.common.compose.components.OutlinedText
+import com.jooheon.toyplayer.features.commonui.components.OutlinedText
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -95,17 +95,18 @@ internal fun LogoSection(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                LottieAnimation(
-                    composition = composition,
-                    progress = { if (isPlaying) progress else 0f },
-                    dynamicProperties = dynamicProperties,
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .aspectRatio(1.6f)
-                        .weight(1f),
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
+                if(isPlaying) {
+                    LottieAnimation(
+                        composition = composition,
+                        progress = { progress },
+                        dynamicProperties = dynamicProperties,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .aspectRatio(1.6f)
+                            .weight(1f),
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
 
                 CircularProgressIndicator(
                     color = Color.White,

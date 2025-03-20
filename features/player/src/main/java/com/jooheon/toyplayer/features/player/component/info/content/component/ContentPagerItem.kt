@@ -21,11 +21,11 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable
 internal fun ContentPagerItem(
-    models: List<PlayerUiState.ContentModel>,
+    playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
+    onContentClick: (Playlist, startIndex: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyListState()
@@ -41,14 +41,14 @@ internal fun ContentPagerItem(
             modifier = Modifier.height(contentSpace())
         )
 
-        models.forEach { model ->
+        playlists.forEach { playlist ->
             ContentItem(
                 state = state,
-                model = model,
+                playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
                 isPlaying = isPlaying,
-                onContentClick = onContentClick,
+                onContentClick = { onContentClick.invoke(playlist, it) },
             )
 
             Spacer(
@@ -72,7 +72,7 @@ private fun PreviewContentPagerItem() {
     val song = uiState.musicState.currentPlayingMusic
     ToyPlayerTheme {
         ContentPagerItem(
-            models = uiState.contentModels,
+            playlists = uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
             isPlaying = false,

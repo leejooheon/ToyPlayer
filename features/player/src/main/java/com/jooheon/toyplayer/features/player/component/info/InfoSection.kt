@@ -23,10 +23,12 @@ import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.features.common.extension.toPx
+import com.jooheon.toyplayer.features.commonui.ext.toPx
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
@@ -46,9 +48,10 @@ import kotlin.math.min
 fun InfoSection(
     pagerState: PagerState,
     musicState: MusicState,
-    currentPlaylist: Playlist,
+    playedName: String,
+    playedThumbnailImage: String,
     currentSong: Song,
-    models: List<PlayerUiState.ContentModel>,
+    playlists: List<Playlist>,
     isLoading: Boolean,
     isShow: Boolean,
     onLibraryClick: () -> Unit,
@@ -57,9 +60,9 @@ fun InfoSection(
     onPlayPauseClick: () -> Unit,
     onNextClick:() -> Unit,
     onPreviousClick: () -> Unit,
-    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
+    onContentClick: (playlist: Playlist, startIndex: Int) -> Unit,
 ) {
-    val chunkedModel = models.toChunkedModel()
+    val chunkedModel = playlists.toChunkedModel()
     var contentAlpha by remember { mutableFloatStateOf(1f) }
     val animTime = integerResource(android.R.integer.config_longAnimTime)
     val pageOffset by remember {
@@ -111,7 +114,8 @@ fun InfoSection(
                     when (pageIndex) {
                         0 -> ControlSection(
                             musicState = musicState,
-                            playlist = currentPlaylist,
+                            playedName = playedName,
+                            playedThumbnailImage = playedThumbnailImage,
                             titleAlpha = 1 - pageOffset,
                             isLoading = isLoading,
                             onLibraryClick = onLibraryClick,
@@ -132,7 +136,7 @@ fun InfoSection(
 
                             ContentSection(
                                 useScrollableItem = chunkedModel.size == 1 || newModels.size > 4,
-                                models = newModels,
+                                playlists = newModels,
                                 currentSong = currentSong,
                                 titleAlpha = pageOffset,
                                 contentAlpha = contentAlpha,
@@ -173,16 +177,17 @@ private fun PreviewInfoSection() {
     val uiState = PlayerUiState.preview
     val pagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { uiState.contentModels.chunked(4).size + 1 },
+        pageCount = { uiState.playlists.chunked(4).size + 1 },
     )
 
     ToyPlayerTheme {
         InfoSection(
             pagerState = pagerState,
             musicState = uiState.musicState,
+            playedName = UiText.StringResource(Strings.placeholder_long).asString(),
+            playedThumbnailImage = "",
             currentSong = uiState.musicState.currentPlayingMusic,
-            currentPlaylist = uiState.pagerModel.currentPlaylist,
-            models = uiState.contentModels,
+            playlists = uiState.playlists,
             isLoading = false,
             isShow = true,
             onLibraryClick = {},

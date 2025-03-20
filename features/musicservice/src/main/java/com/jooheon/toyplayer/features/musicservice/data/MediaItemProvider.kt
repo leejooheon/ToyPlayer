@@ -54,7 +54,8 @@ class MediaItemProvider(
             }
             is MediaId.AllSongs -> {
                 val songs = musicListUseCase.getAllSongList()
-                songs.map { it.toMediaItem() }
+                val radios = radioUseCase.getRadioStationList()
+                (songs + radios).map { it.toMediaItem() }
             }
             is MediaId.LocalSongs -> {
                 val songs = musicListUseCase.getLocalSongList()
@@ -96,7 +97,10 @@ class MediaItemProvider(
     }
 
     private suspend fun getAlbums(): List<Album> {
-        return musicListUseCase.getAllSongList().groupBy {
+        val songs = musicListUseCase.getAllSongList()
+        val radios = radioUseCase.getRadioStationList()
+
+        return (songs + radios).groupBy {
             it.albumId
         }.map { (albumId, songs) ->
             Album(

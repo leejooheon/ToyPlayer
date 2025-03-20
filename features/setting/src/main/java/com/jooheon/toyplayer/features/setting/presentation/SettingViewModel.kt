@@ -1,9 +1,8 @@
 package com.jooheon.toyplayer.features.setting.presentation
 
 import android.content.Context
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.features.common.base.BaseViewModel
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.domain.usecase.SettingsUseCase
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenState
@@ -17,9 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val settingsUseCase: SettingsUseCase
-): BaseViewModel() {
-    override val TAG = SettingViewModel::class.java.simpleName
-
+): ViewModel() {
     private val _sharedState = MutableStateFlow(SettingScreenState.default)
     val sharedState = _sharedState.asStateFlow()
 
@@ -33,9 +30,15 @@ class SettingViewModel @Inject constructor(
     ) = viewModelScope.launch {
         when(event) {
             is SettingScreenEvent.OnEqualizerScreenClick -> { /** Nothing **/ }
-            is SettingScreenEvent.OnBackClick -> _navigateTo.send(ScreenNavigation.Back)
-            is SettingScreenEvent.OnThemeScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Theme)
-            is SettingScreenEvent.OnLanguageScreenClick -> _navigateTo.send(ScreenNavigation.Setting.Language)
+            is SettingScreenEvent.OnBackClick -> {
+//                _navigateTo.send(ScreenNavigation.Back)
+            }
+            is SettingScreenEvent.OnThemeScreenClick -> {
+//                _navigateTo.send(ScreenNavigation.Setting.Theme)
+            }
+            is SettingScreenEvent.OnLanguageScreenClick -> {
+//                _navigateTo.send(ScreenNavigation.Setting.Language)
+            }
             is SettingScreenEvent.OnSkipDurationScreenClick -> {
                 _sharedState.update {
                     it.copy(showSkipDurationDialog = event.isShow)

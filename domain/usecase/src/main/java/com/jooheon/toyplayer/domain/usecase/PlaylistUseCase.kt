@@ -1,9 +1,8 @@
 package com.jooheon.toyplayer.domain.usecase
 
 import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
-import com.jooheon.toyplayer.domain.model.common.onError
-import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,11 @@ class PlaylistUseCase @Inject constructor(
         playlistRepository.getAllPlaylist()
     }
 
-    suspend fun getPlaylist(playlistId: Int): Result<Playlist, RootError> = withContext(Dispatchers.IO) {
+    suspend fun getPlayingQueue(): Result<Playlist, PlaylistError> {
+        return getPlaylist(Playlist.PlayingQueuePlaylistId.first)
+    }
+
+    suspend fun getPlaylist(playlistId: Int): Result<Playlist, PlaylistError> = withContext(Dispatchers.IO) {
         return@withContext playlistRepository.getPlaylist(playlistId)
     }
 
@@ -39,16 +42,6 @@ class PlaylistUseCase @Inject constructor(
         val result = getAllPlaylist()
         return@withContext when(result) {
             is Result.Success -> name !in result.data.map { it.name }
-            is Result.Error -> false
-        }
-    }
-
-    suspend fun checkValidId(id: Int): Boolean = withContext(Dispatchers.IO) {
-        if(id in Playlist.defaultPlaylistIds.map { it.first }) return@withContext false
-
-        val result = getAllPlaylist()
-        return@withContext when(result) {
-            is Result.Success -> id in result.data.map { it.id }
             is Result.Error -> false
         }
     }

@@ -26,12 +26,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 internal fun ContentScrollableItem(
-    models: List<PlayerUiState.ContentModel>,
+    playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
     enableScroll: Boolean,
-    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
+    onContentClick: (Playlist, startIndex: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -65,16 +65,16 @@ internal fun ContentScrollableItem(
             Spacer(modifier = Modifier.height(contentSpace()))
         }
 
-        items(models.size) { index ->
-            val model = models.getOrNull(index) ?: return@items
+        items(playlists.size) { index ->
+            val playlist = playlists.getOrNull(index) ?: return@items
 
             ContentItem(
                 state = rememberLazyListState(),
-                model = model,
+                playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
                 isPlaying = isPlaying,
-                onContentClick = onContentClick,
+                onContentClick = { onContentClick.invoke(playlist, it) },
             )
 
             Spacer(modifier = Modifier.height(contentSpace()))
@@ -96,7 +96,7 @@ private fun PreviewContentScrollableSection() {
     val song = uiState.musicState.currentPlayingMusic
     ToyPlayerTheme {
         ContentScrollableItem(
-            models = uiState.contentModels,
+            playlists = uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
             isPlaying = false,

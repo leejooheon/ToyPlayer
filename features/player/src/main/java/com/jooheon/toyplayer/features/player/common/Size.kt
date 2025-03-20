@@ -1,8 +1,5 @@
 package com.jooheon.toyplayer.features.player.common
 
-import android.content.Context
-import android.graphics.Point
-import android.view.WindowManager
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
@@ -17,10 +14,9 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.common.extension.deviceWidth
 import com.jooheon.toyplayer.features.common.extension.getHeights
-import com.jooheon.toyplayer.features.common.extension.isSystemBarVisible
-import com.jooheon.toyplayer.features.common.extension.systemTopBarHeight
-import com.jooheon.toyplayer.features.common.extension.toDp
-import timber.log.Timber
+import com.jooheon.toyplayer.features.commonui.ext.isSystemBarVisible
+import com.jooheon.toyplayer.features.commonui.ext.systemTopBarHeight
+import com.jooheon.toyplayer.features.commonui.ext.toDp
 
 @Composable
 fun verticalMargin(): Dp {
@@ -43,6 +39,7 @@ fun horizontalMargin(): Dp {
 @Composable
 fun contentWidth(): Dp {
     val context = LocalContext.current
+
     val pixel = (context.deviceWidth() * 0.25).toFloat()
     return pixel.toDp()
 }

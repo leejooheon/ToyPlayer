@@ -21,12 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
-import com.jooheon.toyplayer.features.common.compose.SnackbarController
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
-import com.jooheon.toyplayer.features.main.model.MainScreenEvent
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
+import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
 import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator
 import com.jooheon.toyplayer.features.main.presentation.CustomSnackbarHost
@@ -55,15 +52,15 @@ fun MainScreen(
                 duration = SnackbarDuration.Short
             )
 
-            if(result == SnackbarResult.ActionPerformed) {
+            if (result == SnackbarResult.ActionPerformed) {
                 event.action?.action?.invoke()
             }
         }
     }
 
-    viewModel.navigateTo.observeWithLifecycle {
-        mainNavigator.navController.navigate(ScreenNavigation.Setting.Main)
-    }
+//    viewModel.navigateTo.observeWithLifecycle {
+//        mainNavigator.navController.navigate(ScreenNavigation.Setting.Main)
+//    }
 
     MainScreenInternal(
         navigator = mainNavigator,
@@ -72,7 +69,7 @@ fun MainScreen(
 
     MaybeRequestMediaPermission(
         onPermissionGranted = {
-            viewModel.dispatch(MainScreenEvent.OnPermissionGranted)
+//            viewModel.dispatch(MainScreenEvent.OnPermissionGranted)
         }
     )
 }

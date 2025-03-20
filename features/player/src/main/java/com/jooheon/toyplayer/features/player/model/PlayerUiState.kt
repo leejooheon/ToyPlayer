@@ -1,8 +1,8 @@
 package com.jooheon.toyplayer.features.player.model
 
+import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
@@ -10,16 +10,22 @@ import com.jooheon.toyplayer.features.musicservice.data.MusicState
 data class PlayerUiState(
     val musicState: MusicState,
     val pagerModel: PagerModel,
-    val contentModels: List<ContentModel>,
+    val playlists: List<Playlist>,
     private val isLoading: Boolean,
 ) {
     fun isLoading(): Boolean {
         return isLoading || musicState.isLoading()
     }
+    fun playingQueue(): Playlist {
+        return playlists
+            .firstOrNull { it.id == Playlist.PlayingQueuePlaylistId.first }
+            .default(Playlist.default)
+    }
 
     data class PagerModel(
         val items: List<Song>,
-        val currentPlaylist: Playlist, // FIXME: MusicState로 바꾸자
+        val playedName: String,
+        val playedThumbnailImage: String,
     ) {
         fun currentPageIndex(currentSongKey: String): Int {
             val index = items
@@ -32,27 +38,13 @@ data class PlayerUiState(
         companion object {
             val default = PagerModel(
                 items = emptyList(),
-                currentPlaylist = Playlist.default,
+                playedName = "",
+                playedThumbnailImage = "",
             )
             val preview = PagerModel(
                 items = listOf(Song.preview, Song.preview.copy(audioId = 2), Song.preview.copy(audioId = 3)),
-                currentPlaylist = Playlist.preview,
-            )
-        }
-    }
-
-    data class ContentModel(
-        val playlist: Playlist,
-        val requirePermission: Boolean,
-    ) {
-        companion object {
-            val default = ContentModel(
-                playlist = Playlist.default,
-                requirePermission = false,
-            )
-            val preview = ContentModel(
-                playlist = Playlist.preview,
-                requirePermission = false,
+                playedName = "preview",
+                playedThumbnailImage = "",
             )
         }
     }
@@ -61,20 +53,19 @@ data class PlayerUiState(
         val preview = PlayerUiState(
             musicState = MusicState.preview,
             pagerModel = PagerModel.preview,
-            contentModels = listOf(ContentModel.preview, ContentModel.preview),
+            playlists = listOf(Playlist.preview, Playlist.preview),
             isLoading = true,
         )
         val default = PlayerUiState(
             musicState = MusicState(),
             pagerModel = PagerModel.default,
-            contentModels = emptyList(),
+            playlists = emptyList(),
             isLoading = false,
         )
     }
-
 }
 
-fun List<PlayerUiState.ContentModel>.toChunkedModel(): List<List<PlayerUiState. ContentModel>> {
+fun List<Playlist>.toChunkedModel(): List<List<Playlist>> {
     return chunked(4).let { chunks ->
         if (chunks.lastOrNull().defaultEmpty().size < 4 && chunks.size > 1) {
             val lastChunk = chunks.last()

@@ -32,11 +32,11 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 @Composable
 internal fun ContentItem(
     state: LazyListState,
-    model: PlayerUiState.ContentModel,
+    playlist: Playlist,
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (playlistId: Int, startIndex: Int) -> Unit,
+    onContentClick: (startIndex: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,7 +52,7 @@ internal fun ContentItem(
                 .alpha(titleAlpha)
         ) {
             Text(
-                text = model.playlist.name,
+                text = playlist.name,
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = androidx.compose.ui.graphics.Color.White,
                 ),
@@ -72,13 +72,13 @@ internal fun ContentItem(
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
-            itemsIndexed(model.playlist.songs) { index, item ->
+            itemsIndexed(playlist.songs) { index, item ->
                 ContentCardItem(
                     title = item.title,
                     imageUrl = item.imageUrl,
                     isPlaying = isPlaying,
                     isSelectedItem = item.key() == currentSong.key(),
-                    onClick = { onContentClick.invoke(model.playlist.id, index) },
+                    onClick = { onContentClick.invoke(index) },
                     modifier = Modifier.width(contentWidth())
                 )
             }
@@ -95,11 +95,11 @@ private fun PreviewContentItem() {
     ToyPlayerTheme {
         ContentItem(
             state = rememberLazyListState(),
-            model = PlayerUiState.ContentModel.preview,
+            playlist = Playlist.preview,
             currentSong = Song.preview,
             titleAlpha = 1f,
             isPlaying = false,
-            onContentClick = { _, _ -> },
+            onContentClick = { },
         )
     }
 }

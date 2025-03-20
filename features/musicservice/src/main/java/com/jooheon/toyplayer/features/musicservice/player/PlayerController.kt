@@ -81,25 +81,7 @@ class PlayerController(private val scope: CoroutineScope) {
         if(index == C.INDEX_UNSET) return@executeAfterPrepare
         it.playAtIndex(index, time)
     }
-    fun play(song: Song) = executeAfterPrepare { player ->
-        val playingQueue = player.mediaItems.map { it.toSong() }
 
-        val index = playingQueue.indexOfFirst {
-            it.key() == song.key()
-        }
-
-        if(index != C.INDEX_UNSET) {
-            player.playAtIndex(
-                index = index,
-                duration = player.currentPosition
-            )
-        } else {
-            enqueue(
-                song = song,
-                playWhenReady = true
-            )
-        }
-    }
     fun pause() = executeAfterPrepare {
         it.pause()
     }
@@ -121,22 +103,27 @@ class PlayerController(private val scope: CoroutineScope) {
         val value = (it.repeatMode.defaultZero() + 1) % 3
         it.repeatMode = value
     }
+
     fun enqueue(
         song: Song,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
-        val playingQueue = player.mediaItems.map { it.toSong() }
-
-        val index = playingQueue.indexOfFirst {
-            it.key() == song.key()
-        }
-
-        if(index != C.INDEX_UNSET) {
-            player.removeMediaItem(index)
-        }
-
         player.enqueue(
             mediaItem = song.toMediaItem(),
+            playWhenReady = playWhenReady
+        )
+    }
+
+    fun enqueue(
+        songs: List<Song>,
+        startIndex: Int = C.INDEX_UNSET,
+        startPositionMs: Long = C.TIME_UNSET,
+        playWhenReady: Boolean
+    ) = executeAfterPrepare { player ->
+        player.forceEnqueue(
+            mediaItems = songs.map { it.toMediaItem() },
+            startIndex = startIndex,
+            startPositionMs = startPositionMs,
             playWhenReady = playWhenReady
         )
     }

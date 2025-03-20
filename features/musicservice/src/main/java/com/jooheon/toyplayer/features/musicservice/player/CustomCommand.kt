@@ -17,16 +17,6 @@ sealed interface CustomCommand {
     @Serializable
     data object ToggleShuffle: CustomCommand
 
-    @Serializable
-    data object PlayAutomatic: CustomCommand
-
-    @Serializable
-    data class Play(
-        val playlistId: Int,
-        val startIndex: Int,
-        val playWhenReady: Boolean
-    ): CustomCommand
-
     companion object {
         const val CUSTOM_COMMAND_ACTION = "commandAction"
         internal const val CUSTOM_COMMAND_EXTRA = "commandExtra"

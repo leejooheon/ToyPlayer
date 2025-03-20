@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
+import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
@@ -16,8 +17,9 @@ import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.artist.details.model.ArtistDetailEvent
 import com.jooheon.toyplayer.features.artist.details.model.ArtistDetailUiState
-import com.jooheon.toyplayer.features.common.compose.SnackbarController
-import com.jooheon.toyplayer.features.common.compose.SnackbarEvent
+import com.jooheon.toyplayer.features.common.menu.SongMenuHandler
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +35,7 @@ import kotlin.coroutines.resume
 class ArtistDetailViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
     private val playerController: PlayerController,
+    private val songMenuHandler: SongMenuHandler,
 ): ViewModel() {
     private val _uiState = MutableStateFlow(ArtistDetailUiState.default)
     internal val uiState = _uiState.asStateFlow()
@@ -79,17 +82,15 @@ class ArtistDetailViewModel @Inject constructor(
             song = song,
             playWhenReady = true
         )
-
         val event = SnackbarEvent(UiText.StringResource(Strings.add))
         SnackbarController.sendEvent(event)
     }
 
     private suspend fun addToPlayingQueue(song: Song) {
-        playlistUseCase
-            .getPlaylist(Playlist.PlayingQueuePlaylistId.first)
+        songMenuHandler
+            .addToPlayingQueue(song)
             .onSuccess {
-                updatePlaylist(it, song)
-                val event = SnackbarEvent(UiText.StringResource(Strings.update))
+                val event = SnackbarEvent(UiText.StringResource(Strings.add))
                 SnackbarController.sendEvent(event)
             }
             .onError {
@@ -99,33 +100,37 @@ class ArtistDetailViewModel @Inject constructor(
     }
 
     private suspend fun addToPlaylist(playlist: Playlist, song: Song) {
-        val name = playlist.name
-
-        if(!playlistUseCase.checkValidName(name)) { // TODO: 중복 코드.. usecase로 옮겨야함
-            val event = SnackbarEvent(UiText.StringResource(Strings.error_playlist, name))
-            SnackbarController.sendEvent(event)
-            return
-        }
-
-        playlistUseCase.nextPlaylistIdOrNull()?.let {
-            playlistUseCase.insertPlaylists(
-                playlist.copy(
-                    id = it,
-                    songs = listOf(song)
-                )
-            )
-            val event = SnackbarEvent(UiText.StringResource(Strings.playlist_inserted))
-            SnackbarController.sendEvent(event)
-        } ?: run {
-            val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
-            SnackbarController.sendEvent(event)
-        }
+        songMenuHandler
+            .addToPlaylist(playlist, song)
+            .onSuccess {
+                val event = SnackbarEvent(UiText.StringResource(Strings.playlist_inserted))
+                SnackbarController.sendEvent(event)
+            }
+            .onError {
+                when(it) {
+                    is PlaylistError.DuplicatedName -> {
+                        val event = SnackbarEvent(UiText.StringResource(Strings.error_playlist, playlist.name))
+                        SnackbarController.sendEvent(event)
+                    }
+                    else -> {
+                        val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                        SnackbarController.sendEvent(event)
+                    }
+                }
+            }
     }
 
     private suspend fun updatePlaylist(playlist: Playlist, song: Song) {
-        playlistUseCase.updatePlaylists(
-            playlist.copy(songs = playlist.songs + song)
-        )
+        songMenuHandler
+            .updatePlaylist(playlist, song)
+            .onSuccess {
+                val event = SnackbarEvent(UiText.StringResource(Strings.add))
+                SnackbarController.sendEvent(event)
+            }
+            .onError {
+                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                SnackbarController.sendEvent(event)
+            }
     }
 
     private suspend fun getArtist(context: Context, artistId: String): Artist {

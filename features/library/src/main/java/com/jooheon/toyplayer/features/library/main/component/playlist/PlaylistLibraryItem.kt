@@ -20,7 +20,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.jooheon.toyplayer.features.common.compose.components.OutlinedText
+import com.jooheon.toyplayer.features.commonui.components.OutlinedText
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

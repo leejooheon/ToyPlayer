@@ -37,6 +37,10 @@ dependencies {
     // coil
     implementation(libs.coil)
 
-    // 위치 바꾸자
+    // timber
     implementation(libs.jakewharton.timber)
+
+    // glide
+    implementation(libs.bumptech.glide)
+    annotationProcessor(libs.bumptech.glide.compiler)
 }

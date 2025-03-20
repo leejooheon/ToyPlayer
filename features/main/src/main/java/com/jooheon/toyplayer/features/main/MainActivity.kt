@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.common.compose.TouchEventController
+import com.jooheon.toyplayer.features.commonui.controller.TouchEventController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

@@ -113,57 +113,6 @@ class MediaLibrarySessionCallback(
         Timber.d("onCustomCommand: $command")
         return scope.future {
             when (command) {
-                is CustomCommand.Play -> {
-                    val result = playlistUseCase.getPlaylist(command.playlistId)
-                    when(result) {
-                        is Result.Success -> {
-                            val playlist = result.data
-                            playbackSettingsUseCase.setRecentPlaylistId(command.playlistId)
-                            session.player.forceEnqueue(
-                                mediaItems = playlist.songs.map { it.toMediaItem() },
-                                startPositionMs = 0L,
-                                startIndex = command.startIndex,
-                                playWhenReady = command.playWhenReady,
-                            )
-                            SessionResult(SessionResult.RESULT_SUCCESS)
-                        }
-                        is Result.Error -> {
-                            val error = bundleOf(MusicDataError.key to result.error.serialize())
-                            SessionResult(SessionError.ERROR_IO, error)
-                        }
-                    }
-                }
-                is CustomCommand.PlayAutomatic -> {
-                    val id = playbackSettingsUseCase.playlistId()
-                        .takeIf { it != C.INDEX_UNSET }
-                        .default(RadioPlaylistId.first)
-                    val lastPlayedMediaId = playbackSettingsUseCase.lastPlayedMediaId()
-                    val result = playlistUseCase.getPlaylist(id)
-
-                    when(result) {
-                        is Result.Success -> {
-                            val playlist = result.data
-                            val mediaItems = playlist.songs.map { it.toMediaItem() }
-                            val index = mediaItems
-                                .indexOfFirst { it.mediaId == lastPlayedMediaId }
-                                .takeIf { it != C.INDEX_UNSET }
-                                .defaultZero()
-
-                            playbackSettingsUseCase.setRecentPlaylistId(id)
-                            session.player.forceEnqueue(
-                                mediaItems = playlist.songs.map { it.toMediaItem() },
-                                startPositionMs = 0L,
-                                startIndex = index,
-                                playWhenReady = true,
-                            )
-                            SessionResult(SessionResult.RESULT_SUCCESS)
-                        }
-                        is Result.Error -> {
-                            val error = bundleOf(MusicDataError.key to result.error.serialize())
-                            SessionResult(SessionError.ERROR_IO, error)
-                        }
-                    }
-                }
                 is CustomCommand.CycleRepeat -> {
                     val repeatMode = (session.player.repeatMode.defaultZero() + 1) % 3
                     session.player.repeatMode = repeatMode

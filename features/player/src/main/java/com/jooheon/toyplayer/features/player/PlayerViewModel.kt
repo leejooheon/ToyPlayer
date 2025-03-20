@@ -1,15 +1,17 @@
 package com.jooheon.toyplayer.features.player
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.C
 import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.PlaybackSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
-import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
@@ -17,9 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -49,39 +49,28 @@ class PlayerViewModel @Inject constructor(
             }
         }
         launch {
-            combine(
-                playbackSettingsUseCase.flowPlaylistId(),
-                musicStateHolder.mediaItems
-            ) { playlistId, mediaItems ->
-                playlistId to mediaItems
-            }.collectLatest { (playlistId, mediaItems) ->
-                val result = playlistUseCase.getPlaylist(playlistId)
-                val playlist = when(result) {
-                    is Result.Success -> result.data
-                    is Result.Error -> Playlist.default
-                }
-
+            musicStateHolder.mediaItems.collectLatest { mediaItems ->
+                val songs = mediaItems.map { it.toSong() }
                 val state = uiState.value
                 val newPagerModel = state.pagerModel.copy(
-                    items = mediaItems.map { it.toSong() },
-                    currentPlaylist = playlist
+                    items = songs,
+                    playedName = playbackSettingsUseCase.lastEnqueuedPlaylistName(),
+                    playedThumbnailImage = songs.firstOrNull()?.imageUrl.defaultEmpty(),
                 )
 
-                val contentModels = state.contentModels.toMutableList()
-
-                contentModels
-                    .indexOfFirst { it.playlist.id == Playlist.PlayingQueuePlaylistId.first }
+                val playlists = state.playlists.toMutableList()
+                playlists
+                    .indexOfFirst { it.id == Playlist.PlayingQueuePlaylistId.first }
                     .takeIf { it != -1 }
                     ?.let {
-                        val oldModel = contentModels.removeAt(it)
-                        val newPlaylist = oldModel.playlist.copy(songs = playlist.songs)
-                        val newModel = oldModel.copy(playlist = newPlaylist)
-                        contentModels.add(it, newModel)
+                        val oldModel = playlists.removeAt(it)
+                        val newPlaylist = oldModel.copy(songs = songs)
+                        playlists.add(it, newPlaylist)
                     }
 
                 _uiState.emit(
                     state.copy(
-                        contentModels = contentModels,
+                        playlists = playlists,
                         pagerModel = newPagerModel,
                     )
                 )
@@ -89,42 +78,19 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    internal fun dispatch(context: Context, event: PlayerEvent) = viewModelScope.launch {
+    internal fun dispatch(event: PlayerEvent) = viewModelScope.launch {
         when(event) {
-            is PlayerEvent.OnContentClick -> {
-                if(event.playlistId == playbackSettingsUseCase.playlistId()) {
-                    playerController.playAtIndex(event.index)
-                } else {
-                    playerController.sendCustomCommand(
-                        context = context,
-                        command = CustomCommand.Play(
-                            playlistId = event.playlistId,
-                            startIndex = event.index,
-                            playWhenReady = true
-                        ),
-                        listener = {
-                            Timber.d("sendCustomCommandResult: OnContentClick $it")
-                        }
-                    )
-                }
-            }
-            is PlayerEvent.OnPlayAutomatic -> {
-                playerController.sendCustomCommand(
-                    context = context,
-                    command = CustomCommand.PlayAutomatic,
-                    listener = {
-                        Timber.d("sendCustomCommandResult: OnPlayAutomatic $it")
-                    }
-                )
-            }
+            is PlayerEvent.OnPlaylistClick -> playlistClick(event.playlist, event.index)
+            is PlayerEvent.OnPlayAutomatic -> playAutomatically()
             is PlayerEvent.OnPlayPauseClick -> playerController.playPause()
             is PlayerEvent.OnNextClick -> playerController.seekToNext()
             is PlayerEvent.OnPreviousClick -> playerController.seekToPrevious()
             is PlayerEvent.OnSwipe -> playerController.playAtIndex(event.index)
-            is PlayerEvent.OnSettingClick  -> { /** nothing **/ }
+
+            is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
+            is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
+            is PlayerEvent.OnNavigateLibraryClick -> { /** nothing **/ }
             is PlayerEvent.OnScreenTouched -> { /** nothing **/ }
-            is PlayerEvent.OnPlaylistClick -> { /** nothing **/ }
-            is PlayerEvent.OnLibraryClick -> { /** nothing **/ }
         }
     }
 
@@ -139,18 +105,53 @@ class PlayerViewModel @Inject constructor(
             is Result.Error -> emptyList()
         }
 
-        val models = playlists.map {
-            PlayerUiState.ContentModel(
-                playlist = it,
-                requirePermission = false
-            )
-        }
-
         _uiState.emit(
             uiState.value.copy(
-                contentModels = models,
+                playlists = playlists,
                 isLoading = false,
             )
         )
+    }
+
+    private suspend fun playlistClick(playlist: Playlist, index: Int) {
+        when(playlist.id) {
+            Playlist.PlayingQueuePlaylistId.first -> playerController.playAtIndex(index)
+            else -> {
+                playbackSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+                playerController.enqueue(
+                    songs = playlist.songs,
+                    startIndex = index,
+                    playWhenReady = true,
+                )
+            }
+        }
+    }
+
+    private suspend fun playAutomatically() {
+        val lastPlayedMediaId = playbackSettingsUseCase.lastPlayedMediaId()
+        val playlistResult = playlistUseCase.getPlayingQueue()
+            .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
+            ?: playlistUseCase.getPlaylist(Playlist.RadioPlaylistId.first)
+
+        when(playlistResult) {
+            is Result.Success -> {
+                val playlist = playlistResult.data
+                val mediaItems = playlist.songs.map { it.toMediaItem() }
+                val index = mediaItems
+                    .indexOfFirst { it.mediaId == lastPlayedMediaId }
+                    .takeIf { it != C.INDEX_UNSET }
+                    .defaultZero()
+
+                playerController.enqueue(
+                    songs = playlist.songs,
+                    startPositionMs = 0L,
+                    startIndex = index,
+                    playWhenReady = true,
+                )
+            }
+            is Result.Error -> {
+
+            }
+        }
     }
 }

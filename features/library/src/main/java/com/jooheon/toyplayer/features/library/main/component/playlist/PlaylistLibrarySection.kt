@@ -22,7 +22,7 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.extension.toDp
+import com.jooheon.toyplayer.features.commonui.ext.toDp
 
 @Composable
 internal fun PlaylistLibrarySection(

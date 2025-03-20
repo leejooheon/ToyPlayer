@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.player.common.contentHeight
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
@@ -28,7 +27,8 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 @Composable
 internal fun ControlSection(
     musicState: MusicState,
-    playlist: Playlist,
+    playedName: String,
+    playedThumbnailImage: String,
     titleAlpha: Float,
     isLoading: Boolean,
     onLibraryClick: () -> Unit,
@@ -53,8 +53,8 @@ internal fun ControlSection(
             modifier = Modifier.fillMaxSize()
         ) {
             ControlTopInfo(
-                title = playlist.name,
-                imageUrl = playlist.thumbnailUrl,
+                title = playedName,
+                imageUrl = playedThumbnailImage,
                 isPlaying = musicState.isPlaying(),
                 onLibraryClick = onLibraryClick,
                 onPlaylistClick = onPlaylistClick,
@@ -92,9 +92,8 @@ private fun PreviewControlSection() {
     ToyPlayerTheme {
         ControlSection(
             musicState = uiState.musicState,
-            playlist = Playlist.preview.copy(
-                name = UiText.StringResource(Strings.placeholder_long).asString()
-            ),
+            playedName = UiText.StringResource(Strings.placeholder_long).asString(),
+            playedThumbnailImage = "",
             titleAlpha = 1f,
             isLoading = false,
             onLibraryClick = {},

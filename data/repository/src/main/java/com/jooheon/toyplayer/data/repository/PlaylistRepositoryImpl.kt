@@ -2,15 +2,14 @@ package com.jooheon.toyplayer.data.repository
 
 import com.jooheon.toyplayer.data.playlist.PlaylistDataSource
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.ResourceError
-import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
 
 class PlaylistRepositoryImpl(
     private val playlistDataSource: PlaylistDataSource,
 ): PlaylistRepository {
-    override suspend fun getAllPlaylist(): Result<List<Playlist>, RootError> {
+    override suspend fun getAllPlaylist(): Result<List<Playlist>, PlaylistError> {
         val list = playlistDataSource.getAllPlaylist()
         return Result.Success(list)
     }
@@ -27,10 +26,10 @@ class PlaylistRepositoryImpl(
         playlistDataSource.deletePlaylists(*playlist)
     }
 
-    override suspend fun getPlaylist(id: Int): Result<Playlist, RootError> {
+    override suspend fun getPlaylist(id: Int): Result<Playlist, PlaylistError> {
         val playlistOrNull = playlistDataSource.getPlaylist(id)
         return if(playlistOrNull == null) {
-            Result.Error(ResourceError.Unknown("$id playlist not found"))
+            Result.Error(PlaylistError.NotFound(id))
         } else {
             Result.Success(playlistOrNull)
         }

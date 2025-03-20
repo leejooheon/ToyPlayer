@@ -15,10 +15,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.common.onSuccess
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable

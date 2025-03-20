@@ -35,7 +35,7 @@ class PlaybackUseCase(
     private fun collectPlayingQueue(scope: CoroutineScope) = scope.launch {
         musicStateHolder.mediaItems.collectLatest { mediaItems ->
             playlistUseCase
-                .getPlaylist(Playlist.PlayingQueuePlaylistId.first)
+                .getPlayingQueue()
                 .onSuccess { playlist ->
                     val songs = mediaItems.map { it.toSong() }
                     playlistUseCase.insertPlaylists(

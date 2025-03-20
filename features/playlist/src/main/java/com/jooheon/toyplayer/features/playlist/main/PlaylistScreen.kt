@@ -31,10 +31,10 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
 import com.jooheon.toyplayer.features.playlist.main.component.PlaylistColumnItem
-import com.jooheon.toyplayer.features.common.compose.components.dialog.PlaylistDialog
+import com.jooheon.toyplayer.features.commonui.components.dialog.PlaylistDialog
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 
@@ -126,8 +126,8 @@ private fun PlaylistScreenInternal(
                                 onItemClick = { onEvent.invoke(PlaylistEvent.OnPlaylistClick(playlist.id)) },
                                 onDropDownMenuClick = { menu ->
                                     when(menu) {
-                                        MusicDropDownMenu.PlaylistChangeName -> playlistDialogState = true to playlist
-                                        MusicDropDownMenu.PlaylistDelete -> onEvent.invoke(PlaylistEvent.OnDeletePlaylist(playlist.id))
+                                        DropDownMenu.PlaylistChangeName -> playlistDialogState = true to playlist
+                                        DropDownMenu.PlaylistDelete -> onEvent.invoke(PlaylistEvent.OnDeletePlaylist(playlist.id))
                                         else -> throw IllegalArgumentException("")
                                     }
                                 },

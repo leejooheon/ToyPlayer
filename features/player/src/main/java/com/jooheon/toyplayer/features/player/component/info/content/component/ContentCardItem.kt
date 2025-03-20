@@ -28,13 +28,12 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
-import com.jooheon.toyplayer.features.common.extension.toDp
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.ext.toDp
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable

@@ -27,7 +27,7 @@ import com.jooheon.toyplayer.domain.model.music.Artist
 import com.jooheon.toyplayer.features.artist.more.component.ArtistMoreItem
 import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreEvent
 import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreUiState
-import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 
 @Composable
 fun ArtistMoreScreen(

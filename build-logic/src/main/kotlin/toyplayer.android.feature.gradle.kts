@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":core:navigation"))
 
     implementation(project(":features:common"))
+    implementation(project(":features:common-ui"))
 //    testImplementation(project(":testing"))
 
     val libs = project.extensions.libs

@@ -25,12 +25,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Drawables
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Album
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
 
 @Composable
@@ -97,7 +98,9 @@ internal fun AlbumDetailHeader(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .bounceClick { onPlayAllClick(false) },
             ) {
                 Text(
                     text = UiText.StringResource(Strings.action_play_all).asString(),
@@ -113,7 +116,9 @@ internal fun AlbumDetailHeader(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .bounceClick { onPlayAllClick(true) },
             ) {
                 Text(
                     text = UiText.StringResource(Strings.action_play_all_shuffle).asString(),

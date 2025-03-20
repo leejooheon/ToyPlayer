@@ -32,6 +32,7 @@ activityCompose = "1.10.1"
 constraintLayout = "1.1.0"
 androidxLifecycle = "2.8.7"
 composeNavigation = "2.8.5"
+palette = "1.0.0"
 
 # Media3
 media3 = "1.6.0-rc01"
@@ -183,6 +184,9 @@ androidx-compose-material-iconsExtended = { group = "androidx.compose.material",
 # Compose Material3
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-materialWindow = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+
+# palette
+androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 
 #Compose accompanist  version.ref = "0.25.1"
 google-accompanist-insets = { group = "com.google.accompanist", name = "accompanist-insets", version.strictly = "0.30.1"}

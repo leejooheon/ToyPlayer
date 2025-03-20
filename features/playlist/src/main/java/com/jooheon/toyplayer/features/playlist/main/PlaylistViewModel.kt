@@ -4,21 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
-import com.jooheon.toyplayer.features.common.compose.SnackbarController
-import com.jooheon.toyplayer.features.common.compose.SnackbarEvent
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistEvent
 import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +31,9 @@ class PlaylistViewModel @Inject constructor(
                 _uiState.emit(PlaylistUiState(playlists = it))
             }
             .onError {
-                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                val event = SnackbarEvent(
+                    UiText.StringResource(Strings.some_error)
+                )
                 SnackbarController.sendEvent(event)
             }
     }
@@ -57,7 +56,9 @@ class PlaylistViewModel @Inject constructor(
                 loadData()
             }
             .onError {
-                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                val event = SnackbarEvent(
+                    UiText.StringResource(Strings.some_error)
+                )
                 SnackbarController.sendEvent(event)
             }
     }
@@ -72,14 +73,21 @@ class PlaylistViewModel @Inject constructor(
                 loadData()
             }
             .onError {
-                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                val event = SnackbarEvent(
+                    UiText.StringResource(Strings.some_error)
+                )
                 SnackbarController.sendEvent(event)
             }
     }
 
     private suspend fun insertPlaylist(name: String) {
         if(!playlistUseCase.checkValidName(name)) {
-            val event = SnackbarEvent(UiText.StringResource(Strings.error_playlist, name))
+            val event = SnackbarEvent(
+                UiText.StringResource(
+                    Strings.error_playlist,
+                    name
+                )
+            )
             SnackbarController.sendEvent(event)
             return
         }
@@ -94,7 +102,9 @@ class PlaylistViewModel @Inject constructor(
             playlistUseCase.insertPlaylists(playlist)
             loadData()
         } ?: run {
-            val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+            val event = SnackbarEvent(
+                UiText.StringResource(Strings.some_error)
+            )
             SnackbarController.sendEvent(event)
         }
     }

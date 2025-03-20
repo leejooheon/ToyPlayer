@@ -5,11 +5,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.jooheon.toyplayer.data.datastore.di.DataStoreQualifier
 import com.jooheon.toyplayer.data.datastore.model.PlaybackData
-import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
@@ -20,7 +18,7 @@ class PlaybackPreferencesDataSource @Inject constructor(
     @DataStoreQualifier.Playback private val dataStore: DataStore<Preferences>,
 ) {
     object PreferencesKey {
-        internal val RECENT_PLAYLIST_ID = intPreferencesKey("RECENT_PLAYLIST_ID")
+        internal val LAST_ENQUEUED_PLAYLIST_NAME = stringPreferencesKey("LAST_ENQUEUED_PLAYLIST_NAME")
         internal val LAST_PLAYED_MEDIA_ID = stringPreferencesKey("LAST_PLAYED_MEDIA_ID")
         internal val REPEAT_MODE = intPreferencesKey("REPEAT_MODE")
         internal val SHUFFLE_MODE = booleanPreferencesKey("SHUFFLE_MODE")
@@ -28,16 +26,16 @@ class PlaybackPreferencesDataSource @Inject constructor(
 
     val playbackData = dataStore.data.map { preferences ->
         PlaybackData(
-            playlistId = preferences[PreferencesKey.RECENT_PLAYLIST_ID].default(-1),
+            lastEnqueuedPlaylistName = preferences[PreferencesKey.LAST_ENQUEUED_PLAYLIST_NAME].defaultEmpty(),
             lastPlayedMediaId = preferences[PreferencesKey.LAST_PLAYED_MEDIA_ID].defaultEmpty(),
             repeatMode = preferences[PreferencesKey.REPEAT_MODE].defaultZero(),
             shuffleMode = preferences[PreferencesKey.SHUFFLE_MODE].defaultFalse(),
         )
     }
 
-    suspend fun setRecentPlaylistId(id: Int) {
+    suspend fun setLastEnqueuedPlaylistName(name: String) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKey.RECENT_PLAYLIST_ID] = id
+            preferences[PreferencesKey.LAST_ENQUEUED_PLAYLIST_NAME] = name
         }
     }
     suspend fun setLastPlayedMediaId(mediaId: String) {

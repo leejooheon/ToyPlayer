@@ -29,7 +29,7 @@ import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.features.album.more.component.AlbumMoreItem
 import com.jooheon.toyplayer.features.album.more.model.AlbumMoreEvent
 import com.jooheon.toyplayer.features.album.more.model.AlbumMoreUiState
-import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 
 @Composable
 fun AlbumMoreScreen(

@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.observeWithLifecycle
+import com.jooheon.toyplayer.features.commonui.ext.observeWithLifecycle
 import com.jooheon.toyplayer.features.splash.model.SplashEvent
 import com.jooheon.toyplayer.features.splash.model.SplashState
 

@@ -30,14 +30,15 @@ import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.artist.details.component.ArtistDetailAlbumItem
 import com.jooheon.toyplayer.features.artist.details.model.ArtistDetailEvent
 import com.jooheon.toyplayer.features.artist.details.model.ArtistDetailUiState
-import com.jooheon.toyplayer.features.common.compose.components.CustomTopAppBar
-import com.jooheon.toyplayer.features.common.compose.components.dialog.PlaylistDialog
-import com.jooheon.toyplayer.features.common.compose.components.dialog.SelectPlaylistDialog
-import com.jooheon.toyplayer.features.common.compose.components.dialog.SongDetailsDialog
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
-import com.jooheon.toyplayer.features.common.compose.components.media.MediaDetailHeader
-import com.jooheon.toyplayer.features.common.compose.components.media.MediaItemSmallNoImage
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
+import com.jooheon.toyplayer.features.commonui.components.dialog.PlaylistDialog
+import com.jooheon.toyplayer.features.commonui.components.dialog.SelectPlaylistDialog
+import com.jooheon.toyplayer.features.commonui.components.dialog.SongDetailsDialog
+import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
+import com.jooheon.toyplayer.features.commonui.components.media.MediaDetailHeader
+import com.jooheon.toyplayer.features.commonui.components.media.MediaItemSmallNoImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
+import com.jooheon.toyplayer.features.commonui.components.menu.MenuDialogState
 
 @Composable
 fun ArtistDetailScreen(
@@ -73,7 +74,7 @@ private fun ArtistDetailScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    var dialogState by remember { mutableStateOf(ArtistDetailUiState.DialogState.default) }
+    var dialogState by remember { mutableStateOf(MenuDialogState.default) }
 
     Scaffold(
         topBar = {
@@ -105,7 +106,9 @@ private fun ArtistDetailScreenInternal(
                             modifier = Modifier.padding(horizontal = 12.dp),
                         )
 
-                        MediaDetailHeader(count = album.songs.size)
+                        MediaDetailHeader(
+                            count = album.songs.size
+                        )
 
                         album.songs.forEach { song ->
                             MediaItemSmallNoImage(
@@ -113,23 +116,28 @@ private fun ArtistDetailScreenInternal(
                                 title = song.title,
                                 subTitle = "${song.artist} • ${song.album}",
                                 duration = MusicUtil.toReadableDurationString(song.duration),
-                                dropDownMenus = MusicDropDownMenu.mediaMenuItems,
+                                dropDownMenus = DropDownMenu.mediaMenuItems,
                                 onItemClick = { onEvent.invoke(ArtistDetailEvent.OnSongClick(song)) },
                                 onDropDownMenuClick = { menu ->
-                                    when(menu) {
-                                        MusicDropDownMenu.MediaItemAddToPlayingQueue -> onEvent.invoke(ArtistDetailEvent.OnAddPlayingQueue(song))
-                                        MusicDropDownMenu.MediaItemAddToPlaylist -> {
-                                            dialogState = ArtistDetailUiState.DialogState(
-                                                type = ArtistDetailUiState.DialogState.Type.SelectPlaylist,
+                                    when (menu) {
+                                        DropDownMenu.MediaItemAddToPlayingQueue -> onEvent.invoke(
+                                            ArtistDetailEvent.OnAddPlayingQueue(song)
+                                        )
+
+                                        DropDownMenu.MediaItemAddToPlaylist -> {
+                                            dialogState = MenuDialogState(
+                                                type = MenuDialogState.Type.SelectPlaylist,
                                                 song = song,
                                             )
                                         }
-                                        MusicDropDownMenu.MediaItemDetails -> {
-                                            dialogState = ArtistDetailUiState.DialogState(
-                                                type = ArtistDetailUiState.DialogState.Type.SongInfo,
+
+                                        DropDownMenu.MediaItemDetails -> {
+                                            dialogState = MenuDialogState(
+                                                type = MenuDialogState.Type.SongInfo,
                                                 song = song,
                                             )
                                         }
+
                                         else -> throw IllegalArgumentException("")
                                     }
                                 }
@@ -140,46 +148,57 @@ private fun ArtistDetailScreenInternal(
                 }
 
                 when(dialogState.type) {
-                    ArtistDetailUiState.DialogState.Type.SongInfo -> {
+                    MenuDialogState.Type.SongInfo -> {
                         SongDetailsDialog(
                             song = dialogState.song,
                             onDismissRequest = {
-                                dialogState = ArtistDetailUiState.DialogState.default
+                                dialogState = MenuDialogState.default
                             }
                         )
                     }
-                    ArtistDetailUiState.DialogState.Type.SelectPlaylist -> {
+                    MenuDialogState.Type.SelectPlaylist -> {
                         SelectPlaylistDialog(
                             playlists = uiState.playlists,
                             onPlaylistClick = {
-                                if(it.id == Playlist.default.id) {
-                                    dialogState = ArtistDetailUiState.DialogState(
-                                        type = ArtistDetailUiState.DialogState.Type.NewPlaylist,
+                                if (it.id == Playlist.default.id) {
+                                    dialogState = MenuDialogState(
+                                        type = MenuDialogState.Type.NewPlaylist,
                                         song = dialogState.song,
                                     )
                                 } else {
-                                    onEvent.invoke(ArtistDetailEvent.OnAddPlaylist(it, dialogState.song))
-                                    dialogState = ArtistDetailUiState.DialogState.default
+                                    onEvent.invoke(
+                                        ArtistDetailEvent.OnAddPlaylist(
+                                            it,
+                                            dialogState.song
+                                        )
+                                    )
+                                    dialogState = MenuDialogState.default
                                 }
                             },
                             onDismissRequest = {
-                                dialogState = ArtistDetailUiState.DialogState.default
+                                dialogState = MenuDialogState.default
                             }
                         )
                     }
-                    ArtistDetailUiState.DialogState.Type.NewPlaylist -> {
+                    MenuDialogState.Type.NewPlaylist -> {
                         PlaylistDialog(
                             state = true to Playlist.default,
                             onOkButtonClicked = {
-                                onEvent.invoke(ArtistDetailEvent.OnAddPlaylist(Playlist.default.copy(name = it), dialogState.song))
-                                dialogState = ArtistDetailUiState.DialogState.default
+                                onEvent.invoke(
+                                    ArtistDetailEvent.OnAddPlaylist(
+                                        Playlist.default.copy(
+                                            name = it
+                                        ), dialogState.song
+                                    )
+                                )
+                                dialogState = MenuDialogState.default
                             },
                             onDismissRequest = {
-                                dialogState = ArtistDetailUiState.DialogState.default
+                                dialogState = MenuDialogState.default
                             }
                         )
                     }
-                    ArtistDetailUiState.DialogState.Type.None -> { /** nothing **/ }
+                    MenuDialogState.Type.None -> { /** nothing **/ }
                 }
             }
         }

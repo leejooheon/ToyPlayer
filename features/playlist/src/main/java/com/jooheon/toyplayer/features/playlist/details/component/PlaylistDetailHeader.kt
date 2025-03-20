@@ -16,25 +16,32 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastSumBy
+import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 
 @Composable
 internal fun PlaylistDetailHeader(
@@ -44,9 +51,8 @@ internal fun PlaylistDetailHeader(
     val allDuration = MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
     val songCount = UiText.StringResource(Strings.n_song, playlist.songs.size).asString()
 
-    val thumbnailUrl = playlist.thumbnailUrl.ifBlank {
-        playlist.songs.firstOrNull()?.imageUrl
-    }.default("empty")
+    val thumbnailUrl = playlist.thumbnailUrl
+        .ifBlank { playlist.songs.firstOrNull()?.imageUrl.defaultEmpty() }
 
     Row(modifier = Modifier.fillMaxSize()) {
         CustomGlideImage(
@@ -82,41 +88,48 @@ internal fun PlaylistDetailHeader(
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelSmall
             )
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                TextButton(
+                Button(
                     onClick = { onPlayAllClick(false) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                    ),
                     modifier = Modifier
-                        .clip(RoundedCornerShape(25))
-                        .background(MaterialTheme.colorScheme.tertiaryContainer)
                         .weight(0.75f)
+                        .bounceClick { onPlayAllClick(false) },
                 ) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                        contentDescription = null,
+                        contentDescription = UiText.StringResource(Strings.action_play_all).asString(),
                     )
                 }
                 Spacer(modifier = Modifier.width(18.dp))
-                TextButton(
+
+                Button(
                     onClick = { onPlayAllClick(true) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
                     modifier = Modifier
                         .aspectRatio(1f)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primaryContainer)
                         .weight(0.25f)
+                        .clip(CircleShape)
+                        .bounceClick { onPlayAllClick(true) }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Shuffle,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        contentDescription = null,
+                        contentDescription = UiText.StringResource(Strings.action_play_all_shuffle).asString(),
+                        modifier = Modifier.scale(2f)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -126,7 +139,7 @@ internal fun PlaylistDetailHeader(
 private fun MusicPlaylistDetailHeaderPreview() {
     ToyPlayerTheme {
         PlaylistDetailHeader(
-            playlist = Playlist.default,
+            playlist = Playlist.preview,
             onPlayAllClick = {},
         )
     }

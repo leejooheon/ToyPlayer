@@ -20,8 +20,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
-import com.jooheon.toyplayer.features.common.compose.ObserveAsEvents
-import com.jooheon.toyplayer.features.common.compose.TouchEventController
+import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
+import com.jooheon.toyplayer.features.commonui.controller.TouchEventController
 import com.jooheon.toyplayer.features.player.component.LogoSection
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
@@ -40,22 +40,20 @@ fun PlayerScreen(
     navigateTo: (ScreenNavigation) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     var infoSectionVisibleState by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadData()
     }
 
-    LaunchedEffect(uiState.contentModels) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
-        if(uiState.contentModels.isEmpty()) return@LaunchedEffect
+    LaunchedEffect(uiState.playlists) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
+        if(uiState.playlists.isEmpty()) return@LaunchedEffect
         if(viewModel.autoPlaybackProperty.get()) return@LaunchedEffect
         viewModel.autoPlaybackProperty.set(true)
         if(uiState.musicState.isPlaying()) return@LaunchedEffect
 
-        viewModel.dispatch(context, PlayerEvent.OnPlayAutomatic)
+        viewModel.dispatch(PlayerEvent.OnPlayAutomatic)
         infoSectionVisibleState = true
     }
 
@@ -80,16 +78,16 @@ fun PlayerScreen(
                 is PlayerEvent.OnScreenTouched -> {
                     infoSectionVisibleState = it.state
                 }
-                is PlayerEvent.OnPlaylistClick -> {
+                is PlayerEvent.OnNavigatePlaylistClick -> {
                     navigateTo.invoke(ScreenNavigation.Playlist.Main)
                 }
-                is PlayerEvent.OnSettingClick -> {
+                is PlayerEvent.OnNavigateSettingClick -> {
                     navigateTo.invoke(ScreenNavigation.Setting.Main)
                 }
-                is PlayerEvent.OnLibraryClick -> {
+                is PlayerEvent.OnNavigateLibraryClick -> {
                     navigateTo.invoke(ScreenNavigation.Library)
                 }
-                else -> viewModel.dispatch(context, it)
+                else -> viewModel.dispatch(it)
             }
         },
     )
@@ -103,6 +101,7 @@ private fun PlayerScreenInternal(
 ) {
     val scope = rememberCoroutineScope()
     var screenHideJob by remember { mutableStateOf<Job?>(null) }
+
     fun restartHideJob() {
         Timber.d("restartHideJob")
         screenHideJob?.cancel()
@@ -120,14 +119,14 @@ private fun PlayerScreenInternal(
 
     val infoPagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { uiState.contentModels.toChunkedModel().size + 1 },
+        pageCount = { uiState.playlists.toChunkedModel().size + 1 },
     )
 
     ObserveAsEvents(
         flow = TouchEventController.debouncedEvent,
         key1 = infoSectionVisibleState,
     ) {
-        if(infoSectionVisibleState) {
+        if (infoSectionVisibleState) {
             restartHideJob()
         }
     }
@@ -167,19 +166,20 @@ private fun PlayerScreenInternal(
         InfoSection(
             pagerState = infoPagerState,
             musicState = uiState.musicState,
-            currentPlaylist = uiState.pagerModel.currentPlaylist,
+            playedName = uiState.pagerModel.playedName,
+            playedThumbnailImage = uiState.pagerModel.playedThumbnailImage,
             currentSong = uiState.musicState.currentPlayingMusic,
-            models = uiState.contentModels,
+            playlists = uiState.playlists,
             isLoading = uiState.isLoading(),
             isShow = infoSectionVisibleState,
-            onLibraryClick = { onPlayerEvent.invoke(PlayerEvent.OnLibraryClick) },
-            onPlaylistClick = { onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick) },
-            onSettingClick = { onPlayerEvent.invoke(PlayerEvent.OnSettingClick) },
+            onLibraryClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateLibraryClick) },
+            onPlaylistClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigatePlaylistClick) },
+            onSettingClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateSettingClick) },
             onPlayPauseClick = { onPlayerEvent.invoke(PlayerEvent.OnPlayPauseClick) },
             onNextClick = { onPlayerEvent.invoke(PlayerEvent.OnNextClick) },
             onPreviousClick = { onPlayerEvent.invoke(PlayerEvent.OnPreviousClick) },
             onContentClick = { playlist, index ->
-                onPlayerEvent.invoke(PlayerEvent.OnContentClick(playlist, index))
+                onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick(playlist, index))
             },
         )
     }

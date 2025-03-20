@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 
 @Composable
 internal fun InsidePagerItem(

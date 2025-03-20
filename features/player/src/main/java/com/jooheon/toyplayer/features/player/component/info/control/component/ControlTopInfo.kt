@@ -47,7 +47,7 @@ import com.jooheon.toyplayer.core.designsystem.ext.fadingEdge
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 import timber.log.Timber
 
 @Composable

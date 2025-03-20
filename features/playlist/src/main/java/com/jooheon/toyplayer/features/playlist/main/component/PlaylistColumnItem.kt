@@ -35,16 +35,16 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.features.common.compose.components.CustomGlideImage
-import com.jooheon.toyplayer.features.common.compose.components.dropdown.MusicDropDownMenu
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
+import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
+import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
 
 @Composable
 internal fun PlaylistColumnItem(
     playlist: Playlist,
     showContextualMenu: Boolean,
     onItemClick: () -> Unit,
-    onDropDownMenuClick: ((MusicDropDownMenu) -> Unit),
+    onDropDownMenuClick: ((DropDownMenu) -> Unit),
 ) {
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
 
@@ -118,9 +118,9 @@ internal fun PlaylistColumnItem(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "more" // TODO
                     )
-                    MusicDropDownMenu(
+                    DropDownMenu(
                         expanded = dropDownMenuExpanded,
-                        menus = MusicDropDownMenu.playlistMenuItems,
+                        menus = DropDownMenu.playlistMenuItems,
                         onDismissRequest = { dropDownMenuExpanded = false },
                         onClick = { onDropDownMenuClick?.invoke(it) }
                     )

@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.common.compose.components.CustomDivider
 import com.jooheon.toyplayer.features.setting.presentation.components.SkipDurationDialog
 import com.jooheon.toyplayer.features.setting.model.SettingScreenEvent
 import com.jooheon.toyplayer.features.setting.model.SettingScreenItem
@@ -84,7 +83,7 @@ private fun SettingScreen(
                 )
             )
 
-            CustomDivider(
+            HorizontalDivider(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 thickness = 1.dp
             )
@@ -93,7 +92,7 @@ private fun SettingScreen(
                     item = it,
                     onClick = { onEvent.invoke(it.event) }
                 )
-                CustomDivider(
+                HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 12.dp),
                     thickness = 1.dp
                 )
