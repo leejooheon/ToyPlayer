@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.player.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,7 +72,7 @@ internal fun LogoSection(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .aspectRatio(3.2f)
+            .aspectRatio(2.4f)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(0.7f),
@@ -86,11 +88,12 @@ internal fun LogoSection(
                 ) {
                     OutlinedText(
                         text = song.displayName,
-                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Black),
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontWeight = FontWeight.Black,
+                            textAlign = TextAlign.Center,
+                        ),
                         fillColor = Color.White,
                         outlineColor = Color.Black,
-                        overflow = TextOverflow.Ellipsis,
-                        minLines = 2,
                     )
                 }
 
@@ -103,7 +106,7 @@ internal fun LogoSection(
                         dynamicProperties = dynamicProperties,
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
-                            .aspectRatio(1.6f)
+                            .aspectRatio(1.7f)
                             .weight(1f),
                     )
                     Spacer(modifier = Modifier.height(20.dp))

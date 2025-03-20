@@ -19,6 +19,7 @@ data class StreamResponse(
         return Song.default.copy(
             audioId = audioId,
             useCache = false,
+            displayName = title,
             title = title,
             artist = "streaming",
             album = "streaming",
