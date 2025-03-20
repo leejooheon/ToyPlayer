@@ -90,6 +90,7 @@ internal fun LogoSection(
                         fillColor = Color.White,
                         outlineColor = Color.Black,
                         overflow = TextOverflow.Ellipsis,
+                        minLines = 2,
                     )
                 }
 

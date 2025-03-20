@@ -186,9 +186,7 @@ class MediaLibrarySessionCallback(
             val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
             playlistUseCase.getPlaylist(id)
                 .onSuccess {
-                    if(it.id == Playlist.LocalPlaylistId.first) {
-                        playlistUseCase.updatePlaylists(it.copy(songs = songs))
-                    }
+                    playlistUseCase.updatePlaylists(it.copy(songs = songs))
                 }
                 .onError {
                     val playlist = Playlist(
