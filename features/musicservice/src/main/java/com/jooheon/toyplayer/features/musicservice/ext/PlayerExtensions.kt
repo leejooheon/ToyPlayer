@@ -38,7 +38,7 @@ val Player.mediaItemsIndices: List<Int>
     }
 
 fun Player.forceSeekToPrevious() {
-    if (hasPreviousMediaItem() || currentPosition > maxSeekToPreviousPosition) {
+    if (hasPreviousMediaItem()) {
         seekToPrevious()
     } else if (mediaItemCount > 0) {
         seekTo(mediaItemCount - 1, C.TIME_UNSET)
@@ -47,7 +47,7 @@ fun Player.forceSeekToPrevious() {
 
 fun Player.forceSeekToNext() {
     if(hasNextMediaItem()) {
-        seekToNextMediaItem()
+        seekToNext()
     } else {
         seekTo(0, C.TIME_UNSET)
     }

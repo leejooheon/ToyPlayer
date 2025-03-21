@@ -54,7 +54,7 @@ data class Song(
             path = "-",
             trackNumber = 1,
             imageUrl = "",
-            isFavorite = false,
+            isFavorite = true,
             data = null,
         )
 

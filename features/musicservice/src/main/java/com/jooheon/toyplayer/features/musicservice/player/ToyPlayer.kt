@@ -4,15 +4,18 @@ import androidx.annotation.OptIn
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
-import com.jooheon.toyplayer.features.musicservice.ext.shuffledItems
-import kotlinx.coroutines.CoroutineScope
+import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class ToyPlayer(player: Player): ForwardingPlayer(player){
     override fun play() {
         if(isCurrentMediaItemLive) seekToDefaultPosition()
         super.play()
+    }
+
+    override fun seekToPrevious() {
+        if(isCurrentMediaItemLive) seekToPreviousMediaItem()
+        else super.seekToPrevious()
     }
 
     override fun getAvailableCommands(): Player.Commands {

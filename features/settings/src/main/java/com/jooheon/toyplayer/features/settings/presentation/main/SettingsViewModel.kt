@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
@@ -36,33 +37,16 @@ import kotlin.coroutines.resume
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val playerController: PlayerController,
-    private val musicStateHolder: MusicStateHolder,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
 ): ViewModel() {
     private val _uiState = MutableStateFlow(SettingsUiState.default)
     internal val uiState = _uiState.asStateFlow()
 
-    private var audioSessionId: Int = 0
-
     init {
         collectStates()
     }
 
-    internal fun loadData(
-        context: Context
-    ) = viewModelScope.launch(Dispatchers.IO) {
-        suspendCancellableCoroutine { continuation ->
-            playerController.sendCustomCommand(
-                context = context,
-                command = CustomCommand.GetAudioSessionId,
-                listener = {
-                    continuation.resume(it)
-                }
-            )
-        }.onSuccess {
-            audioSessionId = it.getInt(CustomCommand.GetAudioSessionId.KEY).defaultZero()
-        }
-
+    internal fun loadData() = viewModelScope.launch(Dispatchers.IO) {
         _uiState.update {
             it.copy(
                 models = SettingsUiState.Model.getSettingListItems(),
@@ -88,7 +72,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun collectStates() = viewModelScope.launch {
         launch {
-            musicStateHolder.volume.collectLatest { volume ->
+            playerSettingsUseCase.flowVolume().collectLatest { volume ->
                 _uiState.update {
                     it.copy(
                         volume = volume
@@ -117,15 +101,30 @@ class SettingsViewModel @Inject constructor(
     }
 
     private suspend fun navigateToEqualizer(context: Context) {
-        val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-            putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
-            putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
-            putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-        }
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-        } else {
-            val event = SnackbarEvent(UiText.StringResource(Strings.equalizer_error))
+        suspendCancellableCoroutine { continuation ->
+            playerController.sendCustomCommand(
+                context = context,
+                command = CustomCommand.GetAudioSessionId,
+                listener = {
+                    continuation.resume(it)
+                }
+            )
+        }.onSuccess {
+            val audioSessionId = it.getInt(CustomCommand.GetAudioSessionId.KEY).defaultZero()
+
+            val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
+                putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
+                putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
+                putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
+            }
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+            } else {
+                val event = SnackbarEvent(UiText.StringResource(Strings.equalizer_error))
+                SnackbarController.sendEvent(event)
+            }
+        }.onError {
+            val event = SnackbarEvent(UiText.StringResource(Strings.setting_no_audio_id))
             SnackbarController.sendEvent(event)
         }
     }

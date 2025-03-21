@@ -13,7 +13,7 @@
     <string name="media_folder_root">루트 폴더</string>
 
     <!-- error -->
-    <string name="some_error">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
+    <string name="error_default">일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.</string>
     <string name="error_playlist">%s는 이미 존재하는 이름입니다.</string>
 
     <!-- notification -->
@@ -112,16 +112,11 @@
     <string name="setting_opensource_license">오픈소스 라이센스</string>
     <string name="setting_english">영어</string>
     <string name="setting_korean">한국어</string>
+    <string name="setting_no_audio_id">"먼저 노래를 재생하고 다시 시도하세요"</string>
 
     <string name="media_folder_all_songs">모든 음악</string>
     <string name="media_folder_album">앨범</string>
     <string name="media_folder_playlist">플레이리스트</string>
-
-    <!-- permission -->
-    <string name="action_request_permission">권한 요청하기</string>
-    <string name="action_navigate_app_settings">앱 설정으로 이동</string>
-    <string name="description_permission_blocked">이전 권한 요청에서 거부되었습니다.\n수동으로 권한을 부여해 주세요.</string>
-    <string name="description_permission_read_storage">내부 저장소 접근 권한이 필요합니다.</string>
 
     <!-- settings -->
     <string name="light_mode">라이트 모드</string>

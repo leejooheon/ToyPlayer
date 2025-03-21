@@ -159,6 +159,7 @@ private fun PlayerScreenInternal(
 
         LogoSection(
             musicState = uiState.musicState,
+            onFavoriteClick = { onPlayerEvent.invoke(PlayerEvent.OnFavoriteClick(it)) },
             modifier = Modifier,
         )
 

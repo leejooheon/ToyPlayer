@@ -31,9 +31,7 @@ class PlaylistViewModel @Inject constructor(
                 _uiState.emit(PlaylistUiState(playlists = it))
             }
             .onError {
-                val event = SnackbarEvent(
-                    UiText.StringResource(Strings.some_error)
-                )
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }
     }
@@ -56,9 +54,7 @@ class PlaylistViewModel @Inject constructor(
                 loadData()
             }
             .onError {
-                val event = SnackbarEvent(
-                    UiText.StringResource(Strings.some_error)
-                )
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }
     }
@@ -73,9 +69,7 @@ class PlaylistViewModel @Inject constructor(
                 loadData()
             }
             .onError {
-                val event = SnackbarEvent(
-                    UiText.StringResource(Strings.some_error)
-                )
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }
     }
@@ -102,9 +96,7 @@ class PlaylistViewModel @Inject constructor(
             playlistUseCase.insertPlaylists(playlist)
             loadData()
         } ?: run {
-            val event = SnackbarEvent(
-                UiText.StringResource(Strings.some_error)
-            )
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
             SnackbarController.sendEvent(event)
         }
     }

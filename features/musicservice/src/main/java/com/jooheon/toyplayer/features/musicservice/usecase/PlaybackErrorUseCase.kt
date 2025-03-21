@@ -42,9 +42,8 @@ class PlaybackErrorUseCase(
                 }
                 else -> FailureStatus.OTHER
             }
-
-            val message = exception.localizedMessage ?: "some error occurred"
-            context.showToast(message)
+//            val message = exception.localizedMessage ?: "some error occurred"
+//            context.showToast(message)
         }
     }
 

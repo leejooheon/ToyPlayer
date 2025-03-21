@@ -13,7 +13,7 @@
     <string name="media_folder_root">Root Folder</string>
 
     <!-- error -->
-    <string name="some_error">Some error occurred, try again later</string>
+    <string name="error_default">A temporary error occurred. Please try again later.</string>
     <string name="error_playlist">The name %s already exists.</string>
 
     <!-- notification -->
@@ -112,16 +112,11 @@
     <string name="setting_opensource_license">OpenSource License</string>
     <string name="setting_english">English</string>
     <string name="setting_korean">Korean</string>
+    <string name="setting_no_audio_id">Play a song first, then try again</string>
 
     <string name="media_folder_all_songs">All Songs</string>
     <string name="media_folder_album">Album</string>
     <string name="media_folder_playlist">Playlist</string>
-
-    <!-- permission -->
-    <string name="action_request_permission">Grant Permission</string>
-    <string name="action_navigate_app_settings">Navigate App Settings</string>
-    <string name="description_permission_blocked">Denied it in the previous request,\nplease grant permission manually.</string>
-    <string name="description_permission_read_storage">Read Storage Permission is Required.</string>
 
     <!-- settings -->
     <string name="light_mode">Light mode</string>

@@ -10,7 +10,7 @@
   },
   {
     "type": "CBS",
-    "url": "https://aac.cbs.co.kr/cbs981/_definst_/cbs981.stream/playlist.m3u8",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbs981/_definst_/cbs981.stream/chunklist.m3u8",
     "image": "drawable/fruit",
     "channelName": "CBS 표준FM",
     "channelCode": "CBS 표준FM",
@@ -19,10 +19,19 @@
   },
   {
     "type": "CBS",
-    "url": "https://aac.cbs.co.kr/cbs981/_definst_/cbs981.stream/playlist.m3u8",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbs939/_definst_/cbs939.stream/chunklist.m3u8",
     "image": "drawable/gingerbread",
     "channelName": "CBS 음악FM",
     "channelCode": "CBS 음악FM",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "CBS",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbscmc/_definst_/cbscmc.stream/chunklist.m3u8",
+    "image": "drawable/kitkat",
+    "channelName": "CBS JOY4U",
+    "channelCode": "CBS JOY4U",
     "channelSubCode": null,
     "updatedTime": null
   },

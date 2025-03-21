@@ -1,14 +1,22 @@
 package com.jooheon.toyplayer.features.player
 
+import androidx.compose.material3.Snackbar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
+import com.jooheon.toyplayer.features.commonui.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
@@ -19,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -48,6 +57,14 @@ class PlayerViewModel @Inject constructor(
                 )
             }
         }
+
+        launch {
+            musicStateHolder.playbackError.collectLatest {
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+                SnackbarController.sendEvent(event)
+            }
+        }
+
         launch {
             musicStateHolder.mediaItems.collectLatest { mediaItems ->
                 val songs = mediaItems.map { it.toSong() }
@@ -80,12 +97,13 @@ class PlayerViewModel @Inject constructor(
 
     internal fun dispatch(event: PlayerEvent) = viewModelScope.launch {
         when(event) {
-            is PlayerEvent.OnPlaylistClick -> playlistClick(event.playlist, event.index)
-            is PlayerEvent.OnPlayAutomatic -> playAutomatically()
+            is PlayerEvent.OnPlaylistClick -> onPlaylistClick(event.playlist, event.index)
+            is PlayerEvent.OnPlayAutomatic -> onPlayAutomatically()
             is PlayerEvent.OnPlayPauseClick -> playerController.playPause()
             is PlayerEvent.OnNextClick -> playerController.seekToNext()
             is PlayerEvent.OnPreviousClick -> playerController.seekToPrevious()
             is PlayerEvent.OnSwipe -> playerController.playAtIndex(event.index)
+            is PlayerEvent.OnFavoriteClick -> onFavoriteClick(event.song)
 
             is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
@@ -95,9 +113,9 @@ class PlayerViewModel @Inject constructor(
     }
 
     internal fun loadData() = viewModelScope.launch {
-        _uiState.emit(
-            uiState.value.copy(isLoading = true)
-        )
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
 
         val result = playlistUseCase.getAllPlaylist()
         val playlists = when(result) {
@@ -105,15 +123,15 @@ class PlayerViewModel @Inject constructor(
             is Result.Error -> emptyList()
         }
 
-        _uiState.emit(
-            uiState.value.copy(
+        _uiState.update {
+            it.copy(
                 playlists = playlists,
-                isLoading = false,
+                isLoading = false
             )
-        )
+        }
     }
 
-    private suspend fun playlistClick(playlist: Playlist, index: Int) {
+    private suspend fun onPlaylistClick(playlist: Playlist, index: Int) {
         when(playlist.id) {
             Playlist.PlayingQueuePlaylistId.first -> playerController.playAtIndex(index)
             else -> {
@@ -127,7 +145,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private suspend fun playAutomatically() {
+    private suspend fun onPlayAutomatically() {
         val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId()
         val playlistResult = playlistUseCase.getPlayingQueue()
             .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
@@ -153,5 +171,29 @@ class PlayerViewModel @Inject constructor(
 
             }
         }
+    }
+
+    private suspend fun onFavoriteClick(song: Song) {
+        playlistUseCase.getPlayingQueue()
+            .onSuccess {
+                val index = it.songs.indexOfFirst { it.key() == song.key() }
+                if(index == -1) {
+                    val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+                    SnackbarController.sendEvent(event)
+                    return
+                }
+
+                val newSongs = it.songs.toMutableList()
+                newSongs.removeAt(index)
+                newSongs.add(index, song.copy(isFavorite = true))
+                playlistUseCase.updatePlaylists(
+                    it.copy(songs = newSongs)
+                )
+                loadData()
+            }
+            .onError {
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+                SnackbarController.sendEvent(event)
+            }
     }
 }

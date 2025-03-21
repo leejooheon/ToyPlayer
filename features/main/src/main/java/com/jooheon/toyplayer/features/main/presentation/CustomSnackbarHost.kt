@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +48,7 @@ private fun CustomSnackbarHost(message: String) {
         Card(
             shape = MaterialTheme.shapes.large,
             colors = CardDefaults.cardColors(
-                containerColor = Color.Black
+                containerColor = MaterialTheme.colorScheme.onSurface
             ),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 0.dp
@@ -67,7 +66,7 @@ private fun CustomSnackbarHost(message: String) {
                     text = message,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium.copy(
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.surface,
                     ),
                 )
             }
@@ -79,8 +78,17 @@ private fun CustomSnackbarHost(message: String) {
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewLgPlayerScreen() {
-    ToyPlayerTheme {
+private fun PreviewLightSnackbar() {
+    ToyPlayerTheme(false) {
+        CustomSnackbarHost(
+            message = UiText.DynamicString("Preview message").asString(),
+        )
+    }
+}
+@Preview(showBackground = true)
+@Composable
+private fun PreviewDarkSnackbar() {
+    ToyPlayerTheme(true) {
         CustomSnackbarHost(
             message = UiText.DynamicString("Preview message").asString(),
         )

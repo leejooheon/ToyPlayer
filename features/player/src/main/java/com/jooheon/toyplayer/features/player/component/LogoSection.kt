@@ -1,13 +1,17 @@
 package com.jooheon.toyplayer.features.player.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.LottieProperty
@@ -44,6 +46,7 @@ import com.jooheon.toyplayer.features.musicservice.data.MusicState
 internal fun LogoSection(
     musicState: MusicState,
     modifier: Modifier = Modifier,
+    onFavoriteClick: (Song) -> Unit,
 ) {
     val isLoading = musicState.isLoading()
     val isPlaying = musicState.isPlaying()
@@ -63,7 +66,7 @@ internal fun LogoSection(
     val dynamicProperties = rememberLottieDynamicProperties(
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
-            value = Color.White.toArgb(), // 원하는 색상 지정
+            value = Color.White.toArgb(),
             keyPath = KeyPath("**", "Fill 1")
         )
     )
@@ -72,7 +75,7 @@ internal fun LogoSection(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .aspectRatio(2.4f)
+            .aspectRatio(1.6f)
     ) {
         Box(
             modifier = Modifier.fillMaxSize(0.7f),
@@ -81,23 +84,17 @@ internal fun LogoSection(
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OutlinedText(
-                        text = song.displayName,
-                        style = MaterialTheme.typography.displaySmall.copy(
-                            fontWeight = FontWeight.Black,
-                            textAlign = TextAlign.Center,
-                        ),
-                        fillColor = Color.White,
-                        outlineColor = Color.Black,
-                    )
-                }
 
-                Spacer(modifier = Modifier.height(18.dp))
+            ) {
+                OutlinedText(
+                    text = song.displayName,
+                    style = MaterialTheme.typography.displaySmall.copy(
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                    ),
+                    fillColor = Color.White,
+                    outlineColor = Color.Black,
+                )
 
                 if(isPlaying) {
                     LottieAnimation(
@@ -107,18 +104,31 @@ internal fun LogoSection(
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .aspectRatio(1.7f)
-                            .weight(1f),
+                            .weight(1f)
+                            .offset(y = (-16).dp),
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
 
-                CircularProgressIndicator(
-                    color = Color.White,
-                    strokeWidth = 3.dp,
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .alpha(if(isLoading) 1f else 0f),
-                )
+                if(isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier
+                            .wrapContentSize()
+                    )
+                }
+//                IconButton(
+//                    onClick = { onFavoriteClick.invoke(song) },
+//                    modifier = Modifier
+//                ) {
+//                    Icon(
+//                        imageVector = if(song.isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+//                        contentDescription = "Favorite",
+//                        modifier = Modifier.size(36.dp),
+//                        tint = Color.Red.copy(alpha = if(song.isFavorite) 1f else 0.5f)
+//                    )
+//                }
             }
         }
     }
@@ -134,9 +144,12 @@ private fun PreviewLogoSection() {
         LogoSection(
             musicState = MusicState.preview.copy(
                 currentPlayingMusic = Song.preview.copy(
-                    path = RadioData.default.serialize()
+//                    displayName = "123",
+                    path = RadioData.default.serialize(),
+                    isFavorite = false,
                 )
-            )
+            ),
+            onFavoriteClick = {},
         )
     }
 }

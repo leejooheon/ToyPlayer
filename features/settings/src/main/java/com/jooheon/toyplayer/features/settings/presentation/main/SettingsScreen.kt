@@ -43,7 +43,7 @@ fun SettingScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context)
+        viewModel.loadData()
     }
 
     SettingScreenInternal(
@@ -118,7 +118,7 @@ private fun SettingScreenInternal(
                     SettingsUiState.DialogState.VOLUME -> {
                         VolumeSeekbarDialog(
                             fraction = 0.7f,
-                            volume = 0.5f, // fixme
+                            volume = uiState.volume,
                             onDismissRequest = { resetDialog() },
                             onVolumeChanged = { onEvent.invoke(SettingsUiEvent.OnVolumeChanged(it)) },
                             onApply = {

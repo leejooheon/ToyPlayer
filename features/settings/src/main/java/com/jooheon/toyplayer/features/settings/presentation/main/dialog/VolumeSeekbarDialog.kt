@@ -37,6 +37,7 @@ import com.jooheon.toyplayer.features.commonui.components.dialog.DialogButton
 import com.jooheon.toyplayer.features.commonui.components.dialog.DialogColumn
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +53,8 @@ internal fun VolumeSeekbarDialog(
 
     LaunchedEffect(volume) {
         snapshotFlow { currentVolume }
-            .debounce(500)
+            .debounce(250)
+            .distinctUntilChanged()
             .collectLatest { debouncedVolume ->
                 onVolumeChanged(debouncedVolume)
             }

@@ -1,6 +1,7 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
 plugins {
+//    id("com.google.android.gms.oss-licenses-plugin")
     id("toyplayer.android.application")
 }
 

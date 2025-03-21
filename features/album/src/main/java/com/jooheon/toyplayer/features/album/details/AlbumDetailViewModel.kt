@@ -113,7 +113,7 @@ class AlbumDetailViewModel @Inject constructor(
                 SnackbarController.sendEvent(event)
             }
             .onError {
-                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }
     }
@@ -132,7 +132,7 @@ class AlbumDetailViewModel @Inject constructor(
                         SnackbarController.sendEvent(event)
                     }
                     else -> {
-                        val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                        val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                         SnackbarController.sendEvent(event)
                     }
                 }
@@ -147,7 +147,7 @@ class AlbumDetailViewModel @Inject constructor(
                 SnackbarController.sendEvent(event)
             }
             .onError {
-                val event = SnackbarEvent(UiText.StringResource(Strings.some_error))
+                val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }
     }
