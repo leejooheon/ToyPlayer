@@ -38,7 +38,7 @@ fun ArtistMoreScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context)
+        viewModel.loadArtists(context)
     }
 
     ArtistMoreScreenInternal(

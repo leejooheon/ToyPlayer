@@ -3,12 +3,10 @@ package com.jooheon.toyplayer.domain.usecase
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.repository.api.MusicListRepository
-import com.jooheon.toyplayer.domain.repository.api.RadioRepository
 import javax.inject.Inject
 
 class MusicListUseCase @Inject constructor(
     private val musicListRepository: MusicListRepository,
-    private val radioRepository: RadioRepository,
 ) {
     suspend fun getAllSongList(): List<Song> {
         val local = getLocalSongList()

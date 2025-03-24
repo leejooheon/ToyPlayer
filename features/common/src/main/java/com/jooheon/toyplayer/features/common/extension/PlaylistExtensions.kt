@@ -4,6 +4,7 @@ import android.content.Context
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.model.music.Playlist
 
 fun getDefaultPlaylistName(context: Context, mediaId: MediaId): String {
     val resource =  when(mediaId) {
@@ -17,3 +18,8 @@ fun getDefaultPlaylistName(context: Context, mediaId: MediaId): String {
 
     return UiText.StringResource(resource).asString(context)
 }
+
+fun List<Playlist>.withOutDefault(): List<Playlist> = this.filterNot {
+    it.id in Playlist.defaultPlaylistIds.map { it.first }
+}
+

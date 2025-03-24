@@ -17,6 +17,7 @@ import com.jooheon.toyplayer.domain.usecase.MusicListUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.domain.usecase.RadioUseCase
 import com.jooheon.toyplayer.features.musicservice.R
+import com.jooheon.toyplayer.features.musicservice.ext.toMediaBrowsableItem
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 
 class MediaItemProvider(
@@ -39,48 +40,50 @@ class MediaItemProvider(
                     mediaId = MediaId.AllSongs,
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
                 ).toMediaBrowsableItem()
-                val album = MediaFolder(
-                    title = context.getString(R.string.media_folder_album),
-                    mediaId = MediaId.AlbumRoot,
-                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
-                ).toMediaBrowsableItem()
                 val playlist = MediaFolder(
                     title = context.getString(R.string.media_folder_playlist),
                     mediaId = MediaId.PlaylistRoot,
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_PLAYLISTS
                 ).toMediaBrowsableItem()
+                val album = MediaFolder(
+                    title = context.getString(R.string.media_folder_album),
+                    mediaId = MediaId.AlbumRoot,
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
+                ).toMediaBrowsableItem()
 
-                listOf(allSongs, album, playlist)
+                listOf(allSongs, playlist, album)
             }
             is MediaId.AllSongs -> {
                 val songs = musicListUseCase.getAllSongList()
                 val radios = radioUseCase.getRadioStationList()
-                (songs + radios).map { it.toMediaItem() }
+                (songs + radios).map { it.toMediaItem(mediaId.serialize()) }
             }
             is MediaId.LocalSongs -> {
                 val songs = musicListUseCase.getLocalSongList()
-                songs.map { it.toMediaItem() }
+                songs.map { it.toMediaItem(mediaId.serialize()) }
             }
             is MediaId.StreamSongs -> {
                 val songs = musicListUseCase.getStreamingUrlList()
-                songs.map { it.toMediaItem() }
+                songs.map { it.toMediaItem(mediaId.serialize()) }
             }
             is MediaId.AssetSongs -> {
                 val songs = musicListUseCase.getSongListFromAsset()
-                songs.map { it.toMediaItem() }
+                songs.map { it.toMediaItem(mediaId.serialize()) }
             }
             is MediaId.RadioSongs -> {
                 val songs = radioUseCase.getRadioStationList()
-                songs.map { it.toMediaItem() }
+                songs.map { it.toMediaItem(mediaId.serialize()) }
             }
             is MediaId.AlbumRoot -> {
                 val groupByAlbum = getAlbums()
-                groupByAlbum.map { it.toMediaItem(MediaId.Album(id)) }
+                groupByAlbum.map { it.toMediaItem() }
             }
             is MediaId.Album -> {
                 val albums = getAlbums()
-                val songs = albums.firstOrNull { it.id == mediaId.id }?.songs.defaultEmpty()
-                songs.map { it.toMediaItem() }
+                albums
+                    .firstOrNull { it.id == mediaId.id }
+                    ?.let { it.songs.map { it.toMediaItem(mediaId.serialize()) } }
+                    .defaultEmpty()
             }
             is MediaId.PlaylistRoot -> {
                 val playlists = getPlaylists()
@@ -90,7 +93,7 @@ class MediaItemProvider(
                 val playlists = getPlaylists()
                 val playlist = playlists.firstOrNull { it.id.toString() == mediaId.id } ?: return emptyList()
 
-                playlist.songs.map { it.toMediaItem() }
+                playlist.songs.map { it.toMediaItem(mediaId.serialize()) }
             }
             else -> emptyList()
         }
@@ -120,38 +123,5 @@ class MediaItemProvider(
             is Result.Success -> result.data
             is Result.Error -> emptyList()
         }
-    }
-
-    private fun MediaFolder.toMediaBrowsableItem(): MediaItem {
-        val metadata = MediaMetadata.Builder()
-            .setTitle(title)
-            .setIsBrowsable(true)
-            .setIsPlayable(false)
-            .setMediaType(mediaType)
-            .build()
-
-        return MediaItem.Builder()
-            .setMediaId(mediaId.serialize())
-            .setMediaMetadata(metadata)
-            .setSubtitleConfigurations(mutableListOf())
-            .setUri(Uri.EMPTY)
-            .build()
-    }
-
-    private fun Album.toMediaItem(mediaId: MediaId): MediaItem {
-        val metadata = MediaMetadata.Builder()
-            .setTitle(name)
-            .setIsBrowsable(true)
-            .setIsPlayable(false)
-            .setArtworkUri(imageUrl.toUri())
-            .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-            .build()
-
-        return MediaItem.Builder()
-            .setMediaId(mediaId.serialize())
-            .setMediaMetadata(metadata)
-            .setSubtitleConfigurations(mutableListOf())
-            .setUri(Uri.EMPTY)
-            .build()
     }
 }

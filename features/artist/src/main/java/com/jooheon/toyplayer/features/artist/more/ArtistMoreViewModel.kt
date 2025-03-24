@@ -14,7 +14,11 @@ import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -26,17 +30,19 @@ import kotlin.coroutines.resume
 class ArtistMoreViewModel @Inject constructor(
     private val playerController: PlayerController,
 ): ViewModel() {
-    private val _uiState = MutableStateFlow(ArtistMoreUiState.default)
-    val uiState = _uiState.asStateFlow()
+    private val artistsFlow = MutableStateFlow<List<Artist>>(emptyList())
 
-    internal fun loadData(context: Context) = viewModelScope.launch {
-        val artists = getArtists(context)
-
-        _uiState.update {
-            it.copy(
-                artists = artists,
+    val uiState: StateFlow<ArtistMoreUiState> =
+        artistsFlow
+            .map { ArtistMoreUiState(artists = it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = ArtistMoreUiState.default,
             )
-        }
+
+    internal fun loadArtists(context: Context) = viewModelScope.launch {
+        artistsFlow.emit(getArtists(context))
     }
 
     private suspend fun getArtists(

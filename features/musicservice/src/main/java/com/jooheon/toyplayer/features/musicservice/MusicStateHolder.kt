@@ -73,15 +73,6 @@ class MusicStateHolder @Inject constructor() {
 
     internal fun observeStates(scope: CoroutineScope) = scope.launch {
         launch {
-            currentDuration.collectLatest { duration ->
-                _musicState.update {
-                    it.copy(
-                        timePassed = duration
-                    )
-                }
-            }
-        }
-        launch {
             mediaItem.collectLatest { mediaItem ->
                 val song = mediaItem?.toSong() ?: Song.default
 
@@ -89,7 +80,6 @@ class MusicStateHolder @Inject constructor() {
                 _musicState.update {
                     it.copy(
                         currentPlayingMusic = song,
-                        timePassed = 0L
                     )
                 }
             }

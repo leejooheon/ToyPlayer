@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.commonui.controller.TouchEventController
+import com.jooheon.toyplayer.features.common.controller.TouchEventController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

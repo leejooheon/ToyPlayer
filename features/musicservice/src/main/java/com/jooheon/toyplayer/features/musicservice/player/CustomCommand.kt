@@ -18,6 +18,9 @@ sealed interface CustomCommand {
     data object ToggleShuffle: CustomCommand
 
     @Serializable
+    data class PrepareRecentQueue(val playWhenReady: Boolean): CustomCommand
+
+    @Serializable
     data object GetAudioSessionId: CustomCommand {
         const val KEY = "audioSessionId"
     }

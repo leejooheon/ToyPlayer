@@ -1,49 +1,51 @@
 package com.jooheon.toyplayer.features.common.menu
 
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.controller.SnackbarController
+import com.jooheon.toyplayer.features.common.controller.SnackbarEvent
 import javax.inject.Inject
 
 class SongMenuHandler @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
 ) {
-    suspend fun addToPlayingQueue(song: Song): Result<Playlist, PlaylistError> {
-        return playlistUseCase
-            .getPlayingQueue()
-            .onSuccess { updatePlaylist(it, song) }
-    }
-
-    suspend fun addToPlaylist(playlist: Playlist, song: Song): Result<Unit, PlaylistError> {
-        val name = playlist.name
-
-        if(!playlistUseCase.checkValidName(name)) { // TODO: 중복 코드.. usecase로 옮겨야함
-            return Result.Error(PlaylistError.DuplicatedName)
-        }
-
-        val result = playlistUseCase.nextPlaylistIdOrNull()?.let {
-            playlistUseCase.insertPlaylists(
-                playlist.copy(
-                    id = it,
-                    songs = listOf(song)
-                )
-            )
-            Result.Success(Unit)
-        } ?: run {
-            Result.Error(PlaylistError.UnKnown)
-        }
-
-        return result
-    }
-
-    suspend fun updatePlaylist(playlist: Playlist, song: Song): Result<Unit, PlaylistError> {
-        playlistUseCase.updatePlaylists( // FIXME
-            playlist.copy(songs = playlist.songs + song)
+    suspend fun make(playlist: Playlist, songs: List<Song>) {
+        val result = playlistUseCase.make(
+            playlist = playlist,
+            songs = songs
         )
 
-        return Result.Success(Unit)
+        val event = when(result) {
+            is Result.Success -> SnackbarEvent(UiText.StringResource(Strings.playlist_inserted))
+            is Result.Error -> {
+                when(result.error) {
+                    is PlaylistError.DuplicatedName -> SnackbarEvent(UiText.StringResource(Strings.error_playlist, playlist.name))
+                    else -> SnackbarEvent(UiText.StringResource(Strings.error_default))
+                }
+            }
+        }
+
+        SnackbarController.sendEvent(event)
+    }
+
+    suspend fun insert(id: Int, songs: List<Song>) {
+        val result = playlistUseCase.insert(
+            id = id,
+            songs = songs,
+            reset = false,
+        )
+
+        val event = when(result) {
+            is Result.Success -> SnackbarEvent(UiText.StringResource(Strings.add))
+            is Result.Error -> SnackbarEvent(UiText.StringResource(Strings.error_default))
+        }
+
+        SnackbarController.sendEvent(event)
     }
 }

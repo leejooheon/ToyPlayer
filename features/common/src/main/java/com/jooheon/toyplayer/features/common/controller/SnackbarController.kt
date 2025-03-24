@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.commonui.controller
+package com.jooheon.toyplayer.features.common.controller
 
 import com.jooheon.toyplayer.core.resources.UiText
 import kotlinx.coroutines.channels.Channel

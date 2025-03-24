@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.commonui.controller
+package com.jooheon.toyplayer.features.common.controller
 
 import android.view.MotionEvent
 

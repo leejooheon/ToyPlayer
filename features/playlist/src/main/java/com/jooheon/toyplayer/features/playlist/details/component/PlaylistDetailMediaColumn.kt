@@ -52,7 +52,7 @@ internal fun PlaylistDetailMediaColumn(
                 items = playlist.songs,
             ) { index, song ->
                 MediaItemSmallNoImage(
-                    trackNumber = index + 1,
+                    index = index + 1,
                     title = song.title,
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),

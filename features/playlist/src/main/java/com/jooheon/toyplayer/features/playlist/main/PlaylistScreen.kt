@@ -45,16 +45,12 @@ fun PlaylistScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadData()
-    }
-
     PlaylistScreenInternal(
         uiState = state,
         onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
         onEvent = {
             when(it) {
-                is PlaylistEvent.OnPlaylistClick -> {
+                is PlaylistEvent.OnNavigatePlaylist -> {
                     val destination = ScreenNavigation.Playlist.Details(it.id)
                     navigateTo.invoke(destination)
                 }
@@ -123,7 +119,7 @@ private fun PlaylistScreenInternal(
                             PlaylistColumnItem(
                                 playlist = playlist,
                                 showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { (id, _) -> id },
-                                onItemClick = { onEvent.invoke(PlaylistEvent.OnPlaylistClick(playlist.id)) },
+                                onItemClick = { onEvent.invoke(PlaylistEvent.OnNavigatePlaylist(playlist.id)) },
                                 onDropDownMenuClick = { menu ->
                                     when(menu) {
                                         DropDownMenu.PlaylistChangeName -> playlistDialogState = true to playlist

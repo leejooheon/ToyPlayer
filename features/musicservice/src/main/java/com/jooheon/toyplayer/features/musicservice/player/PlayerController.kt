@@ -18,6 +18,7 @@ import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.Error.Companion.toErrorOrNull
 import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.MusicService
 import com.jooheon.toyplayer.features.musicservice.ext.enqueue
@@ -107,23 +108,25 @@ class PlayerController(private val scope: CoroutineScope) {
     }
 
     fun enqueue(
+        mediaId: MediaId,
         song: Song,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
         player.enqueue(
-            mediaItem = song.toMediaItem(),
+            mediaItem = song.toMediaItem(mediaId.serialize()),
             playWhenReady = playWhenReady
         )
     }
 
     fun enqueue(
+        mediaId: MediaId,
         songs: List<Song>,
         startIndex: Int = C.INDEX_UNSET,
         startPositionMs: Long = C.TIME_UNSET,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
         player.forceEnqueue(
-            mediaItems = songs.map { it.toMediaItem() },
+            mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) },
             startIndex = startIndex,
             startPositionMs = startPositionMs,
             playWhenReady = playWhenReady

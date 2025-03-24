@@ -1,46 +1,35 @@
 package com.jooheon.toyplayer.data.playlist
 
 import com.jooheon.toyplayer.data.playlist.dao.PlaylistDao
-import com.jooheon.toyplayer.data.playlist.dao.data.PlaylistMapper
+import com.jooheon.toyplayer.data.playlist.dao.data.PlaylistEntity.Companion.toPlaylistEntity
 import com.jooheon.toyplayer.domain.model.music.Playlist
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PlaylistDataSource @Inject constructor(
     private val playlistDao: PlaylistDao,
-    private val playlistMapper: PlaylistMapper,
 ) {
-    fun getAllPlaylist(): List<Playlist> {
-        return playlistDao.getAllPlaylist().map {
-            playlistMapper.map(it)
-        }
+    fun getAllPlaylist(): Flow<List<Playlist>> {
+        return playlistDao.getAllPlaylist()
+            .map { playlists ->
+                playlists.map { it.toPlaylist() }
+            }
     }
 
-    fun getPlaylist(id: Int): Playlist? {
-        val entity = playlistDao.get(id) ?: return null
-        return playlistMapper.map(entity)
+    fun flowPlaylist(id: Int): Flow<Playlist?> {
+        return playlistDao.get(id).map { it?.toPlaylist() }
     }
 
-    suspend fun updatePlaylists(vararg playlist: Playlist) {
-        val entity = playlist.map {
-            playlistMapper.mapInverse(it)
-        }.toTypedArray()
-
-        playlistDao.update(*entity)
+    suspend fun updatePlaylists(playlist: Playlist) {
+        playlistDao.update(playlist.toPlaylistEntity())
     }
 
-    suspend fun insertPlaylists(vararg playlist: Playlist) {
-        val entity = playlist.map {
-            playlistMapper.mapInverse(it)
-        }.toTypedArray()
-
-        playlistDao.insert(*entity)
+    suspend fun insertPlaylists(playlist: Playlist) {
+        playlistDao.insert(playlist.toPlaylistEntity())
     }
 
-    suspend fun deletePlaylists(vararg playlist: Playlist) {
-        val entity = playlist.map {
-            playlistMapper.mapInverse(it)
-        }.toTypedArray()
-
-        playlistDao.delete(*entity)
+    suspend fun deletePlaylists(playlist: Playlist) {
+        playlistDao.delete(playlist.toPlaylistEntity())
     }
 }

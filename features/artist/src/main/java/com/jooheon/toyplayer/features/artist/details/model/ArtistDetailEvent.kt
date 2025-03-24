@@ -8,5 +8,5 @@ sealed interface ArtistDetailEvent {
     data class OnAddPlayingQueue(val song: Song): ArtistDetailEvent
     data class OnAddPlaylist(val playlist: Playlist, val song: Song): ArtistDetailEvent
 
-    data class OnAlbumClick(val id: String): ArtistDetailEvent
+    data class OnNavigateAlbum(val id: String): ArtistDetailEvent
 }

@@ -50,14 +50,14 @@ fun ArtistDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context, artistId)
+        viewModel.loadArtist(context, artistId)
     }
 
     ArtistDetailScreenInternal(
         uiState = uiState,
         onEvent = {
             when(it) {
-                is ArtistDetailEvent.OnAlbumClick -> navigateTo.invoke(ScreenNavigation.Album.Details(it.id))
+                is ArtistDetailEvent.OnNavigateAlbum -> navigateTo.invoke(ScreenNavigation.Album.Details(it.id))
                 else -> viewModel.dispatch(it)
             }
         },
@@ -102,7 +102,7 @@ private fun ArtistDetailScreenInternal(
                             imageUrl = album.songs.firstOrNull()?.imageUrl.defaultEmpty(),
                             title = album.name,
                             subTitle = album.artist,
-                            onItemClick = { onEvent.invoke(ArtistDetailEvent.OnAlbumClick(album.id)) },
+                            onItemClick = { onEvent.invoke(ArtistDetailEvent.OnNavigateAlbum(album.id)) },
                             modifier = Modifier.padding(horizontal = 12.dp),
                         )
 
@@ -110,9 +110,9 @@ private fun ArtistDetailScreenInternal(
                             count = album.songs.size
                         )
 
-                        album.songs.forEach { song ->
+                        album.songs.forEachIndexed { index, song ->
                             MediaItemSmallNoImage(
-                                trackNumber = song.trackNumber,
+                                index = index + 1,
                                 title = song.title,
                                 subTitle = "${song.artist} • ${song.album}",
                                 duration = MusicUtil.toReadableDurationString(song.duration),

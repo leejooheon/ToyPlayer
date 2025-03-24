@@ -199,7 +199,6 @@ class MusicService: MediaLibraryService() {
                     }
                 }
             }
-
         }
     }
 

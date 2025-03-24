@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
-import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
+import com.jooheon.toyplayer.features.common.controller.SnackbarController
 import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
 import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator

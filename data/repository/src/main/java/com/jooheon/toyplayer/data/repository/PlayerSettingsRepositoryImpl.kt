@@ -18,13 +18,13 @@ class PlayerSettingsRepositoryImpl(
         preferencesDataSource.setVolume(volume)
     }
 
-    override suspend fun flowRepeatMode(): Flow<Int> {
+    override fun flowRepeatMode(): Flow<Int> {
         return preferencesDataSource.playerSettingsData.map { it.repeatMode }
     }
-    override suspend fun flowShuffleMode(): Flow<Boolean> {
+    override fun flowShuffleMode(): Flow<Boolean> {
         return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.shuffleMode }
     }
-    override suspend fun flowVolume(): Flow<Float> {
+    override fun flowVolume(): Flow<Float> {
         return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.volume }
     }
 }

@@ -4,7 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
@@ -16,6 +18,10 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
+import com.jooheon.toyplayer.domain.model.common.errors.RootError
+import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
@@ -23,16 +29,23 @@ import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
 import com.jooheon.toyplayer.domain.model.music.Playlist
+import com.jooheon.toyplayer.domain.model.radio.RadioData
+import com.jooheon.toyplayer.domain.model.radio.RadioData.Companion.toRadioDataOrNull
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.common.extension.getDefaultPlaylistName
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.ext.findExoPlayer
+import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
+import com.jooheon.toyplayer.features.musicservice.ext.getData
+import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.guava.future
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(UnstableApi::class)
@@ -42,6 +55,7 @@ class MediaLibrarySessionCallback(
     private val mediaItemProvider: MediaItemProvider,
     private val playlistUseCase: PlaylistUseCase,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
+    private val defaultSettingsUseCase: DefaultSettingsUseCase,
 ): MediaLibrarySession.Callback {
     override fun onGetLibraryRoot(
         session: MediaLibrarySession,
@@ -76,6 +90,15 @@ class MediaLibrarySessionCallback(
         }
     }
 
+    override fun onGetItem(
+        session: MediaLibrarySession,
+        browser: MediaSession.ControllerInfo,
+        mediaId: String
+    ): ListenableFuture<LibraryResult<MediaItem>> {
+        Timber.d("onGetItem")
+        return super.onGetItem(session, browser, mediaId)
+    }
+
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -93,7 +116,39 @@ class MediaLibrarySessionCallback(
         startPositionMs: Long
     ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
         Timber.d("onSetMediaItems: [$startIndex, $startPositionMs], ${mediaItems.map { Pair(it.mediaId, it.mediaMetadata.title) }}")
-        return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
+
+        val mediaItem = mediaItems.singleOrNull() ?: run {
+            return super.onSetMediaItems(
+                mediaSession,
+                controller,
+                mediaItems,
+                startIndex,
+                startPositionMs
+            )
+        }
+
+        val mediaId = mediaItem.mediaId.toMediaIdOrNull() as? MediaId.PlaylistMediaId ?: run {
+            return super.onSetMediaItems(
+                mediaSession,
+                controller,
+                mediaItems,
+                startIndex,
+                startPositionMs
+            )
+        }
+
+        return scope.future {
+            val newMediaItems = mediaItemProvider.getChildMediaItems(mediaId.parentId)
+
+            val newStartIndex = newMediaItems
+                .indexOfFirst {
+                    val targetMediaIdOrNull = it.mediaId.toMediaIdOrNull() as? MediaId.PlaylistMediaId
+                    targetMediaIdOrNull?.id == mediaId.id
+                }
+                .defaultZero()
+
+            MediaSession.MediaItemsWithStartPosition(newMediaItems, newStartIndex, C.TIME_UNSET)
+        }
     }
 
     override fun onCustomCommand(
@@ -106,6 +161,22 @@ class MediaLibrarySessionCallback(
         Timber.d("onCustomCommand: $command")
         return scope.future {
             when (command) {
+                is CustomCommand.PrepareRecentQueue -> {
+                    val result = prepareRecentQueue()
+                    when(result) {
+                        is Result.Success -> {
+                            val (mediaItems, startIndex) = result.data
+                            session.player.forceEnqueue(
+                                mediaItems = mediaItems,
+                                startPositionMs = 0L,
+                                startIndex = startIndex,
+                                playWhenReady = command.playWhenReady,
+                            )
+                            SessionResult(SessionResult.RESULT_SUCCESS)
+                        }
+                        is Result.Error -> SessionResult(SessionError.ERROR_NOT_SUPPORTED)
+                    }
+                }
                 is CustomCommand.GetAudioSessionId -> {
                     session.player.findExoPlayer()?.let {
                         SessionResult(
@@ -144,11 +215,33 @@ class MediaLibrarySessionCallback(
         )
     }
 
+    override fun onPlaybackResumption(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        return scope.future {
+            Timber.d("onPlaybackResumption")
+            val result = prepareRecentQueue()
+            when(result) {
+                is Result.Success -> {
+                    val (mediaItems, startIndex) = result.data
+                    MediaSession.MediaItemsWithStartPosition(
+                        mediaItems,
+                        startIndex,
+                        0
+                    )
+                }
+                is Result.Error -> throw UnsupportedOperationException()
+            }
+        }
+    }
+
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
-        Timber.d("onConnect: packageName: ${controller.packageName}")
+        Timber.d("onConnect: packageName: ${controller.packageName}, ${session.player.playbackState.toString()}")
+//        Player.STATE_IDLE
         val connectionResult = super.onConnect(session, controller)
         val sessionCommands = connectionResult.availableSessionCommands
             .buildUpon()
@@ -170,6 +263,27 @@ class MediaLibrarySessionCallback(
         Timber.d("onDisconnected")
     }
 
+    private suspend fun prepareRecentQueue(): Result<Pair<List<MediaItem>, Int>, PlaylistError> {
+        val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId()
+        val playlistResult = playlistUseCase.getPlayingQueue()
+            .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
+            ?: playlistUseCase.getPlaylist(Playlist.RadioPlaylistId.first)
+
+        return when(playlistResult) {
+            is Result.Success -> {
+                val playlist = playlistResult.data
+                val mediaItems = playlist.songs.map { it.toMediaItem(MediaId.PlayingQueue.serialize()) }
+                val index = mediaItems
+                    .indexOfFirst { it.mediaId == lastPlayedMediaId }
+                    .takeIf { it != C.INDEX_UNSET }
+                    .defaultZero()
+                Result.Success(mediaItems to index)
+            }
+
+            is Result.Error -> playlistResult
+        }
+    }
+
     internal fun invalidateCustomLayout(session: MediaSession?) {
         session ?: return
         session.setCustomLayout(
@@ -186,16 +300,19 @@ class MediaLibrarySessionCallback(
             val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
             playlistUseCase.getPlaylist(id)
                 .onSuccess {
-                    playlistUseCase.updatePlaylists(it.copy(songs = songs))
+                    playlistUseCase.insert(
+                        id = id,
+                        songs = songs,
+                        reset = true,
+                    )
                 }
                 .onError {
                     val playlist = Playlist(
                         id = id,
                         name = getDefaultPlaylistName(context, mediaId),
                         thumbnailUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
-                        songs = songs
                     )
-                    playlistUseCase.insertPlaylists(playlist)
+                    playlistUseCase.makeDefaultPlaylist(id, playlist, songs)
                 }
         }
     }

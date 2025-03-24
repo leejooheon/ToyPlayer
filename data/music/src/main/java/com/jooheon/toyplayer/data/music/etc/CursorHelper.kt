@@ -12,6 +12,7 @@ import com.jooheon.toyplayer.data.music.LocalMusicDataSource.Companion.baseProje
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import java.io.File
+import androidx.core.net.toUri
 
 class CursorHelper {
     internal fun getSongFromCursor(cursor: Cursor): Song {
@@ -26,12 +27,12 @@ class CursorHelper {
         val data = cursor.getStringOrNull("_data")
 
         val audioUriExternal = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val artworkUri = Uri.parse("content://media/external/audio/albumart")
+        val artworkUri = "content://media/external/audio/albumart".toUri()
 
         return Song(
             audioId = audioId,
             useCache = false,
-            displayName = "".defaultEmpty(),
+            displayName = title.defaultEmpty(),
             title = title.defaultEmpty(),
             artist = artistName.defaultEmpty(),
             artistId = artistId.toString(),

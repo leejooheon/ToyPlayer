@@ -3,7 +3,6 @@ package com.jooheon.toyplayer.data.playlist.di
 import android.app.Application
 import androidx.room.Room
 import com.jooheon.toyplayer.data.playlist.dao.PlaylistDatabase
-import com.jooheon.toyplayer.data.playlist.dao.data.PlaylistMapper
 import com.jooheon.toyplayer.domain.model.common.Constants
 import dagger.Module
 import dagger.Provides
@@ -25,7 +24,4 @@ object PlaylistDataBaseModule {
     @Provides
     @Singleton
     fun provideMusicPlaylistDao(playlistDatabase: PlaylistDatabase) = playlistDatabase.dao
-
-    @Provides
-    fun provideMusicPlaylistMapper(): PlaylistMapper = PlaylistMapper()
 }

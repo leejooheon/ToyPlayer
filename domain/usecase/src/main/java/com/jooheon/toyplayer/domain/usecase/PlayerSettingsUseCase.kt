@@ -17,7 +17,7 @@ class PlayerSettingsUseCase @Inject constructor(
         playerSettingsRepository.setShuffleMode(shuffleEnabled)
     }
 
-    suspend fun flowRepeatMode(): Flow<Int> = playerSettingsRepository.flowRepeatMode()
-    suspend fun flowShuffleMode(): Flow<Boolean> = playerSettingsRepository.flowShuffleMode()
-    suspend fun flowVolume(): Flow<Float> = playerSettingsRepository.flowVolume()
+    fun flowRepeatMode(): Flow<Int> = playerSettingsRepository.flowRepeatMode()
+    fun flowShuffleMode(): Flow<Boolean> = playerSettingsRepository.flowShuffleMode()
+    fun flowVolume(): Flow<Float> = playerSettingsRepository.flowVolume()
 }

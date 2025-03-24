@@ -35,32 +35,24 @@ fun Song.extras() = bundleOf(
 )
 
 fun MediaItem.toSong(): Song {
-    fun getUseCache(extras: Bundle?): Boolean = extras?.getBoolean(BUNDLE_USE_CACHE).defaultFalse()
-    fun getArtistId(extras: Bundle?): String = extras?.getString(BUNDLE_ARTIST_ID).defaultEmpty()
-    fun getAlbumId(extras: Bundle?): String = extras?.getString(BUNDLE_ALBUM_ID).defaultEmpty()
-    fun getDuration(extras: Bundle?): Long = extras?.getLong(BUNDLE_DURATION).defaultZero()
-    fun getIsFavorite(extras: Bundle?): Boolean = extras?.getBoolean(BUNDLE_IS_FAVORITE).defaultFalse()
-    fun getData(extras: Bundle?): String? = extras?.getString(BUNDLE_DATA)
-    fun getPath(extras: Bundle?): String = extras?.getString(BUNDLE_PATH).defaultEmpty()
-
     val audioId = mediaId.toLongOrNull()
 
     return with(mediaMetadata) {
         Song(
             audioId = audioId.defaultZero(),
-            useCache = getUseCache(extras),
+            useCache = getUseCache(),
             displayName = displayTitle.toString(),
             title = title.toString(),
             artist = artist.toString(),
-            artistId = getArtistId(extras),
+            artistId = getArtistId(),
             album = albumTitle.toString(),
-            albumId = getAlbumId(extras),
-            duration = getDuration(extras),
-            path = getPath(extras),
+            albumId = getAlbumId(),
+            duration = getDuration(),
+            path = getPath(),
             trackNumber = trackNumber ?: C.INDEX_UNSET,
             imageUrl = artworkUri.toString(),
-            isFavorite = getIsFavorite(extras),
-            data = getData(extras)
+            isFavorite = getIsFavorite(),
+            data = getData()
         )
     }
 }

@@ -38,7 +38,7 @@ fun LibraryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context)
+        viewModel.loadArtists(context)
     }
 
     LibraryScreenInternal(
@@ -87,7 +87,7 @@ private fun LibraryScreenInternal(
                     )
 
                     PlaylistLibrarySection(
-                        models = uiState.defaultPlaylists,
+                        models = uiState.playlists,
                         onClick = { onEvent.invoke(LibraryEvent.OnPlaylistClick(it)) },
                         onMoreClick = { onEvent.invoke(LibraryEvent.OnPlaylistMainClick) }
                     )

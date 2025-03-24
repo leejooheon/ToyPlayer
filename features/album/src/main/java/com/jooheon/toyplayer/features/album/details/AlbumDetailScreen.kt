@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,7 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.album.details.components.AlbumDetailHeader
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailEvent
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
@@ -51,7 +50,7 @@ fun AlbumDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.loadData(context, albumId)
+        viewModel.loadAlbum(context, albumId)
     }
 
     AlbumDetailScreenInternal(
@@ -102,12 +101,11 @@ private fun AlbumDetailScreenInternal(
                         )
                     }
 
-                    items(
+                    itemsIndexed(
                         items = uiState.album.songs,
-                        key = { song: Song -> song.hashCode() }
-                    ) { song ->
+                    ) { index, song ->
                         MediaItemSmallNoImage(
-                            trackNumber = song.trackNumber,
+                            index = index + 1,
                             title = song.title,
                             subTitle = "${song.artist} • ${song.album}",
                             duration = MusicUtil.toReadableDurationString(song.duration),

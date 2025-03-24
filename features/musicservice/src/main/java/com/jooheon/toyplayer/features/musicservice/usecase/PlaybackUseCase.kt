@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicservice.usecase
 import androidx.media3.common.Player
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.onSuccess
+import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
@@ -31,17 +32,11 @@ class PlaybackUseCase(
 
         launch {
             musicStateHolder.mediaItems.collectLatest { mediaItems ->
-                playlistUseCase
-                    .getPlayingQueue()
-                    .onSuccess { playlist ->
-                        val songs = mediaItems.map { it.toSong() }
-                        playlistUseCase.insertPlaylists(
-                            playlist.copy(
-                                thumbnailUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
-                                songs = songs
-                            )
-                        )
-                    }
+                playlistUseCase.insert(
+                    id = Playlist.PlayingQueuePlaylistId.first,
+                    songs = mediaItems.map { it.toSong() },
+                    reset = true,
+                )
             }
         }
 

@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.player.model
 
+import android.content.Context
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 
@@ -13,7 +14,7 @@ sealed interface PlayerEvent {
     data object OnNavigateLibraryClick: PlayerEvent
 
     data class OnScreenTouched(val state: Boolean): PlayerEvent
-    data object OnPlayAutomatic: PlayerEvent
+    data class OnPlayAutomatic(val context: Context): PlayerEvent
 
     data class OnFavoriteClick(val song: Song): PlayerEvent
     data class OnPlaylistClick(val playlist: Playlist, val index: Int): PlayerEvent

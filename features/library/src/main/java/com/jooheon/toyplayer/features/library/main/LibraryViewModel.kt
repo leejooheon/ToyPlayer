@@ -4,21 +4,21 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.Artist
 import com.jooheon.toyplayer.domain.model.music.MediaId
-import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
-import com.jooheon.toyplayer.features.library.main.model.LibraryEvent
 import com.jooheon.toyplayer.features.library.main.model.LibraryUiState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -27,28 +27,30 @@ import kotlin.coroutines.resume
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    private val playlistUseCase: PlaylistUseCase,
+    playlistUseCase: PlaylistUseCase,
     private val playerController: PlayerController,
 ): ViewModel() {
-    private val _uiState = MutableStateFlow(LibraryUiState.default)
-    val uiState = _uiState.asStateFlow()
-
-    internal fun loadData(context: Context) = viewModelScope.launch {
-        val artists = getArtists(context)
-        _uiState.update {
-            it.copy(
+    private val artistsFlow = MutableStateFlow<List<Artist>>(emptyList())
+    val uiState: StateFlow<LibraryUiState> =
+        combine(
+            artistsFlow,
+            playlistUseCase.flowAllPlaylists()
+        ) { artists, playlists ->
+            artists to playlists
+        }.map { (artists, playlists) ->
+            LibraryUiState(
                 artists = artists,
+                playlists = playlists,
             )
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = LibraryUiState.default
+        )
 
-        playlistUseCase.getAllPlaylist()
-            .onSuccess { playlists ->
-                _uiState.update {
-                    it.copy(
-                        defaultPlaylists = playlists
-                    )
-                }
-            }
+    internal fun loadArtists(context: Context) = viewModelScope.launch {
+        artistsFlow.emit(getArtists(context))
     }
 
     private suspend fun getArtists(

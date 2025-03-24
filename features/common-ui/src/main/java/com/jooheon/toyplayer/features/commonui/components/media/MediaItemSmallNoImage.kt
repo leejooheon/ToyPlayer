@@ -31,7 +31,7 @@ import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
 
 @Composable
 fun MediaItemSmallNoImage(
-    trackNumber: Int,
+    index: Int,
     title: String,
     subTitle: String,
     duration: String,
@@ -57,7 +57,7 @@ fun MediaItemSmallNoImage(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = trackNumber.toString(),
+                text = index.toString(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -128,7 +128,7 @@ fun MediaItemSmallNoImage(
 private fun MediaItemSmallWithoutImagePreview() {
     ToyPlayerTheme {
         MediaItemSmallNoImage(
-            trackNumber = 1,
+            index = 1,
             title = UiText.StringResource(Strings.placeholder_long).asString(),
             subTitle = UiText.StringResource(Strings.placeholder_medium).asString(),
             duration = "00:12",

@@ -34,18 +34,29 @@ sealed interface MediaId {
     @Serializable
     @SerialName("album_root")
     data object AlbumRoot : MediaId
-
     @Serializable
     @SerialName("album")
     data class Album(val id: String) : MediaId
 
     @Serializable
+    @SerialName("artist_root")
+    data object ArtistRoot : MediaId
+    @Serializable
+    @SerialName("artist")
+    data class Artist(val id: String) : MediaId
+
+    @Serializable
     @SerialName("playlist_root")
     data object PlaylistRoot : MediaId
-
     @Serializable
     @SerialName("playlist")
     data class Playlist(val id: String) : MediaId
+    @Serializable
+    @SerialName("playlist_media_id")
+    data class PlaylistMediaId(
+        val parentId: String,
+        val id: String,
+    ) : MediaId
 
     companion object {
         fun String.toMediaIdOrNull(): MediaId? = try {

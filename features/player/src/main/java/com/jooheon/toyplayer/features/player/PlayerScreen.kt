@@ -14,13 +14,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
-import com.jooheon.toyplayer.features.commonui.controller.TouchEventController
+import com.jooheon.toyplayer.features.common.controller.TouchEventController
 import com.jooheon.toyplayer.features.player.component.LogoSection
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
@@ -39,12 +40,9 @@ fun PlayerScreen(
     navigateTo: (ScreenNavigation) -> Unit,
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var infoSectionVisibleState by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        viewModel.loadData()
-    }
 
     LaunchedEffect(uiState.playlists) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
         if(uiState.playlists.isEmpty()) return@LaunchedEffect
@@ -52,7 +50,7 @@ fun PlayerScreen(
         viewModel.autoPlaybackProperty.set(true)
         if(uiState.musicState.isPlaying()) return@LaunchedEffect
 
-        viewModel.dispatch(PlayerEvent.OnPlayAutomatic)
+        viewModel.dispatch(PlayerEvent.OnPlayAutomatic(context))
         infoSectionVisibleState = true
     }
 

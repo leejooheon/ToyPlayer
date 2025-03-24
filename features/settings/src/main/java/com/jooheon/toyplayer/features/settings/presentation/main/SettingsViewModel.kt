@@ -14,20 +14,19 @@ import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
-import com.jooheon.toyplayer.features.commonui.controller.SnackbarController
-import com.jooheon.toyplayer.features.commonui.controller.SnackbarEvent
-import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.common.controller.SnackbarController
+import com.jooheon.toyplayer.features.common.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
-import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
 import com.jooheon.toyplayer.features.settings.presentation.language.LanguageType
+import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
 import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
@@ -39,21 +38,18 @@ class SettingsViewModel @Inject constructor(
     private val playerController: PlayerController,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
 ): ViewModel() {
-    private val _uiState = MutableStateFlow(SettingsUiState.default)
-    internal val uiState = _uiState.asStateFlow()
-
-    init {
-        collectStates()
-    }
-
-    internal fun loadData() = viewModelScope.launch(Dispatchers.IO) {
-        _uiState.update {
-            it.copy(
-                models = SettingsUiState.Model.getSettingListItems(),
-                currentLanguageType = LanguageType.current(),
-            )
+    val uiState: StateFlow<SettingsUiState> =
+        combine(
+            flowOf(getDefaultUiState()),
+            playerSettingsUseCase.flowVolume()
+        ) { state, volume ->
+            state.copy(volume = volume)
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = SettingsUiState.default,
+        )
 
     internal fun dispatch(
         context: Context,
@@ -70,17 +66,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private fun collectStates() = viewModelScope.launch {
-        launch {
-            playerSettingsUseCase.flowVolume().collectLatest { volume ->
-                _uiState.update {
-                    it.copy(
-                        volume = volume
-                    )
-                }
-            }
-        }
-    }
 
     private fun onLanguageSelected(context: Context, languageType: LanguageType) {
         val language = languageType.code
@@ -128,4 +113,10 @@ class SettingsViewModel @Inject constructor(
             SnackbarController.sendEvent(event)
         }
     }
+
+    private fun getDefaultUiState(): SettingsUiState =
+        SettingsUiState.default.copy(
+            models = SettingsUiState.Model.getSettingListItems(),
+            currentLanguageType = LanguageType.current(),
+        )
 }
