@@ -40,8 +40,8 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val musicStateHolder: MusicStateHolder,
     private val playerController: PlayerController,
-    private val playlistUseCase: PlaylistUseCase,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
+    playlistUseCase: PlaylistUseCase,
 ): ViewModel() {
     val uiState: StateFlow<PlayerUiState> =
         combine(

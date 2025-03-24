@@ -40,7 +40,7 @@ fun horizontalMargin(): Dp {
 fun contentWidth(): Dp {
     val context = LocalContext.current
 
-    val pixel = (context.deviceWidth() * 0.25).toFloat()
+    val pixel = (context.deviceWidth() * 0.35).toFloat()
     return pixel.toDp()
 }
 
