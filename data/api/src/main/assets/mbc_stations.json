@@ -1,6 +1,6 @@
 [
   {
-    "type": "Mbc",
+    "type": "MBC",
     "url": null,
     "image": "drawable/cheese",
     "channelName": "MBC 표준FM",
@@ -9,7 +9,7 @@
     "updatedTime": null
   },
   {
-    "type": "Mbc",
+    "type": "MBC",
     "url": null,
     "image": "drawable/chips",
     "channelName": "MBC FM4U",
@@ -18,7 +18,7 @@
     "updatedTime": null
   },
   {
-    "type": "Mbc",
+    "type": "MBC",
     "url": null,
     "image": "drawable/cupcake",
     "channelName": "MBC 올댓뮤직",

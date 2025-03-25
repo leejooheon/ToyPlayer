@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
@@ -25,34 +26,39 @@ class PlaybackUseCase(
         player ?: return@launch
 
         musicStateHolder.mediaItem
-            .onEach { defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId) }
+            .onEach {
+                if(it == MediaItem.EMPTY) return@onEach
+                defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId)
+            }
             .flowOn(Dispatchers.IO)
             .launchIn(this@launch)
 
         musicStateHolder.mediaItems
             .onEach { mediaItems ->
+                if(player.playbackState == Player.STATE_IDLE) return@onEach
+
                 playlistUseCase.insert(
                     id = Playlist.PlayingQueue.id,
                     songs = mediaItems.map { it.toSong() },
                     reset = true,
                 )
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Main)
             .launchIn(this@launch)
 
         playerSettingsUseCase.flowRepeatMode()
-            .flowOn(Dispatchers.Main)
             .onEach { player.repeatMode = it }
+            .flowOn(Dispatchers.Main)
             .launchIn(this@launch)
 
         playerSettingsUseCase.flowShuffleMode()
-            .flowOn(Dispatchers.Main)
             .onEach { player.shuffleModeEnabled = it }
+            .flowOn(Dispatchers.Main)
             .launchIn(this@launch)
 
         playerSettingsUseCase.flowVolume()
-            .flowOn(Dispatchers.Main)
             .onEach { player.volume = it }
+            .flowOn(Dispatchers.Main)
             .launchIn(this@launch)
     }
 }

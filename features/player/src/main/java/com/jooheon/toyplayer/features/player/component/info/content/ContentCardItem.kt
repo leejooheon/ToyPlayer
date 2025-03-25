@@ -48,7 +48,6 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 internal fun ContentCardItem(
     title: String,
     imageUrl: String,
-    isPlaying: Boolean,
     isSelectedItem: Boolean,
     isFavorite: Boolean,
     showFavorite: Boolean,
@@ -92,34 +91,10 @@ internal fun ContentCardItem(
             )
 
             if(isSelectedItem) {
-                val composition by rememberLottieComposition(
-                    spec = LottieCompositionSpec.Asset("lottie_visualizer.json"),
-                )
-
-                val progress by animateLottieCompositionAsState(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                    isPlaying = isPlaying,
-                    reverseOnRepeat = true,
-                    clipSpec = LottieClipSpec.Frame(min = 4, max = 21),
-                )
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(
-                            MaterialTheme.colorScheme.secondary.copy(
-                                alpha = 0.5f
-                            )
-                        )
-                )
-                LottieAnimation(
-                    composition = composition,
-                    progress = { if (isPlaying) progress else 0f },
-                    modifier = Modifier
-                        .fillMaxWidth(0.16f)
-                        .aspectRatio(1f)
-                        .align(Alignment.Center)
+                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                 )
             }
             if(showFavorite) {
@@ -167,7 +142,6 @@ private fun PreviewContentCardItem() {
         ContentCardItem(
             title = song.title,
             imageUrl = song.imageUrl,
-            isPlaying = true,
             isSelectedItem = true,
             isFavorite = false,
             showFavorite = true,

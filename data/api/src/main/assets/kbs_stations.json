@@ -1,6 +1,6 @@
 [
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/apple_chips",
     "channelName": "KBS 1라디오",
@@ -9,7 +9,7 @@
     "updatedTime": 0
   },
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/apple_juice",
     "channelName": "KBS 2라디오",
@@ -18,7 +18,7 @@
     "updatedTime": 0
   },
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/apple_pie",
     "channelName": "KBS 3라디오",
@@ -27,7 +27,7 @@
     "updatedTime": 0
   },
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/apple_sauce",
     "channelName": "KBS 1FM",
@@ -36,7 +36,7 @@
     "updatedTime": 0
   },
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/apples",
     "channelName": "KBS 2FM",
@@ -45,7 +45,7 @@
     "updatedTime": 0
   },
   {
-    "type": "Kbs",
+    "type": "KBS",
     "url": null,
     "image": "drawable/almonds",
     "channelName": "KBS 한민족 방송",

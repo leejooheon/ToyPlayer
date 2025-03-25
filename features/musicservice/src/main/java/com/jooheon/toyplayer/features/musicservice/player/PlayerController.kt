@@ -108,10 +108,10 @@ class PlayerController(private val scope: CoroutineScope) {
     }
 
     fun enqueue(
-        mediaId: MediaId,
         song: Song,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
+        val mediaId = MediaId.Playlist(Playlist.PlayingQueue.id)
         player.enqueue(
             mediaItem = song.toMediaItem(mediaId.serialize()),
             playWhenReady = playWhenReady
@@ -119,12 +119,12 @@ class PlayerController(private val scope: CoroutineScope) {
     }
 
     fun enqueue(
-        mediaId: MediaId,
         songs: List<Song>,
         startIndex: Int = C.INDEX_UNSET,
         startPositionMs: Long = C.TIME_UNSET,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
+        val mediaId = MediaId.Playlist(Playlist.PlayingQueue.id)
         player.forceEnqueue(
             mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) },
             startIndex = startIndex,

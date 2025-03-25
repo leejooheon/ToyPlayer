@@ -1,6 +1,6 @@
 [
   {
-    "type": "Sbs",
+    "type": "SBS",
     "url": null,
     "image": "drawable/desserts",
     "channelName": "SBS 파워FM",
@@ -9,7 +9,7 @@
     "updatedTime": null
   },
   {
-    "type": "Sbs",
+    "type": "SBS",
     "url": null,
     "image": "drawable/donut",
     "channelName": "SBS 러브FM",
@@ -18,7 +18,7 @@
     "updatedTime": null
   },
   {
-    "type": "Sbs",
+    "type": "SBS",
     "url": null,
     "image": "drawable/eclair",
     "channelName": "SBS 고릴라디오M",

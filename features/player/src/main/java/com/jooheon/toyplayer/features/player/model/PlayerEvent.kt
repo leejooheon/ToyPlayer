@@ -11,6 +11,7 @@ sealed interface PlayerEvent {
 
     data object OnNavigateSettingClick: PlayerEvent
     data object OnNavigatePlaylistClick: PlayerEvent
+    data class OnNavigatePlaylistDetailsClick(val id: Int): PlayerEvent
     data object OnNavigateLibraryClick: PlayerEvent
 
     data class OnScreenTouched(val state: Boolean): PlayerEvent

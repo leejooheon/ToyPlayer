@@ -46,13 +46,8 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-        deviceId: Int
-    ) {
-        Timber.d("onRequestPermissionsResult: $grantResults $permissions")
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
+    override fun onDestroy() {
+        Timber.d("onDestroy")
+        super.onDestroy()
     }
 }

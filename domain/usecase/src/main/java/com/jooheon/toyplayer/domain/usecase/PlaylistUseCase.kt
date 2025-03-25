@@ -89,7 +89,7 @@ class PlaylistUseCase @Inject constructor(
         return@withContext when(result) {
             is Result.Success -> {
                 val playlist = result.data
-                var index = if(reset) 0 else playlist.songs.maxOfOrNull { it.trackNumber }.defaultZero() + 1
+                var index = if(reset) 1 else playlist.songs.maxOfOrNull { it.trackNumber }.defaultZero() + 1
                 val newSongs = songs.map { it.copy(trackNumber = index++) }
                 playlistRepository.updatePlaylist(
                     playlist.copy(

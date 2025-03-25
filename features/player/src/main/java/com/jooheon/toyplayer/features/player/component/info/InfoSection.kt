@@ -11,14 +11,12 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,15 +31,12 @@ import com.jooheon.toyplayer.features.commonui.ext.toPx
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
+import com.jooheon.toyplayer.features.player.common.contentSize
 import com.jooheon.toyplayer.features.player.common.contentSpace
-import com.jooheon.toyplayer.features.player.component.info.content.ContentPagerItem
 import com.jooheon.toyplayer.features.player.component.info.content.ContentSection
 import com.jooheon.toyplayer.features.player.component.info.control.ControlSection
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import com.jooheon.toyplayer.features.player.model.toChunkedModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
 
@@ -64,6 +59,7 @@ fun InfoSection(
     onPreviousClick: () -> Unit,
     onContentClick: (playlist: Playlist, startIndex: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
+    onDetailsClick: (playlistId: Int) -> Unit,
 ) {
     val chunkedModel = playlists.toChunkedModel()
     var contentAlpha by remember { mutableFloatStateOf(1f) }
@@ -73,13 +69,6 @@ fun InfoSection(
             if (pagerState.currentPage == 0) {
                 min(max(pagerState.currentPageOffsetFraction * 2, 0f), 1f)
             } else 1f
-        }
-    }
-
-    LaunchedEffect(isShow) {
-        if(!isShow) { // hide 시 첫번쨰 페이지로 이동
-            try { withContext(Dispatchers.IO) { delay(animTime.toLong()) } }
-            finally { pagerState.scrollToPage(0) }
         }
     }
 
@@ -137,15 +126,15 @@ fun InfoSection(
                                 ?: return@Box
 
                             ContentSection(
-                                useScrollableItem = chunkedModel.size == 1 || newModels.size > 4,
+                                useScrollableItem = chunkedModel.size == 1 || newModels.size > contentSize,
                                 playlists = newModels,
                                 currentSong = currentSong,
                                 titleAlpha = pageOffset,
                                 contentAlpha = contentAlpha,
-                                isPlaying = musicState.isPlaying(),
                                 enableScroll = isLastPage,
                                 onContentClick = onContentClick,
                                 onFavoriteClick = onFavoriteClick,
+                                onDetailsClick = onDetailsClick,
                                 onContentAlphaChanged = { alpha -> contentAlpha = alpha },
                                 modifier = Modifier
                                     .zIndex((pagerState.pageCount - pageIndex).toFloat())
@@ -201,6 +190,7 @@ private fun PreviewInfoSection() {
             onPreviousClick = {},
             onContentClick = { _, _ -> },
             onFavoriteClick = { _, _ -> },
+            onDetailsClick = {}
         )
     }
 }

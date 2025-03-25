@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Song(
-    private val audioId: Long,
+    val audioId: Long,
     val useCache: Boolean,
     val displayName: String,
     val title: String,
@@ -22,7 +22,7 @@ data class Song(
     var data: String? = null,
 ) {
     fun radioDataOrNull() = data.defaultEmpty().toRadioDataOrNull()
-    fun key(): String = radioDataOrNull()?.serialize() ?: audioId.toString()
+    fun key(): String = radioDataOrNull()?.serialize() ?: "${audioId}_${trackNumber}"
 
     companion object {
         val default = Song(
@@ -58,7 +58,7 @@ data class Song(
             data = null,
         )
 
-
+        const val BUNDLE_AUDIO_ID = "bundle_audio_id"
         const val BUNDLE_USE_CACHE = "bundle_use_cache"
         const val BUNDLE_ARTIST_ID = "bundle_artist_id"
         const val BUNDLE_ALBUM_ID = "bundle_album_id"

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.commonui.ext.observeWithLifecycle
-import com.jooheon.toyplayer.features.splash.model.SplashEvent
 import com.jooheon.toyplayer.features.splash.model.SplashState
 
 
@@ -28,21 +27,11 @@ fun SplashScreen(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.initialize()
+        viewModel.initialize(context)
     }
 
     viewModel.state.observeWithLifecycle {
         when(it) {
-            is SplashState.Default -> viewModel.dispatch(SplashEvent.CheckNetwork)
-            is SplashState.NetworkAvailable -> {
-                if(it.value) viewModel.dispatch(SplashEvent.ServiceCheck)
-                else { /** do something **/ }
-            }
-            is SplashState.ServiceAvailable -> {
-                if(it.value) viewModel.dispatch(SplashEvent.Update(context))
-                else { /** do something **/ }
-            }
-            is SplashState.Update -> { /** not reached **/ }
             is SplashState.Done -> navigateTo.invoke(ScreenNavigation.Player)
         }
     }

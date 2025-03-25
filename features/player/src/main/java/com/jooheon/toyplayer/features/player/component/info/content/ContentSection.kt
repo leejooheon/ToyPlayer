@@ -14,10 +14,10 @@ internal fun ContentSection(
     currentSong: Song,
     titleAlpha: Float,
     contentAlpha: Float,
-    isPlaying: Boolean,
     enableScroll: Boolean,
     onContentClick: (Playlist, startIndex: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
+    onDetailsClick: (playlistId: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -26,10 +26,10 @@ internal fun ContentSection(
             playlists = playlists,
             currentSong = currentSong,
             titleAlpha = titleAlpha,
-            isPlaying = isPlaying,
             enableScroll = enableScroll,
             onContentClick = onContentClick,
             onFavoriteClick = onFavoriteClick,
+            onDetailsClick = onDetailsClick,
             onContentAlphaChanged = onContentAlphaChanged,
             modifier = modifier,
         )
@@ -38,9 +38,9 @@ internal fun ContentSection(
             playlists = playlists,
             currentSong = currentSong,
             titleAlpha = titleAlpha,
-            isPlaying = isPlaying,
             onContentClick = onContentClick,
             onFavoriteClick = onFavoriteClick,
+            onDetailsClick = onDetailsClick,
             modifier = modifier.alpha(contentAlpha),
         )
     }

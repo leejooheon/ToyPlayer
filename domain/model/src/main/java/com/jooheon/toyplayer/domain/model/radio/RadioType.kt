@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class RadioType {
-    @Serializable data object Kbs: RadioType()
-    @Serializable data object Sbs: RadioType()
-    @Serializable data object Mbc: RadioType()
-    @Serializable data class Etc(val name: String): RadioType()
+    @Serializable data object KBS: RadioType()
+    @Serializable data object SBS: RadioType()
+    @Serializable data object MBC: RadioType()
+    @Serializable data class ETC(val name: String): RadioType()
 
-    fun name() = if(this is Etc) name else this::class.simpleName.defaultEmpty()
+    fun name() = if(this is ETC) name else this::class.simpleName.defaultEmpty()
 }

@@ -39,8 +39,11 @@ class PlaylistViewModel @Inject constructor(
         when(event) {
             is PlaylistEvent.OnDeletePlaylist -> deletePlaylist(event.id)
             is PlaylistEvent.OnAddPlaylist -> {
-                if(event.id == Playlist.default.id) songMenuHandler.insert(event.id, emptyList())
-                else updatePlaylistName(event.id, event.name)
+                if(event.id == Playlist.default.id) {
+                    songMenuHandler.make(Playlist.default.copy(name = event.name), emptyList())
+                } else {
+                    updatePlaylistName(event.id, event.name)
+                }
             }
 
             is PlaylistEvent.OnNavigatePlaylist -> { /** nothing **/ }

@@ -61,16 +61,6 @@ internal fun ControlTopInfo(
     modifier: Modifier = Modifier,
 ) {
     Timber.d("ControlTopInfo: $title")
-    val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.Asset("lottie_visualizer.json"),
-    )
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        isPlaying = isPlaying,
-        reverseOnRepeat = true,
-        clipSpec = LottieClipSpec.Frame(min = 4, max = 21),
-    )
 
     var titleAreaSize by remember { mutableStateOf(IntSize(0, 0)) }
     val textMeasurer = rememberTextMeasurer()
@@ -105,14 +95,6 @@ internal fun ControlTopInfo(
                     url = imageUrl,
                     contentDescription = title,
                     modifier = Modifier.fillMaxSize()
-                )
-
-                LottieAnimation(
-                    composition = composition,
-                    progress = { if (isPlaying) progress else 0f },
-                    modifier = Modifier
-                        .width(16.dp)
-                        .height(12.dp)
                 )
             }
 

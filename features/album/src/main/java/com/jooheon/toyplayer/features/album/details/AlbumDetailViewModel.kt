@@ -91,7 +91,6 @@ class AlbumDetailViewModel @Inject constructor(
 
         defaultSettingsUseCase.setLastEnqueuedPlaylistName(album.name)
         playerController.enqueue(
-            mediaId = MediaId.Album(album.id),
             songs = album.songs,
             startIndex = startIndex,
             playWhenReady = true,
@@ -100,10 +99,7 @@ class AlbumDetailViewModel @Inject constructor(
     }
 
     private suspend fun onSongClick(song: Song, playWhenReady: Boolean) {
-        val album = uiState.value.album
-
         playerController.enqueue(
-            mediaId = MediaId.Album(album.id),
             song = song,
             playWhenReady = playWhenReady
         )

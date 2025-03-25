@@ -58,7 +58,8 @@ class PlaylistDetailViewModel @Inject constructor(
         event: PlaylistDetailEvent
     ) = viewModelScope.launch {
         when(event) {
-            is PlaylistDetailEvent.OnPlayAllClick -> onPlayAll(event.shuffle)
+            is PlaylistDetailEvent.OnPlay -> onPlay(event.index)
+            is PlaylistDetailEvent.OnPlayAll -> onPlayAll(event.shuffle)
             is PlaylistDetailEvent.OnDelete -> onDelete(event.song)
             is PlaylistDetailEvent.OnPermissionRequest -> onPermissionRequest(event.context)
         }
@@ -87,14 +88,21 @@ class PlaylistDetailViewModel @Inject constructor(
         val playlist = uiState.value.playlist
         playlistUseCase.delete(playlist.id, song)
     }
-
+    private suspend fun onPlay(index: Int) {
+        val playlist = uiState.value.playlist
+        defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+        playerController.enqueue(
+            songs = playlist.songs,
+            startIndex = index,
+            playWhenReady = true,
+        )
+    }
     private suspend fun onPlayAll(shuffle: Boolean) {
         val playlist = uiState.value.playlist
 
         val startIndex = if(shuffle) (playlist.songs.indices).random() else 0
         defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
         playerController.enqueue(
-            mediaId = MediaId.Playlist(playlist.id),
             songs = playlist.songs,
             startIndex = startIndex,
             playWhenReady = true,

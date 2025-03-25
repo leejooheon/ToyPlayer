@@ -18,15 +18,14 @@ import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
-
 @Composable
 internal fun ContentPagerItem(
     playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
-    isPlaying: Boolean,
     onContentClick: (playlist: Playlist, index: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
+    onDetailsClick: (playlistId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyListState()
@@ -48,9 +47,9 @@ internal fun ContentPagerItem(
                 playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
-                isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
-                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it) }
+                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it) },
+                onDetailsClick =  { onDetailsClick.invoke(playlist.id) }
             )
 
             Spacer(
@@ -74,12 +73,12 @@ private fun PreviewContentPagerItem() {
     val song = uiState.musicState.currentPlayingMusic
     ToyPlayerTheme {
         ContentPagerItem(
-            playlists = uiState.playlists + uiState.playlists + uiState.playlists,
+            playlists = uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
-            isPlaying = false,
             onContentClick = { _, _ -> },
-            onFavoriteClick = { _, _ -> }
+            onFavoriteClick = { _, _ -> },
+            onDetailsClick = {},
         )
     }
 }

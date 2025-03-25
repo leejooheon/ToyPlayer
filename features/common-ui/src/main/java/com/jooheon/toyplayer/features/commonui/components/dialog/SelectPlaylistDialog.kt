@@ -45,13 +45,13 @@ fun SelectPlaylistDialog(
     onPlaylistClick: (Playlist) -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    val models = playlists.ifEmpty {
-        listOf(
-            Playlist.default.copy(
-                name = UiText.StringResource(Strings.dialog_new_playlist).asString()
+    val models = playlists
+        .toMutableList()
+        .also {
+            it.add(
+                Playlist.default.copy(name = UiText.StringResource(Strings.dialog_new_playlist).asString())
             )
-        )
-    }
+        }
 
     DialogColumn(
         fraction = 0.7f,

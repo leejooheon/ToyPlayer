@@ -17,7 +17,7 @@ class MainNavigator(
     val startDestination = ScreenNavigation.Splash
 
     fun popBackStack() {
-        navController.navigateUp()
+        navController.popBackStack()
     }
 }
 

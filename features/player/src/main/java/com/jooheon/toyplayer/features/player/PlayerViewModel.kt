@@ -94,6 +94,7 @@ class PlayerViewModel @Inject constructor(
 
             is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
+            is PlayerEvent.OnNavigatePlaylistDetailsClick -> { /** nothing **/ }
             is PlayerEvent.OnNavigateLibraryClick -> { /** nothing **/ }
             is PlayerEvent.OnScreenTouched -> { /** nothing **/ }
         }
@@ -105,7 +106,6 @@ class PlayerViewModel @Inject constructor(
             else -> {
                 defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
                 playerController.enqueue(
-                    mediaId = MediaId.Playlist(playlist.id),
                     songs = playlist.songs,
                     startIndex = index,
                     playWhenReady = true,

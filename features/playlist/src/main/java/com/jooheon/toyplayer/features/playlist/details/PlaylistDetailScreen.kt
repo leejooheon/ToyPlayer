@@ -82,10 +82,10 @@ private fun PlaylistDetailScreenInternal(
                         listState = rememberLazyListState(),
                         playlist = uiState.playlist,
                         onPlayClick = {
-                            onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(false))
+                            onEvent.invoke(PlaylistDetailEvent.OnPlay(it))
                         },
                         onPlayAllClick = {
-                            onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(true))
+                            onEvent.invoke(PlaylistDetailEvent.OnPlayAll(true))
                         },
                         onDropDownEvent = { menu, song ->
                             when (menu) {

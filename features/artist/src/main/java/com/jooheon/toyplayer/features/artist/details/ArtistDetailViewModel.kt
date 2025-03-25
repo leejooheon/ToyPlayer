@@ -80,9 +80,7 @@ class ArtistDetailViewModel @Inject constructor(
     }
 
     private suspend fun onSongClick(song: Song, playWhenReady: Boolean) {
-        val artist = uiState.value.artist
         playerController.enqueue(
-            mediaId = MediaId.Artist(artist.id),
             song = song,
             playWhenReady = playWhenReady
         )

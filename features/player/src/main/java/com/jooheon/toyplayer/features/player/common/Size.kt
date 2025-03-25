@@ -18,6 +18,8 @@ import com.jooheon.toyplayer.features.commonui.ext.isSystemBarVisible
 import com.jooheon.toyplayer.features.commonui.ext.systemTopBarHeight
 import com.jooheon.toyplayer.features.commonui.ext.toDp
 
+const val contentSize = 3
+
 @Composable
 fun verticalMargin(): Dp {
     val configuration = LocalConfiguration.current
@@ -109,8 +111,8 @@ internal fun contentSpace(): Dp {
             fullHeight.toDp() - systemTopBarHeight()
         }
     }
-
-    val contentSpace = (screenHeight - (cardHeight() * 4f)) / 4f
+    val size = (contentSize + 1).toFloat()
+    val contentSpace = (screenHeight - (cardHeight() * size)) / size
 //    Timber.d("contentSpace[$visible]: [$contentSpace, ${cardHeight()}] ([${appUsableHeight.toDp()}, ${fullHeight.toDp()}] - ${systemTopBarHeight()} = $screenHeight)")
     return contentSpace
 }

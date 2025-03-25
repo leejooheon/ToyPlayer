@@ -1,5 +1,8 @@
 package com.jooheon.toyplayer.features.main.presentation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -37,7 +40,9 @@ internal fun MainNavHost(
     NavHost(
         navController = navController,
         startDestination = navigator.startDestination,
-        modifier = modifier
+        modifier = modifier,
+        enterTransition = { fadeIn(animationSpec = tween(300))  },
+        exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
         mainNavGraph(
             navigateTo = navigateTo

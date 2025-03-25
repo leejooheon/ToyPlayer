@@ -261,20 +261,27 @@ class MediaLibrarySessionCallback(
     }
 
     private suspend fun prepareRecentQueue(): Result<Pair<List<MediaItem>, Int>, PlaylistError> {
-        val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId()
+
+
         val playlistResult = playlistUseCase.getPlayingQueue()
             .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
             ?: playlistUseCase.getPlaylist(Playlist.Radio.id)
 
         return when(playlistResult) {
             is Result.Success -> {
+                val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId().toMediaIdOrNull() as? MediaId.Playback
                 val playlist = playlistResult.data
 
                 val mediaItems = playlist.songs.map { it.toMediaItem(MediaId.Playlist(Playlist.PlayingQueue.id).serialize()) }
-                val index = mediaItems
-                    .indexOfFirst { it.mediaId == lastPlayedMediaId }
-                    .takeIf { it != C.INDEX_UNSET }
-                    .defaultZero()
+                val index = if(lastPlayedMediaId == null) 0
+                else {
+                    mediaItems
+                        .indexOfFirst {
+                            (it.mediaId.toMediaIdOrNull() as? MediaId.Playback)?.id == lastPlayedMediaId.id
+                        }
+                        .takeIf { it != C.INDEX_UNSET }
+                        .defaultZero()
+                }
                 Result.Success(mediaItems to index)
             }
 

@@ -31,10 +31,10 @@ internal fun ContentScrollableItem(
     playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
-    isPlaying: Boolean,
     enableScroll: Boolean,
     onContentClick: (Playlist, startIndex: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
+    onDetailsClick: (playlistId: Int) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -76,9 +76,9 @@ internal fun ContentScrollableItem(
                 playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
-                isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
-                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it)}
+                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it)},
+                onDetailsClick = { onDetailsClick.invoke(playlist.id) }
             )
 
             Spacer(modifier = Modifier.height(contentSpace()))
@@ -103,11 +103,11 @@ private fun PreviewContentScrollableSection() {
             playlists = uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
-            isPlaying = false,
             enableScroll = true,
             onContentAlphaChanged = {},
             onContentClick = { _, _ -> },
-            onFavoriteClick = { _, _ -> }
+            onFavoriteClick = { _, _ -> },
+            onDetailsClick = {},
         )
     }
 }

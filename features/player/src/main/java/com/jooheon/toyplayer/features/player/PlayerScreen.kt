@@ -45,11 +45,11 @@ fun PlayerScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var infoSectionVisibleState by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.playlists) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
+    LaunchedEffect(uiState.playlists, uiState.musicState) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
         if(uiState.playlists.isEmpty()) return@LaunchedEffect
         if(viewModel.autoPlaybackProperty.get()) return@LaunchedEffect
         viewModel.autoPlaybackProperty.set(true)
-        if(uiState.musicState.isPlaying()) return@LaunchedEffect
+        if(uiState.musicState.currentPlayingMusic != Song.default) return@LaunchedEffect
 
         viewModel.dispatch(PlayerEvent.OnPlayAutomatic(context))
     }
@@ -88,6 +88,9 @@ fun PlayerScreen(
                 }
                 is PlayerEvent.OnNavigateLibraryClick -> {
                     navigateTo.invoke(ScreenNavigation.Library)
+                }
+                is PlayerEvent.OnNavigatePlaylistDetailsClick -> {
+                    navigateTo.invoke(ScreenNavigation.Playlist.Details(it.id))
                 }
                 else -> viewModel.dispatch(it)
             }
@@ -185,6 +188,9 @@ private fun PlayerScreenInternal(
             },
             onFavoriteClick = { playlistId, index ->
                 onPlayerEvent.invoke(PlayerEvent.OnFavoriteClick(playlistId, index))
+            },
+            onDetailsClick = {
+                onPlayerEvent.invoke(PlayerEvent.OnNavigatePlaylistDetailsClick(it))
             }
         )
     }

@@ -25,8 +25,8 @@ import com.jooheon.toyplayer.features.commonui.components.media.MediaItemSmallNo
 internal fun PlaylistDetailMediaColumn(
     listState: LazyListState,
     playlist: Playlist,
-    onPlayClick: (Song) -> Unit,
-    onPlayAllClick: (Boolean) -> Unit,
+    onPlayClick: (index: Int) -> Unit,
+    onPlayAllClick: (shuffle: Boolean) -> Unit,
     onDropDownEvent: (DropDownMenu, Song) -> Unit,
 ) {
     LazyColumn(
@@ -57,7 +57,7 @@ internal fun PlaylistDetailMediaColumn(
                     subTitle = "${song.artist} • ${song.album}",
                     duration = MusicUtil.toReadableDurationString(song.duration),
                     dropDownMenus = DropDownMenu.playlistMediaItemMenuItems,
-                    onItemClick = { onPlayClick(song) },
+                    onItemClick = { onPlayClick(index) },
                     onDropDownMenuClick = { onDropDownEvent(it, song) }
                 )
             }

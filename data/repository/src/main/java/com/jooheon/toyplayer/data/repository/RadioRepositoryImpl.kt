@@ -24,10 +24,10 @@ class RadioRepositoryImpl(
 
     override suspend fun getRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
         return when(radioData.type) {
-            is RadioType.Kbs -> dataSource.getKbsRadioUrl(radioData)
-            is RadioType.Sbs -> dataSource.getSbsRadioUrl(radioData)
-            is RadioType.Mbc -> dataSource.getMbcRadioUrl(radioData)
-            is RadioType.Etc -> dataSource.getEtcRadioUrl(radioData)
+            is RadioType.KBS -> dataSource.getKbsRadioUrl(radioData)
+            is RadioType.SBS -> dataSource.getSbsRadioUrl(radioData)
+            is RadioType.MBC -> dataSource.getMbcRadioUrl(radioData)
+            is RadioType.ETC -> dataSource.getEtcRadioUrl(radioData)
         }
     }
 }

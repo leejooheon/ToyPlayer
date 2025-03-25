@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.musicservice.ext
 
 import android.net.Uri
 import androidx.core.net.toUri
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
@@ -17,6 +18,7 @@ import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_ALBUM_ID
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_ARTIST_ID
+import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_AUDIO_ID
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_DATA
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_DURATION
 import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_IS_FAVORITE
@@ -25,6 +27,26 @@ import com.jooheon.toyplayer.domain.model.music.Song.Companion.BUNDLE_USE_CACHE
 
 fun MediaItem.isHls(): Boolean = localConfiguration?.mimeType == MimeTypes.APPLICATION_M3U8
 
+fun MediaItem.toSong(): Song {
+    return with(mediaMetadata) {
+        Song(
+            audioId = getAudioId(),
+            useCache = getUseCache(),
+            displayName = displayTitle.toString(),
+            title = title.toString(),
+            artist = artist.toString(),
+            artistId = getArtistId(),
+            album = albumTitle.toString(),
+            albumId = getAlbumId(),
+            duration = getDuration(),
+            path = getPath(),
+            trackNumber = trackNumber ?: C.INDEX_UNSET,
+            imageUrl = artworkUri.toString(),
+            isFavorite = getIsFavorite(),
+            data = getData()
+        )
+    }
+}
 fun Song.toMediaItem(parentId: String): MediaItem {
     val uri = if(isRadio) radioDataOrNull()!!.serialize().toUri() else uri
     val customCacheKey = if(isRadio) radioDataOrNull()!!.serialize() else key()
@@ -123,6 +145,7 @@ internal fun MediaFolder.toMediaBrowsableItem(): MediaItem {
         .build()
 }
 
+fun MediaItem.getAudioId(): Long = mediaMetadata.extras?.getLong(BUNDLE_AUDIO_ID).defaultZero()
 fun MediaItem.getUseCache(): Boolean = mediaMetadata.extras?.getBoolean(BUNDLE_USE_CACHE).defaultFalse()
 fun MediaItem.getArtistId(): String = mediaMetadata.extras?.getString(BUNDLE_ARTIST_ID).defaultEmpty()
 fun MediaItem.getAlbumId(): String = mediaMetadata.extras?.getString(BUNDLE_ALBUM_ID).defaultEmpty()
