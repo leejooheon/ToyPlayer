@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed interface MediaId {
+
     @Serializable
     @SerialName("root")
     data object Root : MediaId
@@ -14,22 +15,6 @@ sealed interface MediaId {
     @Serializable
     @SerialName("all_songs")
     data object AllSongs : MediaId
-
-    @Serializable
-    @SerialName("playing_queue")
-    data object PlayingQueue : MediaId
-    @Serializable
-    @SerialName("local_songs")
-    data object LocalSongs : MediaId
-    @Serializable
-    @SerialName("stream_songs")
-    data object StreamSongs : MediaId
-    @Serializable
-    @SerialName("asset_songs")
-    data object AssetSongs : MediaId
-    @Serializable
-    @SerialName("radio_songs")
-    data object RadioSongs : MediaId
 
     @Serializable
     @SerialName("album_root")
@@ -50,13 +35,30 @@ sealed interface MediaId {
     data object PlaylistRoot : MediaId
     @Serializable
     @SerialName("playlist")
-    data class Playlist(val id: String) : MediaId
+    data class Playlist(val id: Int) : MediaId
+
     @Serializable
-    @SerialName("playlist_media_id")
-    data class PlaylistMediaId(
+    @SerialName("playback")
+    data class Playback(
         val parentId: String,
         val id: String,
     ) : MediaId
+
+    @Serializable
+    sealed interface InternalMediaId: MediaId {
+        @Serializable
+        @SerialName("local_songs")
+        data object LocalSongs : InternalMediaId
+        @Serializable
+        @SerialName("stream_songs")
+        data object StreamSongs : InternalMediaId
+        @Serializable
+        @SerialName("asset_songs")
+        data object AssetSongs : InternalMediaId
+        @Serializable
+        @SerialName("radio_songs")
+        data object RadioSongs : InternalMediaId
+    }
 
     companion object {
         fun String.toMediaIdOrNull(): MediaId? = try {

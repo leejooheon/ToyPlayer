@@ -4,6 +4,7 @@ import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
@@ -32,7 +33,7 @@ class PlaylistUseCase @Inject constructor(
         playlist: Playlist,
         songs: List<Song>
     ) = withContext(Dispatchers.IO) {
-        if(id !in Playlist.defaultPlaylistIds.map { it.first }) throw IllegalArgumentException("Invalid playlist id: $id")
+        if(id !in Playlist.defaultPlaylists.map { it.id }) throw IllegalArgumentException("Invalid playlist id: $id")
         playlistRepository.insertPlaylist(playlist.copy(id = id))
         insert(id, songs, true)
     }
@@ -45,6 +46,37 @@ class PlaylistUseCase @Inject constructor(
         val id = nextPlaylistIdOrNull().defaultZero()
         playlistRepository.insertPlaylist(playlist.copy(id = id))
         insert(id, songs, true)
+    }
+
+    suspend fun favorite(
+        id: Int,
+        song: Song,
+    ): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+        val isFavorite = !song.isFavorite
+
+        val result = getPlaylist(id)
+            .onSuccess { playlist ->
+                playlist.songs.indexOf(song).takeIf { it >= 0 }?.let { index ->
+                    val updatedSongs = playlist.songs.toMutableList().apply {
+                        set(index, song.copy(isFavorite = isFavorite))
+                    }
+                    playlistRepository.updatePlaylist(playlist.copy(songs = updatedSongs))
+                }
+            }
+
+        if(id != Playlist.Favorite.id) {
+            getPlaylist(Playlist.Favorite.id).onSuccess { playlist ->
+                val updatedSongs = playlist.songs.toMutableList().apply {
+                    if (!isFavorite) remove(song) else add(song.copy(isFavorite = true))
+                }
+                playlistRepository.updatePlaylist(playlist.copy(songs = updatedSongs))
+            }
+        }
+
+        return@withContext when(result) {
+            is Result.Success -> Result.Success(Unit)
+            is Result.Error -> result
+        }
     }
 
     suspend fun insert(
@@ -110,7 +142,7 @@ class PlaylistUseCase @Inject constructor(
         playlistRepository.deletePlaylist(playlist)
     }
     suspend fun getPlayingQueue(): Result<Playlist, PlaylistError> {
-        return getPlaylist(Playlist.PlayingQueuePlaylistId.first)
+        return getPlaylist(Playlist.PlayingQueue.id)
     }
 
     private suspend fun checkValidName(name: String): Boolean = withContext(Dispatchers.IO) {

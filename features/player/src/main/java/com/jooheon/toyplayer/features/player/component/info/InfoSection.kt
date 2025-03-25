@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
+import com.jooheon.toyplayer.features.player.component.info.content.ContentPagerItem
 import com.jooheon.toyplayer.features.player.component.info.content.ContentSection
 import com.jooheon.toyplayer.features.player.component.info.control.ControlSection
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
@@ -61,6 +63,7 @@ fun InfoSection(
     onNextClick:() -> Unit,
     onPreviousClick: () -> Unit,
     onContentClick: (playlist: Playlist, startIndex: Int) -> Unit,
+    onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
 ) {
     val chunkedModel = playlists.toChunkedModel()
     var contentAlpha by remember { mutableFloatStateOf(1f) }
@@ -126,7 +129,6 @@ fun InfoSection(
                             onPreviousClick = onPreviousClick,
                         )
                         else -> {
-//                            Timber.d("index: $pageIndex / ${chunkedModel.size}")
                             val isLastPage = pagerState.currentPage == pagerState.pageCount - 1
 
                             val newModels = chunkedModel
@@ -143,6 +145,7 @@ fun InfoSection(
                                 isPlaying = musicState.isPlaying(),
                                 enableScroll = isLastPage,
                                 onContentClick = onContentClick,
+                                onFavoriteClick = onFavoriteClick,
                                 onContentAlphaChanged = { alpha -> contentAlpha = alpha },
                                 modifier = Modifier
                                     .zIndex((pagerState.pageCount - pageIndex).toFloat())
@@ -197,6 +200,7 @@ private fun PreviewInfoSection() {
             onNextClick = {},
             onPreviousClick = {},
             onContentClick = { _, _ -> },
+            onFavoriteClick = { _, _ -> },
         )
     }
 }

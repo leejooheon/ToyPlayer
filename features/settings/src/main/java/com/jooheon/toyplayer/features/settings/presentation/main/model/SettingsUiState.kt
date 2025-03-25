@@ -59,11 +59,11 @@ data class SettingsUiState(
                         title = UiText.StringResource(R.string.setting_volume),
                         iconImageVector = Icons.AutoMirrored.Outlined.VolumeUp
                     ),
-                    Model(
-                        event = SettingsUiEvent.OnNavigateOpenSourceLicense,
-                        title = UiText.StringResource(R.string.setting_opensource_license),
-                        iconImageVector = Icons.Default.FolderOpen
-                    ),
+//                    Model(
+//                        event = SettingsUiEvent.OnNavigateOpenSourceLicense,
+//                        title = UiText.StringResource(R.string.setting_opensource_license),
+//                        iconImageVector = Icons.Default.FolderOpen
+//                    ),
                 )
             }
         }

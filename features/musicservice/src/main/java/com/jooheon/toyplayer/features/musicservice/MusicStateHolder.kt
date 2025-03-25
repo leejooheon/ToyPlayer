@@ -6,7 +6,6 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
 import com.jooheon.toyplayer.features.musicservice.ext.toPlaybackState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
@@ -32,7 +31,7 @@ class MusicStateHolder @Inject constructor() {
     )
     val mediaItems = _mediaItems.asSharedFlow()
 
-    private val _mediaItem = MutableSharedFlow<MediaItem?>(
+    private val _mediaItem = MutableSharedFlow<MediaItem>(
         replay = 1,
         onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
@@ -74,7 +73,7 @@ class MusicStateHolder @Inject constructor() {
     internal fun observeStates(scope: CoroutineScope) = scope.launch {
         launch {
             mediaItem.collectLatest { mediaItem ->
-                val song = mediaItem?.toSong() ?: Song.default
+                val song = mediaItem.toSong()
 
                 Timber.d( "collectMediaItem: ${song.title.defaultEmpty()}")
                 _musicState.update {
@@ -103,7 +102,7 @@ class MusicStateHolder @Inject constructor() {
     internal fun onMediaItemsChanged(mediaItems: List<MediaItem>) {
         _mediaItems.tryEmit(mediaItems)
     }
-    internal fun onMediaItemChanged(mediaItem: MediaItem?) {
+    internal fun onMediaItemChanged(mediaItem: MediaItem) {
         _mediaItem.tryEmit(mediaItem)
     }
     internal fun onIsPlayingChanged(isPlaying: Boolean) {

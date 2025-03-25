@@ -6,7 +6,6 @@ import androidx.annotation.OptIn
 import androidx.core.os.bundleOf
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
@@ -18,10 +17,11 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.gun0912.tedpermission.coroutine.TedPermission
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
-import com.jooheon.toyplayer.domain.model.common.errors.RootError
-import com.jooheon.toyplayer.domain.model.common.extension.default
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
@@ -29,23 +29,21 @@ import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.MediaId.Companion.toMediaIdOrNull
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.radio.RadioData
-import com.jooheon.toyplayer.domain.model.radio.RadioData.Companion.toRadioDataOrNull
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
-import com.jooheon.toyplayer.features.common.extension.getDefaultPlaylistName
+import com.jooheon.toyplayer.features.common.permission.audioStoragePermission
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.ext.findExoPlayer
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
-import com.jooheon.toyplayer.features.musicservice.ext.getData
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @OptIn(UnstableApi::class)
@@ -104,7 +102,7 @@ class MediaLibrarySessionCallback(
         controller: MediaSession.ControllerInfo,
         mediaItems: MutableList<MediaItem>
     ): ListenableFuture<MutableList<MediaItem>> {
-        Timber.d("onAddMediaItems: ${mediaItems.map{it.mediaId}}")
+        Timber.d("onAddMediaItems: ${mediaItems.map{ it.mediaId }}")
         return super.onAddMediaItems(mediaSession, controller, mediaItems)
     }
 
@@ -127,7 +125,7 @@ class MediaLibrarySessionCallback(
             )
         }
 
-        val mediaId = mediaItem.mediaId.toMediaIdOrNull() as? MediaId.PlaylistMediaId ?: run {
+        val mediaId = mediaItem.mediaId.toMediaIdOrNull() as? MediaId.Playback ?: run {
             return super.onSetMediaItems(
                 mediaSession,
                 controller,
@@ -142,7 +140,7 @@ class MediaLibrarySessionCallback(
 
             val newStartIndex = newMediaItems
                 .indexOfFirst {
-                    val targetMediaIdOrNull = it.mediaId.toMediaIdOrNull() as? MediaId.PlaylistMediaId
+                    val targetMediaIdOrNull = it.mediaId.toMediaIdOrNull() as? MediaId.Playback
                     targetMediaIdOrNull?.id == mediaId.id
                 }
                 .defaultZero()
@@ -241,7 +239,6 @@ class MediaLibrarySessionCallback(
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
         Timber.d("onConnect: packageName: ${controller.packageName}, ${session.player.playbackState.toString()}")
-//        Player.STATE_IDLE
         val connectionResult = super.onConnect(session, controller)
         val sessionCommands = connectionResult.availableSessionCommands
             .buildUpon()
@@ -267,12 +264,13 @@ class MediaLibrarySessionCallback(
         val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId()
         val playlistResult = playlistUseCase.getPlayingQueue()
             .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
-            ?: playlistUseCase.getPlaylist(Playlist.RadioPlaylistId.first)
+            ?: playlistUseCase.getPlaylist(Playlist.Radio.id)
 
         return when(playlistResult) {
             is Result.Success -> {
                 val playlist = playlistResult.data
-                val mediaItems = playlist.songs.map { it.toMediaItem(MediaId.PlayingQueue.serialize()) }
+
+                val mediaItems = playlist.songs.map { it.toMediaItem(MediaId.Playlist(Playlist.PlayingQueue.id).serialize()) }
                 val index = mediaItems
                     .indexOfFirst { it.mediaId == lastPlayedMediaId }
                     .takeIf { it != C.INDEX_UNSET }
@@ -295,25 +293,71 @@ class MediaLibrarySessionCallback(
         )
     }
 
-    private suspend fun initDefaultPlaylist() {
-        Playlist.defaultPlaylistIds.forEach { (id, mediaId) ->
-            val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
-            playlistUseCase.getPlaylist(id)
-                .onSuccess {
-                    playlistUseCase.insert(
-                        id = id,
-                        songs = songs,
-                        reset = true,
-                    )
-                }
-                .onError {
-                    val playlist = Playlist(
-                        id = id,
-                        name = getDefaultPlaylistName(context, mediaId),
-                        thumbnailUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
-                    )
-                    playlistUseCase.makeDefaultPlaylist(id, playlist, songs)
-                }
+    private suspend fun initDefaultPlaylist() = withContext(Dispatchers.IO) {
+        fun getInternalMediaId(mediaId: MediaId.Playlist): MediaId {
+            val mappedMediaId = when (mediaId) {
+                Playlist.PlayingQueue,
+                Playlist.Favorite -> mediaId
+
+                Playlist.Radio -> MediaId.InternalMediaId.RadioSongs
+                Playlist.Stream -> MediaId.InternalMediaId.StreamSongs
+                Playlist.Local -> MediaId.InternalMediaId.LocalSongs
+
+                else -> throw IllegalArgumentException("Invalid playlist id: ${mediaId.id}")
+            }
+
+            return mappedMediaId
         }
+
+        fun getDefaultPlaylistName(context: Context, mediaId: MediaId.Playlist): String {
+            val resource =  when(mediaId) {
+                Playlist.PlayingQueue -> Strings.playlist_playing_queue
+                Playlist.Radio -> Strings.playlist_radio
+                Playlist.Local -> Strings.playlist_local
+                Playlist.Stream -> Strings.playlist_stream
+                Playlist.Favorite -> Strings.playlist_favorite
+                else -> throw IllegalArgumentException("$mediaId is not default playlist.")
+            }
+
+            return UiText.StringResource(resource).asString(context)
+        }
+
+        Playlist.defaultPlaylists
+            .forEach { playlistMediaId ->
+                val mediaId = getInternalMediaId(playlistMediaId)
+                val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
+
+                playlistUseCase.getPlaylist(playlistMediaId.id)
+                    .onSuccess { playlist ->
+                        if(playlistMediaId == Playlist.Local) { // local은 앱 실행시마다 리로드 해준다
+                            val granted = TedPermission.create()
+                                .setPermissions(audioStoragePermission)
+                                .checkGranted()
+
+                            if(granted) {
+                                val newSongs = songs.filter { it.key() !in playlist.songs.map { song -> song.key() } }
+                                playlistUseCase.insert(
+                                    id = playlist.id,
+                                    songs = newSongs,
+                                    reset = false
+                                )
+                            } else {
+                                playlistUseCase.insert(
+                                    id = playlist.id,
+                                    songs = emptyList(),
+                                    reset = true
+                                )
+                            }
+                        }
+                    }
+                    .onError {
+                        val playlist = Playlist(
+                            id = playlistMediaId.id,
+                            name = getDefaultPlaylistName(context, playlistMediaId),
+                            thumbnailUrl = songs.firstOrNull()?.imageUrl.defaultEmpty(),
+                        )
+                        playlistUseCase.makeDefaultPlaylist(playlistMediaId.id, playlist, songs)
+                    }
+            }
     }
 }

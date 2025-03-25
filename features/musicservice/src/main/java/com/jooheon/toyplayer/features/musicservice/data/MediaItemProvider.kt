@@ -19,6 +19,8 @@ import com.jooheon.toyplayer.domain.usecase.RadioUseCase
 import com.jooheon.toyplayer.features.musicservice.R
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaBrowsableItem
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MediaItemProvider(
     private val context: Context,
@@ -32,8 +34,8 @@ class MediaItemProvider(
         mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
     ).toMediaBrowsableItem()
 
-    suspend fun getChildMediaItems(id: String): List<MediaItem> {
-        return when(val mediaId = id.toMediaIdOrNull()) {
+    suspend fun getChildMediaItems(id: String): List<MediaItem> = withContext(Dispatchers.IO) {
+        return@withContext when(val mediaId = id.toMediaIdOrNull()) {
             is MediaId.Root -> {
                 val allSongs = MediaFolder(
                     title = context.getString(R.string.media_folder_all_songs),
@@ -58,22 +60,6 @@ class MediaItemProvider(
                 val radios = radioUseCase.getRadioStationList()
                 (songs + radios).map { it.toMediaItem(mediaId.serialize()) }
             }
-            is MediaId.LocalSongs -> {
-                val songs = musicListUseCase.getLocalSongList()
-                songs.map { it.toMediaItem(mediaId.serialize()) }
-            }
-            is MediaId.StreamSongs -> {
-                val songs = musicListUseCase.getStreamingUrlList()
-                songs.map { it.toMediaItem(mediaId.serialize()) }
-            }
-            is MediaId.AssetSongs -> {
-                val songs = musicListUseCase.getSongListFromAsset()
-                songs.map { it.toMediaItem(mediaId.serialize()) }
-            }
-            is MediaId.RadioSongs -> {
-                val songs = radioUseCase.getRadioStationList()
-                songs.map { it.toMediaItem(mediaId.serialize()) }
-            }
             is MediaId.AlbumRoot -> {
                 val groupByAlbum = getAlbums()
                 groupByAlbum.map { it.toMediaItem() }
@@ -90,10 +76,28 @@ class MediaItemProvider(
                 playlists.map { it.toMediaItem() }
             }
             is MediaId.Playlist -> {
-                val playlists = getPlaylists()
-                val playlist = playlists.firstOrNull { it.id.toString() == mediaId.id } ?: return emptyList()
-
-                playlist.songs.map { it.toMediaItem(mediaId.serialize()) }
+                val playlist = getPlaylist(mediaId.id)
+                playlist?.songs.defaultEmpty().map { it.toMediaItem(mediaId.serialize()) }
+            }
+            is MediaId.InternalMediaId -> {
+                when(mediaId) {
+                    is MediaId.InternalMediaId.LocalSongs -> {
+                        val songs = musicListUseCase.getLocalSongList()
+                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                    }
+                    is MediaId.InternalMediaId.StreamSongs -> {
+                        val songs = musicListUseCase.getStreamingUrlList()
+                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                    }
+                    is MediaId.InternalMediaId.AssetSongs -> {
+                        val songs = musicListUseCase.getSongListFromAsset()
+                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                    }
+                    is MediaId.InternalMediaId.RadioSongs -> {
+                        val songs = radioUseCase.getRadioStationList()
+                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                    }
+                }
             }
             else -> emptyList()
         }
@@ -122,6 +126,14 @@ class MediaItemProvider(
         return when(result) {
             is Result.Success -> result.data
             is Result.Error -> emptyList()
+        }
+    }
+
+    private suspend fun getPlaylist(id: Int): Playlist? {
+        val result = playlistUseCase.getPlaylist(id)
+        return when(result) {
+            is Result.Success -> result.data
+            is Result.Error -> null
         }
     }
 }

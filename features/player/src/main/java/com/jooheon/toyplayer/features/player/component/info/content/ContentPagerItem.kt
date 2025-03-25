@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.player.component.info.content.component
+package com.jooheon.toyplayer.features.player.component.info.content
 
 import android.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,8 @@ internal fun ContentPagerItem(
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (Playlist, startIndex: Int) -> Unit,
+    onContentClick: (playlist: Playlist, index: Int) -> Unit,
+    onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = rememberLazyListState()
@@ -49,6 +50,7 @@ internal fun ContentPagerItem(
                 titleAlpha = titleAlpha,
                 isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
+                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it) }
             )
 
             Spacer(
@@ -72,11 +74,12 @@ private fun PreviewContentPagerItem() {
     val song = uiState.musicState.currentPlayingMusic
     ToyPlayerTheme {
         ContentPagerItem(
-            playlists = uiState.playlists,
+            playlists = uiState.playlists + uiState.playlists + uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
             isPlaying = false,
             onContentClick = { _, _ -> },
+            onFavoriteClick = { _, _ -> }
         )
     }
 }

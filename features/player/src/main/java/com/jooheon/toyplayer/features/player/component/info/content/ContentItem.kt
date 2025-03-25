@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.player.component.info.content.component
+package com.jooheon.toyplayer.features.player.component.info.content
 
 import android.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.common.contentWidth
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
-import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable
 internal fun ContentItem(
@@ -36,7 +35,8 @@ internal fun ContentItem(
     currentSong: Song,
     titleAlpha: Float,
     isPlaying: Boolean,
-    onContentClick: (startIndex: Int) -> Unit,
+    onContentClick: (index: Int) -> Unit,
+    onFavoriteClick: (song: Song) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -78,7 +78,13 @@ internal fun ContentItem(
                     imageUrl = item.imageUrl,
                     isPlaying = isPlaying,
                     isSelectedItem = item.key() == currentSong.key(),
+                    isFavorite = item.isFavorite,
+                    showFavorite = playlist.id !in listOf(
+                        Playlist.PlayingQueue.id,
+                        Playlist.Favorite.id
+                    ),
                     onClick = { onContentClick.invoke(index) },
+                    onFavoriteClick = { onFavoriteClick.invoke(item)},
                     modifier = Modifier.width(contentWidth())
                 )
             }
@@ -99,7 +105,8 @@ private fun PreviewContentItem() {
             currentSong = Song.preview,
             titleAlpha = 1f,
             isPlaying = false,
-            onContentClick = { },
+            onContentClick = {},
+            onFavoriteClick = {},
         )
     }
 }

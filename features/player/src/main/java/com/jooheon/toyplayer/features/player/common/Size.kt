@@ -39,8 +39,7 @@ fun horizontalMargin(): Dp {
 @Composable
 fun contentWidth(): Dp {
     val context = LocalContext.current
-
-    val pixel = (context.deviceWidth() * 0.35).toFloat()
+    val pixel = (context.deviceWidth() * 0.35f)
     return pixel.toDp()
 }
 
@@ -111,7 +110,7 @@ internal fun contentSpace(): Dp {
         }
     }
 
-    val contentSpace = (screenHeight - (cardHeight() * 5f)) / 5f
+    val contentSpace = (screenHeight - (cardHeight() * 4f)) / 4f
 //    Timber.d("contentSpace[$visible]: [$contentSpace, ${cardHeight()}] ([${appUsableHeight.toDp()}, ${fullHeight.toDp()}] - ${systemTopBarHeight()} = $screenHeight)")
     return contentSpace
 }

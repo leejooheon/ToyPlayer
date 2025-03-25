@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.musicservice.playback
 
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.features.musicservice.MusicService
 import com.jooheon.toyplayer.features.musicservice.ext.mediaItemTransitionReason
 import com.jooheon.toyplayer.features.musicservice.ext.mediaItems
@@ -45,7 +46,7 @@ class PlaybackListener(
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
         Timber.tag(TAG).d("onMediaItemTransition: ${reason.mediaItemTransitionReason()}")
-        musicStateHolder.onMediaItemChanged(mediaItem)
+        musicStateHolder.onMediaItemChanged(mediaItem ?: MediaItem.EMPTY)
     }
 
     override fun onTimelineChanged(timeline: Timeline, reason: Int) {

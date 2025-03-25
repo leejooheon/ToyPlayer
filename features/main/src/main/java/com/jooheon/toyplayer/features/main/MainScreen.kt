@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     mainNavigator: MainNavigator = rememberMainNavigator(),
     onChangeDarkTheme: (Boolean) -> Unit,
+    onPermissionGranted: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -69,9 +70,7 @@ fun MainScreen(
     )
 
     MaybeRequestMediaPermission(
-        onPermissionGranted = {
-//            viewModel.dispatch(MainScreenEvent.OnPermissionGranted)
-        }
+        onPermissionGranted = onPermissionGranted
     )
 }
 

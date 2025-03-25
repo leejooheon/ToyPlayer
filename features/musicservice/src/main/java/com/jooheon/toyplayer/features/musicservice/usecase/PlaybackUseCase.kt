@@ -1,8 +1,6 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
 import androidx.media3.common.Player
-import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
@@ -10,7 +8,10 @@ import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class PlaybackUseCase(
@@ -23,38 +24,35 @@ class PlaybackUseCase(
     internal fun collectStates(player: Player?) = scope.launch {
         player ?: return@launch
 
-        launch {
-            musicStateHolder.mediaItem.collectLatest { mediaItem ->
-                mediaItem ?: return@collectLatest
-                defaultSettingsUseCase.setLastPlayedMediaId(mediaItem.mediaId)
-            }
-        }
+        musicStateHolder.mediaItem
+            .onEach { defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId) }
+            .flowOn(Dispatchers.IO)
+            .launchIn(this@launch)
 
-        launch {
-            musicStateHolder.mediaItems.collectLatest { mediaItems ->
+        musicStateHolder.mediaItems
+            .onEach { mediaItems ->
                 playlistUseCase.insert(
-                    id = Playlist.PlayingQueuePlaylistId.first,
+                    id = Playlist.PlayingQueue.id,
                     songs = mediaItems.map { it.toSong() },
                     reset = true,
                 )
             }
-        }
+            .flowOn(Dispatchers.IO)
+            .launchIn(this@launch)
 
-        launch {
-            playerSettingsUseCase.flowRepeatMode().collectLatest {
-                player.repeatMode = it
-            }
-        }
+        playerSettingsUseCase.flowRepeatMode()
+            .flowOn(Dispatchers.Main)
+            .onEach { player.repeatMode = it }
+            .launchIn(this@launch)
 
-        launch {
-            playerSettingsUseCase.flowShuffleMode().collectLatest {
-                player.shuffleModeEnabled = it
-            }
-        }
-        launch {
-            playerSettingsUseCase.flowVolume().collectLatest {
-                player.volume = it
-            }
-        }
+        playerSettingsUseCase.flowShuffleMode()
+            .flowOn(Dispatchers.Main)
+            .onEach { player.shuffleModeEnabled = it }
+            .launchIn(this@launch)
+
+        playerSettingsUseCase.flowVolume()
+            .flowOn(Dispatchers.Main)
+            .onEach { player.volume = it }
+            .launchIn(this@launch)
     }
 }

@@ -121,27 +121,13 @@ internal fun VolumeSeekbarDialog(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            DialogButton(
-                text = stringResource(Strings.apply),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-                onClick = { onApply.invoke(currentVolume) }
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            DialogButton(
-                text = stringResource(Strings.cancel),
-                style = MaterialTheme.typography.labelMedium.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-                onClick = { onApply.invoke(volume) }
-            )
-        }
+        DialogButton(
+            text = stringResource(Strings.apply),
+            style = MaterialTheme.typography.labelMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+            onClick = { onApply.invoke(currentVolume) }
+        )
     }
 }
 

@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.player.component.info.content.component
+package com.jooheon.toyplayer.features.player.component.info.content
 
 import android.graphics.Color
 import androidx.compose.foundation.background
@@ -10,6 +10,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +41,7 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 import com.jooheon.toyplayer.features.commonui.ext.toDp
+import com.jooheon.toyplayer.features.player.common.contentWidth
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
 @Composable
@@ -42,7 +50,10 @@ internal fun ContentCardItem(
     imageUrl: String,
     isPlaying: Boolean,
     isSelectedItem: Boolean,
+    isFavorite: Boolean,
+    showFavorite: Boolean,
     onClick: () -> Unit,
+    onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -56,7 +67,8 @@ internal fun ContentCardItem(
     val textHeight = textLayoutResult.size.height
 
     Column(
-        modifier = modifier.bounceClick { onClick.invoke() }
+        modifier = modifier
+            .bounceClick { onClick.invoke() }
     ) {
 
         // when dp changed, change cardTopPreviewHeight together
@@ -73,13 +85,11 @@ internal fun ContentCardItem(
                     shape = MaterialTheme.shapes.medium
                 )
         ) {
-            Box(modifier = modifier) {
-                CustomGlideImage(
-                    url = imageUrl,
-                    contentDescription = title,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
+            CustomGlideImage(
+                url = imageUrl,
+                contentDescription = title,
+                modifier = Modifier.fillMaxSize(),
+            )
 
             if(isSelectedItem) {
                 val composition by rememberLottieComposition(
@@ -111,6 +121,20 @@ internal fun ContentCardItem(
                         .aspectRatio(1f)
                         .align(Alignment.Center)
                 )
+            }
+            if(showFavorite) {
+                IconButton(
+                    onClick = onFavoriteClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                ) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = UiText.StringResource(Strings.action_toggle_favorite).asString(),
+                        modifier = Modifier.size(16.dp),
+                        tint = androidx.compose.ui.graphics.Color.Red.copy(alpha = if (isFavorite) 1f else 0.5f)
+                    )
+                }
             }
         }
 
@@ -145,8 +169,11 @@ private fun PreviewContentCardItem() {
             imageUrl = song.imageUrl,
             isPlaying = true,
             isSelectedItem = true,
+            isFavorite = false,
+            showFavorite = true,
             onClick = {},
-            modifier = Modifier,
+            onFavoriteClick = {},
+            modifier = Modifier.width(contentWidth()),
         )
     }
 }

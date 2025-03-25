@@ -2,7 +2,6 @@
 package com.jooheon.toyplayer.features.musicservice.ext
 
 import android.net.Uri
-import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -34,7 +33,7 @@ fun Song.toMediaItem(parentId: String): MediaItem {
     val mediaType = if(isRadio) MediaMetadata.MEDIA_TYPE_PODCAST else MediaMetadata.MEDIA_TYPE_MUSIC
     val mediaMetadata = toMetadata(mediaType, imageUri)
 
-    val mediaId = MediaId.PlaylistMediaId(
+    val mediaId = MediaId.Playback(
         parentId = parentId,
         id = key()
     )
@@ -83,7 +82,7 @@ fun Playlist.toMediaItem(): MediaItem {
         .build()
 
     return MediaItem.Builder()
-        .setMediaId(MediaId.Playlist(id.toString()).serialize())
+        .setMediaId(MediaId.Playlist(id).serialize())
         .setMediaMetadata(metadata)
         .setSubtitleConfigurations(mutableListOf())
         .setUri(Uri.EMPTY)

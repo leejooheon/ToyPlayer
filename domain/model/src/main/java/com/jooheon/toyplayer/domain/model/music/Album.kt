@@ -14,7 +14,7 @@ data class Album(
     companion object {
         val default = Album(
             id = "-1",
-            name = "-",
+            name = "",
             artist = "<unknown>",
             artistId = "-1",
             imageUrl = "",

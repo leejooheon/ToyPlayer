@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -118,7 +117,7 @@ private fun PlaylistScreenInternal(
                         ) { playlist ->
                             PlaylistColumnItem(
                                 playlist = playlist,
-                                showContextualMenu = playlist.id !in Playlist.defaultPlaylistIds.map { (id, _) -> id },
+                                showContextualMenu = playlist.id !in Playlist.defaultPlaylists.map { it.id },
                                 onItemClick = { onEvent.invoke(PlaylistEvent.OnNavigatePlaylist(playlist.id)) },
                                 onDropDownMenuClick = { menu ->
                                     when(menu) {

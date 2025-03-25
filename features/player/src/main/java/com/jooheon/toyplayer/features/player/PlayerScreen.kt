@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.common.controller.TouchEventController
 import com.jooheon.toyplayer.features.player.component.LogoSection
@@ -51,6 +52,10 @@ fun PlayerScreen(
         if(uiState.musicState.isPlaying()) return@LaunchedEffect
 
         viewModel.dispatch(PlayerEvent.OnPlayAutomatic(context))
+    }
+
+    LaunchedEffect(uiState.pagerModel) {
+        if(uiState.pagerModel.items.isEmpty()) return@LaunchedEffect
         infoSectionVisibleState = true
     }
 
@@ -157,7 +162,6 @@ private fun PlayerScreenInternal(
 
         LogoSection(
             musicState = uiState.musicState,
-            onFavoriteClick = { onPlayerEvent.invoke(PlayerEvent.OnFavoriteClick(it)) },
             modifier = Modifier,
         )
 
@@ -179,6 +183,9 @@ private fun PlayerScreenInternal(
             onContentClick = { playlist, index ->
                 onPlayerEvent.invoke(PlayerEvent.OnPlaylistClick(playlist, index))
             },
+            onFavoriteClick = { playlistId, index ->
+                onPlayerEvent.invoke(PlayerEvent.OnFavoriteClick(playlistId, index))
+            }
         )
     }
 }

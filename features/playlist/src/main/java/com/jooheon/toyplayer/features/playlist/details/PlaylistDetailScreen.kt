@@ -23,6 +23,7 @@ import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 import com.jooheon.toyplayer.features.commonui.components.dialog.SongDetailsDialog
 import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
 import com.jooheon.toyplayer.features.commonui.components.menu.MenuDialogState
+import com.jooheon.toyplayer.features.playlist.details.component.PermissionRequestItem
 import com.jooheon.toyplayer.features.playlist.details.component.PlaylistDetailMediaColumn
 import com.jooheon.toyplayer.features.playlist.details.model.PlaylistDetailEvent
 import com.jooheon.toyplayer.features.playlist.details.model.PlaylistDetailUiState
@@ -52,6 +53,7 @@ private fun PlaylistDetailScreenInternal(
     onBackClick: () -> Unit,
     onEvent: (PlaylistDetailEvent) -> Unit,
 ) {
+    val context = LocalContext.current
     var dialogState by remember { mutableStateOf(MenuDialogState.default) }
 
     Scaffold(
@@ -68,30 +70,41 @@ private fun PlaylistDetailScreenInternal(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                PlaylistDetailMediaColumn(
-                    listState = rememberLazyListState(),
-                    playlist = uiState.playlist,
-                    onPlayClick = {
-                        onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(false))
-                    },
-                    onPlayAllClick = {
-                        onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(true))
-                    },
-                    onDropDownEvent = { menu, song ->
-                        when(menu) {
-                            DropDownMenu.PlaylistMediaItemDelete -> {
-                                onEvent.invoke(PlaylistDetailEvent.OnDelete(song))
+                if(uiState.requirePermission) {
+                    PermissionRequestItem(
+                        launchPermissionRequest = {
+                            onEvent.invoke(PlaylistDetailEvent.OnPermissionRequest(context))
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    PlaylistDetailMediaColumn(
+                        listState = rememberLazyListState(),
+                        playlist = uiState.playlist,
+                        onPlayClick = {
+                            onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(false))
+                        },
+                        onPlayAllClick = {
+                            onEvent.invoke(PlaylistDetailEvent.OnPlayAllClick(true))
+                        },
+                        onDropDownEvent = { menu, song ->
+                            when (menu) {
+                                DropDownMenu.PlaylistMediaItemDelete -> {
+                                    onEvent.invoke(PlaylistDetailEvent.OnDelete(song))
+                                }
+
+                                DropDownMenu.MediaItemDetails -> {
+                                    dialogState = MenuDialogState(
+                                        type = MenuDialogState.Type.SongInfo,
+                                        song = song,
+                                    )
+                                }
+
+                                else -> throw IllegalArgumentException("")
                             }
-                            DropDownMenu.MediaItemDetails -> {
-                                dialogState = MenuDialogState(
-                                    type = MenuDialogState.Type.SongInfo,
-                                    song = song,
-                                )
-                            }
-                            else -> throw IllegalArgumentException("")
-                        }
-                    },
-                )
+                        },
+                    )
+                }
 
                 when(dialogState.type) {
                     MenuDialogState.Type.SongInfo -> {

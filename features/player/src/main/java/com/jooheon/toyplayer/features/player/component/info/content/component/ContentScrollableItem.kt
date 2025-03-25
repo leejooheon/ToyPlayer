@@ -21,6 +21,8 @@ import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
 import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
+import com.jooheon.toyplayer.features.player.component.info.content.ContentItem
+import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -32,6 +34,7 @@ internal fun ContentScrollableItem(
     isPlaying: Boolean,
     enableScroll: Boolean,
     onContentClick: (Playlist, startIndex: Int) -> Unit,
+    onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
     onContentAlphaChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -75,6 +78,7 @@ internal fun ContentScrollableItem(
                 titleAlpha = titleAlpha,
                 isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
+                onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it)}
             )
 
             Spacer(modifier = Modifier.height(contentSpace()))
@@ -103,6 +107,7 @@ private fun PreviewContentScrollableSection() {
             enableScroll = true,
             onContentAlphaChanged = {},
             onContentClick = { _, _ -> },
+            onFavoriteClick = { _, _ -> }
         )
     }
 }

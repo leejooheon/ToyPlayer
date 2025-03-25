@@ -66,7 +66,8 @@
     <string name="cached_song">Cached Song</string>
     <string name="current_playing_song">Current playing song</string>
 
-    <string name="playlist_playing_queue">playing queue</string>
+    <string name="playlist_playing_queue">Playing queue</string>
+    <string name="playlist_favorite">Favorite songs</string>
     <string name="playlist_radio">Radios</string>
     <string name="playlist_stream">Stream Songs</string>
     <string name="playlist_local">Local Songs</string>
@@ -126,9 +127,14 @@
     <string name="dialog_language_selection_description">Please select the language you want to use.</string>
     <string name="dialog_volume_title">Volume Control</string>
     <string name="dialog_volume_description">Adjust the volume to your preferred level.</string>
-
     <string name="korean" translatable="false">한국어</string>
     <string name="english" translatable="false">English</string>
+
+    <!-- permission -->
+    <string name="action_request_permission">Grant Permission</string>
+    <string name="action_navigate_app_settings">Navigate App Settings</string>
+    <string name="description_permission_blocked">Denied it in the previous request,\nplease grant permission manually.</string>
+    <string name="description_permission_read_storage">Read Storage Permission is Required.</string>
 
     <!-- playback test -->
     <string name="test_mp3" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>

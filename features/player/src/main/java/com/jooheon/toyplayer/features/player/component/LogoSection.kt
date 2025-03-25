@@ -46,7 +46,6 @@ import com.jooheon.toyplayer.features.musicservice.data.MusicState
 internal fun LogoSection(
     musicState: MusicState,
     modifier: Modifier = Modifier,
-    onFavoriteClick: (Song) -> Unit,
 ) {
     val isLoading = musicState.isLoading()
     val isPlaying = musicState.isPlaying()
@@ -118,17 +117,6 @@ internal fun LogoSection(
                             .wrapContentSize()
                     )
                 }
-//                IconButton(
-//                    onClick = { onFavoriteClick.invoke(song) },
-//                    modifier = Modifier
-//                ) {
-//                    Icon(
-//                        imageVector = if(song.isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
-//                        contentDescription = "Favorite",
-//                        modifier = Modifier.size(36.dp),
-//                        tint = Color.Red.copy(alpha = if(song.isFavorite) 1f else 0.5f)
-//                    )
-//                }
             }
         }
     }
@@ -149,7 +137,6 @@ private fun PreviewLogoSection() {
                     isFavorite = false,
                 )
             ),
-            onFavoriteClick = {},
         )
     }
 }

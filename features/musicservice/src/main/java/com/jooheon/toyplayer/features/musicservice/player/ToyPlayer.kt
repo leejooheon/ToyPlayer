@@ -1,10 +1,10 @@
 package com.jooheon.toyplayer.features.musicservice.player
 
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 class ToyPlayer(player: Player): ForwardingPlayer(player){
@@ -16,6 +16,14 @@ class ToyPlayer(player: Player): ForwardingPlayer(player){
     override fun seekToPrevious() {
         if(isCurrentMediaItemLive) seekToPreviousMediaItem()
         else super.seekToPrevious()
+    }
+
+    override fun seekToNext() {
+        if(hasNextMediaItem()) {
+            super.seekToNext()
+        } else {
+            seekTo(0, C.TIME_UNSET)
+        }
     }
 
     override fun getAvailableCommands(): Player.Commands {

@@ -13,6 +13,7 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.controller.TouchEventController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
                 MainScreen(
                     onChangeDarkTheme = {
                         viewModel.updateIsDarkTheme(it)
+                    },
+                    onPermissionGranted = {
+                        viewModel.onPermissionGranted(this@MainActivity)
                     }
                 )
             }
@@ -40,5 +44,15 @@ class MainActivity : AppCompatActivity() {
             TouchEventController.sendEvent(ev)
         }
         return super.dispatchTouchEvent(ev)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+        deviceId: Int
+    ) {
+        Timber.d("onRequestPermissionsResult: $grantResults $permissions")
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
     }
 }

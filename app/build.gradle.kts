@@ -60,6 +60,6 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compile)
 
-    // LearkCanary
+    // LeakCanary
     debugImplementation(libs.squareup.leakcanary)
 }

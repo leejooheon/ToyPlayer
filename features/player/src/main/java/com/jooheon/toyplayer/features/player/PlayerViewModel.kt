@@ -3,32 +3,27 @@ package com.jooheon.toyplayer.features.player
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.C
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
-import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
-import com.jooheon.toyplayer.domain.model.common.onError
-import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
-import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
 import com.jooheon.toyplayer.features.common.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
-import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -41,7 +36,7 @@ class PlayerViewModel @Inject constructor(
     private val musicStateHolder: MusicStateHolder,
     private val playerController: PlayerController,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
-    playlistUseCase: PlaylistUseCase,
+    private val playlistUseCase: PlaylistUseCase,
 ): ViewModel() {
     val uiState: StateFlow<PlayerUiState> =
         combine(
@@ -50,7 +45,7 @@ class PlayerViewModel @Inject constructor(
         ) { musicState, playlists ->
             musicState to playlists
         }.map { (musicState, playlists) ->
-            val playingQueue = playlists.firstOrNull { it.id == Playlist.PlayingQueuePlaylistId.first }
+            val playingQueue = playlists.firstOrNull { it.id == Playlist.PlayingQueue.id }
 
             val pagerModel = PlayerUiState.PagerModel(
                 items = playingQueue?.songs.defaultEmpty(),
@@ -65,12 +60,12 @@ class PlayerViewModel @Inject constructor(
                 isLoading = false
             )
         }
+        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = PlayerUiState.default,
         )
-
 
     val autoPlaybackProperty = AtomicBoolean(false)
 
@@ -95,7 +90,7 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.OnNextClick -> playerController.seekToNext()
             is PlayerEvent.OnPreviousClick -> playerController.seekToPrevious()
             is PlayerEvent.OnSwipe -> playerController.playAtIndex(event.index)
-            is PlayerEvent.OnFavoriteClick -> onFavoriteClick(event.song)
+            is PlayerEvent.OnFavoriteClick -> playlistUseCase.favorite(event.playlistId, event.song)
 
             is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
@@ -106,11 +101,11 @@ class PlayerViewModel @Inject constructor(
 
     private suspend fun onPlaylistClick(playlist: Playlist, index: Int) {
         when(playlist.id) {
-            Playlist.PlayingQueuePlaylistId.first -> playerController.playAtIndex(index)
+            Playlist.PlayingQueue.id -> playerController.playAtIndex(index)
             else -> {
                 defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
                 playerController.enqueue(
-                    mediaId = MediaId.Playlist(playlist.id.toString()),
+                    mediaId = MediaId.Playlist(playlist.id),
                     songs = playlist.songs,
                     startIndex = index,
                     playWhenReady = true,
@@ -119,7 +114,7 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onPlayAutomatically(context: Context) {
+    private fun onPlayAutomatically(context: Context) {
         playerController.sendCustomCommand(
             context = context,
             command = CustomCommand.PrepareRecentQueue(true),
@@ -127,9 +122,5 @@ class PlayerViewModel @Inject constructor(
                 Timber.d("PrepareRecentQueue: $it")
             }
         )
-    }
-
-    private suspend fun onFavoriteClick(song: Song) {
-
     }
 }

@@ -23,16 +23,20 @@ data class Playlist(
             songs = listOf(Song.preview, Song.preview, Song.preview, Song.preview),
         )
 
-        val PlayingQueuePlaylistId = Pair(0, MediaId.PlayingQueue)
-        val RadioPlaylistId = Pair(1, MediaId.RadioSongs)
-        val StreamPlaylistId = Pair(2, MediaId.StreamSongs)
-        val LocalPlaylistId = Pair(3, MediaId.LocalSongs)
+        private enum class DefaultPlaylistId(val id: Int) {
+            PlayingQueue(0),
+            Radio(1),
+            Stream(2),
+            Local(3),
+            Favorite(4);
+        }
 
-        val defaultPlaylistIds = listOf(
-            PlayingQueuePlaylistId,
-            RadioPlaylistId,
-            StreamPlaylistId,
-            LocalPlaylistId,
-        )
+        val defaultPlaylists = DefaultPlaylistId.entries.map { MediaId.Playlist(it.id) }
+
+        val PlayingQueue get() = defaultPlaylists[DefaultPlaylistId.PlayingQueue.ordinal]
+        val Radio get() = defaultPlaylists[DefaultPlaylistId.Radio.ordinal]
+        val Stream get() = defaultPlaylists[DefaultPlaylistId.Stream.ordinal]
+        val Local get() = defaultPlaylists[DefaultPlaylistId.Local.ordinal]
+        val Favorite get() = defaultPlaylists[DefaultPlaylistId.Favorite.ordinal]
     }
 }

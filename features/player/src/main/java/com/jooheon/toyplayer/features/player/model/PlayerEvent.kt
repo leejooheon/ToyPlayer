@@ -16,7 +16,7 @@ sealed interface PlayerEvent {
     data class OnScreenTouched(val state: Boolean): PlayerEvent
     data class OnPlayAutomatic(val context: Context): PlayerEvent
 
-    data class OnFavoriteClick(val song: Song): PlayerEvent
+    data class OnFavoriteClick(val playlistId: Int, val song: Song): PlayerEvent
     data class OnPlaylistClick(val playlist: Playlist, val index: Int): PlayerEvent
     data class OnSwipe(val index: Int): PlayerEvent
 }

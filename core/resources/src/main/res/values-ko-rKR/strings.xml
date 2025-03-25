@@ -67,6 +67,7 @@
     <string name="cached_song">캐시된 음악</string>
 
     <string name="playlist_playing_queue">현재 재생중인 목록</string>
+    <string name="playlist_favorite">좋아한 음악</string>
     <string name="playlist_radio">라디오</string>
     <string name="playlist_stream">스트리밍 음악</string>
     <string name="playlist_local">로컬 음악</string>
@@ -126,4 +127,11 @@
     <string name="dialog_language_selection_description">사용하실 언어를 선택해 주세요.</string>
     <string name="dialog_volume_title">볼륨 조절</string>
     <string name="dialog_volume_description">원하는 볼륨 수준으로 조절하세요.</string>
+
+    <!-- permission -->
+    <string name="action_request_permission">권한 요청하기</string>
+    <string name="action_navigate_app_settings">앱 설정으로 이동</string>
+    <string name="description_permission_blocked">이전 권한 요청에서 거부되었습니다.\n수동으로 권한을 부여해 주세요.</string>
+    <string name="description_permission_read_storage">내부 저장소 접근 권한이 필요합니다.</string>
+
 </resources>

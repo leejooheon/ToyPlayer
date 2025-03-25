@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.domain.usecase)
 
     implementation(projects.core.network)
+    implementation(projects.core.resources)
 
     implementation(projects.features.common)
 //    testImplementation(projects.testing)
@@ -36,6 +37,9 @@ dependencies {
 
     // timber
     implementation(libs.jakewharton.timber)
+
+    // permission
+    implementation(libs.tedpermission.coroutine)
 
     // glide
     implementation(libs.bumptech.glide)
