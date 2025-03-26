@@ -27,10 +27,10 @@ class PlaybackUseCase(
 
         musicStateHolder.mediaItem
             .onEach {
-                if(it == MediaItem.EMPTY) return@onEach
+                if(player.playbackState == Player.STATE_IDLE) return@onEach
                 defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId)
             }
-            .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.Main)
             .launchIn(this@launch)
 
         musicStateHolder.mediaItems

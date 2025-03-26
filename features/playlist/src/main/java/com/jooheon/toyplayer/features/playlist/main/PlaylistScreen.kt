@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.playlist.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -67,6 +68,10 @@ private fun PlaylistScreenInternal(
 ) {
     val listState = rememberLazyListState()
     var playlistDialogState by remember { mutableStateOf(false to Playlist.default) }
+
+    BackHandler {
+        onBackClick.invoke()
+    }
 
     Scaffold(
         floatingActionButton = {

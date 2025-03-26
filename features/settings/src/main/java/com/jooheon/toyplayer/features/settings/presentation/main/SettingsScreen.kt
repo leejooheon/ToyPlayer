@@ -1,6 +1,7 @@
 package com.jooheon.toyplayer.features.settings.presentation.main
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,6 +65,10 @@ private fun SettingScreenInternal(
     onBackClick: () -> Unit,
 ) {
     var dialogState by remember { mutableStateOf(SettingsUiState.DialogState.NONE) }
+
+    BackHandler {
+        onBackClick.invoke()
+    }
 
     Scaffold(
         topBar = {

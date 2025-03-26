@@ -1,17 +1,13 @@
 package com.jooheon.toyplayer.features.player.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -83,17 +79,18 @@ internal fun LogoSection(
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-
             ) {
-                OutlinedText(
-                    text = song.displayName,
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        fontWeight = FontWeight.Black,
-                        textAlign = TextAlign.Center,
-                    ),
-                    fillColor = Color.White,
-                    outlineColor = Color.Black,
-                )
+                if(song.radioDataOrNull() != null) {
+                    OutlinedText(
+                        text = song.displayName,
+                        style = MaterialTheme.typography.displaySmall.copy(
+                            fontWeight = FontWeight.Black,
+                            textAlign = TextAlign.Center,
+                        ),
+                        fillColor = Color.White,
+                        outlineColor = Color.Black,
+                    )
+                }
 
                 if(isPlaying) {
                     LottieAnimation(

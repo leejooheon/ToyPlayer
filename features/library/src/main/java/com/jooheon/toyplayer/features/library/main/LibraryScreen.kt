@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.library.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -64,6 +65,11 @@ private fun LibraryScreenInternal(
     onBackClick: () -> Unit,
     onEvent: (LibraryEvent) -> Unit,
 ) {
+
+    BackHandler {
+        onBackClick.invoke()
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(
