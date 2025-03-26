@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.album.details
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -68,6 +69,10 @@ private fun AlbumDetailScreenInternal(
 ) {
     val listState = rememberLazyListState()
     var dialogState by remember { mutableStateOf(MenuDialogState.default) }
+
+    BackHandler {
+        onBackClick.invoke()
+    }
 
     Scaffold(
         topBar = {

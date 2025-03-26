@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.settings.presentation.theme
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,11 @@ private fun ThemeScreenInternal(
     onChangeDarkTheme: (Boolean) -> Unit,
     onBackClick: () -> Unit,
 ) {
+
+    BackHandler {
+        onBackClick.invoke()
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(

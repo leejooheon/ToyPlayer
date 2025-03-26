@@ -44,6 +44,8 @@ fun PlayerScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var infoSectionVisibleState by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    var screenHideJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(uiState.playlists, uiState.musicState) { // 앱 시작 시 자동 재생하는 부분 - 1: 재생
         if(uiState.playlists.isEmpty()) return@LaunchedEffect
@@ -57,6 +59,29 @@ fun PlayerScreen(
     LaunchedEffect(uiState.pagerModel) {
         if(uiState.pagerModel.items.isEmpty()) return@LaunchedEffect
         infoSectionVisibleState = true
+    }
+
+    fun restartHideJob() {
+        if (!infoSectionVisibleState) return
+
+        Timber.d("restartHideJob")
+        screenHideJob?.cancel()
+        screenHideJob = null
+        screenHideJob = scope.launch(Dispatchers.IO) {
+            delay(5.seconds)
+            infoSectionVisibleState = false
+        }
+    }
+
+    ObserveAsEvents(
+        flow = TouchEventController.debouncedEvent,
+        key1 = infoSectionVisibleState,
+    ) {
+        restartHideJob()
+    }
+
+    LaunchedEffect(infoSectionVisibleState) {
+        restartHideJob()
     }
 
     BackHandler {
@@ -75,10 +100,16 @@ fun PlayerScreen(
     PlayerScreenInternal(
         uiState = uiState,
         infoSectionVisibleState = infoSectionVisibleState,
+        modifier = Modifier.pointerInput(infoSectionVisibleState) {
+            detectTapGestures(
+                onTap = { infoSectionVisibleState = !infoSectionVisibleState }
+            )
+        },
         onPlayerEvent = {
             when(it) {
                 is PlayerEvent.OnScreenTouched -> {
                     infoSectionVisibleState = it.state
+                    return@PlayerScreenInternal
                 }
                 is PlayerEvent.OnNavigatePlaylistClick -> {
                     navigateTo.invoke(ScreenNavigation.Playlist.Main)
@@ -94,6 +125,7 @@ fun PlayerScreen(
                 }
                 else -> viewModel.dispatch(it)
             }
+            restartHideJob()
         },
     )
 }
@@ -103,20 +135,8 @@ private fun PlayerScreenInternal(
     uiState: PlayerUiState,
     infoSectionVisibleState: Boolean,
     onPlayerEvent: (PlayerEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    var screenHideJob by remember { mutableStateOf<Job?>(null) }
-
-    fun restartHideJob() {
-        Timber.d("restartHideJob")
-        screenHideJob?.cancel()
-        screenHideJob = null
-        screenHideJob = scope.launch(Dispatchers.IO) {
-            delay(5.seconds)
-            onPlayerEvent.invoke(PlayerEvent.OnScreenTouched(false))
-        }
-    }
-
     val channelPagerState = rememberPagerState(
         initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.key()),
         pageCount = { uiState.pagerModel.items.size }
@@ -127,33 +147,8 @@ private fun PlayerScreenInternal(
         pageCount = { uiState.playlists.toChunkedModel().size + 1 },
     )
 
-    ObserveAsEvents(
-        flow = TouchEventController.debouncedEvent,
-        key1 = infoSectionVisibleState,
-    ) {
-        if (infoSectionVisibleState) {
-            restartHideJob()
-        }
-    }
-
-    LaunchedEffect(infoSectionVisibleState) {
-        Timber.d("infoSectionVisibleState: $infoSectionVisibleState")
-        if (infoSectionVisibleState) {
-            restartHideJob()
-        }
-    }
-
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(infoSectionVisibleState) {
-                detectTapGestures(
-                    onTap = {
-                        val event = PlayerEvent.OnScreenTouched(!infoSectionVisibleState)
-                        onPlayerEvent.invoke(event)
-                    }
-                )
-            }
+        modifier = modifier.fillMaxSize()
     ) {
         InsidePager(
             pagerState = channelPagerState,
@@ -204,6 +199,7 @@ private fun PreviewLgPlayerScreen() {
             uiState = PlayerUiState.preview,
             infoSectionVisibleState = true,
             onPlayerEvent = {},
+            modifier = Modifier,
         )
     }
 }

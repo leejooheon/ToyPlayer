@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         lifecycleScope.launch {
+            Timber.d("dispatchTouchEvent")
             TouchEventController.sendEvent(ev)
         }
         return super.dispatchTouchEvent(ev)

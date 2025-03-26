@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.album.more
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -57,6 +58,11 @@ private fun AlbumMoreScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val listState = rememberLazyGridState()
+
+    BackHandler {
+        onBackClick.invoke()
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(

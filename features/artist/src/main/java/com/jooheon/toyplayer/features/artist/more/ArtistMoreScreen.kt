@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.artist.more
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,6 +64,11 @@ private fun ArtistMoreScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val state = rememberLazyGridState()
+
+    BackHandler {
+        onBackClick.invoke()
+    }
+
     Scaffold(
         topBar = {
             CustomTopAppBar(

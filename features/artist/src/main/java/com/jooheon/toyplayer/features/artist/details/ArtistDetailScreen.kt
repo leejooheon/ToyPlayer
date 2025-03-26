@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.artist.details
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,6 +76,10 @@ private fun ArtistDetailScreenInternal(
 ) {
     val listState = rememberLazyListState()
     var dialogState by remember { mutableStateOf(MenuDialogState.default) }
+
+    BackHandler {
+        onBackClick.invoke()
+    }
 
     Scaffold(
         topBar = {
