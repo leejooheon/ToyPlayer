@@ -68,9 +68,6 @@ class MusicStateHolder @Inject constructor() {
     private val _disContinuation = MutableStateFlow(Pair(0L, 0L))
     val disContinuation = _disContinuation.asStateFlow()
 
-    private val _volume = MutableStateFlow(0f)
-    val volume = _volume.asStateFlow()
-
     internal fun observeStates(scope: CoroutineScope) = scope.launch {
         launch {
             mediaItem.collectLatest { mediaItem ->
@@ -133,8 +130,5 @@ class MusicStateHolder @Inject constructor() {
     }
     internal fun onPositionDiscontinuity(oldPosition: Long, newPosition: Long) {
         _disContinuation.tryEmit(Pair(oldPosition, newPosition))
-    }
-    internal fun onVolumeChanged(volume: Float) {
-        _volume.tryEmit(volume)
     }
 }

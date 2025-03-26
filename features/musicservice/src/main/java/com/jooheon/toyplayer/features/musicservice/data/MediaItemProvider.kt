@@ -6,6 +6,7 @@ import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.jooheon.toyplayer.domain.model.common.Result
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.map
 import com.jooheon.toyplayer.domain.model.music.Album
@@ -34,7 +35,9 @@ class MediaItemProvider(
         mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
     ).toMediaBrowsableItem()
 
-    suspend fun getChildMediaItems(id: String): List<MediaItem> = withContext(Dispatchers.IO) {
+    suspend fun getChildMediaItems(
+        id: String
+    ): Result<List<MediaItem>, PlaybackDataError> = withContext(Dispatchers.IO) {
         return@withContext when(val mediaId = id.toMediaIdOrNull()) {
             is MediaId.Root -> {
                 val allSongs = MediaFolder(
@@ -53,53 +56,74 @@ class MediaItemProvider(
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
                 ).toMediaBrowsableItem()
 
-                listOf(allSongs, playlist, album)
+                val mediaItems = listOf(allSongs, playlist, album)
+                Result.Success(mediaItems)
             }
             is MediaId.AllSongs -> {
                 val songs = musicListUseCase.getAllSongList()
                 val radios = radioUseCase.getRadioStationList()
-                (songs + radios).map { it.toMediaItem(mediaId.serialize()) }
+                val mediaItems = (songs + radios).map { it.toMediaItem(mediaId.serialize()) }
+                Result.Success(mediaItems)
             }
             is MediaId.AlbumRoot -> {
                 val groupByAlbum = getAlbums()
-                groupByAlbum.map { it.toMediaItem() }
+                val mediaItems = groupByAlbum.map { it.toMediaItem() }
+                Result.Success(mediaItems)
             }
             is MediaId.Album -> {
                 val albums = getAlbums()
-                albums
+                val mediaItems = albums
                     .firstOrNull { it.id == mediaId.id }
                     ?.let { it.songs.map { it.toMediaItem(mediaId.serialize()) } }
                     .defaultEmpty()
+                Result.Success(mediaItems)
             }
             is MediaId.PlaylistRoot -> {
-                val playlists = getPlaylists()
-                playlists.map { it.toMediaItem() }
+                val result = playlistUseCase.getAllPlaylist()
+                when(result) {
+                    is Result.Success -> {
+                        val mediaItems = result.data.map { it.toMediaItem() }
+                        Result.Success(mediaItems)
+                    }
+                    is Result.Error -> result
+                }
             }
             is MediaId.Playlist -> {
-                val playlist = getPlaylist(mediaId.id)
-                playlist?.songs.defaultEmpty().map { it.toMediaItem(mediaId.serialize()) }
+                val result = playlistUseCase.getPlaylist(mediaId.id)
+                when(result) {
+                    is Result.Success -> {
+                        val playlist = result.data
+                        val mediaItems = playlist.songs.defaultEmpty().map { it.toMediaItem(mediaId.serialize()) }
+                        Result.Success(mediaItems)
+                    }
+                    is Result.Error -> result
+                }
             }
             is MediaId.InternalMediaId -> {
                 when(mediaId) {
                     is MediaId.InternalMediaId.LocalSongs -> {
                         val songs = musicListUseCase.getLocalSongList()
-                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                        val mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) }
+                        Result.Success(mediaItems)
                     }
                     is MediaId.InternalMediaId.StreamSongs -> {
                         val songs = musicListUseCase.getStreamingUrlList()
-                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                        val mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) }
+                        Result.Success(mediaItems)
                     }
                     is MediaId.InternalMediaId.AssetSongs -> {
                         val songs = musicListUseCase.getSongListFromAsset()
-                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                        val mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) }
+                        Result.Success(mediaItems)
                     }
                     is MediaId.InternalMediaId.RadioSongs -> {
                         val songs = radioUseCase.getRadioStationList()
-                        songs.map { it.toMediaItem(mediaId.serialize()) }
+                        val mediaItems = songs.map { it.toMediaItem(mediaId.serialize()) }
+                        Result.Success(mediaItems)
                     }
                 }
             }
-            else -> emptyList()
+            else -> Result.Error(PlaybackDataError.InvalidData("Invalid media id: $id"))
         }
     }
 

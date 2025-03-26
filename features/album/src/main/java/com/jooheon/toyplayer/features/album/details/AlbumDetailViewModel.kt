@@ -111,13 +111,17 @@ class AlbumDetailViewModel @Inject constructor(
         context: Context,
         albumId: String,
     ): Album = withContext(Dispatchers.IO) {
-        val musicList = suspendCancellableCoroutine { continuation ->
+        val musicList: List<Song> = suspendCancellableCoroutine { continuation ->
             playerController.getMusicListFuture(
                 context = context,
                 mediaId = MediaId.AllSongs,
-                listener = { mediaItems ->
-                    val songs = mediaItems.map { it.toSong() }
-                    continuation.resume(songs)
+                listener = { result ->
+                    result.onSuccess {
+                        val songs = it.map { it.toSong() }
+                        continuation.resume(songs)
+                    }.onError {
+                        continuation.resume(emptyList())
+                    }
                 }
             )
         }

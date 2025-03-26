@@ -51,12 +51,8 @@ object PlaybackUseCaseModule {
     @Provides
     @ServiceScoped
     fun providePlaybackErrorUseCase(
-        @ApplicationContext context: Context,
         musicStateHolder: MusicStateHolder,
-        networkConnectivityObserver: NetworkConnectivityObserver
     ): PlaybackErrorUseCase = PlaybackErrorUseCase(
-        context = context,
         musicStateHolder = musicStateHolder,
-        networkConnectivityObserver = networkConnectivityObserver,
     )
 }

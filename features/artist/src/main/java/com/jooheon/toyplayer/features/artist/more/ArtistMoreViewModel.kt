@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Album
 import com.jooheon.toyplayer.domain.model.music.Artist
 import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.artist.more.model.ArtistMoreUiState
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
@@ -48,13 +51,17 @@ class ArtistMoreViewModel @Inject constructor(
     private suspend fun getArtists(
         context: Context
     ): List<Artist> = withContext(Dispatchers.IO) {
-        val musicList = suspendCancellableCoroutine { continuation ->
+        val musicList: List<Song> = suspendCancellableCoroutine { continuation ->
             playerController.getMusicListFuture(
                 context = context,
                 mediaId = MediaId.AllSongs,
-                listener = { mediaItems ->
-                    val songs = mediaItems.map { it.toSong() }
-                    continuation.resume(songs)
+                listener = { result ->
+                    result.onSuccess {
+                        val songs = it.map { it.toSong() }
+                        continuation.resume(songs)
+                    }.onError {
+                        continuation.resume(emptyList())
+                    }
                 }
             )
         }

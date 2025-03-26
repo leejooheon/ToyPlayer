@@ -21,7 +21,7 @@ import com.gun0912.tedpermission.coroutine.TedPermission
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
@@ -80,11 +80,25 @@ class MediaLibrarySessionCallback(
                 initDefaultPlaylist()
             }
 
-            val items = mediaItemProvider.getChildMediaItems(parentId)
-            val result = if (items.isEmpty()) LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
-                         else LibraryResult.ofItemList(items, params)
+            val result = mediaItemProvider.getChildMediaItems(parentId)
 
-            return@future result
+            return@future when(result) {
+                is Result.Success -> {
+                    val items = result.data
+                    if (items.isEmpty()) LibraryResult.ofError(SessionError.ERROR_BAD_VALUE)
+                    else LibraryResult.ofItemList(items, params)
+                }
+                is Result.Error -> {
+                    val libraryParams = MediaLibraryService.LibraryParams.Builder()
+                        .setExtras(
+                            bundleOf(
+                                PlaybackDataError.KEY_MESSAGE to result.error.serialize()
+                            )
+                        )
+                        .build()
+                    LibraryResult.ofError(SessionError.ERROR_BAD_VALUE, libraryParams)
+                }
+            }
         }
     }
 
@@ -136,16 +150,23 @@ class MediaLibrarySessionCallback(
         }
 
         return scope.future {
-            val newMediaItems = mediaItemProvider.getChildMediaItems(mediaId.parentId)
+            val result = mediaItemProvider.getChildMediaItems(mediaId.parentId)
 
-            val newStartIndex = newMediaItems
-                .indexOfFirst {
-                    val targetMediaIdOrNull = it.mediaId.toMediaIdOrNull() as? MediaId.Playback
-                    targetMediaIdOrNull?.id == mediaId.id
+            when(result) {
+                is Result.Success -> {
+                    val newMediaItems = result.data
+                    val newStartIndex = newMediaItems
+                        .indexOfFirst {
+                            val targetMediaIdOrNull = it.mediaId.toMediaIdOrNull() as? MediaId.Playback
+                            targetMediaIdOrNull?.id == mediaId.id
+                        }
+                        .defaultZero()
+                    MediaSession.MediaItemsWithStartPosition(newMediaItems, newStartIndex, startPositionMs)
                 }
-                .defaultZero()
-
-            MediaSession.MediaItemsWithStartPosition(newMediaItems, newStartIndex, C.TIME_UNSET)
+                is Result.Error -> {
+                    MediaSession.MediaItemsWithStartPosition(emptyList(), C.INDEX_UNSET, C.TIME_UNSET)
+                }
+            }
         }
     }
 
@@ -260,9 +281,7 @@ class MediaLibrarySessionCallback(
         Timber.d("onDisconnected")
     }
 
-    private suspend fun prepareRecentQueue(): Result<Pair<List<MediaItem>, Int>, PlaylistError> {
-
-
+    private suspend fun prepareRecentQueue(): Result<Pair<List<MediaItem>, Int>, PlaybackDataError> {
         val playlistResult = playlistUseCase.getPlayingQueue()
             .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
             ?: playlistUseCase.getPlaylist(Playlist.Radio.id)
@@ -332,7 +351,12 @@ class MediaLibrarySessionCallback(
         Playlist.defaultPlaylists
             .forEach { playlistMediaId ->
                 val mediaId = getInternalMediaId(playlistMediaId)
-                val songs = mediaItemProvider.getChildMediaItems(mediaId.serialize()).map { it.toSong() }
+                val result = mediaItemProvider.getChildMediaItems(mediaId.serialize())
+
+                val songs = when(result) {
+                    is Result.Success -> result.data.map { it.toSong() }
+                    is Result.Error -> emptyList()
+                }
 
                 playlistUseCase.getPlaylist(playlistMediaId.id)
                     .onSuccess { playlist ->

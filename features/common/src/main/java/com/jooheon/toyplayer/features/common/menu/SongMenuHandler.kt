@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.features.common.menu
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
@@ -24,7 +24,7 @@ class SongMenuHandler @Inject constructor(
             is Result.Success -> SnackbarEvent(UiText.StringResource(Strings.playlist_inserted))
             is Result.Error -> {
                 when(result.error) {
-                    is PlaylistError.DuplicatedName -> SnackbarEvent(UiText.StringResource(Strings.error_playlist, playlist.name))
+                    is PlaybackDataError.PlaylistDuplicatedName -> SnackbarEvent(UiText.StringResource(Strings.error_playlist, playlist.name))
                     else -> SnackbarEvent(UiText.StringResource(Strings.error_default))
                 }
             }

@@ -2,6 +2,7 @@ import com.jooheon.toyplayer.setNamespace
 
 plugins {
     id("toyplayer.android.feature")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.domain.usecase
 
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onSuccess
@@ -16,11 +16,11 @@ import javax.inject.Inject
 class PlaylistUseCase @Inject constructor(
     private val playlistRepository: PlaylistRepository,
 ) {
-    suspend fun getAllPlaylist(): Result<List<Playlist>, RootError> = withContext(Dispatchers.IO) {
+    suspend fun getAllPlaylist(): Result<List<Playlist>, PlaybackDataError> = withContext(Dispatchers.IO) {
         playlistRepository.getAllPlaylist()
     }
 
-    suspend fun getPlaylist(id: Int): Result<Playlist, PlaylistError> = withContext(Dispatchers.IO) {
+    suspend fun getPlaylist(id: Int): Result<Playlist, PlaybackDataError> = withContext(Dispatchers.IO) {
         return@withContext playlistRepository.getPlaylist(id)
     }
 
@@ -38,9 +38,9 @@ class PlaylistUseCase @Inject constructor(
         insert(id, songs, true)
     }
 
-    suspend fun make(playlist: Playlist, songs: List<Song>): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+    suspend fun make(playlist: Playlist, songs: List<Song>): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         if(!checkValidName(playlist.name)) {
-            return@withContext Result.Error(PlaylistError.DuplicatedName)
+            return@withContext Result.Error(PlaybackDataError.PlaylistDuplicatedName)
         }
 
         val id = nextPlaylistIdOrNull().defaultZero()
@@ -51,7 +51,7 @@ class PlaylistUseCase @Inject constructor(
     suspend fun favorite(
         id: Int,
         song: Song,
-    ): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+    ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         val isFavorite = !song.isFavorite
 
         val result = getPlaylist(id)
@@ -83,7 +83,7 @@ class PlaylistUseCase @Inject constructor(
         id: Int,
         songs: List<Song>,
         reset: Boolean,
-    ): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+    ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         val result = getPlaylist(id)
 
         return@withContext when(result) {
@@ -105,7 +105,7 @@ class PlaylistUseCase @Inject constructor(
     suspend fun delete(
         id: Int,
         song: Song,
-    ): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+    ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         val result = getPlaylist(id)
 
         return@withContext when(result) {
@@ -122,9 +122,9 @@ class PlaylistUseCase @Inject constructor(
         }
     }
 
-    suspend fun updateName(id: Int, name: String): Result<Unit, PlaylistError> = withContext(Dispatchers.IO) {
+    suspend fun updateName(id: Int, name: String): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         if(!checkValidName(name)) {
-            return@withContext Result.Error(PlaylistError.DuplicatedName)
+            return@withContext Result.Error(PlaybackDataError.PlaylistDuplicatedName)
         }
 
         val result = getPlaylist(id)
@@ -141,7 +141,7 @@ class PlaylistUseCase @Inject constructor(
     suspend fun deletePlaylist(playlist: Playlist) = withContext(Dispatchers.IO) {
         playlistRepository.deletePlaylist(playlist)
     }
-    suspend fun getPlayingQueue(): Result<Playlist, PlaylistError> {
+    suspend fun getPlayingQueue(): Result<Playlist, PlaybackDataError> {
         return getPlaylist(Playlist.PlayingQueue.id)
     }
 

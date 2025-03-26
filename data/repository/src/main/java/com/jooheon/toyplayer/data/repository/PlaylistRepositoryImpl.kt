@@ -2,7 +2,7 @@ package com.jooheon.toyplayer.data.repository
 
 import com.jooheon.toyplayer.data.playlist.PlaylistDataSource
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.PlaylistError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.repository.api.PlaylistRepository
@@ -12,15 +12,15 @@ import kotlinx.coroutines.flow.firstOrNull
 class PlaylistRepositoryImpl(
     private val playlistDataSource: PlaylistDataSource,
 ): PlaylistRepository {
-    override suspend fun getAllPlaylist(): Result<List<Playlist>, PlaylistError> {
+    override suspend fun getAllPlaylist(): Result<List<Playlist>, PlaybackDataError> {
         val list = playlistDataSource.getAllPlaylist().firstOrNull().defaultEmpty()
         return Result.Success(list)
     }
 
-    override suspend fun getPlaylist(id: Int): Result<Playlist, PlaylistError> {
+    override suspend fun getPlaylist(id: Int): Result<Playlist, PlaybackDataError> {
         val playlistOrNull = playlistDataSource.flowPlaylist(id).firstOrNull()
         return if(playlistOrNull == null) {
-            Result.Error(PlaylistError.NotFound(id))
+            Result.Error(PlaybackDataError.PlaylistNotFound(id))
         } else {
             Result.Success(playlistOrNull)
         }

@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.domain.usecase
 
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.radio.RadioData
 import com.jooheon.toyplayer.domain.repository.api.RadioRepository
@@ -20,7 +20,7 @@ class RadioUseCase @Inject constructor(
         }
     }
 
-    suspend fun getRadioUrl(radioData: RadioData): Result<String, MusicDataError> = withContext(Dispatchers.IO) {
+    suspend fun getRadioUrl(radioData: RadioData): Result<String, PlaybackDataError> = withContext(Dispatchers.IO) {
         return@withContext radioRepository.getRadioUrl(radioData)
     }
 }

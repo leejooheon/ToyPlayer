@@ -3,10 +3,11 @@ package com.jooheon.toyplayer.features.musicservice.player
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
@@ -16,7 +17,7 @@ import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.Error.Companion.toErrorOrNull
-import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.errors.RootError
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
@@ -25,10 +26,8 @@ import com.jooheon.toyplayer.features.musicservice.ext.enqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToNext
 import com.jooheon.toyplayer.features.musicservice.ext.forceSeekToPrevious
-import com.jooheon.toyplayer.features.musicservice.ext.mediaItems
 import com.jooheon.toyplayer.features.musicservice.ext.playAtIndex
 import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
-import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -53,15 +52,27 @@ class PlayerController(private val scope: CoroutineScope) {
         MediaBrowser.releaseFuture(_controller)
     }
 
+    @OptIn(UnstableApi::class)
     fun getMusicListFuture(
         context: Context,
         mediaId: MediaId,
-        listener: (List<MediaItem>) -> Unit) = executeAfterPrepare {
+        listener: (Result<List<MediaItem>, PlaybackDataError>) -> Unit) = executeAfterPrepare {
         val contentFuture = it.getChildren(mediaId.serialize(), 0, Int.MAX_VALUE, null)
         contentFuture.addListener(
             {
-                val model = contentFuture.get().value
-                listener.invoke(model.defaultEmpty())
+                val result = contentFuture.get()
+                if(result.resultCode == LibraryResult.RESULT_SUCCESS) {
+                    val model = result.value.defaultEmpty().toList()
+                    listener.invoke(Result.Success(model))
+                } else {
+                    val error = result.params?.extras?.let { bundle ->
+                        val message = bundle.getString(PlaybackDataError.KEY_MESSAGE).defaultEmpty()
+                        PlaybackDataError.InvalidData(message)
+                    } ?: PlaybackDataError.InvalidData("getMusicListFuture[$mediaId]: bundle has no data.")
+
+                    Timber.e("error: $error")
+                    listener.invoke(Result.Error(error))
+                }
             },
             ContextCompat.getMainExecutor(context)
         )
@@ -145,7 +156,7 @@ class PlayerController(private val scope: CoroutineScope) {
                 listener.invoke(Result.Success(result.extras))
             } else {
                 val data = "TODO" //TODO result.extras.getString(EssentialPlaybackError.key, null)
-                val error = data.toErrorOrNull() ?: MusicDataError.InvalidData("sendCustomCommand: bundle has no data. $command")
+                val error = data.toErrorOrNull() ?: PlaybackDataError.InvalidData("sendCustomCommand: bundle has no data. $command")
                 Timber.e("sendCustomCommand[$command], error: $error")
                 listener.invoke(Result.Error(error))
             }

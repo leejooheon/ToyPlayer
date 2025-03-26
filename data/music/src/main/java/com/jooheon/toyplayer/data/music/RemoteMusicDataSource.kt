@@ -6,7 +6,7 @@ import com.jooheon.toyplayer.data.api.service.ApiMbcService
 import com.jooheon.toyplayer.data.api.service.ApiSbsService
 import com.jooheon.toyplayer.data.api.service.ApiStationsService
 import com.jooheon.toyplayer.domain.model.common.Result
-import com.jooheon.toyplayer.domain.model.common.errors.MusicDataError
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.domain.model.radio.RadioData
@@ -34,46 +34,46 @@ class RemoteMusicDataSource @Inject constructor(
         return stations.map { it.toRadioData(context) }
     }
 
-    suspend fun getKbsRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+    suspend fun getKbsRadioUrl(radioData: RadioData): Result<String, PlaybackDataError> {
         return try {
             val response = apiKbsService.getStreamUrl(code = radioData.channelCode)
             val url = response.parseRadioUrl()
 
-            if(url.isNullOrBlank()) Result.Error(MusicDataError.Empty)
+            if(url.isNullOrBlank()) Result.Error(PlaybackDataError.Empty)
             else Result.Success(url)
         } catch (e: Exception) {
-            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
+            Result.Error(PlaybackDataError.Remote(cause = e.message.defaultEmpty()))
         }
     }
 
-    suspend fun getSbsRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+    suspend fun getSbsRadioUrl(radioData: RadioData): Result<String, PlaybackDataError> {
         return try {
             val response = apiSbsService.getStreamUrl(
                 channelCode = radioData.channelCode,
                 channelName = radioData.channelSubCode.defaultEmpty(),
             )
 
-            if (response.isBlank()) Result.Error(MusicDataError.Empty)
+            if (response.isBlank()) Result.Error(PlaybackDataError.Empty)
             else Result.Success(response)
         } catch (e: Exception) {
-            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
+            Result.Error(PlaybackDataError.Remote(cause = e.message.defaultEmpty()))
         }
     }
 
-    suspend fun getMbcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+    suspend fun getMbcRadioUrl(radioData: RadioData): Result<String, PlaybackDataError> {
         return try {
             val response = apiMbcService.getStreamUrl(channel = radioData.channelCode)
 
-            if (response.isBlank()) Result.Error(MusicDataError.Empty)
+            if (response.isBlank()) Result.Error(PlaybackDataError.Empty)
             else Result.Success(response)
         } catch (e: Exception) {
-            Result.Error(MusicDataError.Remote(cause = e.message.defaultEmpty()))
+            Result.Error(PlaybackDataError.Remote(cause = e.message.defaultEmpty()))
         }
     }
 
-    fun getEtcRadioUrl(radioData: RadioData): Result<String, MusicDataError> {
+    fun getEtcRadioUrl(radioData: RadioData): Result<String, PlaybackDataError> {
         return if(radioData.url.isNullOrBlank()) {
-            Result.Error(MusicDataError.Empty)
+            Result.Error(PlaybackDataError.Empty)
         } else {
             Result.Success(radioData.url!!)
         }

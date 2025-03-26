@@ -53,16 +53,7 @@ class PlaybackCacheManager(private val context: Context) {
         return cacheDirectory
     }
 
-    fun addListener(key: String, listener: Cache.Listener) {
-        cache.addListener(key, listener)
-    }
-    fun removeListener(key: String, listener: Cache.Listener) {
-        cache.removeListener(key, listener)
-    }
-
     companion object {
-        internal const val CACHE_TAG = "Cache@Main"
-        const val chunkLength = 512 * 1024L
         const val SECRET_KEY = "AES_KEY_JOO_HEON"
     }
 }

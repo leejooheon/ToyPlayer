@@ -35,11 +35,12 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.dialog.DialogButton
 import com.jooheon.toyplayer.features.commonui.components.dialog.DialogColumn
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 internal fun VolumeSeekbarDialog(
     fraction: Float,
