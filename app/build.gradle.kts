@@ -1,8 +1,15 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
 
+import java.util.Properties
+
+
 plugins {
 //    id("com.google.android.gms.oss-licenses-plugin")
     id("toyplayer.android.application")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -20,10 +27,22 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties["keystore"].toString())
+            storePassword = localProperties["keystore_pass"].toString()
+            keyAlias = localProperties["key_alias"].toString()
+            keyPassword = localProperties["key_pass"].toString()
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
-            isShrinkResources = true
+            isShrinkResources = false
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -33,12 +52,14 @@ android {
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
+            isDebuggable = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
     }
+
     buildFeatures {
         buildConfig = true
     }
