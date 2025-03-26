@@ -8,6 +8,12 @@ plugins {
     id("toyplayer.verify.detekt")
 }
 
+android {
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
+    }
+}
+
 configureKotlinAndroid()
 configureKotest()
 configureCoroutineAndroid()

@@ -22,10 +22,12 @@ import com.jooheon.toyplayer.features.settings.presentation.language.LanguageTyp
 import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
 import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -38,18 +40,30 @@ class SettingsViewModel @Inject constructor(
     private val playerController: PlayerController,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
 ): ViewModel() {
+    private val languageFlow = MutableStateFlow(LanguageType.current())
+
     val uiState: StateFlow<SettingsUiState> =
         combine(
-            flowOf(getDefaultUiState()),
-            playerSettingsUseCase.flowVolume()
-        ) { state, volume ->
-            state.copy(volume = volume)
+            playerSettingsUseCase.flowVolume(),
+            languageFlow,
+        ) { volume, language ->
+            volume to language
+        }.map { (volume, language) ->
+            SettingsUiState(
+                models = SettingsUiState.Model.getSettingListItems(),
+                currentLanguageType = language,
+                volume = volume
+            )
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = SettingsUiState.default,
         )
+
+    internal fun loadLanguage() = viewModelScope.launch {
+        languageFlow.emit(LanguageType.current())
+    }
 
     internal fun dispatch(
         context: Context,
@@ -66,8 +80,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-
-    private fun onLanguageSelected(context: Context, languageType: LanguageType) {
+    private suspend fun onLanguageSelected(context: Context, languageType: LanguageType) {
         val language = languageType.code
 
         val locale = Locale(language)
@@ -113,10 +126,4 @@ class SettingsViewModel @Inject constructor(
             SnackbarController.sendEvent(event)
         }
     }
-
-    private fun getDefaultUiState(): SettingsUiState =
-        SettingsUiState.default.copy(
-            models = SettingsUiState.Model.getSettingListItems(),
-            currentLanguageType = LanguageType.current(),
-        )
 }

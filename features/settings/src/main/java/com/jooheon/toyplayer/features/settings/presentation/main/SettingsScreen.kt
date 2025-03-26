@@ -43,6 +43,10 @@ fun SettingScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadLanguage()
+    }
+
     SettingScreenInternal(
         uiState = uiState,
         onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
