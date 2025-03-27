@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,8 @@ import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -108,9 +111,9 @@ internal fun PlaylistDetailHeader(
                 }
                 Spacer(modifier = Modifier.width(18.dp))
 
-                Button(
+                IconButton(
                     onClick = { onPlayAllClick(true) },
-                    colors = ButtonDefaults.buttonColors(
+                    colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
                     modifier = Modifier
@@ -123,7 +126,7 @@ internal fun PlaylistDetailHeader(
                         imageVector = Icons.Default.Shuffle,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         contentDescription = UiText.StringResource(Strings.action_play_all_shuffle).asString(),
-                        modifier = Modifier.scale(2f)
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
