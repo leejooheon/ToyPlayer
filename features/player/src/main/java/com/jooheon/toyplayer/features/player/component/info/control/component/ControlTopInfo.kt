@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -36,12 +37,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.ext.fadingEdge
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
@@ -61,6 +66,24 @@ internal fun ControlTopInfo(
     modifier: Modifier = Modifier,
 ) {
     Timber.d("ControlTopInfo: $title")
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.Asset("lottie_visualizer.json"),
+    )
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever,
+        isPlaying = isPlaying,
+        reverseOnRepeat = true,
+        clipSpec = LottieClipSpec.Frame(min = 4, max = 21),
+    )
+
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = androidx.compose.ui.graphics.Color.White.toArgb(),
+            keyPath = KeyPath("**", "Ð\u0097Ð°Ð»Ð¸Ð²ÐºÐ° 1")
+        )
+    )
 
     var titleAreaSize by remember { mutableStateOf(IntSize(0, 0)) }
     val textMeasurer = rememberTextMeasurer()
@@ -95,6 +118,15 @@ internal fun ControlTopInfo(
                     url = imageUrl,
                     contentDescription = title,
                     modifier = Modifier.fillMaxSize()
+                )
+
+                LottieAnimation(
+                    composition = composition,
+                    progress = { if (isPlaying) progress else 0f },
+                    dynamicProperties = dynamicProperties,
+                    modifier = Modifier
+                        .width(16.dp)
+                        .height(12.dp)
                 )
             }
 

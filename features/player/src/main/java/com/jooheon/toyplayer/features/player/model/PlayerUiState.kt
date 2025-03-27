@@ -22,9 +22,9 @@ data class PlayerUiState(
         val playedName: String,
         val playedThumbnailImage: String,
     ) {
-        fun currentPageIndex(currentSongKey: String): Int {
+        fun currentPageIndex(audioId: Long): Int {
             val index = items
-                .indexOfFirst { it.key() == currentSongKey }
+                .indexOfFirst { it.audioId == audioId }
                 .takeIf { it != -1 }
                 .defaultZero()
 

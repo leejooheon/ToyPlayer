@@ -19,7 +19,7 @@ object TouchEventController {
     @OptIn(FlowPreview::class)
     val debouncedEvent: Flow<Unit> = event
         .filterNotNull()
-        .debounce(250L)
+        .debounce(100L)
         .map { }
         .flowOn(Dispatchers.IO)
 

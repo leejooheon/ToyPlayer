@@ -14,4 +14,8 @@ dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.usecase)
     implementation(projects.core.resources)
+
+    // glide
+    implementation(libs.bumptech.glide)
+    annotationProcessor(libs.bumptech.glide.compiler)
 }

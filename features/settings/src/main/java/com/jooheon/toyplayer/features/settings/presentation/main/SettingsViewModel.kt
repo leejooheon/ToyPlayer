@@ -13,6 +13,7 @@ import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
+import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
 import com.jooheon.toyplayer.features.common.controller.SnackbarEvent
@@ -80,7 +81,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onLanguageSelected(context: Context, languageType: LanguageType) {
+    private fun onLanguageSelected(context: Context, languageType: LanguageType) {
         val language = languageType.code
 
         val locale = Locale(language)
@@ -92,6 +93,12 @@ class SettingsViewModel @Inject constructor(
 
         val appLocale = LocaleListCompat.forLanguageTags(language)
         AppCompatDelegate.setApplicationLocales(appLocale)
+
+        playerController.getMusicListFuture(
+            context = context,
+            mediaId = MediaId.Root,
+            listener = { /** update playlist name **/ }
+        )
     }
 
     private suspend fun onVolumeChanged(volume: Float) {

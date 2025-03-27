@@ -24,17 +24,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.jooheon.toyplayer.core.designsystem.ext.bounceClick
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
@@ -48,6 +53,7 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 internal fun ContentCardItem(
     title: String,
     imageUrl: String,
+    isPlaying: Boolean,
     isSelectedItem: Boolean,
     isFavorite: Boolean,
     showFavorite: Boolean,
@@ -69,7 +75,6 @@ internal fun ContentCardItem(
         modifier = modifier
             .bounceClick { onClick.invoke() }
     ) {
-
         // when dp changed, change cardTopPreviewHeight together
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -91,10 +96,37 @@ internal fun ContentCardItem(
             )
 
             if(isSelectedItem) {
+                val composition by rememberLottieComposition(
+                    spec = LottieCompositionSpec.Asset("lottie_visualizer.json"),
+                )
+                val progress by animateLottieCompositionAsState(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                    isPlaying = isPlaying,
+                    reverseOnRepeat = true,
+                    clipSpec = LottieClipSpec.Frame(min = 4, max = 21),
+                )
+                val dynamicProperties = rememberLottieDynamicProperties(
+                    LottieDynamicProperty(
+                        property = LottieProperty.COLOR,
+                        value = androidx.compose.ui.graphics.Color.White.toArgb(),
+                        keyPath = KeyPath("**", "Ð\u0097Ð°Ð»Ð¸Ð²ÐºÐ° 1")
+                    )
+                )
+
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+                )
+                LottieAnimation(
+                    composition = composition,
+                    progress = { if (isPlaying) progress else 0f },
+                    dynamicProperties = dynamicProperties,
+                    modifier = Modifier
+                        .fillMaxWidth(0.16f)
+                        .aspectRatio(1f)
+                        .align(Alignment.Center)
                 )
             }
             if(showFavorite) {
@@ -102,6 +134,7 @@ internal fun ContentCardItem(
                     onClick = onFavoriteClick,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
+                        .size(24.dp)
                 ) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Outlined.Favorite else Icons.Outlined.FavoriteBorder,
@@ -142,6 +175,7 @@ private fun PreviewContentCardItem() {
         ContentCardItem(
             title = song.title,
             imageUrl = song.imageUrl,
+            isPlaying = true,
             isSelectedItem = true,
             isFavorite = false,
             showFavorite = true,

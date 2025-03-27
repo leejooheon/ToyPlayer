@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.playlist.details.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +43,7 @@ import com.jooheon.toyplayer.features.commonui.components.CustomGlideImage
 internal fun PlaylistDetailHeader(
     playlist: Playlist,
     onPlayAllClick: (shuffle: Boolean) -> Unit,
+    onThumbnailImageClick: () -> Unit,
 ) {
     val allDuration = MusicUtil.toReadableDurationString(playlist.songs.fastSumBy { it.duration.toInt() }.toLong())
     val songCount = UiText.StringResource(Strings.n_song, playlist.songs.size).asString()
@@ -58,6 +60,7 @@ internal fun PlaylistDetailHeader(
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(15))
                 .weight(0.3f)
+                .clickable { onThumbnailImageClick.invoke() }
         )
 
         Column(
@@ -136,6 +139,7 @@ private fun MusicPlaylistDetailHeaderPreview() {
         PlaylistDetailHeader(
             playlist = Playlist.preview,
             onPlayAllClick = {},
+            onThumbnailImageClick = {},
         )
     }
 }

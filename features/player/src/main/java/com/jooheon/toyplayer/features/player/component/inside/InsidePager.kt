@@ -31,11 +31,11 @@ internal fun InsidePager(
 
     LaunchedEffect(model.items) {
         if(model.items.isEmpty()) return@LaunchedEffect
-        pagerState.scrollToPage(model.currentPageIndex(currentSong.key()))
+        pagerState.scrollToPage(model.currentPageIndex(currentSong.audioId))
     }
 
     LaunchedEffect(currentSong) {
-        val index = model.currentPageIndex(currentSong.key())
+        val index = model.currentPageIndex(currentSong.audioId)
         if(pagerState.currentPage == index) return@LaunchedEffect
         pagerState.scrollToPage(index)
     }

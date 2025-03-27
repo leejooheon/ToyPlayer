@@ -32,6 +32,7 @@ internal fun ContentScrollableItem(
     currentSong: Song,
     titleAlpha: Float,
     enableScroll: Boolean,
+    isPlaying: Boolean,
     onContentClick: (Playlist, startIndex: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
     onDetailsClick: (playlistId: Int) -> Unit,
@@ -76,6 +77,7 @@ internal fun ContentScrollableItem(
                 playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
+                isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
                 onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it)},
                 onDetailsClick = { onDetailsClick.invoke(playlist.id) }
@@ -104,6 +106,7 @@ private fun PreviewContentScrollableSection() {
             currentSong = song,
             titleAlpha = 1f,
             enableScroll = true,
+            isPlaying = false,
             onContentAlphaChanged = {},
             onContentClick = { _, _ -> },
             onFavoriteClick = { _, _ -> },

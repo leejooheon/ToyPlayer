@@ -132,6 +132,7 @@ fun InfoSection(
                                 titleAlpha = pageOffset,
                                 contentAlpha = contentAlpha,
                                 enableScroll = isLastPage,
+                                isPlaying = musicState.isPlaying(),
                                 onContentClick = onContentClick,
                                 onFavoriteClick = onFavoriteClick,
                                 onDetailsClick = onDetailsClick,

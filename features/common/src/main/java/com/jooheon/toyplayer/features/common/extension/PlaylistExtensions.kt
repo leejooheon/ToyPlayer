@@ -10,3 +10,7 @@ fun List<Playlist>.withOutDefault(): List<Playlist> = this.filterNot {
     it.id in Playlist.defaultPlaylists.map { it.id }
 }
 
+fun Playlist.showFavorite(): Boolean = id !in listOf(
+    Playlist.PlayingQueue.id,
+    Playlist.Favorite.id
+)

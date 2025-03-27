@@ -295,9 +295,7 @@ class MediaLibrarySessionCallback(
                 val index = if(lastPlayedMediaId == null) 0
                 else {
                     mediaItems
-                        .indexOfFirst {
-                            (it.mediaId.toMediaIdOrNull() as? MediaId.Playback)?.id == lastPlayedMediaId.id
-                        }
+                        .indexOfFirst { (it.mediaId.toMediaIdOrNull() as? MediaId.Playback)?.id == lastPlayedMediaId.id }
                         .takeIf { it != C.INDEX_UNSET }
                         .defaultZero()
                 }
@@ -360,13 +358,23 @@ class MediaLibrarySessionCallback(
 
                 playlistUseCase.getPlaylist(playlistMediaId.id)
                     .onSuccess { playlist ->
+                        playlistUseCase.updateName(
+                            id = playlist.id,
+                            name = getDefaultPlaylistName(context, playlistMediaId)
+                        )
+
                         if(playlistMediaId == Playlist.Local) { // local은 앱 실행시마다 리로드 해준다
                             val granted = TedPermission.create()
                                 .setPermissions(audioStoragePermission)
                                 .checkGranted()
 
                             if(granted) {
-                                val newSongs = songs.filter { it.key() !in playlist.songs.map { song -> song.key() } }
+                                // local song은 고유한 audioId를 갖는다.
+                                val newSongs = songs.filter { localSong -> // DB에 이미 존재하지 않는 음악만 필터링
+                                    localSong.audioId !in playlist.songs.map { song -> song.audioId } &&
+                                    localSong.path != playlist.songs.find { it.audioId == localSong.audioId }?.path
+                                }
+
                                 playlistUseCase.insert(
                                     id = playlist.id,
                                     songs = newSongs,

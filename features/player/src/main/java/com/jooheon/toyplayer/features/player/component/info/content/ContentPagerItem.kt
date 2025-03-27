@@ -23,6 +23,7 @@ internal fun ContentPagerItem(
     playlists: List<Playlist>,
     currentSong: Song,
     titleAlpha: Float,
+    isPlaying: Boolean,
     onContentClick: (playlist: Playlist, index: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
     onDetailsClick: (playlistId: Int) -> Unit,
@@ -47,6 +48,7 @@ internal fun ContentPagerItem(
                 playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
+                isPlaying = isPlaying,
                 onContentClick = { onContentClick.invoke(playlist, it) },
                 onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it) },
                 onDetailsClick =  { onDetailsClick.invoke(playlist.id) }
@@ -76,6 +78,7 @@ private fun PreviewContentPagerItem() {
             playlists = uiState.playlists,
             currentSong = song,
             titleAlpha = 1f,
+            isPlaying = true,
             onContentClick = { _, _ -> },
             onFavoriteClick = { _, _ -> },
             onDetailsClick = {},

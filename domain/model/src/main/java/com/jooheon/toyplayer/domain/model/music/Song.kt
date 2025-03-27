@@ -21,8 +21,8 @@ data class Song(
     var isFavorite: Boolean = false,
     var data: String? = null,
 ) {
+    fun key(): String = "${audioId}_${trackNumber}"
     fun radioDataOrNull() = data.defaultEmpty().toRadioDataOrNull()
-    fun key(): String = radioDataOrNull()?.serialize() ?: "${audioId}_${trackNumber}"
 
     companion object {
         val default = Song(

@@ -38,6 +38,7 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
+import com.jooheon.toyplayer.features.common.extension.showFavorite
 import com.jooheon.toyplayer.features.player.common.contentWidth
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
 
@@ -47,6 +48,7 @@ internal fun ContentItem(
     playlist: Playlist,
     currentSong: Song,
     titleAlpha: Float,
+    isPlaying: Boolean,
     onContentClick: (index: Int) -> Unit,
     onFavoriteClick: (song: Song) -> Unit,
     onDetailsClick: () -> Unit,
@@ -102,12 +104,10 @@ internal fun ContentItem(
                 ContentCardItem(
                     title = item.title,
                     imageUrl = item.imageUrl,
+                    isPlaying = isPlaying,
                     isSelectedItem = item.key() == currentSong.key(),
                     isFavorite = item.isFavorite,
-                    showFavorite = playlist.id !in listOf(
-                        Playlist.PlayingQueue.id,
-                        Playlist.Favorite.id
-                    ),
+                    showFavorite = playlist.showFavorite(),
                     onClick = { onContentClick.invoke(index) },
                     onFavoriteClick = { onFavoriteClick.invoke(item)},
                     modifier = Modifier.width(contentWidth())
@@ -129,6 +129,7 @@ private fun PreviewContentItem() {
             playlist = Playlist.preview,
             currentSong = Song.preview,
             titleAlpha = 1f,
+            isPlaying = true,
             onContentClick = {},
             onFavoriteClick = {},
             onDetailsClick = {},

@@ -2,7 +2,6 @@ package com.jooheon.toyplayer.domain.usecase
 
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
-import com.jooheon.toyplayer.domain.model.common.errors.RootError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
@@ -116,6 +115,21 @@ class PlaylistUseCase @Inject constructor(
                         songs = playlist.songs.filterNot { it.trackNumber == song.trackNumber }
                     )
                 )
+                Result.Success(Unit)
+            }
+            is Result.Error -> result
+        }
+    }
+    suspend fun updateThumbnailImage(
+        id: Int,
+        url: String
+    ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
+        val result = getPlaylist(id)
+
+        return@withContext when(result) {
+            is Result.Success -> {
+                val playlist = result.data
+                playlistRepository.updatePlaylist(playlist.copy(thumbnailUrl = url))
                 Result.Success(Unit)
             }
             is Result.Error -> result

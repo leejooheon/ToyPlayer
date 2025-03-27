@@ -138,7 +138,7 @@ private fun PlayerScreenInternal(
     modifier: Modifier = Modifier,
 ) {
     val channelPagerState = rememberPagerState(
-        initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.key()),
+        initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.audioId),
         pageCount = { uiState.pagerModel.items.size }
     )
 
