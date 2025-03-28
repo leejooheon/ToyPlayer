@@ -1,33 +1,3 @@
-include(":app")
-
-//include(":features:musicplayer")
-include(":features:player")
-include(":features:musicservice")
-include(":features:common-ui")
-include(":features:common")
-include(":features:main")
-include(":features:settings")
-include(":features:splash")
-include(":features:playlist")
-include(":features:library")
-include(":features:artist")
-include(":features:album")
-
-include(":core:network")
-include(":core:resources")
-include(":core:designsystem")
-include(":core:navigation")
-
-include(":domain:repository-api")
-include(":domain:model")
-include(":domain:usecase")
-
-include(":data:datastore")
-include(":data:music")
-include(":data:playlist")
-include(":data:repository")
-include(":data:api")
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -36,3 +6,50 @@ pluginManagement {
         includeBuild("build-logic")
     }
 }
+
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://jitpack.io" )
+    }
+}
+
+include(":app")
+
+include(
+    ":features:player",
+    ":features:musicservice",
+    ":features:common-ui",
+    ":features:common",
+    ":features:main",
+    ":features:settings",
+    ":features:splash",
+    ":features:playlist",
+    ":features:library",
+    ":features:artist",
+    ":features:album"
+)
+
+include(
+    ":core:network",
+    ":core:resources",
+    ":core:designsystem",
+    ":core:navigation"
+)
+
+include(
+    ":domain:repository-api",
+    ":domain:model",
+    ":domain:usecase"
+)
+
+include(
+    ":data:datastore",
+    ":data:music",
+    ":data:playlist",
+    ":data:repository",
+    ":data:api"
+)

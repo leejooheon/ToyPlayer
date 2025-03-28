@@ -4,7 +4,7 @@
 # hilt: https://github.com/google/dagger/releases
 
 # Project
-androidGradlePlugin = "8.8.2"
+androidGradlePlugin = "8.9.1"
 gms = "4.4.2"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"

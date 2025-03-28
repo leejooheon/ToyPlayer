@@ -4,8 +4,8 @@ import java.util.Properties
 
 
 plugins {
-//    id("com.google.android.gms.oss-licenses-plugin")
     id("toyplayer.android.application")
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 val localProperties = Properties().apply {
@@ -94,6 +94,9 @@ dependencies {
     // Room
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compile)
+
+    // oss
+    implementation(libs.oss.licenses)
 
     // LeakCanary
     debugImplementation(libs.squareup.leakcanary)
