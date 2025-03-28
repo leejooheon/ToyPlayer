@@ -11,6 +11,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -37,6 +38,9 @@ import com.jooheon.toyplayer.features.player.component.info.content.ContentSecti
 import com.jooheon.toyplayer.features.player.component.info.control.ControlSection
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import com.jooheon.toyplayer.features.player.model.toChunkedModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.min
 
@@ -69,6 +73,13 @@ fun InfoSection(
             if (pagerState.currentPage == 0) {
                 min(max(pagerState.currentPageOffsetFraction * 2, 0f), 1f)
             } else 1f
+        }
+    }
+
+    LaunchedEffect(isShow) {
+        if(!isShow) { // hide 시 첫번쨰 페이지로 이동
+            try { withContext(Dispatchers.IO) { delay(animTime.toLong()) } }
+            finally { pagerState.scrollToPage(0) }
         }
     }
 
@@ -133,6 +144,7 @@ fun InfoSection(
                                 contentAlpha = contentAlpha,
                                 enableScroll = isLastPage,
                                 isPlaying = musicState.isPlaying(),
+                                isShow = isShow,
                                 onContentClick = onContentClick,
                                 onFavoriteClick = onFavoriteClick,
                                 onDetailsClick = onDetailsClick,
