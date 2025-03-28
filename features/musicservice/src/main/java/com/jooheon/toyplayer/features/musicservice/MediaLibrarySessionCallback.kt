@@ -1,8 +1,10 @@
 package com.jooheon.toyplayer.features.musicservice
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.annotation.OptIn
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -17,7 +19,6 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.gun0912.tedpermission.coroutine.TedPermission
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
@@ -43,6 +44,7 @@ import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -77,7 +79,7 @@ class MediaLibrarySessionCallback(
             Timber.d("onGetChildren: $parentId, $page, $pageSize")
 
             if (parentId.toMediaIdOrNull() == MediaId.Root) {
-                initDefaultPlaylist()
+                launch { initDefaultPlaylist() }
             }
 
             val result = mediaItemProvider.getChildMediaItems(parentId)
@@ -140,6 +142,16 @@ class MediaLibrarySessionCallback(
         }
 
         val mediaId = mediaItem.mediaId.toMediaIdOrNull() as? MediaId.Playback ?: run {
+            return super.onSetMediaItems(
+                mediaSession,
+                controller,
+                mediaItems,
+                startIndex,
+                startPositionMs
+            )
+        }
+
+        if(startIndex != C.INDEX_UNSET && startPositionMs != C.TIME_UNSET) {
             return super.onSetMediaItems(
                 mediaSession,
                 controller,
@@ -366,9 +378,9 @@ class MediaLibrarySessionCallback(
                         )
 
                         if(playlistMediaId == Playlist.Local) { // local은 앱 실행시마다 리로드 해준다
-                            val granted = TedPermission.create()
-                                .setPermissions(audioStoragePermission)
-                                .checkGranted()
+                            val granted = ContextCompat.checkSelfPermission(
+                                context, audioStoragePermission
+                            ) == PackageManager.PERMISSION_GRANTED
 
                             if(granted) {
                                 // local song은 고유한 audioId를 갖는다.

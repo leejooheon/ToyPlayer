@@ -38,9 +38,6 @@ dependencies {
     // timber
     implementation(libs.jakewharton.timber)
 
-    // permission
-    implementation(libs.tedpermission.coroutine)
-
     // glide
     implementation(libs.bumptech.glide)
     annotationProcessor(libs.bumptech.glide.compiler)

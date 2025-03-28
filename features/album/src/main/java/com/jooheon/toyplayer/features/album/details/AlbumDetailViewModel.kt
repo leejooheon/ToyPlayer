@@ -95,7 +95,6 @@ class AlbumDetailViewModel @Inject constructor(
             startIndex = startIndex,
             playWhenReady = true,
         )
-        playerController.shuffle(shuffle)
     }
 
     private suspend fun onSongClick(song: Song, playWhenReady: Boolean) {

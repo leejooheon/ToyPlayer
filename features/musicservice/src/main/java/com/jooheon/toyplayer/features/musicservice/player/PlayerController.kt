@@ -131,8 +131,8 @@ class PlayerController(private val scope: CoroutineScope) {
 
     fun enqueue(
         songs: List<Song>,
-        startIndex: Int = C.INDEX_UNSET,
-        startPositionMs: Long = C.TIME_UNSET,
+        startIndex: Int = 0,
+        startPositionMs: Long = 0L,
         playWhenReady: Boolean
     ) = executeAfterPrepare { player ->
         val mediaId = MediaId.Playlist(Playlist.PlayingQueue.id)
