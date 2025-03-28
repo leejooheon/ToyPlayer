@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.domain.usecase
 import com.jooheon.toyplayer.domain.model.common.Result
 import com.jooheon.toyplayer.domain.model.common.errors.PlaybackDataError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
@@ -53,23 +54,32 @@ class PlaylistUseCase @Inject constructor(
     ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
         val isFavorite = !song.isFavorite
 
-        val result = getPlaylist(id)
-            .onSuccess { playlist ->
-                playlist.songs.indexOf(song).takeIf { it >= 0 }?.let { index ->
-                    val updatedSongs = playlist.songs.toMutableList().apply {
-                        set(index, song.copy(isFavorite = isFavorite))
+        getPlaylist(id).onSuccess { playlist ->
+            playlist.songs.indexOf(song).takeIf { it >= 0 }?.let { index ->
+                val updatedSongs = playlist.songs
+                    .toMutableList()
+                    .apply {
+                        set(
+                            index = index,
+                            element = song.copy(
+                                trackNumber = index + 1,
+                                isFavorite = isFavorite
+                            )
+                        )
                     }
-                    playlistRepository.updatePlaylist(playlist.copy(songs = updatedSongs))
-                }
-            }
 
-        if(id != Playlist.Favorite.id) {
-            getPlaylist(Playlist.Favorite.id).onSuccess { playlist ->
-                val updatedSongs = playlist.songs.toMutableList().apply {
-                    if (!isFavorite) remove(song) else add(song.copy(isFavorite = true))
-                }
                 playlistRepository.updatePlaylist(playlist.copy(songs = updatedSongs))
             }
+        }.onError {
+            return@withContext Result.Error(it)
+        }
+
+        val result = getPlaylist(Playlist.Favorite.id).onSuccess { playlist ->
+            val updatedSongs = playlist.songs
+                .toMutableList()
+                .apply { if (!isFavorite) remove(song) else add(song.copy(isFavorite = true)) }
+                .mapIndexed { index, song -> song.copy(trackNumber = index + 1) }
+            playlistRepository.updatePlaylist(playlist.copy(songs = updatedSongs))
         }
 
         return@withContext when(result) {

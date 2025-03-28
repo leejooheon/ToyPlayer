@@ -52,7 +52,7 @@ fun Song.toMediaItem(parentId: String): MediaItem {
     val customCacheKey = if(isRadio) radioDataOrNull()!!.serialize() else key()
     val imageUri = if(isRadio) radioDataOrNull()!!.imageUrl.toUri() else albumArtUri
     val mimeType = if(isRadio) MimeTypes.APPLICATION_M3U8 else null
-    val mediaType = if(isRadio) MediaMetadata.MEDIA_TYPE_PODCAST else MediaMetadata.MEDIA_TYPE_MUSIC
+    val mediaType = if(isRadio) MediaMetadata.MEDIA_TYPE_RADIO_STATION else MediaMetadata.MEDIA_TYPE_MUSIC
     val mediaMetadata = toMetadata(mediaType, imageUri)
 
     val mediaId = MediaId.Playback(

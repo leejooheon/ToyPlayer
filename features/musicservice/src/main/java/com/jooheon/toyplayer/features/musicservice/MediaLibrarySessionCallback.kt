@@ -290,6 +290,7 @@ class MediaLibrarySessionCallback(
             is Result.Success -> {
                 val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId().toMediaIdOrNull() as? MediaId.Playback
                 val playlist = playlistResult.data
+                defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
 
                 val mediaItems = playlist.songs.map { it.toMediaItem(MediaId.Playlist(Playlist.PlayingQueue.id).serialize()) }
                 val index = if(lastPlayedMediaId == null) 0
@@ -299,6 +300,7 @@ class MediaLibrarySessionCallback(
                         .takeIf { it != C.INDEX_UNSET }
                         .defaultZero()
                 }
+                Timber.e("prepareRecentQueue: $lastPlayedMediaId, [${mediaItems.map { (it.mediaId.toMediaIdOrNull() as? MediaId.Playback)?.id }} / $index]")
                 Result.Success(mediaItems to index)
             }
 

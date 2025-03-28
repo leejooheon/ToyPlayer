@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
