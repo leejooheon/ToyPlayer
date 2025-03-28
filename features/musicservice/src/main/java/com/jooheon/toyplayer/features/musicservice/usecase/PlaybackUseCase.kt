@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class PlaybackUseCase(
     private val scope: CoroutineScope,
@@ -27,20 +28,8 @@ class PlaybackUseCase(
         musicStateHolder.mediaItem
             .onEach {
                 if(player.playbackState == Player.STATE_IDLE) return@onEach
+                Timber.d("mediaItem: ${it.mediaId}")
                 defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId)
-            }
-            .flowOn(Dispatchers.Main)
-            .launchIn(this@launch)
-
-        musicStateHolder.mediaItems
-            .onEach { mediaItems ->
-                if(player.playbackState == Player.STATE_IDLE) return@onEach
-
-                playlistUseCase.insert(
-                    id = Playlist.PlayingQueue.id,
-                    songs = mediaItems.map { it.toSong() },
-                    reset = true,
-                )
             }
             .flowOn(Dispatchers.Main)
             .launchIn(this@launch)

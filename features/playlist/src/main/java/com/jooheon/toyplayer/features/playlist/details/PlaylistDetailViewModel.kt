@@ -10,6 +10,8 @@ import com.gun0912.tedpermission.coroutine.TedPermission
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
@@ -106,26 +108,33 @@ class PlaylistDetailViewModel @Inject constructor(
         val playlist = uiState.value.playlist
         playlistUseCase.delete(playlist.id, song)
     }
-    private suspend fun onPlay(index: Int) {
-        val playlist = uiState.value.playlist
-        defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
-        playerController.enqueue(
-            songs = playlist.songs,
-            startIndex = index,
-            playWhenReady = true,
-        )
-    }
+
     private suspend fun onPlayAll(shuffle: Boolean) {
         val playlist = uiState.value.playlist
-
         val startIndex = if(shuffle) (playlist.songs.indices).random() else 0
-        defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
-        playerController.enqueue(
+        onPlay(startIndex)
+    }
+
+    private suspend fun onPlay(startIndex: Int) {
+        val playlist = uiState.value.playlist
+
+        playlistUseCase.insert(
+            id = Playlist.PlayingQueue.id,
             songs = playlist.songs,
-            startIndex = startIndex,
-            playWhenReady = true,
-        )
-        playerController.shuffle(shuffle)
+            reset = true,
+        ).onSuccess {
+            defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+            playerController.enqueue(
+                songs = it.songs,
+                startIndex = startIndex,
+                playWhenReady = true,
+            )
+            val event = SnackbarEvent(UiText.StringResource(Strings.update))
+            SnackbarController.sendEvent(event)
+        }.onError {
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+            SnackbarController.sendEvent(event)
+        }
     }
 
     private suspend fun onThumbnailImageSelected(

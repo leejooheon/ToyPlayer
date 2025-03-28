@@ -45,6 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -294,11 +295,27 @@ class MediaLibrarySessionCallback(
     }
 
     private suspend fun prepareRecentQueue(): Result<Pair<List<MediaItem>, Int>, PlaybackDataError> {
-        val playlistResult = playlistUseCase.getPlayingQueue()
-            .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
-            ?: playlistUseCase.getPlaylist(Playlist.Radio.id)
+        suspend fun getNotEmptyPlaylistResult(): Result<Playlist, PlaybackDataError> {
+            val playlistResult = playlistUseCase.getPlayingQueue()
+                .takeIf { it is Result.Success && it.data.songs.isNotEmpty() }
 
-        return when(playlistResult) {
+            return playlistResult ?: run {
+                val playlist = playlistUseCase.getPlaylist(Playlist.Radio.id)
+                playlist.onSuccess {
+                    playlistUseCase.insert(
+                        id = Playlist.PlayingQueue.id,
+                        songs = it.songs,
+                        reset = true
+                    )
+                }.onError {
+                    throw UnsupportedOperationException("default playlist error")
+                }
+
+                playlistUseCase.getPlayingQueue()
+            }
+        }
+
+        return when(val playlistResult = getNotEmptyPlaylistResult()) {
             is Result.Success -> {
                 val lastPlayedMediaId = defaultSettingsUseCase.lastPlayedMediaId().toMediaIdOrNull() as? MediaId.Playback
                 val playlist = playlistResult.data

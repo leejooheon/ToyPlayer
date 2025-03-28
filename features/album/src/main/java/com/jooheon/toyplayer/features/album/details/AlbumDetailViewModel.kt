@@ -38,7 +38,7 @@ import kotlin.coroutines.resume
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
-    playlistUseCase: PlaylistUseCase,
+    private val playlistUseCase: PlaylistUseCase,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
     private val playerController: PlayerController,
     private val songMenuHandler: SongMenuHandler,
@@ -72,7 +72,7 @@ class AlbumDetailViewModel @Inject constructor(
     internal fun dispatch(event: AlbumDetailEvent) = viewModelScope.launch {
         when(event) {
             is AlbumDetailEvent.OnPlayAllClick -> onPlayAll(event.shuffle)
-            is AlbumDetailEvent.OnSongClick -> onSongClick(event.song, true)
+            is AlbumDetailEvent.OnSongClick -> onPlay(event.index, true)
             is AlbumDetailEvent.OnAddPlayingQueue -> onSongClick(event.song, false)
             is AlbumDetailEvent.OnAddPlaylist -> {
                 if(event.playlist.id == Playlist.default.id) {
@@ -86,24 +86,49 @@ class AlbumDetailViewModel @Inject constructor(
 
     private suspend fun onPlayAll(shuffle: Boolean) {
         val album = uiState.value.album
-
         val startIndex = if(shuffle) (album.songs.indices).random() else 0
+        onPlay(startIndex, true)
+        if(shuffle) playerController.shuffle(true)
+    }
 
-        defaultSettingsUseCase.setLastEnqueuedPlaylistName(album.name)
-        playerController.enqueue(
+    private suspend fun onPlay(startIndex: Int, playWhenReady: Boolean) {
+        val album = uiState.value.album
+        playlistUseCase.insert(
+            id = Playlist.PlayingQueue.id,
             songs = album.songs,
-            startIndex = startIndex,
-            playWhenReady = true,
-        )
+            reset = true,
+        ).onSuccess {
+            defaultSettingsUseCase.setLastEnqueuedPlaylistName(album.name)
+            playerController.enqueue(
+                songs = it.songs,
+                startIndex = startIndex,
+                playWhenReady = playWhenReady,
+            )
+            val event = SnackbarEvent(UiText.StringResource(Strings.update))
+            SnackbarController.sendEvent(event)
+        }.onError {
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+            SnackbarController.sendEvent(event)
+        }
     }
 
     private suspend fun onSongClick(song: Song, playWhenReady: Boolean) {
-        playerController.enqueue(
-            song = song,
-            playWhenReady = playWhenReady
-        )
-        val event = SnackbarEvent(UiText.StringResource(Strings.add))
-        SnackbarController.sendEvent(event)
+        playlistUseCase.insert(
+            id = Playlist.PlayingQueue.id,
+            songs = listOf(song),
+            reset = false,
+        ).onSuccess {
+            playerController.enqueue(
+                songs = it.songs,
+                startIndex = it.songs.lastIndex,
+                playWhenReady = playWhenReady,
+            )
+            val event = SnackbarEvent(UiText.StringResource(Strings.add))
+            SnackbarController.sendEvent(event)
+        }.onError {
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+            SnackbarController.sendEvent(event)
+        }
     }
 
     private suspend fun getAlbums(

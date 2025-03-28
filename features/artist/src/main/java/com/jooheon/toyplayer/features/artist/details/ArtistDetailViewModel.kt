@@ -38,7 +38,7 @@ import kotlin.coroutines.resume
 
 @HiltViewModel
 class ArtistDetailViewModel @Inject constructor(
-    playlistUseCase: PlaylistUseCase,
+    private val playlistUseCase: PlaylistUseCase,
     private val playerController: PlayerController,
     private val songMenuHandler: SongMenuHandler,
 ): ViewModel() {
@@ -82,12 +82,22 @@ class ArtistDetailViewModel @Inject constructor(
     }
 
     private suspend fun onSongClick(song: Song, playWhenReady: Boolean) {
-        playerController.enqueue(
-            song = song,
-            playWhenReady = playWhenReady
-        )
-        val event = SnackbarEvent(UiText.StringResource(Strings.add))
-        SnackbarController.sendEvent(event)
+        playlistUseCase.insert(
+            id = Playlist.PlayingQueue.id,
+            songs = listOf(song),
+            reset = false,
+        ).onSuccess {
+            playerController.enqueue(
+                songs = it.songs,
+                startIndex = it.songs.lastIndex,
+                playWhenReady = playWhenReady,
+            )
+            val event = SnackbarEvent(UiText.StringResource(Strings.add))
+            SnackbarController.sendEvent(event)
+        }.onError {
+            val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+            SnackbarController.sendEvent(event)
+        }
     }
 
     private suspend fun getArtist(

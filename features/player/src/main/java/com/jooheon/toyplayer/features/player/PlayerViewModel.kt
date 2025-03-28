@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.common.onError
+import com.jooheon.toyplayer.domain.model.common.onSuccess
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
@@ -104,12 +106,23 @@ class PlayerViewModel @Inject constructor(
         when(playlist.id) {
             Playlist.PlayingQueue.id -> playerController.playAtIndex(index)
             else -> {
-                defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
-                playerController.enqueue(
+                playlistUseCase.insert(
+                    id = Playlist.PlayingQueue.id,
                     songs = playlist.songs,
-                    startIndex = index,
-                    playWhenReady = true,
-                )
+                    reset = true,
+                ).onSuccess {
+                    defaultSettingsUseCase.setLastEnqueuedPlaylistName(playlist.name)
+                    playerController.enqueue(
+                        songs = it.songs,
+                        startIndex = index,
+                        playWhenReady = true,
+                    )
+                    val event = SnackbarEvent(UiText.StringResource(Strings.update))
+                    SnackbarController.sendEvent(event)
+                }.onError {
+                    val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
+                    SnackbarController.sendEvent(event)
+                }
             }
         }
     }

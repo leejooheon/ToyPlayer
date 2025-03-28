@@ -41,7 +41,7 @@ class GlideBitmapLoader(
     private fun initDefaultBitmap() {
         if(::defaultBitmap.isInitialized) return
         defaultBitmap = createBitmap(bitmapSize, bitmapSize).applyCanvas {
-            drawColor(Color.BLACK) // FIXME
+            drawColor(Color.BLACK)
         }
     }
     override fun decodeBitmap(data: ByteArray): ListenableFuture<Bitmap> {

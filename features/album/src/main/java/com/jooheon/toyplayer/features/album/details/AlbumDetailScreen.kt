@@ -115,7 +115,7 @@ private fun AlbumDetailScreenInternal(
                             subTitle = "${song.artist} • ${song.album}",
                             duration = MusicUtil.toReadableDurationString(song.duration),
                             dropDownMenus = DropDownMenu.mediaMenuItems,
-                            onItemClick = { onEvent.invoke(AlbumDetailEvent.OnSongClick(song)) },
+                            onItemClick = { onEvent.invoke(AlbumDetailEvent.OnSongClick(index)) },
                             onDropDownMenuClick = { menu ->
                                 when (menu) {
                                     DropDownMenu.MediaItemAddToPlayingQueue -> onEvent.invoke(

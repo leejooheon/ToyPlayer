@@ -45,7 +45,12 @@ class PlaylistUseCase @Inject constructor(
 
         val id = nextPlaylistIdOrNull().defaultZero()
         playlistRepository.insertPlaylist(playlist.copy(id = id))
-        insert(id, songs, true)
+        val result = insert(id, songs, true)
+
+        return@withContext when(result) {
+            is Result.Success -> Result.Success(Unit)
+            is Result.Error -> result
+        }
     }
 
     suspend fun favorite(
@@ -92,7 +97,7 @@ class PlaylistUseCase @Inject constructor(
         id: Int,
         songs: List<Song>,
         reset: Boolean,
-    ): Result<Unit, PlaybackDataError> = withContext(Dispatchers.IO) {
+    ): Result<Playlist, PlaybackDataError> = withContext(Dispatchers.IO) {
         val result = getPlaylist(id)
 
         return@withContext when(result) {
@@ -100,12 +105,11 @@ class PlaylistUseCase @Inject constructor(
                 val playlist = result.data
                 var index = if(reset) 1 else playlist.songs.maxOfOrNull { it.trackNumber }.defaultZero() + 1
                 val newSongs = songs.map { it.copy(trackNumber = index++) }
-                playlistRepository.updatePlaylist(
-                    playlist.copy(
-                        songs = if(reset) newSongs else playlist.songs + newSongs
-                    )
+                val newPlaylist = playlist.copy(
+                    songs = if(reset) newSongs else playlist.songs + newSongs
                 )
-                Result.Success(Unit)
+                playlistRepository.updatePlaylist(newPlaylist)
+                Result.Success(newPlaylist)
             }
             is Result.Error -> result
         }
