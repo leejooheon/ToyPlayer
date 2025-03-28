@@ -30,7 +30,7 @@ composeNavigation = "2.8.9"
 palette = "1.0.0"
 
 # Media3
-media3 = "1.6.0-rc02"
+media3 = "1.6.0"
 mediarouter = "1.7.0"
 
 # KotlinX

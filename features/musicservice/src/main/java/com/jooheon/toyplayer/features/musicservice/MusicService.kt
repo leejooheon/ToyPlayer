@@ -91,7 +91,7 @@ class MusicService: MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         val player = mediaSession?.player ?: run {
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
             return
         }
         Timber.tag(LifecycleTAG).d( "onTaskRemoved - playWhenReady: ${player.playWhenReady} mediaItemCount: ${player.mediaItemCount}")
@@ -100,7 +100,7 @@ class MusicService: MediaLibraryService() {
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
             // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
         }
     }
 
@@ -155,7 +155,7 @@ class MusicService: MediaLibraryService() {
 
     private fun initListener() {
         val player = mediaSession?.player ?: run {
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
             return
         }
 
