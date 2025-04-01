@@ -1,15 +1,27 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
+import android.os.Handler
 import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
+import androidx.media3.common.audio.BaseAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.Renderer
+import androidx.media3.exoplayer.audio.AudioRendererEventListener
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
+import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.LoudnessCodecController
+import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import com.jooheon.toyplayer.features.common.utils.VersionUtil
+import com.jooheon.toyplayer.features.musicservice.equalizer.EqualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CustomMediaSourceFactory
@@ -20,6 +32,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
+import timber.log.Timber
 
 @OptIn(UnstableApi::class)
 @Module
@@ -33,9 +46,8 @@ object PlayerComponentModule {
     fun provideExoPlayer(
         @MusicServiceContext context: Context,
         mediaSourceFactory: CustomMediaSourceFactory,
+        renderersFactory: DefaultRenderersFactory,
     ): Player {
-        val rendererFactory = DefaultRenderersFactory(context)
-
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
@@ -43,7 +55,7 @@ object PlayerComponentModule {
 
         return ExoPlayer.Builder(context)
             .setMediaSourceFactory(mediaSourceFactory)
-            .setRenderersFactory(rendererFactory)
+            .setRenderersFactory(renderersFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
             .build()
@@ -65,5 +77,59 @@ object PlayerComponentModule {
             defaultDataSource = playbackCacheManager.cacheDataSource(),
             hlsDataSource = hlsMediaSource
         )
+    }
+
+    @Provides
+    fun provideRendererFactory(
+        @MusicServiceContext context: Context,
+        eqProcessor: BaseAudioProcessor
+    ): DefaultRenderersFactory = object : DefaultRenderersFactory(context) {
+        override fun buildAudioRenderers(
+            context: Context,
+            extensionRendererMode: Int,
+            mediaCodecSelector: MediaCodecSelector,
+            enableDecoderFallback: Boolean,
+            audioSink: AudioSink,
+            eventHandler: Handler,
+            eventListener: AudioRendererEventListener,
+            out: ArrayList<Renderer>
+        ) {
+            out.add(
+                MediaCodecAudioRenderer(
+                    context,
+                    MediaCodecAdapter.Factory.getDefault(context),
+                    mediaCodecSelector,
+                    enableDecoderFallback,
+                    eventHandler,
+                    eventListener,
+                    DefaultAudioSink.Builder(context)
+                        .setAudioProcessors(arrayOf(eqProcessor))
+                        .build(),
+                    if(VersionUtil.hasVanillaIceCream()) LoudnessCodecController(
+                        LoudnessCodecController.LoudnessParameterUpdateListener { parameters ->
+                            Timber.d("onLoudnessParameterUpdate: ${parameters.keySet().forEach { parameters.get(it)}}")
+                            return@LoudnessParameterUpdateListener parameters
+                        }
+                    ) else null
+                )
+            )
+
+            super.buildAudioRenderers(
+                context,
+                extensionRendererMode,
+                mediaCodecSelector,
+                enableDecoderFallback,
+                audioSink,
+                eventHandler,
+                eventListener,
+                out
+            )
+        }
+    }
+
+    @Provides
+    @ServiceScoped
+    fun provideMultiBandParametricEq(): BaseAudioProcessor {
+        return EqualizerAudioProcessor()
     }
 }
