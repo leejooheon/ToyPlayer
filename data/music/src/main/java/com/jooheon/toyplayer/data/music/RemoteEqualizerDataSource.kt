@@ -10,7 +10,7 @@ class RemoteEqualizerDataSource @Inject constructor(
     private val apiEqualizerService: ApiEqualizerService,
 ) {
     suspend fun getBand03EqualizerPresets(): List<Preset> {
-        val response = apiEqualizerService.getBand05EqualizerPresets()
+        val response = apiEqualizerService.getBand03EqualizerPresets()
         return response.map { it.toPreset(EqualizerType.BAND_03) }
     }
     suspend fun getBand05EqualizerPresets(): List<Preset> {
