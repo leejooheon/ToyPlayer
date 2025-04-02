@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.commonui.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ fun CustomTopAppBar(
     title: String,
     onClick: () -> Unit,
     icon: ImageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
         modifier = modifier,
@@ -51,7 +53,8 @@ fun CustomTopAppBar(
                     contentDescription = UiText.StringResource(Strings.back).asString(),
                 )
             }
-        }
+        },
+        actions = actions
     )
 }
 

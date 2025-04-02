@@ -1,7 +1,10 @@
 package com.jooheon.toyplayer.domain.usecase
 
+import com.jooheon.toyplayer.domain.model.music.Preset
 import com.jooheon.toyplayer.domain.repository.api.PlayerSettingsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class PlayerSettingsUseCase @Inject constructor(
@@ -16,8 +19,19 @@ class PlayerSettingsUseCase @Inject constructor(
     suspend fun setShuffleMode(shuffleEnabled: Boolean) {
         playerSettingsRepository.setShuffleMode(shuffleEnabled)
     }
+    suspend fun setEqualizerPreset(preset: Preset) {
+        val raw = Json.encodeToString(Preset.serializer(), preset)
+        playerSettingsRepository.setEqualizerPreset(raw)
+    }
 
     fun flowRepeatMode(): Flow<Int> = playerSettingsRepository.flowRepeatMode()
     fun flowShuffleMode(): Flow<Boolean> = playerSettingsRepository.flowShuffleMode()
     fun flowVolume(): Flow<Float> = playerSettingsRepository.flowVolume()
+    fun flowEqualizerPreset(): Flow<Preset> {
+        return playerSettingsRepository.flowEqualizerPreset()
+            .map { json ->
+                runCatching { Json.decodeFromString(Preset.serializer(), json) }
+                    .getOrElse { Preset.default }
+            }
+    }
 }

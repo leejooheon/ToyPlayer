@@ -1,33 +1,48 @@
 package com.jooheon.toyplayer.features.musicservice.equalizer
 
 import androidx.annotation.OptIn
+import androidx.lifecycle.AtomicReference
 import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.audio.BaseAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.Preset
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.equalizer.filter.BiquadHighPassFilter
 import com.jooheon.toyplayer.features.musicservice.equalizer.filter.EighthOrderPeakingFilter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
 import kotlin.math.tanh
 
 @OptIn(UnstableApi::class)
-class EqualizerAudioProcessor : BaseAudioProcessor() {
-    private val centerFrequencies = listOf(31.5f, 63f, 125f, 250f, 500f, 1000f, 2000f, 4000f, 8000f, 16000f)
-//    private val gains = listOf(10f, 10f, 8.0f, 4.3f, 0.5f, -6.0f, -5.4f, -4.4f, -4.0f, -3.0f)
-//    private val gains = listOf(-3f, -3f, -1.2f, 2.2f, 5.1f, 9.8f, 6.8f, 1.8f, -0.1f, -3.0f)
-//    private val gains = listOf(15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f, 15f)
-    private val gains = listOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
+class EqualizerAudioProcessor(
+    scope: CoroutineScope,
+    playerSettingsUseCase: PlayerSettingsUseCase,
+) : BaseAudioProcessor() {
+    private var currentPreset = AtomicReference(Preset.default)
 
     private lateinit var lowCutFilters: List<BiquadHighPassFilter>
-    private lateinit var filtersPerChannel: List<List<EighthOrderPeakingFilter>>
+    private lateinit var peakingFiltersPerChannel: List<List<EighthOrderPeakingFilter>>
+
     private var channelCount = 0
     private var smoothedGain = 0f
 
+    init {
+        playerSettingsUseCase
+            .flowEqualizerPreset()
+            .onEach {
+                currentPreset.set(it)
+                if(isActive) updateFilter(inputAudioFormat)
+            }
+            .launchIn(scope)
+    }
+
     override fun onConfigure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
         channelCount = inputAudioFormat.channelCount
-        smoothedGain = 0f
 
         lowCutFilters = List(channelCount) {
             BiquadHighPassFilter(
@@ -35,17 +50,7 @@ class EqualizerAudioProcessor : BaseAudioProcessor() {
             )
         }
 
-        filtersPerChannel = List(channelCount) {
-            centerFrequencies.mapIndexed { index, freq ->
-                EighthOrderPeakingFilter(
-                    sampleRate = inputAudioFormat.sampleRate.toFloat(),
-                    frequency = freq,
-                    gainDB = gains[index],
-                    q = 1f
-                )
-            }
-        }
-
+        updateFilter(inputAudioFormat)
         return inputAudioFormat
     }
 
@@ -59,7 +64,7 @@ class EqualizerAudioProcessor : BaseAudioProcessor() {
             for (channel in 0 until channelCount) {
                 val raw = inputBuffer.short
                 var sample = raw.toFloat() / 32768f
-                filtersPerChannel[channel].forEach { filter ->
+                peakingFiltersPerChannel[channel].forEach { filter ->
                     val processed = filter.processSample(sample)
                     sample = lowCutFilters[channel].processSample(processed)
                 }
@@ -107,6 +112,22 @@ class EqualizerAudioProcessor : BaseAudioProcessor() {
 
         val clipped = threshold + knee * tanh(over)
         return sign * clipped
+    }
+
+    private fun updateFilter(inputAudioFormat: AudioProcessor.AudioFormat) {
+        val preset = currentPreset.get()
+        peakingFiltersPerChannel = List(channelCount) {
+            preset.type.frequencies().mapIndexed { index, frequency ->
+                EighthOrderPeakingFilter(
+                    sampleRate = inputAudioFormat.sampleRate.toFloat(),
+                    frequency = frequency,
+                    gainDB = preset.gains.getOrNull(index).defaultZero(),
+                    q = 1f
+                )
+            }
+        }
+
+        smoothedGain = 0f
     }
 
     companion object {

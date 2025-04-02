@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.usecase.EqualizerInitUseCase
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import com.jooheon.toyplayer.features.splash.model.SplashState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,13 +17,15 @@ import kotlin.coroutines.resume
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val playerController: PlayerController
+    private val playerController: PlayerController,
+    private val equalizerInitUseCase: EqualizerInitUseCase,
 ): ViewModel() {
     private val _state = Channel<SplashState>()
     val state = _state.receiveAsFlow()
 
     internal fun initialize(context: Context) {
         viewModelScope.launch {
+            equalizerInitUseCase.invoke()
             prepareMediaItems(context)
         }
     }

@@ -17,10 +17,9 @@ import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
-import androidx.media3.exoplayer.mediacodec.LoudnessCodecController
 import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
-import com.jooheon.toyplayer.features.common.utils.VersionUtil
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.equalizer.EqualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
@@ -32,7 +31,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
-import timber.log.Timber
+import kotlinx.coroutines.CoroutineScope
 
 @OptIn(UnstableApi::class)
 @Module
@@ -104,13 +103,7 @@ object PlayerComponentModule {
                     eventListener,
                     DefaultAudioSink.Builder(context)
                         .setAudioProcessors(arrayOf(eqProcessor))
-                        .build(),
-                    if(VersionUtil.hasVanillaIceCream()) LoudnessCodecController(
-                        LoudnessCodecController.LoudnessParameterUpdateListener { parameters ->
-                            Timber.d("onLoudnessParameterUpdate: ${parameters.keySet().forEach { parameters.get(it)}}")
-                            return@LoudnessParameterUpdateListener parameters
-                        }
-                    ) else null
+                        .build()
                 )
             )
 
@@ -129,7 +122,13 @@ object PlayerComponentModule {
 
     @Provides
     @ServiceScoped
-    fun provideMultiBandParametricEq(): BaseAudioProcessor {
-        return EqualizerAudioProcessor()
+    fun provideMultiBandParametricEq(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+    ): BaseAudioProcessor {
+        return EqualizerAudioProcessor(
+            scope = scope,
+            playerSettingsUseCase = playerSettingsUseCase,
+        )
     }
 }

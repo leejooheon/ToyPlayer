@@ -53,6 +53,7 @@ fun SettingScreen(
         onEvent = { event ->
             when(event) {
                 is SettingsUiEvent.OnNavigateTheme -> navigateTo.invoke(ScreenNavigation.Settings.Theme)
+                is SettingsUiEvent.OnNavigateEqualizer -> navigateTo.invoke(ScreenNavigation.Settings.Equalizer)
                 is SettingsUiEvent.OnNavigateOpenSourceLicense -> context.startActivity(
                     Intent(context, OssLicensesMenuActivity::class.java)
                 )

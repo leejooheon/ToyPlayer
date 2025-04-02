@@ -15,8 +15,7 @@ class SongListConverter {
     @TypeConverter
     fun jsonToList(data: String): List<Song>? {
         return try {
-            val songs = Json.decodeFromString<List<Song>>(data)
-            songs
+            Json.decodeFromString<List<Song>>(data)
         } catch (e: Exception) {
             null
         }

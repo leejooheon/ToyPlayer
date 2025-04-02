@@ -6,9 +6,11 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.jooheon.toyplayer.data.datastore.di.DataStoreQualifier
 import com.jooheon.toyplayer.data.datastore.model.PlayerSettingsData
 import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import kotlinx.coroutines.flow.map
@@ -21,6 +23,7 @@ class PlayerSettingsPreferencesDataSource @Inject constructor(
         internal val REPEAT_MODE = intPreferencesKey("REPEAT_MODE")
         internal val SHUFFLE_MODE = booleanPreferencesKey("SHUFFLE_MODE")
         internal val VOLUME = floatPreferencesKey("VOLUME")
+        internal val EQUALIZER_PRESET = stringPreferencesKey("EQUALIZER_PRESET")
     }
 
     val playerSettingsData = dataStore.data.map { preferences ->
@@ -28,6 +31,7 @@ class PlayerSettingsPreferencesDataSource @Inject constructor(
             repeatMode = preferences[PreferencesKey.REPEAT_MODE].defaultZero(),
             shuffleMode = preferences[PreferencesKey.SHUFFLE_MODE].defaultFalse(),
             volume = preferences[PreferencesKey.VOLUME].default(1f),
+            preset = preferences[PreferencesKey.EQUALIZER_PRESET].defaultEmpty(),
         )
     }
 
@@ -44,6 +48,11 @@ class PlayerSettingsPreferencesDataSource @Inject constructor(
     suspend fun setVolume(volume: Float) {
         dataStore.edit { preferences ->
             preferences[PreferencesKey.VOLUME] = volume
+        }
+    }
+    suspend fun setEqualizerPreset(preset: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.EQUALIZER_PRESET] = preset
         }
     }
 }

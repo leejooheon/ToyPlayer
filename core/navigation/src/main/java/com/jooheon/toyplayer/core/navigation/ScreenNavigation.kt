@@ -48,5 +48,7 @@ sealed interface ScreenNavigation {
         data object Main : Settings
         @Serializable
         data object Theme : Settings
+        @Serializable
+        data object Equalizer : Settings
     }
 }

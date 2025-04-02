@@ -51,5 +51,6 @@ include(
     ":data:music",
     ":data:playlist",
     ":data:repository",
-    ":data:api"
+    ":data:api",
+    ":data:equalizer"
 )

@@ -8,6 +8,8 @@
     <string name="back">Back</string>
     <string name="update">Updated</string>
     <string name="add">Added</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
 
     <!-- etc -->
     <string name="media_folder_root">Root Folder</string>
@@ -136,6 +138,14 @@
     <string name="description_permission_blocked">Denied it in the previous request,\nplease grant permission manually.</string>
     <string name="description_permission_read_storage">Read Storage Permission is Required.</string>
 
+    <!-- Equalizer -->
+    <string name="equalizer_user_preset">Custom Preset</string>
+    <string name="dialog_new_preset">New Preset</string>
+    <string name="dialog_edit_preset_name">Edit Preset name</string>
+    <string name="dialog_new_preset_label">input preset name</string>
+    <string name="dialog_new_preset_placeholder">preset name</string>
+    <string name="dialog_preset_delete">Would you like to delete this preset?</string>
+
     <!-- playback test -->
     <string name="test_mp3" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>
     <string name="media_url_mp4" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4</string>
@@ -144,4 +154,6 @@
     <string name="placeholder_long" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut tempus, sem vitae convallis imperdiet, lectus nunc pharetra diam, ac rhoncus quam eros eu risus. Nulla pulvinar condimentum erat, pulvinar tempus turpis blandit ut. Etiam sed ipsum sed lacus eleifend hendrerit eu quis quam. Etiam ligula eros, finibus vestibulum tortor ac, ultrices accumsan dolor. Vivamus vel nisl a libero lobortis posuere. Aenean facilisis nibh vel ultrices bibendum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse ac est vitae lacus commodo efficitur at ut massa. Etiam vestibulum sit amet sapien sed varius. Aliquam non ipsum imperdiet, pulvinar enim nec, mollis risus. Fusce id tincidunt nisl.</string>
     <string name="placeholder_medium" translatable="false">Vanilla, Almond Flour, Eggs, Butter, Cream, Sugar</string>
     <string name="placeholder_short" translatable="false">Placeholder</string>
+
+
 </resources>

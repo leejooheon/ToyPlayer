@@ -3,8 +3,6 @@ package com.jooheon.toyplayer.data.api.fake
 import com.jooheon.toyplayer.data.api.response.StationResponse
 import com.jooheon.toyplayer.data.api.response.StreamResponse
 import com.jooheon.toyplayer.data.api.service.ApiStationsService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -37,10 +35,5 @@ class ApiAssetsStationsService(
 
     override suspend fun getStreamStations(): List<StreamResponse> {
         return json.decodeFromStream(stream.resetStream())
-    }
-
-    private fun InputStream.resetStream(): InputStream {
-        reset()
-        return this
     }
 }

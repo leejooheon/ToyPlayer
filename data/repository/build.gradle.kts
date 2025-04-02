@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.data.datastore)
     implementation(projects.data.music)
     implementation(projects.data.playlist)
+    implementation(projects.data.equalizer)
 
     implementation(libs.kotlinx.serialization.json)
 }

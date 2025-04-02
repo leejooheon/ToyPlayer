@@ -14,13 +14,14 @@ import javax.inject.Singleton
 object PlaylistDataBaseModule {
     @Provides
     @Singleton
-    fun providePlaylistDatabase(application: Application) = Room.databaseBuilder(
-        application,
-        PlaylistDatabase::class.java,
-        "playlist_db"
-    ).build()
+    fun providePlaylistDatabase(application: Application): PlaylistDatabase =
+        Room.databaseBuilder(
+            application,
+            PlaylistDatabase::class.java,
+            "playlist_db"
+        ).build()
 
     @Provides
     @Singleton
-    fun provideMusicPlaylistDao(playlistDatabase: PlaylistDatabase) = playlistDatabase.dao
+    fun providePlaylistDao(database: PlaylistDatabase) = database.dao
 }

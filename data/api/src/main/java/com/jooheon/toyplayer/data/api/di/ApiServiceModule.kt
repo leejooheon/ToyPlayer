@@ -1,7 +1,9 @@
 package com.jooheon.toyplayer.data.api.di
 
 import android.content.Context
+import com.jooheon.toyplayer.data.api.fake.ApiAssetsEqualizerService
 import com.jooheon.toyplayer.data.api.fake.ApiAssetsStationsService
+import com.jooheon.toyplayer.data.api.service.ApiEqualizerService
 import com.jooheon.toyplayer.data.api.service.ApiKbsService
 import com.jooheon.toyplayer.data.api.service.ApiMbcService
 import com.jooheon.toyplayer.data.api.service.ApiSbsService
@@ -49,5 +51,19 @@ internal object ApiServiceModule {
         sbs = context.assets.open("sbs_stations.json"),
         etc = context.assets.open("etc_stations.json"),
         stream = context.assets.open("stream_stations.json"),
+    )
+
+    @Provides
+    @Singleton
+    fun provideEqualizerApi(
+        @ApplicationContext context: Context,
+        json: Json,
+    ): ApiEqualizerService = ApiAssetsEqualizerService(
+        json = json,
+        band03Equalizer = context.assets.open("equalizer_03_band_presets.json"),
+        band05Equalizer = context.assets.open("equalizer_05_band_presets.json"),
+        band10Equalizer = context.assets.open("equalizer_10_band_presets.json"),
+        band15Equalizer = context.assets.open("equalizer_15_band_presets.json"),
+        band31Equalizer = context.assets.open("equalizer_31_band_presets.json"),
     )
 }

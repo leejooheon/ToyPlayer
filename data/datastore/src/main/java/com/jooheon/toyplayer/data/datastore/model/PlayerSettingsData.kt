@@ -4,4 +4,5 @@ data class PlayerSettingsData(
     val repeatMode: Int,
     val shuffleMode: Boolean,
     val volume: Float,
+    val preset: String,
 )

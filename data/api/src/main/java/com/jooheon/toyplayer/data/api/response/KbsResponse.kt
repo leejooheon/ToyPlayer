@@ -1,8 +1,5 @@
 package com.jooheon.toyplayer.data.api.response
 
-import com.jooheon.toyplayer.domain.model.radio.RadioData
-import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.domain.model.music.Song
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

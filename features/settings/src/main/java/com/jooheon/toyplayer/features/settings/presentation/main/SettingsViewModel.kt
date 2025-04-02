@@ -73,7 +73,7 @@ class SettingsViewModel @Inject constructor(
         when(event) {
             is SettingsUiEvent.OnLanguageSelected -> onLanguageSelected(context, event.type)
             is SettingsUiEvent.OnVolumeChanged -> onVolumeChanged(event.volume)
-            SettingsUiEvent.OnNavigateEqualizer -> navigateToEqualizer(context)
+            SettingsUiEvent.OnNavigateEqualizer -> { /** nothing **/ }
             SettingsUiEvent.OnLanguageDialog -> { /** nothing **/ }
             SettingsUiEvent.OnNavigateTheme -> { /** nothing **/ }
             SettingsUiEvent.OnVolumeDialog -> { /** nothing **/ }
@@ -103,34 +103,5 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun onVolumeChanged(volume: Float) {
         playerSettingsUseCase.setVolume(volume)
-    }
-
-    private suspend fun navigateToEqualizer(context: Context) {
-        suspendCancellableCoroutine { continuation ->
-            playerController.sendCustomCommand(
-                context = context,
-                command = CustomCommand.GetAudioSessionId,
-                listener = {
-                    continuation.resume(it)
-                }
-            )
-        }.onSuccess {
-            val audioSessionId = it.getInt(CustomCommand.GetAudioSessionId.KEY).defaultZero()
-
-            val intent = Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL).apply {
-                putExtra(AudioEffect.EXTRA_AUDIO_SESSION, audioSessionId)
-                putExtra(AudioEffect.EXTRA_PACKAGE_NAME, context.packageName)
-                putExtra(AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_MUSIC)
-            }
-            if (intent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(intent)
-            } else {
-                val event = SnackbarEvent(UiText.StringResource(Strings.equalizer_error))
-                SnackbarController.sendEvent(event)
-            }
-        }.onError {
-            val event = SnackbarEvent(UiText.StringResource(Strings.setting_no_audio_id))
-            SnackbarController.sendEvent(event)
-        }
     }
 }

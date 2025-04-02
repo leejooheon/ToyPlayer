@@ -8,6 +8,8 @@
     <string name="back">뒤로가기</string>
     <string name="update">갱신 되었습니다.</string>
     <string name="add">추가 되었습니다.</string>
+    <string name="save">저장</string>
+    <string name="edit">수정</string>
 
     <!-- etc -->
     <string name="media_folder_root">루트 폴더</string>
@@ -134,4 +136,11 @@
     <string name="description_permission_blocked">이전 권한 요청에서 거부되었습니다.\n수동으로 권한을 부여해 주세요.</string>
     <string name="description_permission_read_storage">내부 저장소 접근 권한이 필요합니다.</string>
 
+    <!-- Equalizer -->
+    <string name="equalizer_user_preset">사용자 지정</string>
+    <string name="dialog_new_preset">새로운 프리셋</string>
+    <string name="dialog_edit_preset_name">프리셋 이름 변경</string>
+    <string name="dialog_new_preset_label">프리셋</string>
+    <string name="dialog_new_preset_placeholder">프리셋 이름</string>
+    <string name="dialog_preset_delete">프리셋을 삭제할까요?</string>
 </resources>

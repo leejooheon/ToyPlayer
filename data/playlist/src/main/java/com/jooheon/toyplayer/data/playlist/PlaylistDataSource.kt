@@ -8,28 +8,28 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PlaylistDataSource @Inject constructor(
-    private val playlistDao: PlaylistDao,
+    private val dao: PlaylistDao,
 ) {
     fun getAllPlaylist(): Flow<List<Playlist>> {
-        return playlistDao.getAllPlaylist()
+        return dao.getAllPlaylist()
             .map { playlists ->
                 playlists.map { it.toPlaylist() }
             }
     }
 
     fun flowPlaylist(id: Int): Flow<Playlist?> {
-        return playlistDao.get(id).map { it?.toPlaylist() }
+        return dao.get(id).map { it?.toPlaylist() }
     }
 
     suspend fun updatePlaylists(playlist: Playlist) {
-        playlistDao.update(playlist.toPlaylistEntity())
+        dao.update(playlist.toPlaylistEntity())
     }
 
     suspend fun insertPlaylists(playlist: Playlist) {
-        playlistDao.insert(playlist.toPlaylistEntity())
+        dao.insert(playlist.toPlaylistEntity())
     }
 
     suspend fun deletePlaylists(playlist: Playlist) {
-        playlistDao.delete(playlist.toPlaylistEntity())
+        dao.delete(playlist.toPlaylistEntity())
     }
 }
