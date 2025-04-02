@@ -6,21 +6,22 @@ import kotlin.math.*
 // https://mdpi-res.com/d_attachment/applsci/applsci-06-00129/article_deploy/applsci-06-00129.pdf
 class EighthOrderPeakingFilter(
     sampleRate: Float,
-    val frequency: Float,
-    val gainDB: Float,
-    q: Float
+    frequency: Float,
+    gainDB: Float,
+    q: Float,
+    stages: Int = 2 // 필요에 따라 필터 계수를 올리면 된다.
 ) {
-    private val stage1 = BiquadPeakingFilter(sampleRate, frequency, gainDB / 4f, computeEnhancedQ(q, gainDB))
-    private val stage2 = BiquadPeakingFilter(sampleRate, frequency, gainDB / 4f, computeEnhancedQ(q, gainDB))
-    private val stage3 = BiquadPeakingFilter(sampleRate, frequency, gainDB / 4f, computeEnhancedQ(q, gainDB))
-    private val stage4 = BiquadPeakingFilter(sampleRate, frequency, gainDB / 4f, computeEnhancedQ(q, gainDB))
+    private val filters: List<BiquadPeakingFilter>
+
+    init {
+        val perStageGain = gainDB / stages.toFloat()
+        filters = List(stages) {
+            BiquadPeakingFilter(sampleRate, frequency, perStageGain, computeEnhancedQ(q, gainDB))
+        }
+    }
 
     fun processSample(input: Float): Float {
-        val y1 = stage1.processSample(input)
-        val y2 = stage2.processSample(y1)
-        val y3 = stage3.processSample(y2)
-        val y4 = stage4.processSample(y3)
-        return y4
+        return filters.fold(input) { acc, filter -> filter.processSample(acc) }
     }
 
     // 논문 기반 Q 값 조정 로직 (예시): gain에 따라 Q를 보정함으로써 더 정확한 응답곡선 생성
