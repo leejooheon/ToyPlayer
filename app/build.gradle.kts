@@ -14,6 +14,8 @@ val localProperties = Properties().apply {
 
 android {
     namespace = "com.jooheon.toyplayer"
+    compileSdk = Integer.parseInt(libs.versions.android.sdk.compile.get())
+
     defaultConfig {
         applicationId = "com.jooheon.toyplayer"
 
