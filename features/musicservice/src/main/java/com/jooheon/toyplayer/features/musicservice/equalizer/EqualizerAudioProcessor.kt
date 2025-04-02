@@ -64,9 +64,9 @@ class EqualizerAudioProcessor(
             for (channel in 0 until channelCount) {
                 val raw = inputBuffer.short
                 var sample = raw.toFloat() / 32768f
+                sample = lowCutFilters[channel].processSample(sample)
                 peakingFiltersPerChannel[channel].forEach { filter ->
-                    val processed = filter.processSample(sample)
-                    sample = lowCutFilters[channel].processSample(processed)
+                    sample = filter.processSample(sample)
                 }
                 samplesPerChannel[channel].add(sample)
             }
