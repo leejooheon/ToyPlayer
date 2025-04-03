@@ -139,12 +139,17 @@
     <string name="description_permission_read_storage">Read Storage Permission is Required.</string>
 
     <!-- Equalizer -->
+    <string name="equalizer_tab_eq" translatable="false">Parametric EQ</string>
+    <string name="equalizer_tab_sound" translatable="false">Sound</string>
     <string name="equalizer_user_preset">Custom Preset</string>
     <string name="dialog_new_preset">New Preset</string>
     <string name="dialog_edit_preset_name">Edit Preset name</string>
     <string name="dialog_new_preset_label">input preset name</string>
     <string name="dialog_new_preset_placeholder">preset name</string>
     <string name="dialog_preset_delete">Would you like to delete this preset?</string>
+
+    <!-- audio -->
+    <string name="audio_output_unknown">Unknown Device</string>
 
     <!-- playback test -->
     <string name="test_mp3" translatable="false">https://storage.googleapis.com/exoplayer-test-media-0/play.mp3</string>

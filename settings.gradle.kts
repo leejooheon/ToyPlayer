@@ -34,7 +34,7 @@ include(
 )
 
 include(
-    ":core:network",
+    ":core:system",
     ":core:resources",
     ":core:designsystem",
     ":core:navigation"

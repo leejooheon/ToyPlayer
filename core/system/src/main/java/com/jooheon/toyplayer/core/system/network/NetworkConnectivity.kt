@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.core.network
+package com.jooheon.toyplayer.core.system.network
 
 import android.content.Context
 import android.net.ConnectivityManager

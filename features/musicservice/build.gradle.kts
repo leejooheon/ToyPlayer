@@ -18,7 +18,7 @@ dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.usecase)
 
-    implementation(projects.core.network)
+    implementation(projects.core.system)
     implementation(projects.core.resources)
 
     implementation(projects.features.common)

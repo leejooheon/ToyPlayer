@@ -2,7 +2,7 @@ package com.jooheon.toyplayer.features.musicservice.usecase
 
 import android.content.Context
 import androidx.media3.common.C
-import com.jooheon.toyplayer.core.network.NetworkConnectivityObserver
+import com.jooheon.toyplayer.core.system.network.NetworkConnectivityObserver
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.common.extension.showToast

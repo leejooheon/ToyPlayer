@@ -15,7 +15,7 @@ dependencies {
     implementation(projects.domain.repositoryApi)
 
     implementation(projects.core.resources)
-    implementation(projects.core.network)
+    implementation(projects.core.system)
 
     implementation(projects.data.datastore)
     implementation(projects.data.music)

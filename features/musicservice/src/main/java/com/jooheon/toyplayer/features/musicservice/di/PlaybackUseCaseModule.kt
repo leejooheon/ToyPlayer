@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
-import com.jooheon.toyplayer.core.network.NetworkConnectivityObserver
+import com.jooheon.toyplayer.core.system.network.NetworkConnectivityObserver
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase

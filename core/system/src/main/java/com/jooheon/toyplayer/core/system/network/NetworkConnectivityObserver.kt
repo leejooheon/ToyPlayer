@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.core.network
+package com.jooheon.toyplayer.core.system.network
 
 import kotlinx.coroutines.flow.Flow
 

@@ -10,6 +10,7 @@ android {
 
 dependencies {
     implementation(projects.features.musicservice)
+    implementation(projects.core.system)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.material.iconsExtended)

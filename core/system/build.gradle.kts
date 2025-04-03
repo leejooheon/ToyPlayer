@@ -12,4 +12,6 @@ android {
 dependencies {
     implementation(libs.javax.inject)
     implementation(projects.domain.usecase)
+    implementation(projects.domain.model)
+    implementation(projects.core.resources)
 }
