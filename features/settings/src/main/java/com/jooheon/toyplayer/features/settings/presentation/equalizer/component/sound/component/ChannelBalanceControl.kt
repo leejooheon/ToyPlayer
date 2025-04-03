@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,7 +112,7 @@ internal fun ChannelBalanceControl(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .clickable { },
+                    .clickable { angle = 135f },
             ) {
                 Text(
                     text = "L ${(leftGain * 100).toInt()}% / R ${(rightGain * 100).toInt()}%",
@@ -123,7 +124,8 @@ internal fun ChannelBalanceControl(
 
         Text(
             text = title.asString(),
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
     }
@@ -140,7 +142,7 @@ private fun PreviewSoundSection() {
             onValueChange = {},
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface)
-                .width(300.dp)
+                .width(150.dp)
                 .padding(16.dp)
         )
     }

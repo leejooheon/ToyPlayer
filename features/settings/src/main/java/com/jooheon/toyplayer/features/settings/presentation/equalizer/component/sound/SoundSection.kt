@@ -97,7 +97,7 @@ internal fun SoundSection(
                     title = UiText.StringResource(Strings.equalizer_system_volume_description),
                     volume = currentSystemVolume.toFloat(),
                     steps = maxSystemVolume,
-                    valueRange = 0f..15f,
+                    valueRange = 0f..maxSystemVolume.toFloat(),
                     onVolumeChanged = { onEvent.invoke(EqualizerUiEvent.OnSystemVolumeChanged(it.toInt())) },
                     modifier = Modifier
                 )

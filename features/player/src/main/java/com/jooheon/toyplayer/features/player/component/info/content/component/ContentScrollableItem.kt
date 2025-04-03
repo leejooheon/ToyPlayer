@@ -49,6 +49,8 @@ internal fun ContentScrollableItem(
     val listState = rememberLazyListState()
 
     LaunchedEffect(isShow) {
+        if(isShow) listState.scrollToItem(0, 0)
+
         if(!isShow) { // hide 시 첫번쨰 페이지로 이동
             try { withContext(Dispatchers.IO) { delay(animTime.toLong()) } }
             finally { listState.scrollToItem(0, 0) }

@@ -2,6 +2,7 @@ package com.jooheon.toyplayer.features.settings.presentation.equalizer.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -14,9 +15,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.settings.presentation.equalizer.component.sound.toDegrees
@@ -85,12 +86,15 @@ internal fun CircularSlider(
             }
 
             Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .clickable { angle = 0f }
+                ,
             ) {
                 Text(
                     text = "${((angle / 270f) * 100).toInt()}%",
-                    fontSize = 20.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -98,7 +102,8 @@ internal fun CircularSlider(
 
         Text(
             text = title.asString(),
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
     }
