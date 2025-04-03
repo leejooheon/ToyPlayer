@@ -6,7 +6,6 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
-import androidx.media3.common.audio.BaseAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
@@ -20,7 +19,8 @@ import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
-import com.jooheon.toyplayer.features.musicservice.equalizer.EqualizerAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.audio.BalanceAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.audio.EqualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CustomMediaSourceFactory
@@ -81,7 +81,8 @@ object PlayerComponentModule {
     @Provides
     fun provideRendererFactory(
         @MusicServiceContext context: Context,
-        eqProcessor: BaseAudioProcessor
+        equalizerAudioProcessor: EqualizerAudioProcessor,
+        balanceAudioProcessor: BalanceAudioProcessor
     ): DefaultRenderersFactory = object : DefaultRenderersFactory(context) {
         override fun buildAudioRenderers(
             context: Context,
@@ -102,7 +103,12 @@ object PlayerComponentModule {
                     eventHandler,
                     eventListener,
                     DefaultAudioSink.Builder(context)
-                        .setAudioProcessors(arrayOf(eqProcessor))
+                        .setAudioProcessors(
+                            arrayOf(
+                                equalizerAudioProcessor,
+                                balanceAudioProcessor
+                            )
+                        )
                         .build()
                 )
             )
@@ -122,11 +128,24 @@ object PlayerComponentModule {
 
     @Provides
     @ServiceScoped
-    fun provideMultiBandParametricEq(
+    fun provideEqualizerAudioProcessor(
         @MusicServiceCoroutineScope scope: CoroutineScope,
         playerSettingsUseCase: PlayerSettingsUseCase,
-    ): BaseAudioProcessor {
+    ): EqualizerAudioProcessor {
         return EqualizerAudioProcessor(
+            scope = scope,
+            playerSettingsUseCase = playerSettingsUseCase,
+        )
+    }
+
+
+    @Provides
+    @ServiceScoped
+    fun provideBalanceAudioProcessor(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+    ): BalanceAudioProcessor {
+        return BalanceAudioProcessor(
             scope = scope,
             playerSettingsUseCase = playerSettingsUseCase,
         )

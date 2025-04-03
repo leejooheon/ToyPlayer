@@ -5,8 +5,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.ContentObserver
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
+import android.os.Handler
+import android.os.Looper
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.audio.AudioOutputDevice
@@ -14,6 +17,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import android.provider.Settings
+import kotlin.math.roundToInt
 
 internal class AudioOutputObserverImpl(
     private val context: Context
@@ -35,6 +40,36 @@ internal class AudioOutputObserverImpl(
         trySend(getAvailableOutputs())
         awaitClose { context.unregisterReceiver(receiver) }
     }.distinctUntilChanged()
+
+    override fun observeSystemVolume(): Flow<Pair<Int, Int>> = callbackFlow {
+        fun send() {
+            val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            trySend(currentVolume to maxVolume)
+        }
+
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                send()
+            }
+        }
+
+        send()
+
+        context.contentResolver.registerContentObserver(
+            Settings.System.CONTENT_URI,
+            true,
+            observer
+        )
+
+        awaitClose {
+            context.contentResolver.unregisterContentObserver(observer)
+        }
+    }.distinctUntilChanged()
+
+    override fun setVolume(volume: Int) {
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI)
+    }
 
     private fun getAvailableOutputs(): List<AudioOutputDevice> {
         return audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)

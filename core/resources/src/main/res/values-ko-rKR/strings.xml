@@ -138,6 +138,11 @@
 
     <!-- Equalizer -->
     <string name="equalizer_user_preset">사용자 지정</string>
+    <string name="equalizer_bass_boost">베이스 부스트</string>
+    <string name="equalizer_player_volume_title">볼륨</string>
+    <string name="equalizer_player_volume_description">플레이어 볼륨을 조절합니다.</string>
+    <string name="equalizer_system_volume_description">시스템 볼륨을 조절합니다.</string>
+    <string name="equalizer_audio_channel_balance">오디오 채널 밸런스</string>
     <string name="dialog_new_preset">새로운 프리셋</string>
     <string name="dialog_edit_preset_name">프리셋 이름 변경</string>
     <string name="dialog_new_preset_label">프리셋</string>

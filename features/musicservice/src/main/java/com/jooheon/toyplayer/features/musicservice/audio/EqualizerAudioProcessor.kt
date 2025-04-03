@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicservice.equalizer
+package com.jooheon.toyplayer.features.musicservice.audio
 
 import androidx.annotation.OptIn
 import androidx.lifecycle.AtomicReference
@@ -9,8 +9,9 @@ import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.EqualizerType
 import com.jooheon.toyplayer.domain.model.music.Preset
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
-import com.jooheon.toyplayer.features.musicservice.equalizer.filter.BiquadHighPassFilter
-import com.jooheon.toyplayer.features.musicservice.equalizer.filter.MultiOrderPeakingFilter
+import com.jooheon.toyplayer.features.musicservice.audio.equalizer.BiquadHighPassFilter
+import com.jooheon.toyplayer.features.musicservice.audio.equalizer.MultiOrderPeakingFilter
+import com.jooheon.toyplayer.features.musicservice.audio.common.frameSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -57,7 +58,7 @@ class EqualizerAudioProcessor(
 
         val samplesPerChannel = List(channelCount) { mutableListOf<Float>() }
 
-        while (inputBuffer.remaining() >= 2 * channelCount) {
+        while (inputBuffer.remaining() >= frameSize(inputAudioFormat)) {
             for (channel in 0 until channelCount) {
                 val raw = inputBuffer.short
                 var sample = raw.toFloat() / 32768f

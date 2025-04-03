@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
+import com.jooheon.toyplayer.core.system.audio.AudioOutputObserver
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
@@ -26,12 +27,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
@@ -40,6 +43,7 @@ class EqualizerViewModel @Inject constructor(
     private val playerController: PlayerController,
     private val equalizerUseCase: EqualizerUseCase,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
+    private val audioOutputObserver: AudioOutputObserver
 ): ViewModel() {
     private val equalizerTypes = EqualizerType.entries
 
@@ -48,12 +52,28 @@ class EqualizerViewModel @Inject constructor(
         equalizerTypes.zip(results.toList())
             .map { (type, presets) -> EqualizerUiState.PresetGroup(type, presets) }
     }
+    private val soundGroupFlow = combine(
+        audioOutputObserver.observeSystemVolume(),
+        playerSettingsUseCase.flowBassBoost(),
+        playerSettingsUseCase.flowVolume(),
+        playerSettingsUseCase.flowChannelBalance()
+    ) { systemVolume, bassBoost, playerVolume, channelBalance ->
+        EqualizerUiState.SoundGroup(
+            bassBoost = bassBoost,
+            systemVolume = systemVolume,
+            playerVolume = playerVolume,
+            channelBalance = channelBalance,
+        )
+    }
+
     internal val uiState = combine(
         combinedPresetsFlow,
-        playerSettingsUseCase.flowEqualizerPreset()
-    ) { presetGroups, selectedPreset ->
+        soundGroupFlow,
+        playerSettingsUseCase.flowEqualizerPreset(),
+    ) { presetGroups, soundGroup, selectedPreset ->
         buildEqualizerUiState(
             presetGroups = presetGroups,
+            soundGroup = soundGroup,
             selectedPreset = selectedPreset
         )
     }.stateIn(
@@ -71,7 +91,17 @@ class EqualizerViewModel @Inject constructor(
             is EqualizerUiEvent.OnPresetUpdate -> onPresetUpdate(event.preset)
             is EqualizerUiEvent.OnPresetDelete -> onPresetDelete(event.preset)
             is EqualizerUiEvent.OnSettingClick -> navigateToEqualizer(event.context)
+            is EqualizerUiEvent.OnBassBoostChanged -> playerSettingsUseCase.setBassBoost(event.value)
+            is EqualizerUiEvent.OnPlayerVolumeChanged -> playerSettingsUseCase.setVolume(event.value)
+            is EqualizerUiEvent.OnChannelBalanceChanged -> playerSettingsUseCase.setChannelBalance(event.value)
+            is EqualizerUiEvent.OnSystemVolumeChanged -> onSystemVolumeChanged(event.value)
         }
+    }
+
+    private fun onSystemVolumeChanged(value: Int) {
+        val state = uiState.value
+        if(state.soundGroup.systemVolume.first == value) return
+        audioOutputObserver.setVolume(value)
     }
 
     private suspend fun onPresetUpdate(preset: Preset) = withContext(Dispatchers.IO) {
@@ -162,6 +192,7 @@ class EqualizerViewModel @Inject constructor(
 
     private fun buildEqualizerUiState(
         presetGroups: List<EqualizerUiState.PresetGroup>,
+        soundGroup: EqualizerUiState.SoundGroup,
         selectedPreset: Preset
     ): EqualizerUiState {
         val actualSelectedPreset = if (selectedPreset == Preset.default) {
@@ -176,6 +207,7 @@ class EqualizerViewModel @Inject constructor(
 
         return EqualizerUiState(
             presetGroups = presetGroups,
+            soundGroup = soundGroup,
             selectedPreset = actualSelectedPreset
         )
     }

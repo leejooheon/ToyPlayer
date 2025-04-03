@@ -1,36 +1,28 @@
 package com.jooheon.toyplayer.features.settings.presentation.equalizer
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,11 +32,8 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
-import com.jooheon.toyplayer.features.settings.presentation.equalizer.component.EqualizerChipRow
-import com.jooheon.toyplayer.features.settings.presentation.equalizer.component.EqualizerSliderColumn
-import com.jooheon.toyplayer.features.settings.presentation.equalizer.dialog.EqualizerDeleteDialog
-import com.jooheon.toyplayer.features.settings.presentation.equalizer.dialog.EqualizerSaveDialog
-import com.jooheon.toyplayer.features.settings.presentation.equalizer.model.EqualizerDialogState
+import com.jooheon.toyplayer.features.settings.presentation.equalizer.component.equalizer.EqualizerSection
+import com.jooheon.toyplayer.features.settings.presentation.equalizer.component.sound.SoundSection
 import com.jooheon.toyplayer.features.settings.presentation.equalizer.model.EqualizerUiEvent
 import com.jooheon.toyplayer.features.settings.presentation.equalizer.model.EqualizerUiState
 
@@ -69,7 +58,14 @@ private fun EqualizerScreenInternal(
     onBackClick: () -> Unit,
 ) {
     val context = LocalContext.current
-    var dialogState by remember { mutableStateOf(EqualizerDialogState.default) }
+
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val tabs = listOf(
+        Strings.equalizer_tab_eq,
+        Strings.equalizer_tab_sound
+    ).map {
+        UiText.StringResource(it).asString()
+    }
 
     Scaffold(
         topBar = {
@@ -104,71 +100,37 @@ private fun EqualizerScreenInternal(
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    EqualizerChipRow(
-                        presetGroups = uiState.presetGroups,
-                        selectedPreset = uiState.selectedPreset,
-                        onPresetSelected = {
-                            val event = EqualizerUiEvent.OnPresetSelected(it)
-                            onEvent.invoke(event)
-                        },
-                        onTypeSelected = {
-                            val event = EqualizerUiEvent.OnTypeSelected(it)
-                            onEvent.invoke(event)
-                        },
-                        onSaveOrEditClick = {
-                            dialogState = EqualizerDialogState(
-                                type = EqualizerDialogState.Type.SaveOrEdit,
-                                preset = uiState.selectedPreset
+                    TabRow(selectedTabIndex = selectedTabIndex) {
+                        tabs.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = { selectedTabIndex = index },
+                                text = {
+                                    Text(
+                                        text = title
+                                    )
+                                }
                             )
-                        },
-                        onDeleteClick = {
-                            dialogState = EqualizerDialogState(
-                                type = EqualizerDialogState.Type.Delete,
-                                preset = uiState.selectedPreset
-                            )
-                        },
-                    )
-
-                    EqualizerSliderColumn(
-                        centerFrequencies = uiState.selectedPreset.type.frequencies(),
-                        gains = uiState.selectedPreset.gains,
-                        onGainsChange = {
-                            val event = EqualizerUiEvent.OnGainsChanged(it)
-                            onEvent.invoke(event)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-
-                when(dialogState.type) {
-                    EqualizerDialogState.Type.Delete -> {
-                        EqualizerDeleteDialog(
-                            state = true to dialogState.preset,
-                            onOkButtonClicked = {
-                                onEvent.invoke(EqualizerUiEvent.OnPresetDelete(it))
-                                dialogState = EqualizerDialogState.default
-                            },
-                            onDismissRequest = {
-                                dialogState = EqualizerDialogState.default
-                            }
-                        )
-                    }
-                    EqualizerDialogState.Type.SaveOrEdit -> {
-                        EqualizerSaveDialog(
-                            state = true to dialogState.preset,
-                            onOkButtonClicked = {
-                                val event = if(dialogState.preset.isCustomPreset()) EqualizerUiEvent.OnPresetSave(it)
-                                else EqualizerUiEvent.OnPresetUpdate(it)
-                                onEvent.invoke(event)
-                                dialogState = EqualizerDialogState.default
-                            },
-                            onDismissRequest = {
-                                dialogState = EqualizerDialogState.default
-                            }
-                        )
+                        }
                     }
 
-                    EqualizerDialogState.Type.None -> { /** nothing **/ }
+                    when (selectedTabIndex) {
+                        0 -> {
+                            EqualizerSection(
+                                presetGroups = uiState.presetGroups,
+                                selectedPreset = uiState.selectedPreset,
+                                onEvent = onEvent,
+                                modifier = Modifier
+                            )
+                        }
+                        1 -> {
+                            SoundSection(
+                                soundGroup = uiState.soundGroup,
+                                onEvent = onEvent,
+                                modifier = Modifier
+                            )
+                        }
+                    }
                 }
             }
         }

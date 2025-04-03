@@ -23,6 +23,12 @@ class PlayerSettingsUseCase @Inject constructor(
         val raw = Json.encodeToString(Preset.serializer(), preset)
         playerSettingsRepository.setEqualizerPreset(raw)
     }
+    suspend fun setChannelBalance(channelBalance: Float) {
+        playerSettingsRepository.setChannelBalance(channelBalance)
+    }
+    suspend fun setBassBoost(bassBoost: Int) {
+        playerSettingsRepository.setBassBoost(bassBoost)
+    }
 
     fun flowRepeatMode(): Flow<Int> = playerSettingsRepository.flowRepeatMode()
     fun flowShuffleMode(): Flow<Boolean> = playerSettingsRepository.flowShuffleMode()
@@ -34,4 +40,6 @@ class PlayerSettingsUseCase @Inject constructor(
                     .getOrElse { Preset.default }
             }
     }
+    fun flowChannelBalance(): Flow<Float> = playerSettingsRepository.flowChannelBalance()
+    fun flowBassBoost(): Flow<Int> = playerSettingsRepository.flowBassBoost()
 }

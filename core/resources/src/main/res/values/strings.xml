@@ -142,6 +142,11 @@
     <string name="equalizer_tab_eq" translatable="false">Parametric EQ</string>
     <string name="equalizer_tab_sound" translatable="false">Sound</string>
     <string name="equalizer_user_preset">Custom Preset</string>
+    <string name="equalizer_bass_boost">Bass Boost</string>
+    <string name="equalizer_player_volume_title">volume</string>
+    <string name="equalizer_player_volume_description">Adjusts the player volume.</string>
+    <string name="equalizer_system_volume_description">Adjusts the system volume.</string>
+    <string name="equalizer_audio_channel_balance">Audio channel balance</string>
     <string name="dialog_new_preset">New Preset</string>
     <string name="dialog_edit_preset_name">Edit Preset name</string>
     <string name="dialog_new_preset_label">input preset name</string>

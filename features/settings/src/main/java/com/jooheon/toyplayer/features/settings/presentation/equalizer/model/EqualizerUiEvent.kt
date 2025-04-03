@@ -12,4 +12,9 @@ sealed interface EqualizerUiEvent {
     data class OnPresetUpdate(val preset: Preset): EqualizerUiEvent
     data class OnPresetDelete(val preset: Preset): EqualizerUiEvent
     data class OnSettingClick(val context: Context): EqualizerUiEvent
+
+    data class OnBassBoostChanged(val value: Int) : EqualizerUiEvent
+    data class OnSystemVolumeChanged(val value: Int) : EqualizerUiEvent
+    data class OnPlayerVolumeChanged(val value: Float) : EqualizerUiEvent
+    data class OnChannelBalanceChanged(val value: Float) : EqualizerUiEvent
 }

@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.settings.presentation.equalizer.component
+package com.jooheon.toyplayer.features.settings.presentation.equalizer.component.equalizer.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

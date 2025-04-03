@@ -22,6 +22,12 @@ class PlayerSettingsRepositoryImpl(
     override suspend fun setEqualizerPreset(preset: String) {
         preferencesDataSource.setEqualizerPreset(preset)
     }
+    override suspend fun setChannelBalance(channelBalance: Float) {
+        preferencesDataSource.setChannelBalance(channelBalance)
+    }
+    override suspend fun setBassBoost(bassBoost: Int) {
+        preferencesDataSource.setBassBoost(bassBoost)
+    }
 
     override fun flowRepeatMode(): Flow<Int> {
         return preferencesDataSource.playerSettingsData.map { it.repeatMode }
@@ -29,10 +35,16 @@ class PlayerSettingsRepositoryImpl(
     override fun flowShuffleMode(): Flow<Boolean> {
         return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.shuffleMode }
     }
+    override fun flowEqualizerPreset(): Flow<String> {
+        return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.preset }
+    }
     override fun flowVolume(): Flow<Float> {
         return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.volume }
     }
-    override fun flowEqualizerPreset(): Flow<String> {
-        return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.preset }
+    override fun flowChannelBalance(): Flow<Float> {
+        return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.channelBalance }
+    }
+    override fun flowBassBoost(): Flow<Int> {
+        return preferencesDataSource.playerSettingsData.map { settingsData -> settingsData.bassBoost }
     }
 }

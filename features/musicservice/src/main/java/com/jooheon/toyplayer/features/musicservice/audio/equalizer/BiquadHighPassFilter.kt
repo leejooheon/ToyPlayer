@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.musicservice.equalizer.filter
+package com.jooheon.toyplayer.features.musicservice.audio.equalizer
 
 import kotlin.math.cos
 import kotlin.math.sin

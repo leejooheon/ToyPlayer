@@ -24,14 +24,18 @@ class PlayerSettingsPreferencesDataSource @Inject constructor(
         internal val SHUFFLE_MODE = booleanPreferencesKey("SHUFFLE_MODE")
         internal val VOLUME = floatPreferencesKey("VOLUME")
         internal val EQUALIZER_PRESET = stringPreferencesKey("EQUALIZER_PRESET")
+        internal val CHANNEL_BALANCE = floatPreferencesKey("CHANNEL_BALANCE")
+        internal val BASS_BOOST = intPreferencesKey("BASS_BOOST")
     }
 
     val playerSettingsData = dataStore.data.map { preferences ->
         PlayerSettingsData(
             repeatMode = preferences[PreferencesKey.REPEAT_MODE].defaultZero(),
             shuffleMode = preferences[PreferencesKey.SHUFFLE_MODE].defaultFalse(),
-            volume = preferences[PreferencesKey.VOLUME].default(1f),
             preset = preferences[PreferencesKey.EQUALIZER_PRESET].defaultEmpty(),
+            volume = preferences[PreferencesKey.VOLUME].default(1f),
+            channelBalance = preferences[PreferencesKey.CHANNEL_BALANCE].defaultZero(),
+            bassBoost = preferences[PreferencesKey.BASS_BOOST].defaultZero(),
         )
     }
 
@@ -45,14 +49,24 @@ class PlayerSettingsPreferencesDataSource @Inject constructor(
             preferences[PreferencesKey.SHUFFLE_MODE] = shuffleMode
         }
     }
+    suspend fun setEqualizerPreset(preset: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.EQUALIZER_PRESET] = preset
+        }
+    }
     suspend fun setVolume(volume: Float) {
         dataStore.edit { preferences ->
             preferences[PreferencesKey.VOLUME] = volume
         }
     }
-    suspend fun setEqualizerPreset(preset: String) {
+    suspend fun setChannelBalance(channelBalance: Float) {
         dataStore.edit { preferences ->
-            preferences[PreferencesKey.EQUALIZER_PRESET] = preset
+            preferences[PreferencesKey.CHANNEL_BALANCE] = channelBalance
+        }
+    }
+    suspend fun setBassBoost(percent: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKey.BASS_BOOST] = percent
         }
     }
 }
