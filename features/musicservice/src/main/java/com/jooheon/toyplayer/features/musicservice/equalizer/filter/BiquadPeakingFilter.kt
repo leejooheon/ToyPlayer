@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.features.musicservice.equalizer.filter
 import kotlin.math.*
 
 // https://secure.aes.org/forum/pubs/conventions/?elib=17963
-class BiquadPeakingFilter(
+internal class BiquadPeakingFilter(
     private val sampleRate: Float,
     private val frequency: Float,
     private val gainDB: Float,

@@ -6,10 +6,11 @@ import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.audio.BaseAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
+import com.jooheon.toyplayer.domain.model.music.EqualizerType
 import com.jooheon.toyplayer.domain.model.music.Preset
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.equalizer.filter.BiquadHighPassFilter
-import com.jooheon.toyplayer.features.musicservice.equalizer.filter.EighthOrderPeakingFilter
+import com.jooheon.toyplayer.features.musicservice.equalizer.filter.MultiOrderPeakingFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -26,8 +27,9 @@ class EqualizerAudioProcessor(
     private var currentPreset = AtomicReference(Preset.default)
 
     private lateinit var lowCutFilters: List<BiquadHighPassFilter>
-    private lateinit var peakingFiltersPerChannel: List<List<EighthOrderPeakingFilter>>
+    private lateinit var peakingFiltersPerChannel: List<List<MultiOrderPeakingFilter>>
 
+    private var equalizerType = EqualizerType.default
     private var channelCount = 0
     private var smoothedGain = 0f
 
@@ -44,12 +46,6 @@ class EqualizerAudioProcessor(
     override fun onConfigure(inputAudioFormat: AudioProcessor.AudioFormat): AudioProcessor.AudioFormat {
         channelCount = inputAudioFormat.channelCount
 
-        lowCutFilters = List(channelCount) {
-            BiquadHighPassFilter(
-                sampleRate = inputAudioFormat.sampleRate.toFloat()
-            )
-        }
-
         updateFilter(inputAudioFormat)
         return inputAudioFormat
     }
@@ -60,13 +56,17 @@ class EqualizerAudioProcessor(
         outputBuffer.order(ByteOrder.LITTLE_ENDIAN)
 
         val samplesPerChannel = List(channelCount) { mutableListOf<Float>() }
+
         while (inputBuffer.remaining() >= 2 * channelCount) {
             for (channel in 0 until channelCount) {
                 val raw = inputBuffer.short
                 var sample = raw.toFloat() / 32768f
-                sample = lowCutFilters[channel].processSample(sample)
+
                 peakingFiltersPerChannel[channel].forEach { filter ->
                     sample = filter.processSample(sample)
+                    if(equalizerType != EqualizerType.BAND_31) {
+                        sample = lowCutFilters[channel].processSample(sample)
+                    }
                 }
                 samplesPerChannel[channel].add(sample)
             }
@@ -116,9 +116,26 @@ class EqualizerAudioProcessor(
 
     private fun updateFilter(inputAudioFormat: AudioProcessor.AudioFormat) {
         val preset = currentPreset.get()
+
+        lowCutFilters = List(channelCount) {
+            BiquadHighPassFilter(
+                sampleRate = inputAudioFormat.sampleRate.toFloat(),
+                cutoffFreq = when(preset.type) {
+                    EqualizerType.BAND_31 -> 0.1f
+                    EqualizerType.BAND_15 -> 7f
+                    else -> 10f
+                },
+                q = when (preset.type) {
+                    EqualizerType.BAND_31 -> 1f
+                    EqualizerType.BAND_15 -> 0.85f
+                    else -> 0.707f
+                }
+            )
+        }
+
         peakingFiltersPerChannel = List(channelCount) {
             preset.type.frequencies().mapIndexed { index, frequency ->
-                EighthOrderPeakingFilter(
+                MultiOrderPeakingFilter(
                     sampleRate = inputAudioFormat.sampleRate.toFloat(),
                     frequency = frequency,
                     gainDB = preset.gains.getOrNull(index).defaultZero(),
@@ -127,7 +144,8 @@ class EqualizerAudioProcessor(
             }
         }
 
-        smoothedGain = 0f
+        equalizerType = preset.type
+        smoothedGain = 1f
     }
 
     companion object {

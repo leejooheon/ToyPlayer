@@ -3,7 +3,7 @@ package com.jooheon.toyplayer.features.musicservice.equalizer.filter
 import kotlin.math.cos
 import kotlin.math.sin
 
-class BiquadHighPassFilter(
+internal class BiquadHighPassFilter(
     private val sampleRate: Float,
     private val cutoffFreq: Float = 20f,
     private val q: Float = 0.707f
@@ -36,7 +36,7 @@ class BiquadHighPassFilter(
         a2 = (1.0 - alpha) / a0
     }
 
-    fun processSample(input: Float): Float {
+    internal fun processSample(input: Float): Float {
         val x0 = input.toDouble()
         val y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
 

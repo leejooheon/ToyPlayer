@@ -4,12 +4,12 @@ import kotlin.math.*
 
 // https://ieeexplore.ieee.org/document/7797451
 // https://mdpi-res.com/d_attachment/applsci/applsci-06-00129/article_deploy/applsci-06-00129.pdf
-class EighthOrderPeakingFilter(
+internal class MultiOrderPeakingFilter(
     sampleRate: Float,
     frequency: Float,
     gainDB: Float,
     q: Float,
-    stages: Int = 2 // 필요에 따라 필터 계수를 올리면 된다.
+    stages: Int = 4 // 필요에 따라 필터 계수를 올리면 된다.
 ) {
     private val filters: List<BiquadPeakingFilter>
 
@@ -20,7 +20,7 @@ class EighthOrderPeakingFilter(
         }
     }
 
-    fun processSample(input: Float): Float {
+    internal fun processSample(input: Float): Float {
         return filters.fold(input) { acc, filter -> filter.processSample(acc) }
     }
 
