@@ -12,6 +12,7 @@ data class Preset(
 ) {
     fun isSavedPreset(): Boolean = isCustom && name != CUSTOM_PRESET_NAME
     fun isCustomPreset(): Boolean = isCustom && name == CUSTOM_PRESET_NAME
+    fun isFlat(): Boolean = gains.all { it == 0f }
 
     companion object {
         const val CUSTOM_PRESET_NAME = " "

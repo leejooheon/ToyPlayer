@@ -17,7 +17,10 @@ enum class EqualizerType(val numBands: Int) {
         BAND_31 -> Band31Frequencies
     }
 
-    override fun toString(): String = numBands.toString()
+    override fun toString(): String = when(this) {
+        BAND_31 -> "$numBands (experimental)"
+        else -> numBands.toString()
+    }
 
     companion object {
         val default = BAND_10

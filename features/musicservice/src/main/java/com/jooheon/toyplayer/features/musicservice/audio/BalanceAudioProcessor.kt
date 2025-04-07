@@ -1,22 +1,22 @@
 package com.jooheon.toyplayer.features.musicservice.audio
 
 import androidx.media3.common.audio.AudioProcessor
-import androidx.media3.common.audio.BaseAudioProcessor
 import androidx.media3.common.util.UnstableApi
 import com.google.common.util.concurrent.AtomicDouble
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
-import com.jooheon.toyplayer.features.musicservice.audio.common.frameSize
+import com.jooheon.toyplayer.features.musicservice.audio.ext.frameSize
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import kotlin.math.abs
 
 @UnstableApi
 class BalanceAudioProcessor(
     scope: CoroutineScope,
     playerSettingsUseCase: PlayerSettingsUseCase,
-): BaseAudioProcessor() {
+): BaseAudioEffectProcessor() {
     private var channelCount = 0
     private var balance = AtomicDouble(0.0)  // -1.0 (left) ~ 1.0 (right)
 
@@ -33,12 +33,17 @@ class BalanceAudioProcessor(
     }
 
     override fun queueInput(inputBuffer: ByteBuffer) {
+        if(shouldBypass()) {
+            bypassOutput(inputBuffer)
+            return
+        }
+
         val outputBuffer = replaceOutputBuffer(inputBuffer.remaining())
         inputBuffer.order(ByteOrder.LITTLE_ENDIAN)
         outputBuffer.order(ByteOrder.LITTLE_ENDIAN)
 
         val balance = balance.get().toFloat()
-        while (inputBuffer.remaining() >= frameSize(inputAudioFormat)) {
+        while (inputBuffer.remaining() >= inputAudioFormat.frameSize) {
             val left = inputBuffer.short.toFloat() / 32768f
             val right = inputBuffer.short.toFloat() / 32768f
 
@@ -53,5 +58,9 @@ class BalanceAudioProcessor(
         }
 
         outputBuffer.flip()
+    }
+
+    override fun shouldBypass(): Boolean {
+        return abs(balance.get()) < 0.0001 // Float-safe 비교
     }
 }
