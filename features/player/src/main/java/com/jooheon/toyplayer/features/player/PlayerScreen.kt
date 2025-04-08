@@ -137,6 +137,7 @@ private fun PlayerScreenInternal(
     onPlayerEvent: (PlayerEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val chunkedModel = uiState.playlists.toChunkedModel()
     val channelPagerState = rememberPagerState(
         initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.audioId),
         pageCount = { uiState.pagerModel.items.size }
@@ -144,7 +145,7 @@ private fun PlayerScreenInternal(
 
     val infoPagerState = rememberPagerState(
         initialPage = 0,
-        pageCount = { uiState.playlists.toChunkedModel().size + 1 },
+        pageCount = { chunkedModel.size + 1 },
     )
 
     Box(

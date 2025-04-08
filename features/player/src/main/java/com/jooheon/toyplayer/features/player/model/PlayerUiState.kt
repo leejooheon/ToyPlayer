@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.player.model
 
+import androidx.compose.runtime.Composable
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
 import com.jooheon.toyplayer.domain.model.music.Playlist
@@ -61,10 +62,11 @@ data class PlayerUiState(
 }
 
 
+@Composable
 fun List<Playlist>.toChunkedModel(): List<List<Playlist>> {
     // Note: 한 화면에 보이는 컨텐츠 갯수 조절방법: chunked 사이즈, contentSpace에서 나누는 부분
-    return chunked(contentSize).let { chunks ->
-        if (chunks.lastOrNull().defaultEmpty().size < contentSize && chunks.size > 1) {
+    return chunked(contentSize()).let { chunks ->
+        if (chunks.lastOrNull().defaultEmpty().size < contentSize() && chunks.size > 1) {
             val lastChunk = chunks.last()
             val previousChunk = chunks[chunks.size - 2]
             val mergedChunk = previousChunk + lastChunk

@@ -38,7 +38,7 @@ internal fun ControlBottomInfo(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.displayMedium.copy(
+            style = MaterialTheme.typography.bodyLarge.copy(
                 color = androidx.compose.ui.graphics.Color.White,
             ),
             maxLines = 2,
@@ -49,7 +49,7 @@ internal fun ControlBottomInfo(
 
         Text(
             text = artist,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodySmall.copy(
                 color = androidx.compose.ui.graphics.Color.White.copy(
                     alpha = 0.5f
                 ),

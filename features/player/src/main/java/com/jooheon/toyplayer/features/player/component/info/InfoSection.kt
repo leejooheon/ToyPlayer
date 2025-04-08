@@ -137,7 +137,7 @@ fun InfoSection(
                                 ?: return@Box
 
                             ContentSection(
-                                useScrollableItem = chunkedModel.size == 1 || newModels.size > contentSize,
+                                useScrollableItem = chunkedModel.size == 1 || newModels.size > contentSize(),
                                 playlists = newModels,
                                 currentSong = currentSong,
                                 titleAlpha = pageOffset,

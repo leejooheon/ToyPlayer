@@ -1,5 +1,6 @@
 package com.jooheon.toyplayer.features.player.component.info.content
 
+import android.content.res.Configuration
 import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +63,7 @@ internal fun ContentCardItem(
     onFavoriteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val configuration = LocalConfiguration.current
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = textMeasurer.measure(
         text = UiText.StringResource(Strings.placeholder_long).asString(),
@@ -154,7 +157,7 @@ internal fun ContentCardItem(
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = androidx.compose.ui.graphics.Color.White,
             ),
-            maxLines = 2,
+            maxLines = if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
