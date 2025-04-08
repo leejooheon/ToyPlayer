@@ -12,6 +12,7 @@ import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.domain.usecase.VisualizerObserver
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
 import com.jooheon.toyplayer.features.common.controller.SnackbarEvent
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
@@ -39,6 +40,7 @@ class PlayerViewModel @Inject constructor(
     private val playerController: PlayerController,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
     private val playlistUseCase: PlaylistUseCase,
+    private val visualizerObserver: VisualizerObserver,
 ): ViewModel() {
     val uiState: StateFlow<PlayerUiState> =
         combine(
@@ -68,6 +70,8 @@ class PlayerViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = PlayerUiState.default,
         )
+
+    val visualizerFlow = visualizerObserver.observe()
 
     val autoPlaybackProperty = AtomicBoolean(false)
 

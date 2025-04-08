@@ -42,4 +42,7 @@ dependencies {
     // glide
     implementation(libs.bumptech.glide)
     annotationProcessor(libs.bumptech.glide.compiler)
+
+    // noise
+    implementation(libs.noise)
 }

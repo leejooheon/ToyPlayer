@@ -31,3 +31,15 @@ fun Context.deviceWidth(): Int {
         size.x
     }
 }
+fun Context.deviceHeight(): Int {
+    val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+    return if (VersionUtil.hasR()) {
+        windowManager.currentWindowMetrics.bounds.height()
+    } else {
+        val display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        size.y
+    }
+}

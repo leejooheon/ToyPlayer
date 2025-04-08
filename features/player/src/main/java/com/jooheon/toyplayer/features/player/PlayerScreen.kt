@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.domain.model.audio.VisualizerData
 import com.jooheon.toyplayer.domain.model.music.Song
 import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.common.controller.TouchEventController
@@ -43,6 +44,8 @@ fun PlayerScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val visualizer by viewModel.visualizerFlow.collectAsStateWithLifecycle(VisualizerData.default)
+
     var infoSectionVisibleState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var screenHideJob by remember { mutableStateOf<Job?>(null) }
@@ -100,6 +103,7 @@ fun PlayerScreen(
     PlayerScreenInternal(
         uiState = uiState,
         infoSectionVisibleState = infoSectionVisibleState,
+        visualizerData = visualizer,
         modifier = Modifier.pointerInput(infoSectionVisibleState) {
             detectTapGestures(
                 onTap = { infoSectionVisibleState = !infoSectionVisibleState }
@@ -133,6 +137,7 @@ fun PlayerScreen(
 @Composable
 private fun PlayerScreenInternal(
     uiState: PlayerUiState,
+    visualizerData: VisualizerData,
     infoSectionVisibleState: Boolean,
     onPlayerEvent: (PlayerEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -161,6 +166,7 @@ private fun PlayerScreenInternal(
 
         LogoSection(
             musicState = uiState.musicState,
+            visualizerData = visualizerData,
             modifier = Modifier,
         )
 
@@ -198,6 +204,7 @@ private fun PreviewLgPlayerScreen() {
     ToyPlayerTheme {
         PlayerScreenInternal(
             uiState = PlayerUiState.preview,
+            visualizerData = VisualizerData.default,
             infoSectionVisibleState = true,
             onPlayerEvent = {},
             modifier = Modifier,
