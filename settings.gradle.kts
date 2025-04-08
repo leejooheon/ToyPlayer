@@ -37,7 +37,8 @@ include(
     ":core:system",
     ":core:resources",
     ":core:designsystem",
-    ":core:navigation"
+    ":core:navigation",
+    ":core:juce"
 )
 
 include(
