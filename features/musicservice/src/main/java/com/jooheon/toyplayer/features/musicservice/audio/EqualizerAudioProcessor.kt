@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.math.abs
+import kotlin.math.ln
 import kotlin.math.tanh
 
 @OptIn(UnstableApi::class)
@@ -142,7 +143,7 @@ class EqualizerAudioProcessor(
                     sampleRate = inputAudioFormat.sampleRate.toFloat(),
                     frequency = frequency,
                     gainDB = preset.gains.getOrNull(index).defaultZero(),
-                    q = 1f
+                    q = computeAdaptiveQ(frequency)
                 )
             }
         }
@@ -151,6 +152,12 @@ class EqualizerAudioProcessor(
         smoothedGain = 1f
     }
 
+    private fun computeAdaptiveQ(freqHz: Float): Float {
+        val minQ = 0f
+        val maxQ = 2.0f
+        val norm = ((ln(freqHz / 20f) / ln(20000f / 20f))).coerceIn(0f, 1f)
+        return norm * (maxQ - minQ) + minQ
+    }
     override fun shouldBypass(): Boolean = currentPreset.get().isFlat()
 
     companion object {

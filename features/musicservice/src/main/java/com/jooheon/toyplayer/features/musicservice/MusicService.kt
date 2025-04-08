@@ -6,18 +6,15 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.OptIn
 import androidx.core.content.getSystemService
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.core.juce.JuceInitializer
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.ext.isHls
-import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
@@ -26,12 +23,13 @@ import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
@@ -79,6 +77,7 @@ class MusicService: MediaLibraryService() {
     override fun onCreate() {
         Timber.tag(LifecycleTAG).d( "onCreate")
         super.onCreate()
+        JuceInitializer().initialize()
 
         initMediaSession()
         initNotification()
