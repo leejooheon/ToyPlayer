@@ -1,6 +1,6 @@
 <resources>
     <!-- common -->
-    <string name="app_name">ToyPlayer</string>
+    <string name="app_name">RadioPop</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="ok">OK</string>
