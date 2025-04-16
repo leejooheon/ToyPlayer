@@ -11,7 +11,6 @@ import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.jooheon.toyplayer.core.juce.JuceInitializer
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.ext.isHls
@@ -77,7 +76,6 @@ class MusicService: MediaLibraryService() {
     override fun onCreate() {
         Timber.tag(LifecycleTAG).d( "onCreate")
         super.onCreate()
-        JuceInitializer().initialize()
 
         initMediaSession()
         initNotification()

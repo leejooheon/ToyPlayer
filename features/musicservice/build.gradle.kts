@@ -18,7 +18,6 @@ dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.usecase)
 
-    implementation(projects.core.juce)
     implementation(projects.core.system)
     implementation(projects.core.resources)
 

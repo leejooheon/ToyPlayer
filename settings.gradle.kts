@@ -38,7 +38,6 @@ include(
     ":core:resources",
     ":core:designsystem",
     ":core:navigation",
-    ":core:juce"
 )
 
 include(

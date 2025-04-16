@@ -21,7 +21,6 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.audio.BalanceAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.audio.EqualizerAudioProcessor
-import com.jooheon.toyplayer.features.musicservice.audio.JuceEqualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.audio.VisualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
@@ -84,7 +83,6 @@ object PlayerComponentModule {
     fun provideRendererFactory(
         @MusicServiceContext context: Context,
         equalizerAudioProcessor: EqualizerAudioProcessor,
-        juceEqualizerAudioProcessor: JuceEqualizerAudioProcessor,
         visualizerAudioProcessor: VisualizerAudioProcessor,
         balanceAudioProcessor: BalanceAudioProcessor
     ): DefaultRenderersFactory = object : DefaultRenderersFactory(context) {
@@ -110,7 +108,6 @@ object PlayerComponentModule {
                         .setAudioProcessors(
                             arrayOf(
                                 equalizerAudioProcessor,
-//                                juceEqualizerAudioProcessor,
                                 visualizerAudioProcessor,
                                 balanceAudioProcessor
                             )
@@ -143,19 +140,6 @@ object PlayerComponentModule {
             playerSettingsUseCase = playerSettingsUseCase,
         )
     }
-
-    @Provides
-    @ServiceScoped
-    fun provideJuceEqualizerAudioProcessor(
-        @MusicServiceCoroutineScope scope: CoroutineScope,
-        playerSettingsUseCase: PlayerSettingsUseCase,
-    ): JuceEqualizerAudioProcessor {
-        return JuceEqualizerAudioProcessor(
-            scope = scope,
-            playerSettingsUseCase = playerSettingsUseCase,
-        )
-    }
-
 
     @Provides
     @ServiceScoped
