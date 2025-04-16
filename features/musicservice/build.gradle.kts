@@ -1,16 +1,27 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
+
+import com.jooheon.toyplayer.setNamespace
+
 plugins {
-    id("toyplayer.android.library.hilt")
+    id("toyplayer.android.library")
+    id("toyplayer.android.hilt")
+
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.jooheon.toyplayer.features.musicservice"
+    setNamespace("features.musicservice")
 }
 
 dependencies {
-    implementation(projects.domain)
+    implementation(projects.domain.model)
+    implementation(projects.domain.usecase)
+
+    implementation(projects.core.juce)
+    implementation(projects.core.system)
+    implementation(projects.core.resources)
+
     implementation(projects.features.common)
 //    testImplementation(projects.testing)
 
@@ -25,9 +36,13 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.mediarouter)
 
-    // coil
-    implementation(libs.coil)
-
-    // 위치 바꾸자
+    // timber
     implementation(libs.jakewharton.timber)
+
+    // glide
+    implementation(libs.bumptech.glide)
+    annotationProcessor(libs.bumptech.glide.compiler)
+
+    // noise
+    implementation(libs.noise)
 }

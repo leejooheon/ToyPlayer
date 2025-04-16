@@ -1,0 +1,56 @@
+[
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/apple_chips",
+    "channelName": "KBS 1라디오",
+    "channelCode": "21",
+    "channelSubCode": null,
+    "updatedTime": 0
+  },
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/apple_juice",
+    "channelName": "KBS 2라디오",
+    "channelCode": "22",
+    "channelSubCode": null,
+    "updatedTime": 0
+  },
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/apple_pie",
+    "channelName": "KBS 3라디오",
+    "channelCode": "23",
+    "channelSubCode": null,
+    "updatedTime": 0
+  },
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/apple_sauce",
+    "channelName": "KBS 1FM",
+    "channelCode": "24",
+    "channelSubCode": null,
+    "updatedTime": 0
+  },
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/apples",
+    "channelName": "KBS 2FM",
+    "channelCode": "25",
+    "channelSubCode": null,
+    "updatedTime": 0
+  },
+  {
+    "type": "KBS",
+    "url": null,
+    "image": "drawable/almonds",
+    "channelName": "KBS 한민족 방송",
+    "channelCode": "26",
+    "channelSubCode": null,
+    "updatedTime": 0
+  }
+]

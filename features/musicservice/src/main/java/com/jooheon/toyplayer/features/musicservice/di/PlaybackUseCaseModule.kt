@@ -1,8 +1,10 @@
 package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
-import com.jooheon.toyplayer.domain.observer.NetworkConnectivityObserver
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
+import com.jooheon.toyplayer.core.system.network.NetworkConnectivityObserver
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
@@ -13,6 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
+import kotlinx.coroutines.CoroutineScope
 
 @Module
 @InstallIn(ServiceComponent::class)
@@ -32,22 +35,24 @@ object PlaybackUseCaseModule {
     @Provides
     @ServiceScoped
     fun providePlaybackUseCase(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
         musicStateHolder: MusicStateHolder,
-        playingQueueUseCase: PlayingQueueUseCase,
+        playlistUseCase: PlaylistUseCase,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+        defaultSettingsUseCase: DefaultSettingsUseCase,
     ): PlaybackUseCase = PlaybackUseCase(
+        scope = scope,
         musicStateHolder = musicStateHolder,
-        playingQueueUseCase = playingQueueUseCase,
+        playlistUseCase = playlistUseCase,
+        playerSettingsUseCase = playerSettingsUseCase,
+        defaultSettingsUseCase = defaultSettingsUseCase,
     )
 
     @Provides
     @ServiceScoped
     fun providePlaybackErrorUseCase(
-        @ApplicationContext context: Context,
         musicStateHolder: MusicStateHolder,
-        networkConnectivityObserver: NetworkConnectivityObserver
     ): PlaybackErrorUseCase = PlaybackErrorUseCase(
-        context = context,
         musicStateHolder = musicStateHolder,
-        networkConnectivityObserver = networkConnectivityObserver,
     )
 }

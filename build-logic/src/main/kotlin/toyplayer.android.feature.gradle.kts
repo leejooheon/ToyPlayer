@@ -2,8 +2,9 @@ import com.jooheon.toyplayer.configureHiltAndroid
 import com.jooheon.toyplayer.libs
 
 plugins {
-    id("toyplayer.android.library.hilt")
+    id("toyplayer.android.library")
     id("toyplayer.android.compose")
+    id("toyplayer.android.hilt")
 }
 
 android {
@@ -15,8 +16,15 @@ android {
 configureHiltAndroid()
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(project(":domain:model"))
+    implementation(project(":domain:usecase"))
+
+    implementation(project(":core:resources"))
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:navigation"))
+
     implementation(project(":features:common"))
+    implementation(project(":features:common-ui"))
 //    testImplementation(project(":testing"))
 
     val libs = project.extensions.libs

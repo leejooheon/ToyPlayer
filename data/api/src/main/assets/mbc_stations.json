@@ -1,0 +1,29 @@
+[
+  {
+    "type": "MBC",
+    "url": null,
+    "image": "drawable/cheese",
+    "channelName": "MBC 표준FM",
+    "channelCode": "sfm",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "MBC",
+    "url": null,
+    "image": "drawable/chips",
+    "channelName": "MBC FM4U",
+    "channelCode": "mfm",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "MBC",
+    "url": null,
+    "image": "drawable/cupcake",
+    "channelName": "MBC 올댓뮤직",
+    "channelCode": "chm",
+    "channelSubCode": null,
+    "updatedTime": null
+  }
+]

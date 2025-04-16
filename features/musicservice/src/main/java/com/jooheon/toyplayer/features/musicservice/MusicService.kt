@@ -5,13 +5,16 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.IBinder
 import androidx.annotation.OptIn
+import androidx.core.content.getSystemService
 import androidx.media3.common.Player
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import com.jooheon.toyplayer.core.juce.JuceInitializer
+import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
-import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
+import com.jooheon.toyplayer.features.musicservice.ext.isHls
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
@@ -20,18 +23,17 @@ import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MusicService: MediaLibraryService() {
-    private val TAG = MusicService::class.java.simpleName + "@" + "Main"
-
     @Inject
     @MusicServiceCoroutineScope
     lateinit var serviceScope: CoroutineScope
@@ -68,7 +70,6 @@ class MusicService: MediaLibraryService() {
 
     private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
-
     private var notificationManager: NotificationManager? = null
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
@@ -76,6 +77,7 @@ class MusicService: MediaLibraryService() {
     override fun onCreate() {
         Timber.tag(LifecycleTAG).d( "onCreate")
         super.onCreate()
+        JuceInitializer().initialize()
 
         initMediaSession()
         initNotification()
@@ -88,7 +90,7 @@ class MusicService: MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         val player = mediaSession?.player ?: run {
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
             return
         }
         Timber.tag(LifecycleTAG).d( "onTaskRemoved - playWhenReady: ${player.playWhenReady} mediaItemCount: ${player.mediaItemCount}")
@@ -97,7 +99,7 @@ class MusicService: MediaLibraryService() {
             // This is done because if the app is swiped away from recent apps without this check,
             // the notification would remain in an unresponsive state.
             // Further explanation can be found at: https://github.com/androidx/media/issues/167#issuecomment-1615184728
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
         }
     }
 
@@ -108,30 +110,26 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun release() {
-        playbackCacheManager.release()
-        mediaLibrarySessionCallback.release()
-
-        mediaSession?.let {
-            it.player.release()
-            release()
-        }
-
         clearListener()
         serviceScope.cancel()
+        playbackCacheManager.release()
+
+        mediaSession?.let {
+            it.player.stop()
+            it.player.clearMediaItems()
+            it.player.removeListener(playbackListener)
+            it.player.release()
+            it.release()
+        }
+        mediaSession = null
+
+        notificationManager?.cancel(NOTIFICATION_ID)
+        notificationManager = null
 //        handleMedia3Bug()
     }
 
-    private fun handleMedia3Bug() { // TODO: CleanUp
-        /**
-         * process가 종료되지 않는 버그.. 짱난다 demo-session도 동일
-         * we should have something else instead\
-         * https://github.com/androidx/media/issues/805
-         **/
-        notificationManager?.cancelAll()
-        exitProcess(0)
-    }
-
     private fun initNotification() {
+        notificationManager = getSystemService()
         customMediaNotificationProvider = CustomMediaNotificationProvider(
             context = this,
             notificationIdProvider = { NOTIFICATION_ID },
@@ -156,7 +154,7 @@ class MusicService: MediaLibraryService() {
 
     private fun initListener() {
         val player = mediaSession?.player ?: run {
-            stopSelf()
+            pauseAllPlayersAndStopSelf()
             return
         }
 
@@ -166,7 +164,7 @@ class MusicService: MediaLibraryService() {
     }
 
     private fun initUseCase() {
-        playbackUseCase.initialize(mediaSession?.player, serviceScope)
+        playbackUseCase.collectStates(mediaSession?.player)
         playbackLogUseCase.initialize(serviceScope)
         playbackErrorUseCase.initialize(serviceScope)
     }
@@ -179,14 +177,8 @@ class MusicService: MediaLibraryService() {
                     musicStateHolder.shuffleMode
                 ) { repeatMode, shuffleMode ->
                     repeatMode to shuffleMode
-                }.collectLatest { (repeatMode, shuffleMode) ->
-                    mediaSession?.setCustomLayout(
-                        CustomMediaNotificationCommand.layout(
-                            context = this@MusicService,
-                            shuffleMode = shuffleMode,
-                            repeatMode = repeatMode
-                        )
-                    )
+                }.collectLatest {
+                    mediaLibrarySessionCallback.invalidateCustomLayout(mediaSession)
                 }
             }
 
@@ -194,6 +186,16 @@ class MusicService: MediaLibraryService() {
                 playbackErrorUseCase.autoPlayChannel.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
                     if(!player.isPlaying) player.play()
+                }
+            }
+
+            launch {
+                playbackErrorUseCase.seekToDefaultChannel.collectLatest {
+                    val player = mediaSession?.player ?: return@collectLatest
+                    if(player.currentMediaItem?.isHls().defaultFalse()) {
+                        player.seekToDefaultPosition()
+                        player.prepare()
+                    }
                 }
             }
         }
@@ -222,14 +224,9 @@ class MusicService: MediaLibraryService() {
         super.onRebind(intent)
     }
     companion object {
-        private const val PACKAGE_NAME = "toyplayer.musicservice"
-
         private const val LifecycleTAG = "ServiceLifecycle"
 
         const val NOTIFICATION_ID = 234
         const val NOTIFICATION_CHANNEL_ID = "Jooheon_player_notification"
-
-        const val CYCLE_REPEAT = "$PACKAGE_NAME.cycle_repeat"
-        const val TOGGLE_SHUFFLE = "$PACKAGE_NAME.toggle_shuffle"
     }
 }

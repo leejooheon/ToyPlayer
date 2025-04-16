@@ -6,8 +6,8 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.Player
-import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -16,16 +16,22 @@ import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.audio.AudioSink
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.extractor.DefaultExtractorsFactory
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
+import com.jooheon.toyplayer.features.musicservice.audio.BalanceAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.audio.EqualizerAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.audio.JuceEqualizerAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.audio.VisualizerAudioProcessor
+import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
-import com.jooheon.toyplayer.features.musicservice.playback.PlaybackUriResolver
+import com.jooheon.toyplayer.features.musicservice.playback.factory.CustomMediaSourceFactory
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
 
@@ -35,18 +41,14 @@ import kotlinx.coroutines.CoroutineScope
 object PlayerComponentModule {
     @Provides
     @ServiceScoped
-    fun provideToyPlayer(
-        player: Player,
-        @MusicServiceCoroutineScope scope: CoroutineScope,
-    ): ToyPlayer = ToyPlayer(player, scope)
+    fun provideToyPlayer(player: Player): ToyPlayer = ToyPlayer(player)
 
     @Provides
     fun provideExoPlayer(
         @MusicServiceContext context: Context,
-        mediaSourceFactory: DefaultMediaSourceFactory,
+        mediaSourceFactory: CustomMediaSourceFactory,
+        renderersFactory: DefaultRenderersFactory,
     ): Player {
-        val rendererFactory = DefaultRenderersFactory(context)
-
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             .setUsage(C.USAGE_MEDIA)
@@ -54,7 +56,7 @@ object PlayerComponentModule {
 
         return ExoPlayer.Builder(context)
             .setMediaSourceFactory(mediaSourceFactory)
-            .setRenderersFactory(rendererFactory)
+            .setRenderersFactory(renderersFactory)
             .setAudioAttributes(audioAttributes, true) // AudioFocus가 변경될때
             .setHandleAudioBecomingNoisy(true) // 재생 주체가 변경될때 정지 (해드폰 -> 스피커)
             .build()
@@ -63,13 +65,107 @@ object PlayerComponentModule {
     @OptIn(UnstableApi::class)
     @Provides
     fun provideDefaultMediaSourceFactory(
-        playbackUriResolver: PlaybackUriResolver,
+        @ApplicationContext context: Context,
+        hlsPlaybackUriResolver: HlsPlaybackUriResolver,
         playbackCacheManager: PlaybackCacheManager,
-    ): DefaultMediaSourceFactory = DefaultMediaSourceFactory(
-        ResolvingDataSource.Factory(
-            playbackCacheManager.cacheDataSource(),
-            playbackUriResolver
-        ),
-        DefaultExtractorsFactory()
-    )
+    ): CustomMediaSourceFactory {
+        val hlsMediaSource = ResolvingDataSource.Factory(
+            DefaultDataSource.Factory(context),
+            hlsPlaybackUriResolver
+        )
+
+        return CustomMediaSourceFactory(
+            defaultDataSource = playbackCacheManager.cacheDataSource(),
+            hlsDataSource = hlsMediaSource
+        )
+    }
+
+    @Provides
+    fun provideRendererFactory(
+        @MusicServiceContext context: Context,
+        equalizerAudioProcessor: EqualizerAudioProcessor,
+        juceEqualizerAudioProcessor: JuceEqualizerAudioProcessor,
+        visualizerAudioProcessor: VisualizerAudioProcessor,
+        balanceAudioProcessor: BalanceAudioProcessor
+    ): DefaultRenderersFactory = object : DefaultRenderersFactory(context) {
+        override fun buildAudioRenderers(
+            context: Context,
+            extensionRendererMode: Int,
+            mediaCodecSelector: MediaCodecSelector,
+            enableDecoderFallback: Boolean,
+            audioSink: AudioSink,
+            eventHandler: Handler,
+            eventListener: AudioRendererEventListener,
+            out: ArrayList<Renderer>
+        ) {
+            out.add(
+                MediaCodecAudioRenderer(
+                    context,
+                    MediaCodecAdapter.Factory.getDefault(context),
+                    mediaCodecSelector,
+                    enableDecoderFallback,
+                    eventHandler,
+                    eventListener,
+                    DefaultAudioSink.Builder(context)
+                        .setAudioProcessors(
+                            arrayOf(
+                                equalizerAudioProcessor,
+//                                juceEqualizerAudioProcessor,
+                                visualizerAudioProcessor,
+                                balanceAudioProcessor
+                            )
+                        )
+                        .build()
+                )
+            )
+
+            super.buildAudioRenderers(
+                context,
+                extensionRendererMode,
+                mediaCodecSelector,
+                enableDecoderFallback,
+                audioSink,
+                eventHandler,
+                eventListener,
+                out
+            )
+        }
+    }
+
+    @Provides
+    @ServiceScoped
+    fun provideEqualizerAudioProcessor(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+    ): EqualizerAudioProcessor {
+        return EqualizerAudioProcessor(
+            scope = scope,
+            playerSettingsUseCase = playerSettingsUseCase,
+        )
+    }
+
+    @Provides
+    @ServiceScoped
+    fun provideJuceEqualizerAudioProcessor(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+    ): JuceEqualizerAudioProcessor {
+        return JuceEqualizerAudioProcessor(
+            scope = scope,
+            playerSettingsUseCase = playerSettingsUseCase,
+        )
+    }
+
+
+    @Provides
+    @ServiceScoped
+    fun provideBalanceAudioProcessor(
+        @MusicServiceCoroutineScope scope: CoroutineScope,
+        playerSettingsUseCase: PlayerSettingsUseCase,
+    ): BalanceAudioProcessor {
+        return BalanceAudioProcessor(
+            scope = scope,
+            playerSettingsUseCase = playerSettingsUseCase,
+        )
+    }
 }

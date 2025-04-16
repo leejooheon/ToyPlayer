@@ -1,42 +1,43 @@
 package com.jooheon.toyplayer.features.splash
 
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jooheon.toyplayer.features.common.base.BaseViewModel
-import com.jooheon.toyplayer.features.common.utils.NetworkUtil.isNetworkAvailable
+import com.jooheon.toyplayer.domain.model.music.MediaId
+import com.jooheon.toyplayer.domain.usecase.EqualizerInitUseCase
+import com.jooheon.toyplayer.features.musicservice.player.PlayerController
+import com.jooheon.toyplayer.features.splash.model.SplashState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(): BaseViewModel() {
-    override val TAG: String = SplashViewModel::class.java.simpleName
-    private val _done = mutableStateOf<SplashResult<*>>(SplashResult.Default)
-    val done = _done
+class SplashViewModel @Inject constructor(
+    private val playerController: PlayerController,
+    private val equalizerInitUseCase: EqualizerInitUseCase,
+): ViewModel() {
+    private val _state = Channel<SplashState>()
+    val state = _state.receiveAsFlow()
 
-    fun prepareLaunchApp(context: Context) {
+    internal fun initialize(context: Context) {
         viewModelScope.launch {
-            if(!networkCheck(context).value) {
-                // call dialog
-            }
-
-            if(!isFirstLaunched().value) {
-                // call dialog
-            }
-
-            delay(500L)
-
-            _done.value = SplashResult.Done
+            equalizerInitUseCase.invoke()
+            prepareMediaItems(context)
         }
     }
 
-    private fun networkCheck(context: Context): SplashResult.NetworkAvailable<Boolean> {
-        return SplashResult.NetworkAvailable(isNetworkAvailable(context))
-    }
-
-    private fun isFirstLaunched(): SplashResult.Account<Boolean> { // FIXME
-        return SplashResult.Account(false)
+    private suspend fun prepareMediaItems(context: Context) {
+        suspendCancellableCoroutine { continuation ->
+            playerController.getMusicListFuture(
+                context = context,
+                mediaId = MediaId.Root,
+                listener = { continuation.resume(it) }
+            )
+        }
+        _state.send(SplashState.Done)
     }
 }

@@ -1,10 +1,21 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
+
+import java.util.Properties
+
+
 plugins {
     id("toyplayer.android.application")
+    id("com.google.android.gms.oss-licenses-plugin")
+}
+
+val localProperties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
     namespace = "com.jooheon.toyplayer"
+    compileSdk = Integer.parseInt(libs.versions.android.sdk.compile.get())
+
     defaultConfig {
         applicationId = "com.jooheon.toyplayer"
 
@@ -18,23 +29,49 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    buildTypes {
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("debug")
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProperties["keystore"].toString())
+            storePassword = localProperties["keystore_pass"].toString()
+            keyAlias = localProperties["key_alias"].toString()
+            keyPassword = localProperties["key_pass"].toString()
         }
     }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = false
+            isDebuggable = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
 }
 
 dependencies {
-    implementation(projects.data)
-    implementation(projects.domain)
     implementation(projects.features.main)
     implementation(projects.features.common)
     implementation(projects.features.musicservice)
-    implementation(projects.features.musicplayer)
+    implementation(projects.data.repository)
 
     // theme
     implementation(libs.androidx.material)
@@ -60,6 +97,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compile)
 
-    // LearkCanary
+    // oss
+    implementation(libs.oss.licenses)
+
+    // LeakCanary
     debugImplementation(libs.squareup.leakcanary)
 }

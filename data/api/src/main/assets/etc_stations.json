@@ -1,0 +1,83 @@
+[
+  {
+    "type": "TBN",
+    "url": "http://radio2.tbn.or.kr:1935/gyeongin/myStream/playlist.m3u8",
+    "image": "drawable/froyo",
+    "channelName": "TBN 경인교통방송",
+    "channelCode": "TBN 경인교통방송",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "CBS",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbs981/_definst_/cbs981.stream/chunklist.m3u8",
+    "image": "drawable/fruit",
+    "channelName": "CBS 표준FM",
+    "channelCode": "CBS 표준FM",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "CBS",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbs939/_definst_/cbs939.stream/chunklist.m3u8",
+    "image": "drawable/gingerbread",
+    "channelName": "CBS 음악FM",
+    "channelCode": "CBS 음악FM",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "CBS",
+    "url": "https://m-aac.cbs.co.kr/mweb_cbscmc/_definst_/cbscmc.stream/chunklist.m3u8",
+    "image": "drawable/kitkat",
+    "channelName": "CBS JOY4U",
+    "channelCode": "CBS JOY4U",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "FEBC",
+    "url": "http://mlive2.febc.net:1935/live/seoulfm/playlist.m3u8",
+    "image": "drawable/gluten_free",
+    "channelName": "FEBC 서울극동방송",
+    "channelCode": "FEBC 서울극동방송",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "BBS",
+    "url": "https://bbslive.clouducs.com/bbsradio-live/livestream/playlist.m3u8",
+    "image": "drawable/grapes",
+    "channelName": "BBS 서울불교방송",
+    "channelCode": "BBS 서울불교방송",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "EBS",
+    "url": "https://ebsonair.ebs.co.kr/fmradiofamilypc/familypc1m/playlist.m3u8",
+    "image": "drawable/honeycomb",
+    "channelName": "EBS FM",
+    "channelCode": "EBS FM",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "YTN",
+    "url": "https://radiolive.ytn.co.kr/radio/_definst_/20211118_fmlive/playlist.m3u8",
+    "image": "drawable/ice_cream_sandwich",
+    "channelName": "YTN 라디오",
+    "channelCode": "YTN 라디오",
+    "channelSubCode": null,
+    "updatedTime": null
+  },
+  {
+    "type": "LGBF",
+    "url": "https://mgugaklive.nowcdn.co.kr/gugakradio/gugakradio.stream/playlist.m3u8",
+    "image": "drawable/jelly_bean",
+    "channelName": "국악방송",
+    "channelCode": "국악방송",
+    "channelSubCode": null,
+    "updatedTime": null
+  }
+]
