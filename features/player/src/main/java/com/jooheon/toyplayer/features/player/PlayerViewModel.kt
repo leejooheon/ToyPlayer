@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
+import com.jooheon.toyplayer.domain.model.audio.VisualizerData
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
@@ -22,12 +23,14 @@ import com.jooheon.toyplayer.features.player.model.PlayerEvent
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -42,7 +45,7 @@ class PlayerViewModel @Inject constructor(
     private val playlistUseCase: PlaylistUseCase,
     private val visualizerObserver: VisualizerObserver,
 ): ViewModel() {
-    val uiState: StateFlow<PlayerUiState> =
+    internal val uiState: StateFlow<PlayerUiState> =
         combine(
             musicStateHolder.musicState,
             playlistUseCase.flowAllPlaylists(),
@@ -71,9 +74,15 @@ class PlayerViewModel @Inject constructor(
             initialValue = PlayerUiState.default,
         )
 
-    val visualizerFlow = visualizerObserver.observe()
+    internal val visualizerFlow = visualizerObserver.observe()
+        .sample(150)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = VisualizerData.default
+        )
 
-    val autoPlaybackProperty = AtomicBoolean(false)
+    internal val autoPlaybackProperty = AtomicBoolean(false)
 
     init {
         collectStates()

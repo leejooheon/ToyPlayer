@@ -40,7 +40,7 @@ internal fun ControlButton(
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.ArrowBackIos,
-            contentDescription = stringResource(Strings.action_play_pause),
+            contentDescription = stringResource(Strings.action_previous),
             tint = Color.White,
             modifier = Modifier.size(32.dp).bounceClick { onPreviousClick.invoke() }
         )
@@ -65,7 +65,7 @@ internal fun ControlButton(
         }
         Icon(
             imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
-            contentDescription = stringResource(Strings.action_play_pause),
+            contentDescription = stringResource(Strings.action_next),
             tint = Color.White,
             modifier = Modifier.size(32.dp).bounceClick { onNextClick.invoke() }
         )

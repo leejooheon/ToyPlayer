@@ -44,7 +44,7 @@ fun PlayerScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val visualizer by viewModel.visualizerFlow.collectAsStateWithLifecycle(VisualizerData.default)
+    val visualizer by viewModel.visualizerFlow.collectAsStateWithLifecycle()
 
     var infoSectionVisibleState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()

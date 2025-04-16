@@ -73,6 +73,8 @@ fun horizontalMargin(): Dp {
 @Composable
 fun contentSize(): Int {
     val configuration = LocalConfiguration.current
+    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT) return 3
+
     val density = LocalDensity.current
     val insets = androidx.compose.foundation.layout.WindowInsets.safeDrawing
 
@@ -82,7 +84,6 @@ fun contentSize(): Int {
     val screenHeight = configuration.screenHeightDp.dp
     val usableHeight = screenHeight - topInset - bottomInset
 
-    // 카드 하나당 높이 기준 (예: 180.dp로 설정)
     val itemMinHeight = contentHeight() + cardHeight()
 
     // 행 개수 = usable height에서 몇 개 들어갈 수 있는지
