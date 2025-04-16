@@ -4,42 +4,40 @@
     <p>An Android application for play music</p>
 </div>
 
-This project is my digital playground where I am learning.
+**ToyPlayer** is my digital playground for experimenting with new ideas, technologies, and architectures in Android development.  
+It supports **radio playback**, **local music files**, and **free streaming audio** — all in one app.
 
-I'm testing new technologies and ideas here.
-
-If you like to contribute, that is very appreciated.
+If you’d like to contribute or leave feedback, it’s very appreciated!
 
 ---
 
-## Features
-- Play (almost) any song (local, remote, assets)
-- Media3 : MediaLibraryService
-- Background playback
-- Cache audio with AES encryption and decrypt and play the file.
-- Late init media url when preparing playback. (ResolvingDataSource.Resolver)
-- Android Auto
-- Local playlist management
-- Motion Layout like YoutubeMusic
-- Multiple Theme light/dark/dynamic
-- Multiple language (Eng, Kor)
+## 🚀 Features
+- 📻 **Live radio streaming** (KBS, MBC, SBS, etc.)
+- 📻 **Free streaming** (Pop, Latin, Jazz, Classic, etc.)
+- 🎧 Built on **Media3** (MediaLibraryService)
+- 🔄 **Custom ExoPlayer middleware**:
+  - Custom `MediaSource` handling (e.g. radio wrapping)
+  - Custom `AudioProcessor` for sample-level transformation
+  - Custom `ResolvingDataSource` for deferred URL resolution
+- 🔐 **Encrypted ExoPlayer cache**
+  - Adds AES encryption on top of default SimpleCache
+  - Decrypts on-the-fly for secure audio playback
+- 🎚️ **Parametric Equalizer** with multi-band control
+- 🚗 **Android Auto** support
+- 📝 Local playlist management
+- 🎬 Smooth **MotionLayout UI**
+- 🎨 Supports light / dark Theme
+- 🌐 Multilingual: **English**, **Korean**
+- ⏺️ Background playback
 
 ## Preview
 <p float="left">
-  <img src="./screenshot/screen_main.png" height="600" width="270" >
-  <img src="./screenshot/screen_motion.gif" height="600" width="270" >
-  <img src="./screenshot/screen_full_player.png" height="600" width="270" >
-  <img src="./screenshot/screen_playing_queue.png" height="600" width="270" >
-  <img src="./screenshot/screen_album.png" height="600" width="270" >
-  <img src="./screenshot/screen_artist.png" height="600" width="270" >
+  <img src="./screenshot/player_info_top.png" height="600" width="270" >
+  <img src="./screenshot/player_info_category.png" height="600" width="270" >
+  <img src="./screenshot/album_detail.png" height="600" width="270" >
+  <img src="./screenshot/artist_detail.png" height="600" width="270" >
+  <img src="./screenshot/playlist_main.png" height="600" width="270" >
+  <img src="./screenshot/settings_sound.png" height="600" width="270" >
+  <img src="./screenshot/settings_sound.png" height="600" width="270" >
+  <img src="./screenshot/settings_language.png" height="600" width="270" >
 </p>
-
-## Architecture
-Toyplayer Architecture is based on CleanArchitecture
-* **app** - The Application module. It contains all the initialization logic for the Android
-  environment.
-* **features** - The module/folder containing all the features (visual or not) from the application.
-* **domain** - The modules containing the most important part of the application: the business
-  logic. This module depends only on itself and all interaction it does is via _dependency
-  inversion_.
-* **data** - The module containing the data (local, remote, light etc) from the app.
