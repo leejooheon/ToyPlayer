@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ToyPlayer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <item name="android:windowActionModeOverlay">false</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

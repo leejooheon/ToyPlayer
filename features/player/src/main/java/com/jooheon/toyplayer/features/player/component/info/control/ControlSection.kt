@@ -1,0 +1,107 @@
+package com.jooheon.toyplayer.features.player.component.info.control
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.tooling.preview.Preview
+import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.resources.Strings
+import com.jooheon.toyplayer.core.resources.UiText
+import com.jooheon.toyplayer.features.musicservice.data.MusicState
+import com.jooheon.toyplayer.features.player.common.contentHeight
+import com.jooheon.toyplayer.features.player.common.horizontalMargin
+import com.jooheon.toyplayer.features.player.common.verticalMargin
+import com.jooheon.toyplayer.features.player.component.info.control.component.ControlBottomInfo
+import com.jooheon.toyplayer.features.player.component.info.control.component.ControlButton
+import com.jooheon.toyplayer.features.player.component.info.control.component.ControlTopInfo
+import com.jooheon.toyplayer.features.player.model.PlayerUiState
+
+
+@Composable
+internal fun ControlSection(
+    musicState: MusicState,
+    playedName: String,
+    playedThumbnailImage: String,
+    titleAlpha: Float,
+    isLoading: Boolean,
+    onLibraryClick: () -> Unit,
+    onPlaylistClick: () -> Unit,
+    onSettingClick: () -> Unit,
+    onPlayPauseClick: () -> Unit,
+    onNextClick: () -> Unit,
+    onPreviousClick: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = verticalMargin(),
+                start = horizontalMargin(),
+                end = horizontalMargin(),
+            ),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            ControlTopInfo(
+                title = playedName,
+                imageUrl = playedThumbnailImage,
+                isPlaying = musicState.isPlaying(),
+                onLibraryClick = onLibraryClick,
+                onPlaylistClick = onPlaylistClick,
+                onSettingClick = onSettingClick,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            ControlBottomInfo(
+                title = musicState.currentPlayingMusic.title,
+                artist = musicState.currentPlayingMusic.artist,
+                modifier = Modifier.alpha(titleAlpha)
+            )
+        }
+
+        ControlButton(
+            isLoading = isLoading,
+            isPlaying = musicState.isPlaying(),
+            onPlayPauseClick = onPlayPauseClick,
+            onNextClick = onNextClick,
+            onPreviousClick = onPreviousClick,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .padding(bottom = contentHeight() * 0.6f),
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+)
+@Composable
+private fun PreviewControlSection() {
+    val uiState = PlayerUiState.preview
+    ToyPlayerTheme {
+        ControlSection(
+            musicState = uiState.musicState,
+            playedName = UiText.StringResource(Strings.placeholder_long).asString(),
+            playedThumbnailImage = "",
+            titleAlpha = 1f,
+            isLoading = false,
+            onLibraryClick = {},
+            onPlaylistClick = {},
+            onSettingClick = {},
+            onPlayPauseClick = {},
+            onNextClick = {},
+            onPreviousClick = {},
+        )
+    }
+}

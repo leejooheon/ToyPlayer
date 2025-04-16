@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MediaLibrarySessionCallback
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.notification.GlideBitmapLoader
@@ -25,10 +28,16 @@ object MediaSessionModule {
         @MusicServiceContext context: Context,
         @MusicServiceCoroutineScope scope: CoroutineScope,
         mediaItemProvider: MediaItemProvider,
+        playlistUseCase: PlaylistUseCase,
+        playlistSettingsUseCase: PlayerSettingsUseCase,
+        defaultSettingsUseCase: DefaultSettingsUseCase,
     ): MediaLibrarySessionCallback = MediaLibrarySessionCallback(
         context = context,
         scope = scope,
         mediaItemProvider = mediaItemProvider,
+        playlistUseCase = playlistUseCase,
+        playerSettingsUseCase = playlistSettingsUseCase,
+        defaultSettingsUseCase = defaultSettingsUseCase,
     )
 
     @OptIn(UnstableApi::class)

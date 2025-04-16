@@ -9,15 +9,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object MusicUtil {
-    fun localMusicStorageUri(): Uri {
-        val uri = if (VersionUtil.hasQ()) {
-            MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        }
-        return uri
-    }
-
     fun toReadableDurationString(songDurationMillis: Long): String {
         var minutes = songDurationMillis / 1000 / 60
         val seconds = songDurationMillis / 1000 % 60
@@ -66,7 +57,8 @@ object MusicUtil {
         try {
             if (URLUtil.isHttpUrl(imageUrl) ||
                 URLUtil.isHttpsUrl(imageUrl) ||
-                URLUtil.isContentUrl(imageUrl)) {
+                URLUtil.isContentUrl(imageUrl) ||
+                imageUrl.startsWith("android.resource://")) {
                 return imageUrl.toUri()
             }
         } catch (e: Exception) {

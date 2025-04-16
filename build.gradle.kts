@@ -1,4 +1,5 @@
 @file:Suppress("DSL_SCOPE_VIOLATION")
+
 buildscript {
     repositories {
         google()
@@ -6,7 +7,7 @@ buildscript {
         maven(url = "https://jitpack.io" )
     }
     dependencies {
-        classpath(libs.google.gms.plugin)
+        classpath(libs.oss.licenses.plugin)
     }
 }
 
@@ -22,12 +23,4 @@ plugins {
 
 apply {
     from("gradle/dependencyGraph.gradle")
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven(url = "https://jitpack.io" )
-    }
 }

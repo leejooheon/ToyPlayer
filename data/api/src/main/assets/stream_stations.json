@@ -1,0 +1,50 @@
+[
+  {
+    "audioId": 8086,
+    "title": "Pop",
+    "url": "http://mediaserv30.live-streams.nl:8086/live",
+    "image": "drawable/kitkat"
+  },
+  {
+    "audioId": 8034,
+    "title": "Latin",
+    "url": "http://mediaserv33.live-streams.nl:8034/live",
+    "image": "drawable/kiwi"
+  },
+  {
+    "audioId": 8006,
+    "title": "Jazz",
+    "url": "http://mediaserv38.live-streams.nl:8006/live",
+    "image": "drawable/lollipop"
+  },
+  {
+    "audioId": 8036,
+    "title": "Lounge",
+    "url": "http://mediaserv33.live-streams.nl:8036/live",
+    "image": "drawable/mango"
+  },
+  {
+    "audioId": 8000,
+    "title": "Gold",
+    "url": "http://mediaserv30.live-streams.nl:8000/live",
+    "image": "drawable/marshmallow"
+  },
+  {
+    "audioId": 8088,
+    "title": "Classical",
+    "url": "http://mediaserv30.live-streams.nl:8088/live",
+    "image": "drawable/nougat"
+  },
+  {
+    "audioId": 8027,
+    "title": "World",
+    "url": "http://mediaserv38.live-streams.nl:8027/live",
+    "image": "drawable/nuts"
+  },
+  {
+    "audioId": 8000,
+    "title": "France",
+    "url": "http://mediaserv21.live-streams.nl:8000/live",
+    "image": "drawable/oreo"
+  }
+]

@@ -8,8 +8,9 @@ import androidx.media3.datasource.cache.Cache
 import androidx.media3.datasource.cache.CacheDataSink
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager.Companion.SECRET_KEY
 
+@UnstableApi
 class CipherCacheDataSinkFactory(private val cache: Cache): DataSink.Factory {
-    @UnstableApi override fun createDataSink(): DataSink {
+    override fun createDataSink(): DataSink {
         val cacheSink = CacheDataSink(
             cache,
             Long.MAX_VALUE,

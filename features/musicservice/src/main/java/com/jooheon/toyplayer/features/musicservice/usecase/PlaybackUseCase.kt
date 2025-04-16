@@ -1,94 +1,77 @@
 package com.jooheon.toyplayer.features.musicservice.usecase
 
+import android.media.audiofx.BassBoost
+import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Player
-import com.jooheon.toyplayer.domain.common.Resource
-import com.jooheon.toyplayer.domain.entity.music.ShuffleMode
-import com.jooheon.toyplayer.domain.usecase.music.library.PlayingQueueUseCase
+import androidx.media3.common.util.UnstableApi
+import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
+import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
-import com.jooheon.toyplayer.features.musicservice.ext.forceEnqueue
-import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
-import com.jooheon.toyplayer.features.musicservice.ext.toSong
+import com.jooheon.toyplayer.features.musicservice.ext.findExoPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 
+@OptIn(UnstableApi::class)
 class PlaybackUseCase(
+    private val scope: CoroutineScope,
     private val musicStateHolder: MusicStateHolder,
-    private val playingQueueUseCase: PlayingQueueUseCase,
+    private val playlistUseCase: PlaylistUseCase,
+    private val playerSettingsUseCase: PlayerSettingsUseCase,
+    private val defaultSettingsUseCase: DefaultSettingsUseCase
 ) {
-    internal fun initialize(player: Player?, scope: CoroutineScope) {
-        scope.launch {
-            player ?: return@launch
-            initPlaybackOptions(player)
-            initPlayingQueue(player)
-        }
+    private var bassBoost: BassBoost? = null
+    private var bassBoostSessionId: Int? = null
 
-        collectMediaItem(scope)
-        collectPlayingQueue(scope)
-        collectPlaybackOptions(scope)
-    }
+    internal fun collectStates(player: Player?) = scope.launch {
+        player ?: return@launch
 
-    private fun collectPlayingQueue(scope: CoroutineScope) = scope.launch {
-        musicStateHolder.mediaItems.collectLatest {
-            val songs = it.map { it.toSong() }
-            playingQueueUseCase.setPlayingQueue(songs)
-        }
-    }
-
-    private fun collectMediaItem(scope: CoroutineScope) = scope.launch {
-        musicStateHolder.mediaItem.collectLatest { mediaItem ->
-            mediaItem ?: return@collectLatest
-            val key = mediaItem.mediaId.toLongOrNull() ?: return@collectLatest
-            playingQueueUseCase.setRecentMediaItemKey(key)
-        }
-    }
-
-    private fun collectPlaybackOptions(scope: CoroutineScope) = scope.launch {
-        launch {
-            musicStateHolder.shuffleMode.collectLatest {
-                playingQueueUseCase.shuffleModeChanged(it)
+        musicStateHolder.mediaItem
+            .onEach {
+                if(player.playbackState == Player.STATE_IDLE) return@onEach
+                Timber.d("mediaItem: ${it.mediaId}")
+                defaultSettingsUseCase.setLastPlayedMediaId(it.mediaId)
             }
-        }
+            .flowOn(Dispatchers.Main)
+            .launchIn(this@launch)
 
-        launch {
-            musicStateHolder.repeatMode.collectLatest {
-                playingQueueUseCase.repeatModeChanged(it)
-            }
-        }
-    }
+        playerSettingsUseCase.flowRepeatMode()
+            .onEach { player.repeatMode = it }
+            .flowOn(Dispatchers.Main)
+            .launchIn(this@launch)
 
-    private suspend fun initPlayingQueue(player: Player) = withContext(Dispatchers.IO) {
-        playingQueueUseCase.playingQueue().onEach {
-            if(it is Resource.Success) {
-                val playingQueue = it.value
+        playerSettingsUseCase.flowShuffleMode()
+            .onEach { player.shuffleModeEnabled = it }
+            .flowOn(Dispatchers.Main)
+            .launchIn(this@launch)
 
-                val newMediaItems = playingQueue.map { it.toMediaItem() }
-                withContext(Dispatchers.Main.immediate) {
-                    val key = playingQueueUseCase.getRecentMediaItemKey()
-                    val index = newMediaItems.indexOfFirst {
-                        it.mediaId == key.toString()
+        playerSettingsUseCase.flowVolume()
+            .onEach { player.volume = it }
+            .flowOn(Dispatchers.Main)
+            .launchIn(this@launch)
+
+        playerSettingsUseCase.flowBassBoost()
+            .onEach { value ->
+                val sessionId = player.findExoPlayer()?.audioSessionId.default(C.AUDIO_SESSION_ID_UNSET)
+                if (sessionId != C.AUDIO_SESSION_ID_UNSET) {
+                    if (bassBoost == null || bassBoostSessionId != sessionId) {
+                        bassBoost?.release()
+                        bassBoostSessionId = sessionId
+                        bassBoost = BassBoost(0, sessionId)
+                            .apply { enabled = true }
                     }
-                    player.forceEnqueue(
-                        mediaItems = newMediaItems,
-                        startIndex = index,
-                        startPositionMs = C.TIME_UNSET,
-                        playWhenReady = false
-                    )
+
+                    bassBoost?.setStrength((value * 10).coerceIn(0, 1000).toShort())
                 }
             }
-        }.launchIn(this)
-    }
-
-    private suspend fun initPlaybackOptions(player: Player) = withContext(Dispatchers.Main.immediate) {
-        val repeatMode = playingQueueUseCase.repeatMode()
-        val shuffleMode = playingQueueUseCase.shuffleMode()
-
-        player.repeatMode = repeatMode.ordinal
-        player.shuffleModeEnabled = shuffleMode == ShuffleMode.SHUFFLE
+            .flowOn(Dispatchers.Main)
+            .launchIn(this@launch)
     }
 }
