@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.player.component.info.control.component
 
-import android.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +28,9 @@ import com.jooheon.toyplayer.features.player.common.contentHeight
 internal fun ControlBottomInfo(
     title: String,
     artist: String,
+    duration: Long,
+    currentPosition: Long,
+    onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -64,7 +66,17 @@ internal fun ControlBottomInfo(
                 .fillMaxWidth()
                 .padding(bottom = (contentHeight() * 0.6f)),
         ) {
-            Spacer(modifier = Modifier.padding(top = 16.dp))
+            if(duration > 0) {
+                ControlSlider(
+                    duration = duration,
+                    currentPosition = currentPosition,
+                    onSeek = onSeek,
+                    modifier = Modifier,
+                )
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
             IconButton(
                 onClick = {},
                 modifier = Modifier
@@ -83,14 +95,17 @@ internal fun ControlBottomInfo(
 
 @Preview(
     showBackground = true,
-    backgroundColor = Color.GRAY.toLong(),
+    backgroundColor = android.graphics.Color.GRAY.toLong(),
 )
 @Composable
 private fun PreviewControlBottomInfoSection() {
     ToyPlayerTheme {
         ControlBottomInfo(
             title = Song.preview.title,
-            artist = Song.preview.artist
+            artist = Song.preview.artist,
+            duration = 10000L,
+            currentPosition = 5000L,
+            onSeek = {},
         )
     }
 }

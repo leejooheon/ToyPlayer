@@ -3,6 +3,7 @@ package com.jooheon.toyplayer.features.player
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.C
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.audio.VisualizerData
@@ -74,12 +75,27 @@ class PlayerViewModel @Inject constructor(
             initialValue = PlayerUiState.default,
         )
 
-    internal val visualizerFlow = visualizerObserver.observe()
-        .sample(150)
+
+    @OptIn(FlowPreview::class)
+    internal val visualizerFlow = combine(
+        visualizerObserver.observe().sample(100),
+        musicStateHolder.isPlaying,
+    ) { visualizerData, isPlaying ->
+        if(isPlaying) visualizerData
+        else VisualizerData.default
+    }.sample(100)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = VisualizerData.default
+        )
+
+    internal val currentPosition: StateFlow<Long> = musicStateHolder.currentDuration
+        .map { maxOf(it, 0L) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0L
         )
 
     internal val autoPlaybackProperty = AtomicBoolean(false)
@@ -106,6 +122,7 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.OnPreviousClick -> playerController.seekToPrevious()
             is PlayerEvent.OnSwipe -> playerController.playAtIndex(event.index)
             is PlayerEvent.OnFavoriteClick -> playlistUseCase.favorite(event.playlistId, event.song)
+            is PlayerEvent.OnSeek -> playerController.snapTo(event.position)
 
             is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
