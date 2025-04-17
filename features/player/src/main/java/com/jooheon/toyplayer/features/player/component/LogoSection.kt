@@ -42,10 +42,6 @@ internal fun LogoSection(
 ) {
     val isLoading = musicState.isLoading()
     val song = musicState.currentPlayingMusic
-    val (visualizerWidth, visualizerHeight) = when (LocalConfiguration.current.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> 0.3f to 0.1f
-        else -> 0.35f to 0.1f
-    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -57,7 +53,7 @@ internal fun LogoSection(
                 .fillMaxWidth(0.7f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if(!song.useCache) {
+            if(musicState.currentPlayingMusic.duration <= 0) {
                 OutlinedText(
                     text = song.displayName,
                     style = MaterialTheme.typography.displaySmall.copy(
@@ -82,15 +78,14 @@ internal fun LogoSection(
                         }
                     },
                     update = {
-                        if(visualizerData == VisualizerData.default) return@AndroidView
                         it.bandView.onFFT(
                             fft = visualizerData.fft.toFloatArray(),
                             sampleRate = visualizerData.sampleRateHz
                         )
                     },
                     modifier = Modifier
-                        .fillMaxWidth(visualizerWidth)
-                        .fillMaxHeight(visualizerHeight)
+                        .fillMaxWidth(0.5f)
+                        .height(16.dp)
                 )
 
                 if(isLoading || LocalInspectionMode.current) {
@@ -120,7 +115,7 @@ private fun PreviewLogoSection() {
                     isFavorite = false,
                 )
             ),
-            visualizerData = VisualizerData.default
+            visualizerData = VisualizerData.default,
         )
     }
 }
