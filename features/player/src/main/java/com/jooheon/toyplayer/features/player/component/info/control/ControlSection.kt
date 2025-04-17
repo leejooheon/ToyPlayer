@@ -11,15 +11,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.zIndex
+import androidx.media3.common.C
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
+import com.jooheon.toyplayer.features.musicservice.ext.isRadio
 import com.jooheon.toyplayer.features.player.common.contentHeight
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
 import com.jooheon.toyplayer.features.player.common.verticalMargin
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlBottomInfo
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlButton
+import com.jooheon.toyplayer.features.player.component.info.control.component.ControlSlider
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlTopInfo
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
@@ -27,6 +31,7 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 @Composable
 internal fun ControlSection(
     musicState: MusicState,
+    currentPosition: Long,
     playedName: String,
     playedThumbnailImage: String,
     titleAlpha: Float,
@@ -37,9 +42,11 @@ internal fun ControlSection(
     onPlayPauseClick: () -> Unit,
     onNextClick: () -> Unit,
     onPreviousClick: () -> Unit,
+    onSeek: (Long) -> Unit,
+    modifier: Modifier,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(
                 top = verticalMargin(),
@@ -65,6 +72,9 @@ internal fun ControlSection(
             ControlBottomInfo(
                 title = musicState.currentPlayingMusic.title,
                 artist = musicState.currentPlayingMusic.artist,
+                duration = musicState.currentPlayingMusic.duration,
+                currentPosition = currentPosition,
+                onSeek = onSeek,
                 modifier = Modifier.alpha(titleAlpha)
             )
         }
@@ -92,6 +102,7 @@ private fun PreviewControlSection() {
     ToyPlayerTheme {
         ControlSection(
             musicState = uiState.musicState,
+            currentPosition = 5000L,
             playedName = UiText.StringResource(Strings.placeholder_long).asString(),
             playedThumbnailImage = "",
             titleAlpha = 1f,
@@ -102,6 +113,8 @@ private fun PreviewControlSection() {
             onPlayPauseClick = {},
             onNextClick = {},
             onPreviousClick = {},
+            onSeek = {},
+            modifier = Modifier,
         )
     }
 }

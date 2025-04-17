@@ -100,7 +100,6 @@ class VisualizerAudioProcessor: AudioProcessor, VisualizerObserver {
                             VisualizerData(
                                 fft = fft.toList(),
                                 sampleRateHz = sampleRateHz,
-                                channel = channelCount,
                             )
                         )
                     }
