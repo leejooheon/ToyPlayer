@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.PagerDefaults
@@ -18,6 +19,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +51,7 @@ import kotlin.math.min
 fun InfoSection(
     pagerState: PagerState,
     musicState: MusicState,
+    currentPosition: Long,
     playedName: String,
     playedThumbnailImage: String,
     currentSong: Song,
@@ -64,6 +67,7 @@ fun InfoSection(
     onContentClick: (playlist: Playlist, startIndex: Int) -> Unit,
     onFavoriteClick: (playlistId: Int, song: Song) -> Unit,
     onDetailsClick: (playlistId: Int) -> Unit,
+    onSeek: (Long) -> Unit,
 ) {
     val chunkedModel = playlists.toChunkedModel()
     var contentAlpha by remember { mutableFloatStateOf(1f) }
@@ -107,6 +111,7 @@ fun InfoSection(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .zIndex(if (pageIndex == 0) Float.MAX_VALUE else 0f)
                         .graphicsLayer(
                             translationY = calculateYOffset(
                                 state = pagerState,
@@ -117,6 +122,7 @@ fun InfoSection(
                     when (pageIndex) {
                         0 -> ControlSection(
                             musicState = musicState,
+                            currentPosition = currentPosition,
                             playedName = playedName,
                             playedThumbnailImage = playedThumbnailImage,
                             titleAlpha = 1 - pageOffset,
@@ -127,6 +133,8 @@ fun InfoSection(
                             onPlayPauseClick = onPlayPauseClick,
                             onNextClick = onNextClick,
                             onPreviousClick = onPreviousClick,
+                            onSeek = onSeek,
+                            modifier = Modifier
                         )
                         else -> {
                             val isLastPage = pagerState.currentPage == pagerState.pageCount - 1
@@ -189,6 +197,7 @@ private fun PreviewInfoSection() {
         InfoSection(
             pagerState = pagerState,
             musicState = uiState.musicState,
+            currentPosition = 0L,
             playedName = UiText.StringResource(Strings.placeholder_long).asString(),
             playedThumbnailImage = "",
             currentSong = uiState.musicState.currentPlayingMusic,
@@ -203,7 +212,8 @@ private fun PreviewInfoSection() {
             onPreviousClick = {},
             onContentClick = { _, _ -> },
             onFavoriteClick = { _, _ -> },
-            onDetailsClick = {}
+            onDetailsClick = {},
+            onSeek = {},
         )
     }
 }

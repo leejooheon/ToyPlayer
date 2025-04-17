@@ -36,7 +36,7 @@ class PlaybackListener(
             if(isPlaying) {
                 withContext(Dispatchers.Main) {
                     pollCurrentDuration(player).collect {
-                            value -> musicStateHolder.onCurrentDurationChanged(value)
+                        value -> musicStateHolder.onCurrentDurationChanged(value)
                     }
                 }
             }

@@ -53,7 +53,7 @@ data class PlayerUiState(
             isLoading = true,
         )
         val default = PlayerUiState(
-            musicState = MusicState(),
+            musicState = MusicState.default,
             pagerModel = PagerModel.default,
             playlists = emptyList(),
             isLoading = false,

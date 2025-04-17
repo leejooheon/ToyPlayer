@@ -44,7 +44,7 @@ class MusicStateHolder @Inject constructor() {
     )
     val playbackError = _playbackError
 
-    private val _musicState = MutableStateFlow(MusicState())
+    private val _musicState = MutableStateFlow(MusicState.default)
     val musicState = _musicState.asStateFlow()
 
     private val _isPlaying = MutableStateFlow(false)

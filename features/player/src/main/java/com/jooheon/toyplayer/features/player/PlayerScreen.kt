@@ -22,8 +22,8 @@ import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.domain.model.audio.VisualizerData
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.common.controller.TouchEventController
+import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
 import com.jooheon.toyplayer.features.player.component.LogoSection
 import com.jooheon.toyplayer.features.player.component.info.InfoSection
 import com.jooheon.toyplayer.features.player.component.inside.InsidePager
@@ -45,6 +45,7 @@ fun PlayerScreen(
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val visualizer by viewModel.visualizerFlow.collectAsStateWithLifecycle()
+    val currentPosition by viewModel.currentPosition.collectAsStateWithLifecycle()
 
     var infoSectionVisibleState by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -102,8 +103,9 @@ fun PlayerScreen(
 
     PlayerScreenInternal(
         uiState = uiState,
-        infoSectionVisibleState = infoSectionVisibleState,
         visualizerData = visualizer,
+        currentPosition = currentPosition,
+        infoSectionVisibleState = infoSectionVisibleState,
         modifier = Modifier.pointerInput(infoSectionVisibleState) {
             detectTapGestures(
                 onTap = { infoSectionVisibleState = !infoSectionVisibleState }
@@ -138,6 +140,7 @@ fun PlayerScreen(
 private fun PlayerScreenInternal(
     uiState: PlayerUiState,
     visualizerData: VisualizerData,
+    currentPosition: Long,
     infoSectionVisibleState: Boolean,
     onPlayerEvent: (PlayerEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -173,6 +176,7 @@ private fun PlayerScreenInternal(
         InfoSection(
             pagerState = infoPagerState,
             musicState = uiState.musicState,
+            currentPosition = currentPosition,
             playedName = uiState.pagerModel.playedName,
             playedThumbnailImage = uiState.pagerModel.playedThumbnailImage,
             currentSong = uiState.musicState.currentPlayingMusic,
@@ -193,18 +197,20 @@ private fun PlayerScreenInternal(
             },
             onDetailsClick = {
                 onPlayerEvent.invoke(PlayerEvent.OnNavigatePlaylistDetailsClick(it))
-            }
+            },
+            onSeek = { onPlayerEvent.invoke(PlayerEvent.OnSeek(it)) }
         )
     }
 }
 
 @Preview
 @Composable
-private fun PreviewLgPlayerScreen() {
+private fun PreviewPlayerScreen() {
     ToyPlayerTheme {
         PlayerScreenInternal(
             uiState = PlayerUiState.preview,
             visualizerData = VisualizerData.default,
+            currentPosition = 5000L,
             infoSectionVisibleState = true,
             onPlayerEvent = {},
             modifier = Modifier,

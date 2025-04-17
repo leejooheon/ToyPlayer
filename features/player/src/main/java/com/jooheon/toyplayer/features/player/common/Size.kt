@@ -1,11 +1,6 @@
 package com.jooheon.toyplayer.features.player.common
 
-import android.app.Activity
 import android.content.res.Configuration
-import android.view.View
-import android.view.WindowInsets
-import android.view.WindowInsetsController
-import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,36 +11,15 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsCompat
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.common.extension.deviceWidth
 import com.jooheon.toyplayer.features.common.extension.getHeights
-import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.commonui.ext.isSystemBarVisible
 import com.jooheon.toyplayer.features.commonui.ext.systemTopBarHeight
 import com.jooheon.toyplayer.features.commonui.ext.toDp
-
-fun Activity.setImmersiveFullScreen() {
-    if (VersionUtil.hasR()) {
-        window.setDecorFitsSystemWindows(false)
-        window.insetsController?.let { controller ->
-            controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-            controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-    } else {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                )
-    }
-}
 
 @Composable
 fun verticalMargin(): Dp {
@@ -65,11 +39,6 @@ fun horizontalMargin(): Dp {
     return verticalMargin
 }
 
-//@Composable
-//fun contentSize(): Int {
-//    val orientation = LocalConfiguration.current.orientation
-//    return if (orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 3
-//}
 @Composable
 fun contentSize(): Int {
     val configuration = LocalConfiguration.current
