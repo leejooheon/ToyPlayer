@@ -65,10 +65,6 @@ private fun ArtistMoreScreenInternal(
 ) {
     val state = rememberLazyGridState()
 
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(

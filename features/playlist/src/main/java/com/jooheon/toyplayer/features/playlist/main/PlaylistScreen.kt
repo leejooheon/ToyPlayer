@@ -69,10 +69,6 @@ private fun PlaylistScreenInternal(
     val listState = rememberLazyListState()
     var playlistDialogState by remember { mutableStateOf(false to Playlist.default) }
 
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(

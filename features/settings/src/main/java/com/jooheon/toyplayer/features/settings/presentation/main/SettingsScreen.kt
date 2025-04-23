@@ -71,10 +71,6 @@ private fun SettingScreenInternal(
 ) {
     var dialogState by remember { mutableStateOf(SettingsUiState.DialogState.NONE) }
 
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(
