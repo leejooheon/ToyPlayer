@@ -10,8 +10,8 @@ kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
 
 compose_compiler = "1.5.14"
-version_code = "20001"
-version_name = "2.0.1"
+version_code = "20002"
+version_name = "2.0.2"
 android_sdk_compile = "35"
 android_sdk_min = "26"
 
