@@ -83,10 +83,6 @@ private fun PlaylistDetailScreenInternal(
         }
     )
 
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(

@@ -65,11 +65,6 @@ private fun LibraryScreenInternal(
     onBackClick: () -> Unit,
     onEvent: (LibraryEvent) -> Unit,
 ) {
-
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(

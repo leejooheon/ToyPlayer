@@ -94,10 +94,6 @@ fun PlayerScreen(
                 infoSectionVisibleState = false
                 return@BackHandler
             }
-            else -> {
-                navigateTo.invoke(ScreenNavigation.Back)
-                return@BackHandler
-            }
         }
     }
 

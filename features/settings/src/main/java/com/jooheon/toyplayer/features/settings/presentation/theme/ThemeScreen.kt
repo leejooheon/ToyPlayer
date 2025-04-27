@@ -42,11 +42,6 @@ private fun ThemeScreenInternal(
     onChangeDarkTheme: (Boolean) -> Unit,
     onBackClick: () -> Unit,
 ) {
-
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(

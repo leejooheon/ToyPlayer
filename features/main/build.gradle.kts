@@ -24,6 +24,7 @@ dependencies {
     implementation(projects.features.album)
 
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.media3.session)
 
     implementation(libs.kotlinx.serialization.json)

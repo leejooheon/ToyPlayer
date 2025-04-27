@@ -77,10 +77,6 @@ private fun ArtistDetailScreenInternal(
     val listState = rememberLazyListState()
     var dialogState by remember { mutableStateOf(MenuDialogState.default) }
 
-    BackHandler {
-        onBackClick.invoke()
-    }
-
     Scaffold(
         topBar = {
             CustomTopAppBar(
