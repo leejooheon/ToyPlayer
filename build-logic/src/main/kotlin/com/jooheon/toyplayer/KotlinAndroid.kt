@@ -2,9 +2,13 @@ package com.jooheon.toyplayer
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.kotlin.dsl.assign
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+
 
 /**
  * https://github.com/android/nowinandroid/blob/main/build-logic/convention/src/main/kotlin/com/google/samples/apps/nowinandroid/KotlinAndroid.kt
@@ -39,20 +43,26 @@ internal fun Project.configureKotlinAndroid() {
         }
     }
 
-    configureKotlin()
+    configureKotlin<KotlinAndroidProjectExtension>()
 }
 
-internal fun Project.configureKotlin() {
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_17.toString()
-            // Treat all Kotlin warnings as errors (disabled by default)
-            // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
-            val warningsAsErrors: String? by project
-            allWarningsAsErrors = warningsAsErrors.toBoolean()
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-            )
-        }
+private inline fun <reified T : KotlinBaseExtension> Project.configureKotlin() = configure<T> {
+    // Treat all Kotlin warnings as errors (disabled by default)
+    // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
+    val warningsAsErrors = providers.gradleProperty("warningsAsErrors").map {
+        it.toBoolean()
+    }.orElse(false)
+    when (this) {
+        is KotlinAndroidProjectExtension -> compilerOptions
+        is KotlinJvmProjectExtension -> compilerOptions
+        else -> TODO("Unsupported project extension $this ${T::class}")
+    }.apply {
+        jvmTarget = JvmTarget.JVM_17
+        allWarningsAsErrors = warningsAsErrors
+        freeCompilerArgs.add(
+            // Enable experimental coroutines APIs, including Flow
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+        )
     }
 }
+

@@ -4,59 +4,59 @@
 # hilt: https://github.com/google/dagger/releases
 
 # Project
-androidGradlePlugin = "8.9.3"
+androidGradlePlugin = "8.11.0"
 gms = "4.4.2"
-kotlin = "2.1.20"
-ksp = "2.1.20-2.0.0"
+kotlin = "2.2.0"
+ksp = "2.2.0-2.0.2"
 
-compose_compiler = "1.5.14"
+compose_compiler = "1.5.15"
 version_code = "20003"
 version_name = "2.0.3"
 android_sdk_compile = "35"
 android_sdk_min = "26"
 
+# Hilt
+hilt = "2.56.2"
+hiltCompose = "1.2.0"
+hiltWorker = "1.2.0"
+
 # Compose
-composeBom = "2025.05.00"
+composeBom = "2025.06.01"
 
 # AndroidX
 corektx = "1.16.0"
-appcompat = "1.7.0"
+appcompat = "1.7.1"
 activity = "1.10.1"
 material = "1.12.0"
-datastore="1.1.3"
+datastore="1.1.7"
 activityCompose = "1.10.1"
 constraintLayout = "1.1.1"
-androidxLifecycle = "2.9.0"
+androidxLifecycle = "2.9.1"
 composeNavigation = "2.9.0"
 palette = "1.0.0"
 
 # Media3
 media3 = "1.7.1"
-mediarouter = "1.7.0"
+mediarouter = "1.8.0"
 
 # KotlinX
-kotlinxCoroutines = "1.10.1"
+kotlinxCoroutines = "1.10.2"
 kotlinxSerialization = "1.8.1"
-kotlinxImmutable = "0.3.8"
+kotlinxImmutable = "0.4.0"
 
 # JavaX
 javaxInject = "1"
 
-# Hilt
-hilt = "2.56.1"
-hiltCompose = "1.2.0"
-hiltWorker = "1.2.0"
-
 # work
-work = "2.10.1"
+work = "2.10.2"
 
 # Room
-room = "2.7.1"
+room = "2.7.2"
 
 # Network
-retrofit = "2.11.0"
-retrofit-mock = "2.11.0"
-retrofit-interceptor = "5.0.0-alpha.14"
+retrofit = "3.0.0"
+retrofit-mock = "3.0.0"
+retrofit-interceptor = "5.0.0-alpha.16"
 chucker = "4.1.0"
 retrofit-serialization-converter = "1.0.0"
 
@@ -76,7 +76,7 @@ timber ="5.0.1"
 tedpermission = "3.4.2"
 
 # Lottie
-lottie = "6.6.4"
+lottie = "6.6.7"
 
 # AudioFileIO
 jaudiotagger = "2.3.15"
@@ -86,14 +86,14 @@ noise = "2.0.0"
 
 # Leak canary
 leakCanary = "2.14"
-detekt = "1.23.7" # https://github.com/detekt/detekt
+detekt = "1.23.8" # https://github.com/detekt/detekt
 
 # Test
 testJunit = "4.13.2"
-junitVintageEngine = "5.10.3"
+junitVintageEngine = "5.13.2"
 kotest = "5.9.1"
-mockk = "1.13.16"
-turbine = "1.2.0"
+mockk = "1.14.4"
+turbine = "1.2.1"
 
 # AndroidTest
 androidxTestExt = "1.2.1"
