@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
@@ -33,7 +32,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(
     mainNavigator: MainNavigator = rememberMainNavigator(),
-    onChangeDarkTheme: (Boolean) -> Unit,
     onPermissionGranted: () -> Unit
 ) {
     val context = LocalContext.current
@@ -66,7 +64,6 @@ fun MainScreen(
     MainScreenInternal(
         navigator = mainNavigator,
         snackbarHostState = snackbarHostState,
-        onChangeDarkTheme = onChangeDarkTheme,
     )
 
     MaybeRequestMediaPermission(
@@ -78,7 +75,6 @@ fun MainScreen(
 private fun MainScreenInternal(
     navigator: MainNavigator,
     snackbarHostState: SnackbarHostState,
-    onChangeDarkTheme: (Boolean) -> Unit,
 ) {
     Scaffold(
         snackbarHost = {
@@ -88,13 +84,11 @@ private fun MainScreenInternal(
     ) { innerPadding ->
         MainNavHost(
             navigator = navigator,
-            onChangeDarkTheme = onChangeDarkTheme,
             modifier = Modifier
                 .fillMaxSize()
                 .padding( // FIXME: topPadding 넣으면 간격이 넓어짐..
                     start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                     end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                    bottom = innerPadding.calculateBottomPadding(),
                 )
         )
     }
@@ -128,7 +122,6 @@ private fun PreviewMainScreen() {
         MainScreenInternal(
             navigator = rememberMainNavigator(),
             snackbarHostState = remember { SnackbarHostState() },
-            onChangeDarkTheme = {},
         )
     }
 }

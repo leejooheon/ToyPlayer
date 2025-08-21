@@ -20,7 +20,6 @@ fun settingsNavGraph(
         }
         is ScreenNavigation.Settings.Theme  -> NavEntry(key) {
             ThemeScreen(
-                onChangeDarkTheme = {}, // fIXME
                 onBack = onBack,
             )
         }

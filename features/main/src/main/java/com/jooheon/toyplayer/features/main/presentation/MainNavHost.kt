@@ -18,7 +18,6 @@ import com.jooheon.toyplayer.features.settings.navigation.settingsNavGraph
 internal fun MainNavHost(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
-    onChangeDarkTheme: (Boolean) -> Unit,
 ) {
     val navMapper: NavMapper = remember {
         mainNavGraph(

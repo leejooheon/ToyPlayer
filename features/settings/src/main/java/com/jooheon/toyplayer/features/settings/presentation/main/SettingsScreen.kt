@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.settings.presentation.main
 
 import android.content.Intent
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +30,7 @@ import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
 import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiState
-import com.jooheon.toyplayer.features.settings.presentation.main.dialog.LanguageDialog
+import com.jooheon.toyplayer.features.settings.presentation.language.LanguageDialog
 import com.jooheon.toyplayer.features.settings.presentation.main.component.SettingItem
 import com.jooheon.toyplayer.features.settings.presentation.main.dialog.VolumeSeekbarDialog
 
