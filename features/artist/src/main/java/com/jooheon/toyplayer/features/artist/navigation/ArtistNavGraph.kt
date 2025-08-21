@@ -1,25 +1,30 @@
 package com.jooheon.toyplayer.features.artist.navigation
 
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavEntry
+import com.jooheon.toyplayer.core.navigation.NavMapper
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.artist.details.ArtistDetailScreen
 import com.jooheon.toyplayer.features.artist.more.ArtistMoreScreen
 
-fun NavGraphBuilder.artistNavGraph(
+fun artistNavGraph(
     navigateTo: (ScreenNavigation) -> Unit,
-) {
-    composable<ScreenNavigation.Artist.More> {
-        ArtistMoreScreen(
-            navigateTo = navigateTo
-        )
-    }
-    composable<ScreenNavigation.Artist.Details> {
-        val args = it.toRoute<ScreenNavigation.Artist.Details>()
-        ArtistDetailScreen(
-            navigateTo = navigateTo,
-            artistId = args.artistId,
-        )
+    onBack: () -> Unit,
+): NavMapper = { key ->
+    when (key) {
+        is ScreenNavigation.Artist.More -> NavEntry(key) {
+            ArtistMoreScreen(
+                navigateTo = navigateTo,
+                onBack = onBack,
+
+            )
+        }
+        is ScreenNavigation.Artist.Details -> NavEntry(key) {
+            ArtistDetailScreen(
+                navigateTo = navigateTo,
+                onBack = onBack,
+                artistId = key.artistId,
+            )
+        }
+        else -> null
     }
 }

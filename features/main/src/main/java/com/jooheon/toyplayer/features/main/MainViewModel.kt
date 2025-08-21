@@ -7,25 +7,15 @@ import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.player.PlayerController
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val defaultSettingsUseCase: DefaultSettingsUseCase,
+    defaultSettingsUseCase: DefaultSettingsUseCase,
     private val playerController: PlayerController,
 ): ViewModel() {
     val isDarkTheme = defaultSettingsUseCase.flowIsDarkTheme()
-
-    fun updateIsDarkTheme(isDarkTheme: Boolean) =
-        viewModelScope.launch {
-            defaultSettingsUseCase.updateIsDarkTheme(isDarkTheme)
-        }
 
     fun onPermissionGranted(context: Context) = viewModelScope.launch {
         playerController.getMusicListFuture(

@@ -1,48 +1,40 @@
 package com.jooheon.toyplayer.features.main.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import timber.log.Timber
 
-class MainNavigator(
-    val navController: NavHostController,
-) {
-    internal val startDestination = ScreenNavigation.Splash
+class MainNavigator() {
+    private val _backStack = mutableStateListOf<ScreenNavigation>(startDestination)
+    internal val backStack: List<ScreenNavigation> get() = _backStack.toList()
 
     internal val navigateTo: (ScreenNavigation) -> Unit = { destination ->
-        printBackStack(destination)
+        _backStack.add(destination)
         when (destination) {
             is ScreenNavigation.Player -> {
-                navController.navigate(ScreenNavigation.Player) {
-                    launchSingleTop = true
-                    popUpTo(ScreenNavigation.Splash) { inclusive = true }
-                }
+                _backStack.remove(ScreenNavigation.Splash)
             }
-            is ScreenNavigation.Back -> popBackStack()
-            else -> navController.navigate(destination)
+            else -> { /** nothing **/ }
         }
-        printBackStack(destination)
+        printBackStack()
     }
 
-    private fun popBackStack() {
-        val success = navController.popBackStack()
-        Timber.d("popBackStack result: $success")
+    internal fun popBackStack() {
+        _backStack.removeLastOrNull()
     }
 
-    @SuppressLint("RestrictedApi")
-    fun printBackStack(destination: ScreenNavigation) {
-        val backStackEntries = navController.currentBackStack.value.map { it.destination.route }
-        Timber.d("backStack[$destination]: $backStackEntries")
+    private fun printBackStack() {
+        Timber.d("backStack: $backStack")
+    }
+
+    companion object {
+        private val startDestination = ScreenNavigation.Splash
     }
 }
 
 @Composable
-internal fun rememberMainNavigator(
-    navController: NavHostController = rememberNavController(),
-): MainNavigator = remember(navController) {
-    MainNavigator(navController)
+internal fun rememberMainNavigator(): MainNavigator = remember {
+    MainNavigator()
 }

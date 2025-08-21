@@ -88,13 +88,8 @@ fun PlayerScreen(
         restartHideJob()
     }
 
-    BackHandler {
-        when {
-            infoSectionVisibleState -> {
-                infoSectionVisibleState = false
-                return@BackHandler
-            }
-        }
+    BackHandler(infoSectionVisibleState) {
+        infoSectionVisibleState = false
     }
 
     PlayerScreenInternal(

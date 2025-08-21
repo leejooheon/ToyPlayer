@@ -11,7 +11,8 @@ ksp = "2.2.0-2.0.2"
 compose_compiler = "1.5.15"
 version_code = "20003"
 version_name = "2.0.3"
-android_sdk_compile = "35"
+android_sdk_compile = "36"
+android_sdk_target = "35"
 android_sdk_min = "26"
 
 # Hilt
@@ -28,10 +29,16 @@ appcompat = "1.7.1"
 activity = "1.10.1"
 material = "1.12.0"
 datastore="1.1.7"
-activityCompose = "1.10.1"
 constraintLayout = "1.1.1"
 androidxLifecycle = "2.9.2"
 composeNavigation = "2.9.3"
+
+activityCompose = "1.12.0-alpha06"
+material3 = "1.4.0-beta01"
+navigation3 = "1.0.0-alpha07"
+navigation3Material = "1.0.0-SNAPSHOT"
+lifecycleViewmodel = "1.0.0-SNAPSHOT"
+
 palette = "1.0.0"
 
 # Media3
@@ -166,6 +173,11 @@ androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-t
 # Compose navigation
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-compose-navigation-test = { group = "androidx.navigation", name = "navigation-testing", version.ref = "composeNavigation" }
+
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+androidx-material3-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "navigation3Material" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodel" }
 
 # Compose Material
 #androidx-compose-material = { group = "androidx.compose.material", name = "material" }

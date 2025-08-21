@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.playlist.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,13 +40,14 @@ import com.jooheon.toyplayer.features.playlist.main.model.PlaylistUiState
 @Composable
 fun PlaylistScreen(
     navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: PlaylistViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     PlaylistScreenInternal(
         uiState = state,
-        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
+        onBackClick = onBack,
         onEvent = {
             when(it) {
                 is PlaylistEvent.OnNavigatePlaylist -> {

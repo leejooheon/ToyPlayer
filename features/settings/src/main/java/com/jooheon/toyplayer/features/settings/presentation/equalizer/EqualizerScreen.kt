@@ -39,7 +39,7 @@ import com.jooheon.toyplayer.features.settings.presentation.equalizer.model.Equa
 
 @Composable
 fun EqualizerScreen(
-    onBackClick: () -> Unit,
+    onBack: () -> Unit,
     viewModel: EqualizerViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -47,7 +47,7 @@ fun EqualizerScreen(
     EqualizerScreenInternal(
         uiState = uiState,
         onEvent = viewModel::dispatch,
-        onBackClick = onBackClick,
+        onBackClick = onBack,
     )
 }
 

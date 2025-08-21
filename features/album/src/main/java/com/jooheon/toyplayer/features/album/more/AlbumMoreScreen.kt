@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.album.more
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.music.Album
@@ -34,7 +32,7 @@ import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 
 @Composable
 fun AlbumMoreScreen(
-    navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: AlbumMoreViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -47,7 +45,7 @@ fun AlbumMoreScreen(
     AlbumMoreScreenInternal(
         uiState = uiState,
         onEvent = {},
-        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) }
+        onBackClick = onBack
     )
 }
 

@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.settings.presentation.theme
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.designsystem.theme.LocalDarkTheme
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Drawables
@@ -26,13 +26,13 @@ import com.jooheon.toyplayer.features.settings.presentation.theme.component.Them
 @Composable
 fun ThemeScreen(
     darkTheme: Boolean = LocalDarkTheme.current,
-    onChangeDarkTheme: (Boolean) -> Unit,
-    onBackClick: () -> Unit,
+    onBack: () -> Unit,
+    viewModel: ThemeViewModel = hiltViewModel()
 ) {
     ThemeScreenInternal(
         darkTheme = darkTheme,
-        onChangeDarkTheme = onChangeDarkTheme,
-        onBackClick = onBackClick
+        onChangeDarkTheme = viewModel::dispatch,
+        onBackClick = onBack
     )
 }
 
