@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.artist.details
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +43,7 @@ import com.jooheon.toyplayer.features.commonui.components.menu.MenuDialogState
 @Composable
 fun ArtistDetailScreen(
     navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     artistId: String,
     viewModel: ArtistDetailViewModel = hiltViewModel()
 ) {
@@ -62,9 +62,7 @@ fun ArtistDetailScreen(
                 else -> viewModel.dispatch(it)
             }
         },
-        onBackClick = {
-            navigateTo.invoke(ScreenNavigation.Back)
-        }
+        onBackClick = onBack
     )
 }
 

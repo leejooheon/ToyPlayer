@@ -15,6 +15,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.compose.material.iconsExtended)
 
+    implementation(libs.androidx.media3.common)
+
     implementation(libs.androidx.appcompat)
     implementation(libs.oss.licenses)
 }

@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.album.details
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -26,24 +25,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.features.album.details.components.AlbumDetailHeader
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailEvent
 import com.jooheon.toyplayer.features.album.details.model.AlbumDetailUiState
-import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
-import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
-import com.jooheon.toyplayer.features.commonui.components.media.MediaDetailHeader
-import com.jooheon.toyplayer.features.commonui.components.media.MediaItemSmallNoImage
 import com.jooheon.toyplayer.features.common.utils.MusicUtil
+import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 import com.jooheon.toyplayer.features.commonui.components.dialog.PlaylistDialog
 import com.jooheon.toyplayer.features.commonui.components.dialog.SelectPlaylistDialog
 import com.jooheon.toyplayer.features.commonui.components.dialog.SongDetailsDialog
+import com.jooheon.toyplayer.features.commonui.components.media.MediaDetailHeader
+import com.jooheon.toyplayer.features.commonui.components.media.MediaItemSmallNoImage
+import com.jooheon.toyplayer.features.commonui.components.menu.DropDownMenu
 import com.jooheon.toyplayer.features.commonui.components.menu.MenuDialogState
 
 @Composable
 fun AlbumDetailScreen(
-    navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     albumId: String,
     viewModel: AlbumDetailViewModel = hiltViewModel()
 ) {
@@ -57,7 +55,7 @@ fun AlbumDetailScreen(
     AlbumDetailScreenInternal(
         uiState = uiState,
         onEvent = viewModel::dispatch,
-        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) }
+        onBackClick = onBack
     )
 }
 

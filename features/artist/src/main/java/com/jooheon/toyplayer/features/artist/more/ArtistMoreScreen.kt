@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.artist.more
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +32,7 @@ import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
 @Composable
 fun ArtistMoreScreen(
     navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: ArtistMoreViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -51,9 +51,7 @@ fun ArtistMoreScreen(
                 }
             }
         },
-        onBackClick = {
-            navigateTo.invoke(ScreenNavigation.Back)
-        }
+        onBackClick = onBack
     )
 }
 

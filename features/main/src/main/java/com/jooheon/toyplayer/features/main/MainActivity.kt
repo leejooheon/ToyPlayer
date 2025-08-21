@@ -2,8 +2,8 @@ package com.jooheon.toyplayer.features.main
 
 import android.os.Bundle
 import android.view.MotionEvent
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.getValue
@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -27,9 +28,6 @@ class MainActivity : AppCompatActivity() {
 
             ToyPlayerTheme(isDarkTheme) {
                 MainScreen(
-                    onChangeDarkTheme = {
-                        viewModel.updateIsDarkTheme(it)
-                    },
                     onPermissionGranted = {
                         viewModel.onPermissionGranted(this@MainActivity)
                     }

@@ -13,9 +13,6 @@ sealed interface ScreenNavigation {
     data object Library : ScreenNavigation
 
     @Serializable
-    data object Back : ScreenNavigation
-
-    @Serializable
     data object Splash : ScreenNavigation
 
     @Serializable
