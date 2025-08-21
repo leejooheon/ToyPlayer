@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.settings.presentation.main.dialog
+package com.jooheon.toyplayer.features.settings.presentation.language
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -21,7 +21,6 @@ import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.dialog.DialogButton
 import com.jooheon.toyplayer.features.commonui.components.dialog.DialogColumn
-import com.jooheon.toyplayer.features.settings.presentation.language.LanguageType
 import com.jooheon.toyplayer.features.settings.presentation.main.component.LanguageItem
 
 @Composable

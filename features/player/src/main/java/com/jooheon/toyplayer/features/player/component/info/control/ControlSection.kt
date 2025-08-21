@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.media3.common.C
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
@@ -49,7 +50,7 @@ internal fun ControlSection(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                top = verticalMargin(),
+                top = verticalMargin() + 16.dp,
                 start = horizontalMargin(),
                 end = horizontalMargin(),
             ),

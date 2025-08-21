@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
@@ -56,10 +57,6 @@ fun MainScreen(
             }
         }
     }
-
-//    viewModel.navigateTo.observeWithLifecycle {
-//        mainNavigator.navController.navigate(ScreenNavigation.Setting.Main)
-//    }
 
     MainScreenInternal(
         navigator = mainNavigator,
