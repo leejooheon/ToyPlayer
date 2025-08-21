@@ -1,5 +1,6 @@
 <div align="center">
-    <img src="./app/src/main/res/mipmap-hdpi/ic_launcher.png" width="128" height="128" style="display: block; margin: 0 auto"/>
+    <img src="./app/src/main/res/mipmap-hdpi/ic_launcher.webp" width="128" height="128" style="display: block; margin: 0 auto"/>
+    <a href="https://play.google.com/store/apps/details?id=com.jooheon.toyplayer"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="70"></a>
     <h1>ToyPlayer</h1>
     <p>An Android application for play music</p>
 </div>
