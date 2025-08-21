@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.musicservice.audio
 
 import androidx.annotation.OptIn
-import androidx.lifecycle.AtomicReference
 import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
 import com.jooheon.toyplayer.domain.model.common.extension.defaultZero
@@ -19,6 +18,7 @@ import java.nio.ByteOrder
 import kotlin.math.abs
 import kotlin.math.ln
 import kotlin.math.tanh
+import java.util.concurrent.atomic.AtomicReference
 
 @OptIn(UnstableApi::class)
 class EqualizerAudioProcessor(
