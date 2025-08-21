@@ -38,6 +38,7 @@ import com.jooheon.toyplayer.features.settings.presentation.main.dialog.VolumeSe
 @Composable
 fun SettingScreen(
     navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -49,7 +50,7 @@ fun SettingScreen(
 
     SettingScreenInternal(
         uiState = uiState,
-        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
+        onBackClick = onBack,
         onEvent = { event ->
             when(event) {
                 is SettingsUiEvent.OnNavigateTheme -> navigateTo.invoke(ScreenNavigation.Settings.Theme)

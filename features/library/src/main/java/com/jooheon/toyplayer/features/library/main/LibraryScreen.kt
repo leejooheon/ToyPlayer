@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.library.main
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +32,7 @@ import com.jooheon.toyplayer.features.library.main.model.LibraryUiState
 @Composable
 fun LibraryScreen(
     navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -44,9 +44,7 @@ fun LibraryScreen(
 
     LibraryScreenInternal(
         uiState = uiState,
-        onBackClick = {
-            navigateTo.invoke(ScreenNavigation.Back)
-        },
+        onBackClick = onBack,
         onEvent = {
             val event = when(it) {
                 is LibraryEvent.OnPlaylistClick -> ScreenNavigation.Playlist.Details(it.id)

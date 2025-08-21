@@ -27,12 +27,12 @@ import com.jooheon.toyplayer.features.settings.presentation.theme.component.Them
 fun ThemeScreen(
     darkTheme: Boolean = LocalDarkTheme.current,
     onChangeDarkTheme: (Boolean) -> Unit,
-    onBackClick: () -> Unit,
+    onBack: () -> Unit,
 ) {
     ThemeScreenInternal(
         darkTheme = darkTheme,
         onChangeDarkTheme = onChangeDarkTheme,
-        onBackClick = onBackClick
+        onBackClick = onBack
     )
 }
 

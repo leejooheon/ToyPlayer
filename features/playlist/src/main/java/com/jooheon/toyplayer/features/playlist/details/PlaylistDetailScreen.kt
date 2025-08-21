@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.playlist.details
 
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,7 +45,7 @@ import timber.log.Timber
 @Composable
 fun PlaylistDetailScreen(
     playlistId: Int,
-    navigateTo: (ScreenNavigation) -> Unit,
+    onBack: () -> Unit,
     viewModel: PlaylistDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,7 +56,7 @@ fun PlaylistDetailScreen(
 
     PlaylistDetailScreenInternal(
         uiState = uiState,
-        onBackClick = { navigateTo.invoke(ScreenNavigation.Back) },
+        onBackClick = onBack,
         onEvent = { viewModel.dispatch(it) },
     )
 }
