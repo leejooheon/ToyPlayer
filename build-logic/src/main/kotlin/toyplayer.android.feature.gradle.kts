@@ -32,6 +32,10 @@ dependencies {
     implementation(libs.findLibrary("androidx.compose.navigation").get())
     androidTestImplementation(libs.findLibrary("androidx.compose.navigation.test").get())
 
+    implementation(libs.findLibrary("androidx.navigation3.runtime").get())
+    implementation(libs.findLibrary("androidx.navigation3.ui").get())
+    implementation(libs.findLibrary("androidx.material3.navigation3").get())
+
     implementation(libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
     implementation(libs.findLibrary("androidx.lifecycle.runtime.compose").get())
 }
