@@ -1,40 +1,32 @@
 package com.jooheon.toyplayer.features.main.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import timber.log.Timber
 
-class MainNavigator() {
-    private val _backStack = mutableStateListOf<ScreenNavigation>(startDestination)
-    internal val backStack: List<ScreenNavigation> get() = _backStack.toList()
+class MainNavigator: Navigator {
+    override val backStack: SnapshotStateList<ScreenNavigation> = mutableStateListOf(ScreenNavigation.Splash)
 
-    internal val navigateTo: (ScreenNavigation) -> Unit = { destination ->
-        _backStack.add(destination)
+    override fun navigateTo(destination: ScreenNavigation) {
+        backStack.add(destination)
+
         when (destination) {
             is ScreenNavigation.Player -> {
-                _backStack.remove(ScreenNavigation.Splash)
+                backStack.remove(ScreenNavigation.Splash)
             }
             else -> { /** nothing **/ }
         }
         printBackStack()
     }
 
-    internal fun popBackStack() {
-        _backStack.removeLastOrNull()
+    override fun popBackStack() {
+        backStack.removeLastOrNull()
+        printBackStack()
     }
 
     private fun printBackStack() {
         Timber.d("backStack: $backStack")
     }
-
-    companion object {
-        private val startDestination = ScreenNavigation.Splash
-    }
-}
-
-@Composable
-internal fun rememberMainNavigator(): MainNavigator = remember {
-    MainNavigator()
 }
