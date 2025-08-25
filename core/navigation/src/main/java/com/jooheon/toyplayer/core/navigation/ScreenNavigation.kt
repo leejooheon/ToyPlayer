@@ -1,9 +1,10 @@
 package com.jooheon.toyplayer.core.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface ScreenNavigation {
+sealed interface ScreenNavigation: NavKey {
     fun ScreenNavigation.route() = this.javaClass.name.replace("$", ".")
 
     @Serializable

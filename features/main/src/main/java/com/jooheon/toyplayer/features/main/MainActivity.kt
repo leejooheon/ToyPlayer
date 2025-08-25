@@ -10,24 +10,36 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.features.common.controller.TouchEventController
+import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
+    @Inject
+    lateinit var navigator: Navigator
+
+    @Inject
+    lateinit var entryProviderBuilders: Set<@JvmSuppressWildcards EntryProviderInstaller>
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        setEdgeToEdgeConfig()
 
         setContent {
             val isDarkTheme by viewModel.isDarkTheme.collectAsStateWithLifecycle(false, this)
 
             ToyPlayerTheme(isDarkTheme) {
                 MainScreen(
+                    navigator = navigator,
+                    entryProviderBuilders = entryProviderBuilders,
                     onPermissionGranted = {
                         viewModel.onPermissionGranted(this@MainActivity)
                     }
@@ -35,7 +47,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         lifecycleScope.launch {
@@ -45,8 +56,12 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun onDestroy() {
-        Timber.d("onDestroy")
-        super.onDestroy()
+    private fun setEdgeToEdgeConfig() {
+        enableEdgeToEdge()
+        if (VersionUtil.hasQ()) {
+            // Force the 3-button navigation bar to be transparent
+            // See: https://developer.android.com/develop/ui/views/layout/edge-to-edge#create-transparent
+            window.isNavigationBarContrastEnforced = false
+        }
     }
 }

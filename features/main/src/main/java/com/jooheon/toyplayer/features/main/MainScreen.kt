@@ -3,10 +3,7 @@ package com.jooheon.toyplayer.features.main
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -18,21 +15,23 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.SinglePaneSceneStrategy
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
-import com.jooheon.toyplayer.features.common.utils.VersionUtil
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.features.common.controller.SnackbarController
+import com.jooheon.toyplayer.features.common.utils.VersionUtil
 import com.jooheon.toyplayer.features.commonui.ext.ObserveAsEvents
+import com.jooheon.toyplayer.features.main.components.CustomSnackbarHost
 import com.jooheon.toyplayer.features.main.navigation.MainNavigator
-import com.jooheon.toyplayer.features.main.navigation.rememberMainNavigator
-import com.jooheon.toyplayer.features.main.presentation.CustomSnackbarHost
-import com.jooheon.toyplayer.features.main.presentation.MainNavHost
 import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
-    mainNavigator: MainNavigator = rememberMainNavigator(),
+    navigator: Navigator,
+    entryProviderBuilders: Set<EntryProviderInstaller>,
     onPermissionGranted: () -> Unit
 ) {
     val context = LocalContext.current
@@ -59,7 +58,8 @@ fun MainScreen(
     }
 
     MainScreenInternal(
-        navigator = mainNavigator,
+        navigator = navigator,
+        entryProviderBuilders = entryProviderBuilders,
         snackbarHostState = snackbarHostState,
     )
 
@@ -70,7 +70,8 @@ fun MainScreen(
 
 @Composable
 private fun MainScreenInternal(
-    navigator: MainNavigator,
+    navigator: Navigator,
+    entryProviderBuilders: Set<EntryProviderInstaller>,
     snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
@@ -78,15 +79,15 @@ private fun MainScreenInternal(
             CustomSnackbarHost(hostState = snackbarHostState)
         },
         modifier = Modifier,
-    ) { innerPadding ->
-        MainNavHost(
-            navigator = navigator,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding( // FIXME: topPadding 넣으면 간격이 넓어짐..
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                )
+    ) { _ ->
+        NavDisplay(
+            modifier = Modifier.fillMaxSize(),
+            backStack = navigator.backStack,
+            onBack = { navigator.popBackStack() },
+            sceneStrategy = SinglePaneSceneStrategy(),
+            entryProvider = entryProvider {
+                entryProviderBuilders.forEach { builder -> this.builder() }
+            }
         )
     }
 }
@@ -117,7 +118,8 @@ private fun MaybeRequestMediaPermission(
 private fun PreviewMainScreen() {
     ToyPlayerTheme {
         MainScreenInternal(
-            navigator = rememberMainNavigator(),
+            navigator = MainNavigator(),
+            entryProviderBuilders = emptySet(),
             snackbarHostState = remember { SnackbarHostState() },
         )
     }

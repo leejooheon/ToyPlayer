@@ -1,10 +1,5 @@
 package com.jooheon.toyplayer.core.navigation
 
-import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.EntryProviderBuilder
 
-
-typealias NavMapper = (ScreenNavigation) -> NavEntry<ScreenNavigation>?
-
-infix fun NavMapper.or(other: NavMapper): NavMapper = { key ->
-    this(key) ?: other(key)
-}
+typealias EntryProviderInstaller = EntryProviderBuilder<ScreenNavigation>.() -> Unit

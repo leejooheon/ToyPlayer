@@ -50,7 +50,6 @@ internal fun ControlSection(
         modifier = modifier
             .fillMaxSize()
             .padding(
-                top = verticalMargin() + 16.dp,
                 start = horizontalMargin(),
                 end = horizontalMargin(),
             ),

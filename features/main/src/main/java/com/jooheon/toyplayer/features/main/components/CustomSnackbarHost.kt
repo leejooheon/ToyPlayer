@@ -1,4 +1,4 @@
-package com.jooheon.toyplayer.features.main.presentation
+package com.jooheon.toyplayer.features.main.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
