@@ -1,33 +1,35 @@
 package com.jooheon.toyplayer.features.settings.navigation
 
-import androidx.navigation3.runtime.NavEntry
-import com.jooheon.toyplayer.core.navigation.NavMapper
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.entry
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.settings.presentation.equalizer.EqualizerScreen
 import com.jooheon.toyplayer.features.settings.presentation.main.SettingScreen
 import com.jooheon.toyplayer.features.settings.presentation.theme.ThemeScreen
 
-fun settingsNavGraph(
-    navigateTo: (ScreenNavigation) -> Unit,
-    onBack: () -> Unit,
-): NavMapper = { key ->
-    when (key) {
-        is ScreenNavigation.Settings.Main  -> NavEntry(key) {
+class SettingsEntryProviderInstaller(
+    private val navigator: Navigator,
+): EntryProviderInstaller {
+    override operator fun invoke(
+        builder: EntryProviderBuilder<ScreenNavigation>
+    ) = with(builder) {
+        entry(ScreenNavigation.Settings.Main) {
             SettingScreen(
-                navigateTo = navigateTo,
-                onBack = onBack,
+                navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack,
             )
         }
-        is ScreenNavigation.Settings.Theme  -> NavEntry(key) {
+        entry(ScreenNavigation.Settings.Theme) {
             ThemeScreen(
-                onBack = onBack,
+                onBack = navigator::popBackStack,
             )
         }
-        is ScreenNavigation.Settings.Equalizer -> NavEntry(key) {
+        entry(ScreenNavigation.Settings.Equalizer) {
             EqualizerScreen(
-                onBack = onBack
+                onBack = navigator::popBackStack,
             )
         }
-        else -> null
     }
 }

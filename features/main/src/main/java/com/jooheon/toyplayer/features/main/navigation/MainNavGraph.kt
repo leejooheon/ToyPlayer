@@ -1,33 +1,35 @@
 package com.jooheon.toyplayer.features.main.navigation
 
-import androidx.navigation3.runtime.NavEntry
-import com.jooheon.toyplayer.core.navigation.NavMapper
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.entry
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.library.main.LibraryScreen
 import com.jooheon.toyplayer.features.player.PlayerScreen
 import com.jooheon.toyplayer.features.splash.SplashScreen
 
-fun mainNavGraph(
-    navigateTo: (ScreenNavigation) -> Unit,
-    onBack: () -> Unit,
-): NavMapper = { key ->
-    when (key) {
-        is ScreenNavigation.Splash  -> NavEntry(key) {
+class MainEntryProviderInstaller(
+    private val navigator: Navigator,
+): EntryProviderInstaller {
+    override operator fun invoke(
+        builder: EntryProviderBuilder<ScreenNavigation>
+    ) = with(builder) {
+        entry<ScreenNavigation.Splash> {
             SplashScreen(
-                navigateTo = navigateTo
+                navigateTo = navigator::navigateTo
             )
         }
-        is ScreenNavigation.Player  -> NavEntry(key) {
+        entry<ScreenNavigation.Player> {
             PlayerScreen(
-                navigateTo = navigateTo
+                navigateTo = navigator::navigateTo
             )
         }
-        is ScreenNavigation.Library -> NavEntry(key) {
+        entry<ScreenNavigation.Library> {
             LibraryScreen(
-                navigateTo = navigateTo,
-                onBack = onBack
+                navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack
             )
         }
-        else -> null
     }
 }

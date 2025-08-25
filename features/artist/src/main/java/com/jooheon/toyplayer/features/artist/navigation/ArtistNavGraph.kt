@@ -1,30 +1,31 @@
 package com.jooheon.toyplayer.features.artist.navigation
 
-import androidx.navigation3.runtime.NavEntry
-import com.jooheon.toyplayer.core.navigation.NavMapper
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.entry
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.artist.details.ArtistDetailScreen
 import com.jooheon.toyplayer.features.artist.more.ArtistMoreScreen
 
-fun artistNavGraph(
-    navigateTo: (ScreenNavigation) -> Unit,
-    onBack: () -> Unit,
-): NavMapper = { key ->
-    when (key) {
-        is ScreenNavigation.Artist.More -> NavEntry(key) {
+class ArtistEntryProviderInstaller(
+    private val navigator: Navigator,
+): EntryProviderInstaller {
+    override operator fun invoke(
+        builder: EntryProviderBuilder<ScreenNavigation>
+    ) = with(builder) {
+        entry<ScreenNavigation.Artist.More> {
             ArtistMoreScreen(
-                navigateTo = navigateTo,
-                onBack = onBack,
-
+                navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack,
             )
         }
-        is ScreenNavigation.Artist.Details -> NavEntry(key) {
+        entry<ScreenNavigation.Artist.Details> {
             ArtistDetailScreen(
-                navigateTo = navigateTo,
-                onBack = onBack,
-                artistId = key.artistId,
+                navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack,
+                artistId = it.artistId,
             )
         }
-        else -> null
     }
 }

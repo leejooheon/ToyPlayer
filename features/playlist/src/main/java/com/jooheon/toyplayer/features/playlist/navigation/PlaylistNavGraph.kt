@@ -1,29 +1,30 @@
 package com.jooheon.toyplayer.features.playlist.navigation
 
-import androidx.navigation3.runtime.NavEntry
-import com.jooheon.toyplayer.core.navigation.NavMapper
+import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.entry
+import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
+import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.features.playlist.details.PlaylistDetailScreen
 import com.jooheon.toyplayer.features.playlist.main.PlaylistScreen
 
-
-fun playlistNavGraph(
-    navigateTo: (ScreenNavigation) -> Unit,
-    onBack: () -> Unit,
-): NavMapper = { key ->
-    when (key) {
-        is ScreenNavigation.Playlist.Main -> NavEntry(key) {
+class PlaylistEntryProviderInstaller(
+    private val navigator: Navigator,
+): EntryProviderInstaller {
+    override operator fun invoke(
+        builder: EntryProviderBuilder<ScreenNavigation>
+    ) = with(builder) {
+        entry<ScreenNavigation.Playlist.Main> {
             PlaylistScreen(
-                navigateTo = navigateTo,
-                onBack = onBack
+                navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack
             )
         }
-        is ScreenNavigation.Playlist.Details -> NavEntry(key) {
+        entry<ScreenNavigation.Playlist.Details> {
             PlaylistDetailScreen(
-                onBack = onBack,
-                playlistId = key.playlistId,
+                onBack = navigator::popBackStack,
+                playlistId = it.playlistId,
             )
         }
-        else -> null
     }
 }
