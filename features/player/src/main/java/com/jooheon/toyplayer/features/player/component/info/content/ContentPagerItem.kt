@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.model.music.Song
-import com.jooheon.toyplayer.features.player.common.cardBottomPreviewHeight
-import com.jooheon.toyplayer.features.player.common.cardTopPreviewHeight
 import com.jooheon.toyplayer.features.player.common.contentSpace
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 
@@ -29,11 +27,10 @@ internal fun ContentPagerItem(
     onDetailsClick: (playlistId: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val state = rememberLazyListState()
-
     Column(
         verticalArrangement = Arrangement.Top,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
     ) {
         Spacer(
             modifier = Modifier.height(cardBottomPreviewHeight())
@@ -41,10 +38,8 @@ internal fun ContentPagerItem(
         Spacer(
             modifier = Modifier.height(contentSpace())
         )
-
         playlists.forEach { playlist ->
             ContentItem(
-                state = state,
                 playlist = playlist,
                 currentSong = currentSong,
                 titleAlpha = titleAlpha,
@@ -53,15 +48,10 @@ internal fun ContentPagerItem(
                 onFavoriteClick = { onFavoriteClick.invoke(playlist.id, it) },
                 onDetailsClick =  { onDetailsClick.invoke(playlist.id) }
             )
-
             Spacer(
                 modifier = Modifier.height(contentSpace())
             )
         }
-
-        Spacer(
-            modifier = Modifier.height(cardTopPreviewHeight())
-        )
     }
 }
 

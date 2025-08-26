@@ -40,6 +40,6 @@ If you’d like to contribute or leave feedback, it’s very appreciated!
   <img src="./screenshot/artist_detail.png" height="600" width="270" >
   <img src="./screenshot/playlist_main.png" height="600" width="270" >
   <img src="./screenshot/settings_sound.png" height="600" width="270" >
-  <img src="./screenshot/settings_eq.png.png" height="600" width="270" >
+  <img src="./screenshot/settings_eq.png" height="600" width="270" >
   <img src="./screenshot/settings_language.png" height="600" width="270" >
 </p>

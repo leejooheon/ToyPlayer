@@ -65,19 +65,6 @@ data class PlayerUiState(
 @Composable
 fun List<Playlist>.toChunkedModel(): List<List<Playlist>> {
     // Note: 한 화면에 보이는 컨텐츠 갯수 조절방법: chunked 사이즈, contentSpace에서 나누는 부분
-    return chunked(contentSize()).let { chunks ->
-        if (chunks.lastOrNull().defaultEmpty().size < contentSize() && chunks.size > 1) {
-            val lastChunk = chunks.last()
-            val previousChunk = chunks[chunks.size - 2]
-            val mergedChunk = previousChunk + lastChunk
-
-            val mutableChunks = chunks.toMutableList()
-            mutableChunks[mutableChunks.size - 2] = mergedChunk
-            mutableChunks.removeAt(mutableChunks.lastIndex)
-
-            mutableChunks
-        } else {
-            chunks
-        }
-    }
+    val chunked = chunked(contentSize())
+    return chunked
 }
