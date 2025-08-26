@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,23 +65,11 @@ internal fun ContentCardItem(
     modifier: Modifier = Modifier,
 ) {
     val configuration = LocalConfiguration.current
-    val textMeasurer = rememberTextMeasurer()
-    val textLayoutResult = textMeasurer.measure(
-        text = UiText.StringResource(Strings.placeholder_long).asString(),
-        style = MaterialTheme.typography.bodyMedium,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-        constraints = Constraints.fixedWidth(1)
-    )
-    val textHeight = textLayoutResult.size.height
 
     Column(
         modifier = modifier
             .bounceClick { onClick.invoke() }
     ) {
-        // when dp changed, change cardTopPreviewHeight together
-        Spacer(modifier = Modifier.height(4.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,7 +150,12 @@ internal fun ContentCardItem(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(textHeight.toDp())
+                .height(
+                    height = textHeight(
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = if(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 1 else 2,
+                    )
+                )
         )
     }
 }

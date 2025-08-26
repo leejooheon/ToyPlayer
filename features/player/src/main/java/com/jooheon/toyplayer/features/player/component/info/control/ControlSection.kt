@@ -11,20 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import androidx.media3.common.C
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.musicservice.data.MusicState
-import com.jooheon.toyplayer.features.musicservice.ext.isRadio
 import com.jooheon.toyplayer.features.player.common.contentHeight
 import com.jooheon.toyplayer.features.player.common.horizontalMargin
-import com.jooheon.toyplayer.features.player.common.verticalMargin
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlBottomInfo
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlButton
-import com.jooheon.toyplayer.features.player.component.info.control.component.ControlSlider
 import com.jooheon.toyplayer.features.player.component.info.control.component.ControlTopInfo
 import com.jooheon.toyplayer.features.player.model.PlayerUiState
 

@@ -3,25 +3,19 @@ package com.jooheon.toyplayer.features.player.component.info.content
 import android.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.KeyboardArrowRight
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +38,6 @@ import com.jooheon.toyplayer.features.player.common.horizontalMargin
 
 @Composable
 internal fun ContentItem(
-    state: LazyListState,
     playlist: Playlist,
     currentSong: Song,
     titleAlpha: Float,
@@ -57,13 +50,15 @@ internal fun ContentItem(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        // when dp changed, change cardTopPreviewHeight together
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = horizontalMargin())
+                .padding(
+                    start = horizontalMargin(),
+                    top = 8.dp,
+                    bottom = 8.dp,
+                )
                 .alpha(titleAlpha),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -89,11 +84,9 @@ internal fun ContentItem(
                 )
             }
         }
-        // when dp changed, change cardTopPreviewHeight together
-        Spacer(modifier = Modifier.height(8.dp))
 
         LazyRow(
-            state = state,
+            state = rememberLazyListState(),
             horizontalArrangement = Arrangement.spacedBy(contentWidth() * 0.1f),
             contentPadding = PaddingValues(
                 horizontal = horizontalMargin()
@@ -125,7 +118,6 @@ internal fun ContentItem(
 private fun PreviewContentItem() {
     ToyPlayerTheme {
         ContentItem(
-            state = rememberLazyListState(),
             playlist = Playlist.preview,
             currentSong = Song.preview,
             titleAlpha = 1f,

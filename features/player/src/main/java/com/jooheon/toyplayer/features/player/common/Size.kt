@@ -1,62 +1,30 @@
 package com.jooheon.toyplayer.features.player.common
 
 import android.content.res.Configuration
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsCompat
-import com.jooheon.toyplayer.core.resources.Strings
-import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.common.extension.deviceWidth
-import com.jooheon.toyplayer.features.common.extension.getHeights
-import com.jooheon.toyplayer.features.commonui.ext.isSystemBarVisible
-import com.jooheon.toyplayer.features.commonui.ext.systemTopBarHeight
 import com.jooheon.toyplayer.features.commonui.ext.toDp
-
-@Composable
-fun verticalMargin(): Dp {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val verticalMargin = screenHeight * 0.03f
-
-    return verticalMargin
-}
+import com.jooheon.toyplayer.features.player.component.info.content.cardBottomPreviewHeight
+import com.jooheon.toyplayer.features.player.component.info.content.cardTopPreviewHeight
 
 @Composable
 fun horizontalMargin(): Dp {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenWidthDp.dp
+    val screenHeight = LocalWindowInfo.current.containerSize.height.toDp()
     val verticalMargin = screenHeight * 0.05f
-
     return verticalMargin
 }
 
 @Composable
 fun contentSize(): Int {
-    val configuration = LocalConfiguration.current
-    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT) return 3
-
-    val density = LocalDensity.current
-    val insets = androidx.compose.foundation.layout.WindowInsets.safeDrawing
-
-    val topInset = insets.getTop(density).toDp()
-    val bottomInset = insets.getBottom(density).toDp()
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val usableHeight = screenHeight - topInset - bottomInset
-
+    val screenHeight = LocalWindowInfo.current.containerSize.height.toDp()
     val itemMinHeight = contentHeight() + cardHeight()
 
     // 행 개수 = usable height에서 몇 개 들어갈 수 있는지
-    return maxOf(1, (usableHeight / itemMinHeight).toInt())
+    return maxOf(1, (screenHeight / itemMinHeight).toInt())
 }
 
 @Composable
@@ -73,7 +41,7 @@ fun contentWidth(): Dp {
 }
 
 @Composable
-fun contentHeight(): Dp {
+internal fun contentHeight(): Dp {
     return contentWidth() * 0.63f
 }
 
@@ -83,70 +51,9 @@ internal fun cardHeight(): Dp {
 }
 
 @Composable
-internal fun cardTopPreviewHeight(): Dp { // 화면 아래에 보이는거
-    val textMeasurer = rememberTextMeasurer()
-    val textLayoutResult = textMeasurer.measure(
-        text = UiText.StringResource(Strings.placeholder_long).asString(),
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 1
-    )
-
-    val textHeight = textLayoutResult.size.height.toDp()
-    val titleTextPadding = (8.dp) * 2 // ContentItem.kt padding
-    val imageTopPadding = 4.dp // ContentCardItem.kt padding
-
-    val height = textHeight + titleTextPadding + imageTopPadding
-
-    val result = (contentHeight() * 0.6f) + height
-    return result
-}
-
-@Composable
-internal fun cardBottomPreviewHeight(): Dp { // 맨 위에 보이는거
-    val textMeasurer = rememberTextMeasurer()
-    val textLayoutResult = textMeasurer.measure(
-        text = UiText.StringResource(Strings.placeholder_long).asString(),
-        style = MaterialTheme.typography.bodyMedium,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-        constraints = Constraints.fixedWidth(1)
-    )
-    val textHeight = textLayoutResult.size.height.toDp()
-    val cardImagePadding = 6.dp // ContentCardItem.kt padding
-
-    val height = textHeight + cardImagePadding
-
-    val result =  (contentHeight() * 0.4f) + height
-    return result
-}
-
-@Composable
 internal fun contentSpace(): Dp {
-    val screenHeight = getScreenHeight()
+    val screenHeight = LocalWindowInfo.current.containerSize.height.toDp()
     val size = (contentSize() + 1).toFloat()
     val contentSpace = (screenHeight - (cardHeight() * size)) / size
-//    Timber.d("contentSpace[$visible]: [$contentSpace, ${cardHeight()}] ([${appUsableHeight.toDp()}, ${fullHeight.toDp()}] - ${systemTopBarHeight()} = $screenHeight)")
     return contentSpace
-}
-
-@Composable
-internal fun getScreenHeight(): Dp {
-    val context = LocalContext.current
-    val visible = isSystemBarVisible(WindowInsetsCompat.Type.statusBars())
-
-    val (appUsableHeight, fullHeight) = context.getHeights()
-    val screenHeight = if(visible) {
-        if(appUsableHeight == fullHeight) {
-            fullHeight.toDp() - systemTopBarHeight()
-        } else {
-            appUsableHeight.toDp()
-        }
-    } else {
-        if(appUsableHeight == fullHeight) {
-            fullHeight.toDp()
-        } else {
-            fullHeight.toDp() - systemTopBarHeight()
-        }
-    }
-    return screenHeight
 }
