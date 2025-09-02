@@ -43,5 +43,5 @@ dependencies {
     annotationProcessor(libs.bumptech.glide.compiler)
 
     // noise
-    implementation(libs.noise)
+    implementation(projects.library.paramsenNoise)
 }
