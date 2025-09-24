@@ -55,3 +55,6 @@ include(
     ":data:api",
     ":data:equalizer"
 )
+
+include (":library:paramsen-noise")
+project(":library:paramsen-noise").projectDir = File(rootDir, "library/paramsen-noise/")
