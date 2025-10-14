@@ -25,6 +25,7 @@ import com.jooheon.toyplayer.features.musicservice.audio.VisualizerAudioProcesso
 import com.jooheon.toyplayer.features.musicservice.playback.HlsPlaybackUriResolver
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.factory.CustomMediaSourceFactory
+import com.jooheon.toyplayer.features.musicservice.player.TestPlayer
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
 import dagger.Module
 import dagger.Provides
@@ -41,6 +42,10 @@ object PlayerComponentModule {
     @Provides
     @ServiceScoped
     fun provideToyPlayer(player: Player): ToyPlayer = ToyPlayer(player)
+
+    @Provides
+    @ServiceScoped
+    fun provideTestPlayer(player: Player): TestPlayer = TestPlayer(player)
 
     @Provides
     fun provideExoPlayer(

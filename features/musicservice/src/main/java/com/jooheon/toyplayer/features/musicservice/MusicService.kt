@@ -17,6 +17,7 @@ import com.jooheon.toyplayer.features.musicservice.ext.isHls
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
+import com.jooheon.toyplayer.features.musicservice.player.TestPlayer
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
@@ -51,6 +52,9 @@ class MusicService: MediaLibraryService() {
 
     @Inject
     lateinit var toyPlayer: ToyPlayer
+
+    @Inject
+    lateinit var testPlayer: TestPlayer
 
     @Inject
     lateinit var mediaLibrarySessionCallback: MediaLibrarySessionCallback
@@ -148,6 +152,8 @@ class MusicService: MediaLibraryService() {
 //            setBitmapLoader(CoilBitmapLoader(this, serviceScope))
 //            setBitmapLoader(CacheBitmapLoader(DataSourceBitmapLoader(/* context= */ this)))
         }.build()
+
+        mediaSession?.player = testPlayer
     }
 
     private fun initListener() {
