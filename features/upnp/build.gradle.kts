@@ -9,12 +9,12 @@ android {
 }
 
 dependencies {
-    implementation("org.jupnp.bom:org.jupnp.bom:3.0.3")
+    implementation(libs.org.jupnp.bom)
 
-    implementation("org.eclipse.jetty:jetty-server:9.4.58.v20250814")
-    implementation("org.eclipse.jetty:jetty-servlet:9.4.58.v20250814")
-    implementation("org.eclipse.jetty:jetty-client:9.4.58.v20250814")
-    implementation("org.slf4j:slf4j-jdk14:2.0.17") // 1.7.36
+    implementation(libs.jetty.server)
+    implementation(libs.jetty.servlet)
+    implementation(libs.jetty.client)
+    implementation(libs.slf4j)
 
-    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    implementation(libs.nanohttpd)
 }

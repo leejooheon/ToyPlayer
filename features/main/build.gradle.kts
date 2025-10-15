@@ -32,4 +32,7 @@ dependencies {
     implementation(libs.androidx.compose.material.iconsExtended)
 
     implementation(libs.kotlinx.immutable)
+
+    //test
+    implementation(libs.org.jupnp.bom)
 }

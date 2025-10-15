@@ -15,6 +15,12 @@ android_sdk_compile = "36"
 android_sdk_target = "35"
 android_sdk_min = "26"
 
+# jupnp
+jupnpBom = "3.0.3"
+jetty = "9.4.58.v20250814"
+nanohttpd = "2.3.1"
+slf4j = "2.0.17"
+
 # Hilt
 hilt = "2.57"
 hiltCompose = "1.2.0"
@@ -189,6 +195,14 @@ androidx-palette = { module = "androidx.palette:palette", version.ref = "palette
 
 # license
 oss-licenses = { group = "com.google.android.gms", name = "play-services-oss-licenses", version.ref = "ossLicenses" }
+
+# jupnp
+org-jupnp-bom = { module = "org.jupnp.bom:org.jupnp.bom", version.ref = "jupnpBom" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
+jetty-client = { module = "org.eclipse.jetty:jetty-client", version.ref = "jetty" }
+nanohttpd = { module = "org.nanohttpd:nanohttpd", version.ref = "nanohttpd" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 
 # Media3 - ExoPlayer
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }

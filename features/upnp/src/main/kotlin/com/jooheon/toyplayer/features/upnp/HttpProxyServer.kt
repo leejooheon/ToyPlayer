@@ -7,7 +7,11 @@ import java.net.URL
 import kotlin.collections.firstOrNull
 import kotlin.text.isNullOrBlank
 
-class HttpProxyServer(port: Int = 18080) : NanoHTTPD(port) {
+class HttpProxyServer() : NanoHTTPD(PORT) {
+    companion object {
+        internal const val PORT = 18080
+    }
+
     override fun serve(s: IHTTPSession): Response {
         val src = s.parameters["u"]?.firstOrNull()
             ?: return newFixedLengthResponse(Response.Status.BAD_REQUEST, "text/plain", "missing u")
