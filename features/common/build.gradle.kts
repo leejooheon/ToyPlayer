@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.domain.usecase)
     implementation(projects.core.resources)
 
+    implementation(libs.androidx.media3.common)
     // glide
     implementation(libs.bumptech.glide)
     annotationProcessor(libs.bumptech.glide.compiler)

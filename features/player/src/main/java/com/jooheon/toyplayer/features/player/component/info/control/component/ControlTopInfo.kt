@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.FeaturedPlayList
 import androidx.compose.material.icons.outlined.Album
+import androidx.compose.material.icons.outlined.Cast
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -60,6 +61,7 @@ internal fun ControlTopInfo(
     title: String,
     imageUrl: String,
     isPlaying: Boolean,
+    onCastClick: () -> Unit,
     onLibraryClick: () -> Unit,
     onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
@@ -161,6 +163,20 @@ internal fun ControlTopInfo(
             Spacer(modifier = Modifier.width(16.dp))
 
             IconButton(
+                onClick = onCastClick,
+                modifier = Modifier
+                    .size(36.dp)
+                    .bounceClick { onLibraryClick.invoke() },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Cast,
+                    contentDescription = stringResource(Strings.title_cast),
+                    tint = androidx.compose.ui.graphics.Color.White,
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+
+            IconButton(
                 onClick = onLibraryClick,
                 modifier = Modifier
                     .size(36.dp)
@@ -168,7 +184,7 @@ internal fun ControlTopInfo(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Album,
-                    contentDescription = stringResource(Strings.title_playlist),
+                    contentDescription = stringResource(Strings.title_library),
                     tint = androidx.compose.ui.graphics.Color.White,
                 )
             }
@@ -215,6 +231,7 @@ private fun PreviewControlTopInfoSection() {
             isPlaying = true,
             title = Song.preview.title,
             imageUrl = "",
+            onCastClick = {},
             onLibraryClick = {},
             onPlaylistClick = {},
             onSettingClick = {},

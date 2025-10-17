@@ -2,9 +2,11 @@ package com.jooheon.toyplayer.features.musicservice.player
 
 import android.os.Bundle
 import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.ListenableFuture
+import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -25,6 +27,14 @@ sealed interface CustomCommand {
         const val KEY = "audioSessionId"
     }
 
+    @Serializable
+    data object DiscoverRenderers: CustomCommand
+
+    @Serializable
+    data class SwitchRenderer(val model: DlnaRendererModel?): CustomCommand
+
+    @Serializable
+    data class Test(val models: List<DlnaRendererModel>): CustomCommand
     companion object {
         const val CUSTOM_COMMAND_ACTION = "commandAction"
         internal const val CUSTOM_COMMAND_EXTRA = "commandExtra"
@@ -46,6 +56,16 @@ sealed interface CustomCommand {
 internal fun MediaController.sendCustomCommand(command: CustomCommand): ListenableFuture<SessionResult> {
     val json = Json.encodeToString(CustomCommand.serializer(), command)
     return sendCustomCommand(
+        SessionCommand(CustomCommand.CUSTOM_COMMAND_ACTION, Bundle.EMPTY),
+        Bundle().apply {
+            putString(CustomCommand.CUSTOM_COMMAND_EXTRA, json)
+        },
+    )
+}
+
+internal fun MediaSession.broadcastCustomCommand(command: CustomCommand) {
+    val json = Json.encodeToString(CustomCommand.serializer(), command)
+    broadcastCustomCommand(
         SessionCommand(CustomCommand.CUSTOM_COMMAND_ACTION, Bundle.EMPTY),
         Bundle().apply {
             putString(CustomCommand.CUSTOM_COMMAND_EXTRA, json)

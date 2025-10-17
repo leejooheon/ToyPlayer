@@ -59,16 +59,6 @@ fun Player.playAtIndex(index: Int, duration: Long) {
     prepare()
 }
 
-fun Player.enqueue(
-    mediaItem: MediaItem,
-    playWhenReady: Boolean
-) {
-    val index = currentMediaItemIndex + 1
-    addMediaItem(index, mediaItem)
-
-    if(playWhenReady) playAtIndex(index, C.TIME_UNSET)
-}
-
 fun Player.forceEnqueue(
     mediaItems: List<MediaItem>,
     startIndex: Int,

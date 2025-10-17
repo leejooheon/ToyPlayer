@@ -1,6 +1,6 @@
 package com.jooheon.toyplayer.features.upnp.protocol
 
-import com.jooheon.toyplayer.features.upnp.DlnaSpec
+import com.jooheon.toyplayer.features.upnp.model.DlnaSpec
 import org.jupnp.android.AndroidUpnpService
 import org.jupnp.model.action.ActionInvocation
 import org.jupnp.model.message.UpnpResponse

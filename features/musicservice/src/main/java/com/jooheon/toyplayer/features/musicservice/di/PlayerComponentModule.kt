@@ -18,7 +18,11 @@ import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import com.jooheon.toyplayer.domain.castapi.CastController
+import com.jooheon.toyplayer.domain.castapi.CastStateHolder
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
+import com.jooheon.toyplayer.features.common.temp.MusicServiceContext
+import com.jooheon.toyplayer.features.common.temp.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.audio.BalanceAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.audio.EqualizerAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.audio.VisualizerAudioProcessor
@@ -45,7 +49,15 @@ object PlayerComponentModule {
 
     @Provides
     @ServiceScoped
-    fun provideTestPlayer(player: Player): TestPlayer = TestPlayer(player)
+    fun provideTestPlayer(
+        player: Player,
+        castController: CastController,
+        castStateHolder: CastStateHolder,
+    ): TestPlayer = TestPlayer(
+        player = player,
+        castController = castController,
+        castStateHolder = castStateHolder
+    )
 
     @Provides
     fun provideExoPlayer(

@@ -2,6 +2,8 @@ package com.jooheon.toyplayer.features.musicservice.di
 
 import android.app.Service
 import android.content.Context
+import com.jooheon.toyplayer.features.common.temp.MusicServiceContext
+import com.jooheon.toyplayer.features.common.temp.MusicServiceCoroutineScope
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -12,14 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class MusicServiceContext
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class MusicServiceCoroutineScope
 
 @Module
 @InstallIn(ServiceComponent::class)

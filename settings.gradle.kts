@@ -59,3 +59,4 @@ include(
 include (":library:paramsen-noise")
 project(":library:paramsen-noise").projectDir = File(rootDir, "library/paramsen-noise/")
 include(":features:upnp")
+include(":domain:cast-api")

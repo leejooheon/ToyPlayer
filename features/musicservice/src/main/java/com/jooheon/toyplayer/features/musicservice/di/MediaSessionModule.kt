@@ -7,9 +7,12 @@ import androidx.media3.common.util.UnstableApi
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.temp.MusicServiceContext
+import com.jooheon.toyplayer.features.common.temp.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.MediaLibrarySessionCallback
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.notification.GlideBitmapLoader
+import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +34,7 @@ object MediaSessionModule {
         playlistUseCase: PlaylistUseCase,
         playlistSettingsUseCase: PlayerSettingsUseCase,
         defaultSettingsUseCase: DefaultSettingsUseCase,
+        castUseCase: CastUseCase
     ): MediaLibrarySessionCallback = MediaLibrarySessionCallback(
         context = context,
         scope = scope,
@@ -38,6 +42,7 @@ object MediaSessionModule {
         playlistUseCase = playlistUseCase,
         playerSettingsUseCase = playlistSettingsUseCase,
         defaultSettingsUseCase = defaultSettingsUseCase,
+        castUseCase = castUseCase
     )
 
     @OptIn(UnstableApi::class)

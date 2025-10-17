@@ -1,127 +1,207 @@
 package com.jooheon.toyplayer.features.upnp
 
 import android.content.Context
+import androidx.media3.common.Player.REPEAT_MODE_ALL
+import androidx.media3.common.Player.REPEAT_MODE_OFF
+import androidx.media3.common.Player.REPEAT_MODE_ONE
+import com.jooheon.toyplayer.domain.castapi.CastController
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.features.upnp.protocol.andThen
 import com.jooheon.toyplayer.features.upnp.protocol.getCurrentTransportActions
-import com.jooheon.toyplayer.features.upnp.protocol.getMute
+import com.jooheon.toyplayer.features.upnp.protocol.getDeviceCapabilities
+import com.jooheon.toyplayer.features.upnp.protocol.getMediaInfo
+import com.jooheon.toyplayer.features.upnp.protocol.getPositionInfo
 import com.jooheon.toyplayer.features.upnp.protocol.getProtocolInfos
+import com.jooheon.toyplayer.features.upnp.protocol.getTransportInfo
 import com.jooheon.toyplayer.features.upnp.protocol.getVolume
 import com.jooheon.toyplayer.features.upnp.protocol.logStep
+import com.jooheon.toyplayer.features.upnp.protocol.parseDurationToMillis
+import com.jooheon.toyplayer.features.upnp.protocol.pause
 import com.jooheon.toyplayer.features.upnp.protocol.play
+import com.jooheon.toyplayer.features.upnp.protocol.seekTo
 import com.jooheon.toyplayer.features.upnp.protocol.setMute
 import com.jooheon.toyplayer.features.upnp.protocol.setPlayMode
 import com.jooheon.toyplayer.features.upnp.protocol.setUri
-import com.jooheon.toyplayer.features.upnp.protocol.setVolume
 import com.jooheon.toyplayer.features.upnp.protocol.stop
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.jooheon.toyplayer.features.upnp.protocol.supportsAac
+import com.jooheon.toyplayer.features.upnp.protocol.supportsFlac
+import com.jooheon.toyplayer.features.upnp.protocol.supportsHls
+import com.jooheon.toyplayer.features.upnp.protocol.supportsMp3
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import org.jupnp.android.AndroidUpnpService
 import org.jupnp.model.meta.RemoteDevice
 import org.jupnp.support.model.PlayMode
-import org.jupnp.support.model.ProtocolInfos
+import timber.log.Timber
 import java.net.URLEncoder
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class DlnaPlayerController @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-    dlnaServiceManager: DlnaServiceManager
-) {
-    private val parentScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+class DlnaPlayerController(
+    private val context: Context,
+    private val scope: CoroutineScope,
+    private val dlnaStateHolder: DlnaStateHolder,
+): CastController {
     private var sessionScope: CoroutineScope? = null
 
-    @Volatile
-    internal var renderer: RemoteDevice? = null
+    suspend fun connect(renderer: RemoteDevice) {
+        val service = dlnaStateHolder.service.value ?: return
 
-    @Volatile
-    internal var service: AndroidUpnpService? = null
-
-    private var protocolInfos: ProtocolInfos? = null
-
-    init {
-        parentScope.launch {
-            dlnaServiceManager.serviceFlow.collect {
-                if (it == null) disConnect()
-                service = it
-            }
-        }
-    }
-
-    fun connect(renderer: RemoteDevice) = parentScope.launch {
-        val service = service ?: return@launch
-
-        disConnect()
         createSessionScope()
-        this@DlnaPlayerController.renderer = renderer
+        getTransportInfo()
 
         renderer.getProtocolInfos(service)
             .logStep("getProtocolInfos")
-            .onSuccess { protocolInfos = it }
+            .onSuccess {
+                Timber.i("supports: [Aac: ${it.supportsAac()}], [Mp3: ${it.supportsMp3()}], [Flac: ${it.supportsFlac()}], [Hls: ${it.supportsHls()}]")
+                dlnaStateHolder.onProtocolInfosChanged(it)
+            }
     }
 
     fun disConnect() {
-        renderer?.let { stop() }
         sessionScope?.cancel()
         sessionScope = null
-        protocolInfos = null
-        renderer = null
+        dlnaStateHolder.clear()
     }
 
-    fun pause() = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+    override fun play(
+        uri: String,
+        seekTo: Long,
+    ) {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
-        renderer.stop(service).logStep("pause")
+            renderer.setUri(service, uri.buildUri(context)).logStep("setUri")
+                .andThen { renderer.play(service).logStep("play") }
+                .also {
+                    if(seekTo == -1L) return@also
+                    it.andThen { renderer.seekTo(service, seekTo).logStep("seek") }
+                }
+        }
     }
 
-    fun stop() = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+    override fun resume() {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
-        renderer.stop(service).logStep("stop")
+            renderer.getMediaInfo(service).logStep("getMediaInfo")
+                .onSuccess {
+                    it.currentURI?.let {
+                        renderer.play(service).logStep("play")
+                    }
+                }
+        }
     }
 
-    fun setPlayMode(playMode: PlayMode) = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+    override fun pause() {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
-        renderer.setPlayMode(service, playMode).logStep("setPlayMode")
+            renderer.pause(service).logStep("pause")
+        }
     }
 
-    fun setUri(uri: String) = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+    override fun stop(){
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
-        renderer.stop(service).logStep("stop")
-            .andThen { renderer.setPlayMode(service, PlayMode.NORMAL).logStep("setPlayMode") }
-            .andThen { renderer.setUri(service, uri.buildUri(context)).logStep("setUri") }
-            .andThen { renderer.play(service).logStep("play") }
+            renderer.stop(service).logStep("stop")
+        }
+    }
+
+    override fun seekTo(positionMs: Long) {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+            renderer.seekTo(service, positionMs).logStep("seekTo")
+        }
+    }
+
+
+    override fun shuffleModeEnabled(enabled: Boolean) {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+            if(enabled) PlayMode.SHUFFLE else PlayMode.NORMAL
+
+            renderer.setPlayMode(service, PlayMode.SHUFFLE).logStep("setPlayMode")
+        }
+    }
+
+    override fun repeatMode(mode: Int) {
+        sessionScope?.launch {
+            val service = dlnaStateHolder.service.value ?: return@launch
+            val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+            val playMode = when(mode) {
+                REPEAT_MODE_OFF -> PlayMode.NORMAL
+                REPEAT_MODE_ONE -> PlayMode.REPEAT_ONE
+                REPEAT_MODE_ALL -> PlayMode.REPEAT_ALL
+                else -> throw IllegalArgumentException("Unknown repeat mode: $mode")
+            }
+            
+            renderer.setPlayMode(service, playMode).logStep("setPlayMode")
+        }
     }
 
     fun setMute(mute: Boolean) = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
         renderer.setMute(service, mute).logStep("setMute")
     }
 
     fun getCurrentTransportActions() = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
         renderer.getCurrentTransportActions(service).logStep("getCurrentTransportActions")
     }
 
+    fun getDeviceCapabilities() = sessionScope?.launch {
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+        renderer.getDeviceCapabilities(service).logStep("getDeviceCapabilities")
+    }
+
+    fun getMediaInfo() = sessionScope?.launch {
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+        renderer.getMediaInfo(service).logStep("getMediaInfo")
+    }
+    fun getPositionInfo() = sessionScope?.launch {
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+        renderer.getPositionInfo(service).logStep("getPositionInfo")
+            .onSuccess {
+                val position = parseDurationToMillis(it.relTime)
+                dlnaStateHolder.onPositionChanged(position)
+            }
+    }
+    fun getTransportInfo() = sessionScope?.launch {
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
+
+        renderer.getTransportInfo(service)
+            .logStep("getTransportInfo")
+            .onSuccess {
+                dlnaStateHolder.onStateChanged(it.currentTransportState.value)
+                dlnaStateHolder.onConnectionStateChanged(it.currentTransportStatus.value)
+            }
+    }
+
     fun getVolume() = sessionScope?.launch {
-        val service = service ?: return@launch
-        val renderer = renderer ?: return@launch
+        val service = dlnaStateHolder.service.value ?: return@launch
+        val renderer = dlnaStateHolder.selectedRenderer.value ?: return@launch
 
         renderer.getVolume(service).logStep("getVolume")
     }
@@ -144,7 +224,7 @@ class DlnaPlayerController @Inject constructor(
         sessionScope?.cancel()
         sessionScope = null
 
-        val job = SupervisorJob(parentScope.coroutineContext[Job])
+        val job = SupervisorJob(scope.coroutineContext[Job])
         val dispatcher = Dispatchers.Main
         sessionScope = CoroutineScope(job + dispatcher)
     }

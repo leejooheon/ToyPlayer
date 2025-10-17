@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
@@ -31,6 +32,7 @@ internal fun ControlSection(
     playedThumbnailImage: String,
     titleAlpha: Float,
     isLoading: Boolean,
+    onCastClick: () -> Unit,
     onLibraryClick: () -> Unit,
     onPlaylistClick: () -> Unit,
     onSettingClick: () -> Unit,
@@ -43,10 +45,7 @@ internal fun ControlSection(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(
-                start = horizontalMargin(),
-                end = horizontalMargin(),
-            ),
+            .padding(horizontal = 8.dp),
     ) {
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -57,6 +56,7 @@ internal fun ControlSection(
                 title = playedName,
                 imageUrl = playedThumbnailImage,
                 isPlaying = musicState.isPlaying(),
+                onCastClick = onCastClick,
                 onLibraryClick = onLibraryClick,
                 onPlaylistClick = onPlaylistClick,
                 onSettingClick = onSettingClick,
@@ -101,6 +101,7 @@ private fun PreviewControlSection() {
             playedThumbnailImage = "",
             titleAlpha = 1f,
             isLoading = false,
+            onCastClick = {},
             onLibraryClick = {},
             onPlaylistClick = {},
             onSettingClick = {},

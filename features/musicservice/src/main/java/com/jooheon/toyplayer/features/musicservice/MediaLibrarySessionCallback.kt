@@ -41,11 +41,11 @@ import com.jooheon.toyplayer.features.musicservice.ext.toMediaItem
 import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
+import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -57,6 +57,7 @@ class MediaLibrarySessionCallback(
     private val playlistUseCase: PlaylistUseCase,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
+    private val castUseCase: CastUseCase,
 ): MediaLibrarySession.Callback {
     override fun onGetLibraryRoot(
         session: MediaLibrarySession,
@@ -226,8 +227,17 @@ class MediaLibrarySessionCallback(
                     playerSettingsUseCase.setRepeatMode(repeatMode)
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
-                CustomCommand.ToggleShuffle -> {
+                is CustomCommand.ToggleShuffle -> {
                     playerSettingsUseCase.setShuffleMode(!(session.player.shuffleModeEnabled))
+                    SessionResult(SessionResult.RESULT_SUCCESS)
+                }
+
+                is CustomCommand.DiscoverRenderers -> {
+                    castUseCase.bindService()
+                    SessionResult(SessionResult.RESULT_SUCCESS)
+                }
+                is CustomCommand.SwitchRenderer -> {
+                    castUseCase.selectRenderer(command.model)
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
                 else -> SessionResult(SessionError.ERROR_NOT_SUPPORTED)

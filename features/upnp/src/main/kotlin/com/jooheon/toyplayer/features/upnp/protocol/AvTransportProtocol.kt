@@ -1,7 +1,7 @@
 package com.jooheon.toyplayer.features.upnp.protocol
 
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
-import com.jooheon.toyplayer.features.upnp.DlnaSpec
+import com.jooheon.toyplayer.features.upnp.model.DlnaSpec
 import org.jupnp.android.AndroidUpnpService
 import org.jupnp.model.action.ActionInvocation
 import org.jupnp.model.message.UpnpResponse
@@ -30,7 +30,7 @@ import kotlin.coroutines.suspendCoroutine
 
 private val spec = DlnaSpec.AVTransport
 
-// 현재 상태에서 가능한 액션 조회
+// 최근 보낸 명령
 internal suspend inline fun RemoteDevice.getCurrentTransportActions(
     service: AndroidUpnpService
 ): Result<List<TransportAction>> = suspendCoroutine { continuation ->
@@ -238,8 +238,6 @@ internal suspend inline fun RemoteDevice.next(
         return@suspendCoroutine
     }
     
-
-    
     val serviceType = findService(spec.type)
 
     val action = object : Next(fixedInstanceId, serviceType) {
@@ -273,8 +271,7 @@ internal suspend inline fun RemoteDevice.previous(
         continuation.resume(Result.failure(RuntimeException("ControlPoint is null")))
         return@suspendCoroutine
     }
-    
-    
+
     val serviceType = findService(spec.type)
 
     val action = object : Previous(fixedInstanceId, serviceType) {
@@ -369,7 +366,7 @@ internal suspend inline fun RemoteDevice.stop(
 
 
 internal suspend inline fun RemoteDevice.play(
-    service: AndroidUpnpService
+    service: AndroidUpnpService,
 ): Result<ActionInvocation<*>?> = suspendCoroutine { continuation ->
     checkHasServiceType()
         .onFailure {
@@ -402,10 +399,11 @@ internal suspend inline fun RemoteDevice.play(
     service.controlPoint.execute(action)
 }
 
-internal suspend inline fun RemoteDevice.seek(
+internal suspend inline fun RemoteDevice.seekTo(
     service: AndroidUpnpService,
-    realTimeTarget: String,
+    positionMs: Long,
 ): Result<ActionInvocation<*>?> = suspendCoroutine { continuation ->
+
     checkHasServiceType()
         .onFailure {
             continuation.resume(Result.failure(it))
@@ -416,8 +414,17 @@ internal suspend inline fun RemoteDevice.seek(
         continuation.resume(Result.failure(RuntimeException("ControlPoint is null")))
         return@suspendCoroutine
     }
-    
+
+    fun msToRelTime(ms: Long): String {
+        val totalSec = ms / 1000
+        val h = totalSec / 3600
+        val m = (totalSec % 3600) / 60
+        val s = totalSec % 60
+        return "%02d:%02d:%02d".format(h, m, s)
+    }
+
     val serviceType = findService(spec.type)
+    val realTimeTarget = msToRelTime(positionMs)
 
     val action = object : Seek(serviceType, realTimeTarget) {
         override fun success(invocation: ActionInvocation<*>?) {

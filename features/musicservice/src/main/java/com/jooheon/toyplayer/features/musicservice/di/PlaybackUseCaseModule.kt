@@ -2,10 +2,14 @@ package com.jooheon.toyplayer.features.musicservice.di
 
 import android.content.Context
 import com.jooheon.toyplayer.core.system.network.NetworkConnectivityObserver
+import com.jooheon.toyplayer.domain.castapi.CastService
+import com.jooheon.toyplayer.domain.castapi.CastStateHolder
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
+import com.jooheon.toyplayer.features.common.temp.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
@@ -53,6 +57,18 @@ object PlaybackUseCaseModule {
     fun providePlaybackErrorUseCase(
         musicStateHolder: MusicStateHolder,
     ): PlaybackErrorUseCase = PlaybackErrorUseCase(
+        musicStateHolder = musicStateHolder,
+    )
+
+    @Provides
+    @ServiceScoped
+    fun provideCastUseCase(
+        musicStateHolder: MusicStateHolder,
+        castService: CastService,
+        castStateHolder: CastStateHolder,
+    ): CastUseCase = CastUseCase(
+        castService = castService,
+        castStateHolder = castStateHolder,
         musicStateHolder = musicStateHolder,
     )
 }

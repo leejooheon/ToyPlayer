@@ -78,6 +78,17 @@ fun PlayerScreen(
     }
 
     ObserveAsEvents(
+        flow = viewModel.testChannel,
+        onEvent = {
+            val event = PlayerEvent.OnCastSelected(
+                context = context,
+                model = it
+            )
+            viewModel.dispatch(event)
+        }
+    )
+
+    ObserveAsEvents(
         flow = TouchEventController.debouncedEvent,
         key1 = infoSectionVisibleState,
     ) {
@@ -136,6 +147,7 @@ private fun PlayerScreenInternal(
     onPlayerEvent: (PlayerEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val chunkedModel = uiState.playlists.toChunkedModel()
     val channelPagerState = rememberPagerState(
         initialPage = uiState.pagerModel.currentPageIndex(uiState.musicState.currentPlayingMusic.audioId),
@@ -174,6 +186,7 @@ private fun PlayerScreenInternal(
             playlists = uiState.playlists,
             isLoading = uiState.isLoading(),
             isShow = infoSectionVisibleState,
+            onCastClick = { onPlayerEvent.invoke(PlayerEvent.OnCastClick(context)) },
             onLibraryClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateLibraryClick) },
             onPlaylistClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigatePlaylistClick) },
             onSettingClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateSettingClick) },

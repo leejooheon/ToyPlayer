@@ -17,6 +17,7 @@ android {
 dependencies {
     implementation(projects.domain.model)
     implementation(projects.domain.usecase)
+    implementation(projects.domain.castApi)
 
     implementation(projects.core.system)
     implementation(projects.core.resources)

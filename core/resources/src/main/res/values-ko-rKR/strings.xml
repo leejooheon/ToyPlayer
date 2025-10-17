@@ -56,6 +56,7 @@
     <string name="title_cd_cache">캐시</string>
     <string name="title_playlist">재생목록</string>
     <string name="title_cd_playlist">재생목록</string>
+    <string name="title_cast">캐스트</string>
 
     <string name="tab_name_song">음악</string>
     <string name="tab_name_album">앨범</string>
