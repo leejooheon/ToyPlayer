@@ -1,0 +1,65 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='780' height='440' viewBox='0 0 780 440' font-family='Inter,Arial,sans-serif'>
+<style>.title{font-size:22px;font-weight:bold;fill:#1f2933;}.box{fill:#eaf2fb;stroke:#1f4d7a;stroke-width:1.5;rx:12;ry:12;}.label{font-size:13px;fill:#102a43;text-anchor:middle;}.caption{font-size:12px;fill:#52606d;text-anchor:middle;}.arrow{stroke:#334e68;stroke-width:1.4;marker-end:url(#arrowhead);}.arrow-text{font-size:12px;fill:#334e68;text-anchor:middle;}</style>
+<defs><marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'><polygon points='0 0, 10 3.5, 0 7' fill='#334e68'/></marker></defs>
+<text class='title' x='160.0' y='40'>Testing utilities & shared dependencies</text>
+
+<g>
+    <rect class='box' x='40' y='80' width='220' height='130' />
+    <text class='label' x='150.0' y='102'>testing module</text>
+    <text class='caption' x='150.0' y='120'>
+        <tspan x='150.0' dy='14'>toyplayer.android.library</tspan><tspan x='150.0' dy='16'>namespace com.jooheon.testing</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='300' y='80' width='220' height='130' />
+    <text class='label' x='410.0' y='102'>build.gradle.kts</text>
+    <text class='caption' x='410.0' y='120'>
+        <tspan x='410.0' dy='14'>api junit4 + vintage</tspan><tspan x='410.0' dy='16'>mockk, turbine</tspan><tspan x='410.0' dy='16'>kotlinx-coroutines-test</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='560' y='80' width='180' height='130' />
+    <text class='label' x='650.0' y='102'>Consumers</text>
+    <text class='caption' x='650.0' y='120'>
+        <tspan x='650.0' dy='14'>feature/domain tests</tspan><tspan x='650.0' dy='16'>import shared deps</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='260' y1='150' x2='300' y2='150' />
+    <text class='arrow-text' x='280.0' y='144.0'>shares</text>
+</g>
+
+<g>
+    <line class='arrow' x1='520' y1='150' x2='560' y2='150' />
+    <text class='arrow-text' x='540.0' y='144.0'>exposes</text>
+</g>
+
+<g>
+    <rect class='box' x='220' y='260' width='240' height='130' />
+    <text class='label' x='340.0' y='282'>MainDispatcherRule</text>
+    <text class='caption' x='340.0' y='300'>
+        <tspan x='340.0' dy='14'>set Dispatchers.Main</tspan><tspan x='340.0' dy='16'>reset after test</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='340' y1='210' x2='340' y2='260' />
+    <text class='arrow-text' x='340.0' y='229.0'>@get:Rule</text>
+</g>
+
+<g>
+    <rect class='box' x='500' y='260' width='220' height='130' />
+    <text class='label' x='610.0' y='282'>Coroutine/Compose tests</text>
+    <text class='caption' x='610.0' y='300'>
+        <tspan x='610.0' dy='14'>use rule for stable dispatcher</tspan><tspan x='610.0' dy='16'>combine with Turbine, runTest</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='440' y1='300' x2='500' y2='300' />
+    <text class='arrow-text' x='470.0' y='294.0'>reliable scheduling</text>
+</g>
+</svg>

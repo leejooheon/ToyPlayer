@@ -1,0 +1,83 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='900' height='540' viewBox='0 0 900 540' font-family='Inter,Arial,sans-serif'>
+<style>.title{font-size:22px;font-weight:bold;fill:#1f2933;}.box{fill:#eaf2fb;stroke:#1f4d7a;stroke-width:1.5;rx:12;ry:12;}.label{font-size:13px;fill:#102a43;text-anchor:middle;}.caption{font-size:12px;fill:#52606d;text-anchor:middle;}.arrow{stroke:#334e68;stroke-width:1.4;marker-end:url(#arrowhead);}.arrow-text{font-size:12px;fill:#334e68;text-anchor:middle;}</style>
+<defs><marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'><polygon points='0 0, 10 3.5, 0 7' fill='#334e68'/></marker></defs>
+<text class='title' x='230.0' y='40'>Compose UI & ViewModel state loop</text>
+
+<g>
+    <rect class='box' x='40' y='80' width='260' height='150' />
+    <text class='label' x='170.0' y='102'>PlayerViewModel</text>
+    <text class='caption' x='170.0' y='120'>
+        <tspan x='170.0' dy='14'>combine music state + playlists</tspan><tspan x='170.0' dy='16'>StateFlow uiState</tspan><tspan x='170.0' dy='16'>dispatch(PlayerEvent)</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='540' y='80' width='260' height='150' />
+    <text class='label' x='670.0' y='102'>PlayerScreen</text>
+    <text class='caption' x='670.0' y='120'>
+        <tspan x='670.0' dy='14'>collectAsStateWithLifecycle</tspan><tspan x='670.0' dy='16'>gestures -> PlayerEvent</tspan><tspan x='670.0' dy='16'>delegate navigation</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='300' y1='150' x2='540' y2='150' />
+    <text class='arrow-text' x='420.0' y='144.0'>uiState flow</text>
+</g>
+
+<g>
+    <rect class='box' x='40' y='260' width='260' height='140' />
+    <text class='label' x='170.0' y='282'>MusicStateHolder</text>
+    <text class='caption' x='170.0' y='300'>
+        <tspan x='170.0' dy='14'>playback/duration flows</tspan><tspan x='170.0' dy='16'>error events</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='170' y1='230' x2='170' y2='260' />
+    <text class='arrow-text' x='170.0' y='239.0'>collect</text>
+</g>
+
+<g>
+    <rect class='box' x='540' y='260' width='260' height='140' />
+    <text class='label' x='670.0' y='282'>UI components</text>
+    <text class='caption' x='670.0' y='300'>
+        <tspan x='670.0' dy='14'>InsidePager</tspan><tspan x='670.0' dy='16'>InfoSection</tspan><tspan x='670.0' dy='16'>LogoSection</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='670' y1='230' x2='670' y2='260' />
+    <text class='arrow-text' x='670.0' y='239.0'>render state</text>
+</g>
+
+<g>
+    <rect class='box' x='40' y='420' width='260' height='110' />
+    <text class='label' x='170.0' y='442'>Use cases</text>
+    <text class='caption' x='170.0' y='460'>
+        <tspan x='170.0' dy='14'>PlaylistUseCase</tspan><tspan x='170.0' dy='16'>DefaultSettingsUseCase</tspan><tspan x='170.0' dy='16'>VisualizerObserver</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='170' y1='400' x2='170' y2='420' />
+    <text class='arrow-text' x='170.0' y='404.0'>business data</text>
+</g>
+
+<g>
+    <rect class='box' x='540' y='420' width='260' height='110' />
+    <text class='label' x='670.0' y='442'>PlayerController</text>
+    <text class='caption' x='670.0' y='460'>
+        <tspan x='670.0' dy='14'>MediaBrowser commands</tspan><tspan x='670.0' dy='16'>play/pause/seek</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='540' y1='430' x2='300' y2='170' />
+    <text class='arrow-text' x='420.0' y='294.0'>dispatch events</text>
+</g>
+
+<g>
+    <line class='arrow' x1='670' y1='420' x2='670' y2='230' />
+    <text class='arrow-text' x='670.0' y='319.0'>event -> action</text>
+</g>
+</svg>

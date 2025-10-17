@@ -1,0 +1,88 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='900' height='540' viewBox='0 0 900 540' font-family='Inter,Arial,sans-serif'>
+<style>.title{font-size:22px;font-weight:bold;fill:#1f2933;}.box{fill:#eaf2fb;stroke:#1f4d7a;stroke-width:1.5;rx:12;ry:12;}.label{font-size:13px;fill:#102a43;text-anchor:middle;}.caption{font-size:12px;fill:#52606d;text-anchor:middle;}.arrow{stroke:#334e68;stroke-width:1.4;marker-end:url(#arrowhead);}.arrow-text{font-size:12px;fill:#334e68;text-anchor:middle;}</style>
+<defs><marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'><polygon points='0 0, 10 3.5, 0 7' fill='#334e68'/></marker></defs>
+<text class='title' x='250.0' y='40'>Media3 playback collaboration</text>
+
+<g>
+    <rect class='box' x='60' y='80' width='240' height='150' />
+    <text class='label' x='180.0' y='102'>MusicService</text>
+    <text class='caption' x='180.0' y='120'>
+        <tspan x='180.0' dy='14'>MediaLibraryService</tspan><tspan x='180.0' dy='16'>builds MediaSession</tspan><tspan x='180.0' dy='16'>injects ToyPlayer</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='520' y='80' width='240' height='150' />
+    <text class='label' x='640.0' y='102'>MusicStateHolder</text>
+    <text class='caption' x='640.0' y='120'>
+        <tspan x='640.0' dy='14'>shared flows</tspan><tspan x='640.0' dy='16'>media items</tspan><tspan x='640.0' dy='16'>playback flags</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='300' y1='150' x2='520' y2='150' />
+    <text class='arrow-text' x='410.0' y='144.0'>player callbacks</text>
+</g>
+
+<g>
+    <line class='arrow' x1='520' y1='210' x2='300' y2='210' />
+    <text class='arrow-text' x='410.0' y='204.0'>state updates</text>
+</g>
+
+<g>
+    <rect class='box' x='60' y='260' width='240' height='140' />
+    <text class='label' x='180.0' y='282'>Playback use cases</text>
+    <text class='caption' x='180.0' y='300'>
+        <tspan x='180.0' dy='14'>PlaybackUseCase</tspan><tspan x='180.0' dy='16'>PlaybackErrorUseCase</tspan><tspan x='180.0' dy='16'>PlaybackLogUseCase</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='180' y1='230' x2='180' y2='260' />
+    <text class='arrow-text' x='180.0' y='239.0'>collects & reacts</text>
+</g>
+
+<g>
+    <rect class='box' x='60' y='420' width='240' height='110' />
+    <text class='label' x='180.0' y='442'>ToyPlayer</text>
+    <text class='caption' x='180.0' y='460'>
+        <tspan x='180.0' dy='14'>Media3 player</tspan><tspan x='180.0' dy='16'>lifecycle managed by service</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='180' y1='400' x2='180' y2='420' />
+    <text class='arrow-text' x='180.0' y='404.0'>controls</text>
+</g>
+
+<g>
+    <rect class='box' x='520' y='260' width='240' height='140' />
+    <text class='label' x='640.0' y='282'>MediaLibrarySessionCallback</text>
+    <text class='caption' x='640.0' y='300'>
+        <tspan x='640.0' dy='14'>custom layout</tspan><tspan x='640.0' dy='16'>command routing</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='300' y1='240' x2='520' y2='300' />
+    <text class='arrow-text' x='410.0' y='264.0'>invalidate layout</text>
+</g>
+
+<g>
+    <rect class='box' x='320' y='420' width='240' height='110' />
+    <text class='label' x='440.0' y='442'>PlayerController</text>
+    <text class='caption' x='440.0' y='460'>
+        <tspan x='440.0' dy='14'>MediaBrowser client</tspan><tspan x='440.0' dy='16'>enqueue / seek / commands</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='320' y1='460' x2='180' y2='460' />
+    <text class='arrow-text' x='250.0' y='454.0'>controls via session</text>
+</g>
+
+<g>
+    <line class='arrow' x1='560' y1='420' x2='640' y2='330' />
+    <text class='arrow-text' x='600.0' y='369.0'>observes state flows</text>
+</g>
+</svg>

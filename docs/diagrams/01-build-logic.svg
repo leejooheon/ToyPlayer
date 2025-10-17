@@ -1,0 +1,88 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='900' height='520' viewBox='0 0 900 520' font-family='Inter,Arial,sans-serif'>
+<style>.title{font-size:22px;font-weight:bold;fill:#1f2933;}.box{fill:#eaf2fb;stroke:#1f4d7a;stroke-width:1.5;rx:12;ry:12;}.label{font-size:13px;fill:#102a43;text-anchor:middle;}.caption{font-size:12px;fill:#52606d;text-anchor:middle;}.arrow{stroke:#334e68;stroke-width:1.4;marker-end:url(#arrowhead);}.arrow-text{font-size:12px;fill:#334e68;text-anchor:middle;}</style>
+<defs><marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'><polygon points='0 0, 10 3.5, 0 7' fill='#334e68'/></marker></defs>
+<text class='title' x='210.0' y='40'>Module registration & dependency management</text>
+
+<g>
+    <rect class='box' x='40' y='80' width='220' height='140' />
+    <text class='label' x='150.0' y='102'>settings.gradle.kts</text>
+    <text class='caption' x='150.0' y='120'>
+        <tspan x='150.0' dy='14'>includeBuild("build-logic")</tspan><tspan x='150.0' dy='16'>include(:modules)</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='340' y='80' width='220' height='140' />
+    <text class='label' x='450.0' y='102'>build-logic</text>
+    <text class='caption' x='450.0' y='120'>
+        <tspan x='450.0' dy='14'>toyplayer.* convention</tspan><tspan x='450.0' dy='16'>plugins (application/feature)</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='640' y='80' width='220' height='140' />
+    <text class='label' x='750.0' y='102'>Module build.gradle.kts</text>
+    <text class='caption' x='750.0' y='120'>
+        <tspan x='750.0' dy='14'>apply(plugin ids)</tspan><tspan x='750.0' dy='16'>configure android/kotlin</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='260' y1='150' x2='340' y2='150' />
+    <text class='arrow-text' x='300.0' y='144.0'>exposes</text>
+</g>
+
+<g>
+    <line class='arrow' x1='560' y1='150' x2='640' y2='150' />
+    <text class='arrow-text' x='600.0' y='144.0'>applies</text>
+</g>
+
+<g>
+    <rect class='box' x='340' y='260' width='220' height='140' />
+    <text class='label' x='450.0' y='282'>gradle/libs.versions.toml</text>
+    <text class='caption' x='450.0' y='300'>
+        <tspan x='450.0' dy='14'>centralized versions</tspan><tspan x='450.0' dy='16'>aliases -> libs.*</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='450' y1='220' x2='450' y2='260' />
+    <text class='arrow-text' x='450.0' y='234.0'>version catalog</text>
+</g>
+
+<g>
+    <rect class='box' x='100' y='410' width='240' height='120' />
+    <text class='label' x='220.0' y='432'>Project modules</text>
+    <text class='caption' x='220.0' y='450'>
+        <tspan x='220.0' dy='14'>app, features, core</tspan><tspan x='220.0' dy='16'>domain, data, testing</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='520' y='410' width='240' height='120' />
+    <text class='label' x='640.0' y='432'>Dependency blocks</text>
+    <text class='caption' x='640.0' y='450'>
+        <tspan x='640.0' dy='14'>implementation(libs.*)</tspan><tspan x='640.0' dy='16'>api(libs.*)</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='150' y1='220' x2='180' y2='410' />
+    <text class='arrow-text' x='165.0' y='309.0'>included modules</text>
+</g>
+
+<g>
+    <line class='arrow' x1='760' y1='220' x2='700' y2='410' />
+    <text class='arrow-text' x='730.0' y='309.0'>consumes catalog</text>
+</g>
+
+<g>
+    <line class='arrow' x1='450' y1='400' x2='220' y2='410' />
+    <text class='arrow-text' x='335.0' y='399.0'>type-safe access</text>
+</g>
+
+<g>
+    <line class='arrow' x1='450' y1='400' x2='520' y2='410' />
+    <text class='arrow-text' x='485.0' y='399.0'>shared coordinates</text>
+</g>
+</svg>

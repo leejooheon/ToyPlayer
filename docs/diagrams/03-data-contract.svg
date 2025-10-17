@@ -1,0 +1,91 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='900' height='540' viewBox='0 0 900 540' font-family='Inter,Arial,sans-serif'>
+<style>.title{font-size:22px;font-weight:bold;fill:#1f2933;}.box{fill:#eaf2fb;stroke:#1f4d7a;stroke-width:1.5;rx:12;ry:12;}.label{font-size:13px;fill:#102a43;text-anchor:middle;}.caption{font-size:12px;fill:#52606d;text-anchor:middle;}.arrow{stroke:#334e68;stroke-width:1.4;marker-end:url(#arrowhead);}.arrow-text{font-size:12px;fill:#334e68;text-anchor:middle;}</style>
+<defs><marker id='arrowhead' markerWidth='10' markerHeight='7' refX='10' refY='3.5' orient='auto'><polygon points='0 0, 10 3.5, 0 7' fill='#334e68'/></marker></defs>
+<text class='title' x='240.0' y='40'>Domain ↔ Data playlist contract</text>
+
+<g>
+    <rect class='box' x='40' y='80' width='240' height='140' />
+    <text class='label' x='160.0' y='102'>domain/repository-api</text>
+    <text class='caption' x='160.0' y='120'>
+        <tspan x='160.0' dy='14'>PlaylistRepository</tspan><tspan x='160.0' dy='16'>Result & Flow contract</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='340' y='80' width='240' height='140' />
+    <text class='label' x='460.0' y='102'>domain/usecase</text>
+    <text class='caption' x='460.0' y='120'>
+        <tspan x='460.0' dy='14'>PlaylistUseCase</tspan><tspan x='460.0' dy='16'>DefaultSettingsUseCase</tspan>
+    </text>
+</g>
+
+<g>
+    <rect class='box' x='640' y='80' width='220' height='140' />
+    <text class='label' x='750.0' y='102'>features</text>
+    <text class='caption' x='750.0' y='120'>
+        <tspan x='750.0' dy='14'>PlayerViewModel</tspan><tspan x='750.0' dy='16'>Screen controllers</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='280' y1='150' x2='340' y2='150' />
+    <text class='arrow-text' x='310.0' y='144.0'>depends on</text>
+</g>
+
+<g>
+    <line class='arrow' x1='580' y1='150' x2='640' y2='150' />
+    <text class='arrow-text' x='610.0' y='144.0'>injects</text>
+</g>
+
+<g>
+    <rect class='box' x='40' y='260' width='240' height='150' />
+    <text class='label' x='160.0' y='282'>data/repository</text>
+    <text class='caption' x='160.0' y='300'>
+        <tspan x='160.0' dy='14'>RepositoryModule</tspan><tspan x='160.0' dy='16'>PlaylistRepositoryImpl</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='160' y1='220' x2='160' y2='260' />
+    <text class='arrow-text' x='160.0' y='234.0'>Hilt binding</text>
+</g>
+
+<g>
+    <rect class='box' x='340' y='260' width='240' height='150' />
+    <text class='label' x='460.0' y='282'>data/playlist</text>
+    <text class='caption' x='460.0' y='300'>
+        <tspan x='460.0' dy='14'>PlaylistDataSource</tspan><tspan x='460.0' dy='16'>maps DAO -> domain</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='280' y1='330' x2='340' y2='330' />
+    <text class='arrow-text' x='310.0' y='324.0'>constructor</text>
+</g>
+
+<g>
+    <rect class='box' x='640' y='260' width='220' height='150' />
+    <text class='label' x='750.0' y='282'>data/playlist/dao</text>
+    <text class='caption' x='750.0' y='300'>
+        <tspan x='750.0' dy='14'>PlaylistDao</tspan><tspan x='750.0' dy='16'>entities & queries</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='580' y1='330' x2='640' y2='330' />
+    <text class='arrow-text' x='610.0' y='324.0'>Room mapping</text>
+</g>
+
+<g>
+    <rect class='box' x='340' y='430' width='240' height='100' />
+    <text class='label' x='460.0' y='452'>Extending data</text>
+    <text class='caption' x='460.0' y='470'>
+        <tspan x='460.0' dy='14'>1. Update DAO/source</tspan><tspan x='460.0' dy='16'>2. Adapt DataSource</tspan><tspan x='460.0' dy='16'>3. Adjust RepositoryImpl</tspan><tspan x='460.0' dy='16'>4. Expose via interface</tspan>
+    </text>
+</g>
+
+<g>
+    <line class='arrow' x1='460' y1='410' x2='460' y2='430' />
+    <text class='arrow-text' x='460.0' y='414.0'>steps</text>
+</g>
+</svg>
