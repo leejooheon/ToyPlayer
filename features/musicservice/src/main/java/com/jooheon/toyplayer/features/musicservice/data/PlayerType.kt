@@ -1,5 +1,5 @@
 package com.jooheon.toyplayer.features.musicservice.data
 
-enum class RendererType {
+enum class PlayerType {
     LOCAL, DLNA
 }

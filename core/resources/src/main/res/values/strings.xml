@@ -118,6 +118,9 @@
     <string name="setting_korean">Korean</string>
     <string name="setting_no_audio_id">Play a song first, then try again</string>
 
+
+    <string name="title_dlna" translatable="false">DLNA</string>
+
     <string name="media_folder_all_songs">All Songs</string>
     <string name="media_folder_album">Album</string>
     <string name="media_folder_playlist">Playlist</string>

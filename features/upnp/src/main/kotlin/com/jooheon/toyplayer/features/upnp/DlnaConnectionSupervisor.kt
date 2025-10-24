@@ -39,7 +39,7 @@ class DlnaConnectionSupervisor @Inject constructor() {
 
                 override fun eventReceived(subscription: GENASubscription<*>?) {
                     Timber.d("eventReceived: $subscription")
-                    val values = subscription?.currentValues // Map<StateVariable, StateVariableValue>
+                    val values = subscription?.currentValues
                     val xml = values?.get("LastChange")?.value as? String ?: return
 
                     val last = LastChange(AVTransportLastChangeParser(), xml)
@@ -49,26 +49,26 @@ class DlnaConnectionSupervisor @Inject constructor() {
                         last.getEventedValue(id, AVTransportVariable.TransportState::class.java)?.let {
                             val transportState = it.value
                             val event = GenaEvent.OnStateChanged(transportState.value)
-                            Timber.d("sendEvent: $event")
+                            Timber.d("send TransportState: $event")
                             send(event)
                         }
                         last.getEventedValue(id, AVTransportVariable.TransportStatus::class.java)?.let {
                             val transportStatus = it.value
                             val event = GenaEvent.OnStatusChanged(transportStatus.value)
-                            Timber.d("sendEvent: $event")
+                            Timber.d("send TransportStatus: $event")
                             send(event)
                         }
                         last.getEventedValue(id, AVTransportVariable.CurrentPlayMode::class.java)?.let {
                             val playMode = it.value
                             val event = GenaEvent.OnPlayModeChanged(playMode.name)
-                            Timber.d("sendEvent: $event")
+                            Timber.d("send CurrentPlayMode: $event")
                             send(event)
                         }
                         last.getEventedValue(id, AVTransportVariable.CurrentTrackDuration::class.java)?.let {
                             val realTimeTarget = it.value
                             val duration = parseDurationToMillis(realTimeTarget)
                             val event = GenaEvent.OnTrackDurationChanged(duration)
-                            Timber.d("sendEvent: $event")
+                            Timber.d("send CurrentTrackDuration: $event")
                             send(event)
                         }
                     }

@@ -38,4 +38,6 @@ dependencies {
 
     implementation(libs.findLibrary("androidx.lifecycle.viewModel.compose").get())
     implementation(libs.findLibrary("androidx.lifecycle.runtime.compose").get())
+
+    implementation(libs.findLibrary("kotlinx.immutable").get())
 }

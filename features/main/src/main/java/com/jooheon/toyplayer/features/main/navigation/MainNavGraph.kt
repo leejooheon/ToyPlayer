@@ -5,6 +5,7 @@ import androidx.navigation3.runtime.entry
 import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
 import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
+import com.jooheon.toyplayer.features.dlna.DlnaScreen
 import com.jooheon.toyplayer.features.library.main.LibraryScreen
 import com.jooheon.toyplayer.features.player.PlayerScreen
 import com.jooheon.toyplayer.features.splash.SplashScreen
@@ -28,6 +29,11 @@ class MainEntryProviderInstaller(
         entry<ScreenNavigation.Library> {
             LibraryScreen(
                 navigateTo = navigator::navigateTo,
+                onBack = navigator::popBackStack
+            )
+        }
+        entry<ScreenNavigation.Dlna> {
+            DlnaScreen(
                 onBack = navigator::popBackStack
             )
         }

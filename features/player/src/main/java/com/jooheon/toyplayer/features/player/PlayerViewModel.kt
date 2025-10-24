@@ -3,15 +3,12 @@ package com.jooheon.toyplayer.features.player
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.C
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.audio.VisualizerData
-import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
 import com.jooheon.toyplayer.domain.model.common.onError
 import com.jooheon.toyplayer.domain.model.common.onSuccess
-import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.model.music.Playlist
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
@@ -26,14 +23,12 @@ import com.jooheon.toyplayer.features.player.model.PlayerUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -107,25 +102,11 @@ class PlayerViewModel @Inject constructor(
         collectStates()
     }
 
-    private val _testChannel = Channel<DlnaRendererModel>()
-    internal val testChannel = _testChannel.receiveAsFlow()
-
     private fun collectStates() = viewModelScope.launch {
         launch {
             musicStateHolder.playbackError.collectLatest {
                 val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
-            }
-        }
-        launch {
-            playerController.customEvents.collect {
-                Timber.d("customEvents: $it")
-                if(it is CustomCommand.Test) {
-                    Timber.d("test: ${it.models}")
-                    if(it.models.isNotEmpty()) {
-                        _testChannel.send(it.models.first())
-                    }
-                }
             }
         }
     }
@@ -146,9 +127,8 @@ class PlayerViewModel @Inject constructor(
             is PlayerEvent.OnSwipe -> playerController.playAtIndex(event.index)
             is PlayerEvent.OnFavoriteClick -> playlistUseCase.favorite(event.playlistId, event.song)
             is PlayerEvent.OnSeek -> playerController.snapTo(event.position)
-            is PlayerEvent.OnCastClick -> onCastClick(event.context)
-            is PlayerEvent.OnCastSelected -> onCastSelected(event.context, event.model)
 
+            is PlayerEvent.OnNavigateDlnaClick -> { /** nothing **/ }
             is PlayerEvent.OnNavigateSettingClick  -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistClick -> { /** nothing **/ }
             is PlayerEvent.OnNavigatePlaylistDetailsClick -> { /** nothing **/ }
@@ -188,26 +168,6 @@ class PlayerViewModel @Inject constructor(
             command = CustomCommand.PrepareRecentQueue(true),
             listener = {
                 Timber.d("PrepareRecentQueue: $it")
-            }
-        )
-    }
-
-    private fun onCastClick(context: Context) {
-        playerController.sendCustomCommand(
-            context = context,
-            command = CustomCommand.DiscoverRenderers,
-            listener = {
-                Timber.d("LaunchCastDialog: $it")
-            }
-        )
-    }
-
-    private fun onCastSelected(context: Context, model: DlnaRendererModel?) {
-        playerController.sendCustomCommand(
-            context = context,
-            command = CustomCommand.SwitchRenderer(model),
-            listener = {
-                Timber.d("SwitchRenderer: $it")
             }
         )
     }

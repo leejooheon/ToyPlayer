@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.jooheon.toyplayer.core.designsystem.theme.ToyPlayerTheme
@@ -35,6 +37,12 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val isDarkTheme by viewModel.isDarkTheme.collectAsStateWithLifecycle(false, this)
             ToyPlayerTheme(isDarkTheme) {
+                SideEffect {
+                    val window = this@MainActivity.window
+                    val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+                    insetsController.isAppearanceLightStatusBars = false // true: 검정 아이콘, false: 흰색 아이콘
+                }
+
                 MainScreen(
                     navigator = navigator,
                     entryProviderBuilders = entryProviderBuilders,
@@ -47,9 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
-        lifecycleScope.launch {
-            TouchEventController.sendEvent(ev)
-        }
+        TouchEventController.sendEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 

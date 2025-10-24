@@ -13,6 +13,7 @@ import com.jooheon.toyplayer.features.musicservice.MediaLibrarySessionCallback
 import com.jooheon.toyplayer.features.musicservice.data.MediaItemProvider
 import com.jooheon.toyplayer.features.musicservice.notification.GlideBitmapLoader
 import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlayerTypeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +35,8 @@ object MediaSessionModule {
         playlistUseCase: PlaylistUseCase,
         playlistSettingsUseCase: PlayerSettingsUseCase,
         defaultSettingsUseCase: DefaultSettingsUseCase,
-        castUseCase: CastUseCase
+        castUseCase: CastUseCase,
+        playerTypeUseCase: PlayerTypeUseCase,
     ): MediaLibrarySessionCallback = MediaLibrarySessionCallback(
         context = context,
         scope = scope,
@@ -42,7 +44,8 @@ object MediaSessionModule {
         playlistUseCase = playlistUseCase,
         playerSettingsUseCase = playlistSettingsUseCase,
         defaultSettingsUseCase = defaultSettingsUseCase,
-        castUseCase = castUseCase
+        castUseCase = castUseCase,
+        playerTypeUseCase = playerTypeUseCase
     )
 
     @OptIn(UnstableApi::class)

@@ -6,4 +6,11 @@ import kotlinx.serialization.Serializable
 data class DlnaRendererModel(
     val name: String,
     val udn: String, // Unique Device Name
-)
+) {
+    companion object {
+        val default = DlnaRendererModel(
+            name = "",
+            udn = "",
+        )
+    }
+}

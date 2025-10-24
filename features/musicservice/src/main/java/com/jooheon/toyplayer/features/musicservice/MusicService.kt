@@ -13,7 +13,7 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.common.temp.MusicServiceCoroutineScope
-import com.jooheon.toyplayer.features.musicservice.data.RendererType
+import com.jooheon.toyplayer.features.musicservice.data.PlayerType
 import com.jooheon.toyplayer.features.musicservice.ext.isHls
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationProvider
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
@@ -26,6 +26,7 @@ import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlayerTypeUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -77,6 +78,9 @@ class MusicService: MediaLibraryService() {
 
     @Inject
     lateinit var castUseCase: CastUseCase
+
+    @Inject
+    lateinit var playerTypeUseCase: PlayerTypeUseCase
 
     private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
@@ -169,7 +173,6 @@ class MusicService: MediaLibraryService() {
 
         musicStateHolder.observeStates(serviceScope)
         playbackListener.observeDuration(serviceScope, player)
-//        player.addListener(playbackListener)
     }
 
     private fun initUseCase() {
@@ -191,14 +194,12 @@ class MusicService: MediaLibraryService() {
                     mediaLibrarySessionCallback.invalidateCustomLayout(mediaSession)
                 }
             }
-
             launch {
                 playbackErrorUseCase.autoPlayChannel.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
                     if(!player.isPlaying) player.play()
                 }
             }
-
             launch {
                 playbackErrorUseCase.seekToDefaultChannel.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
@@ -211,16 +212,29 @@ class MusicService: MediaLibraryService() {
             launch {
                 castUseCase.rendererList.collectLatest {
                     val session = mediaSession ?: return@collectLatest
-                    session.broadcastCustomCommand(CustomCommand.Test(it))
+                    session.broadcastCustomCommand(CustomCommand.OnDlnaDiscovered(it))
                 }
             }
             launch {
-                castUseCase.rendererType.collectLatest {
+                playerTypeUseCase.playerType.collectLatest {
                     val session = mediaSession ?: return@collectLatest
-                    session.player.removeListener(playbackListener)
+                    Timber.d("Switching player to: $it")
+                    toyPlayer.removeListener(playbackListener)
+
+                    when(it) {
+                        PlayerType.LOCAL -> {
+                            toyPlayer.addListener(playbackListener)
+                            castUseCase.unbindService()
+                        }
+                        PlayerType.DLNA -> {
+                            toyPlayer.removeListener(playbackListener)
+                            castUseCase.bindService()
+                        }
+                    }
+
                     session.player = when(it) {
-                        RendererType.LOCAL -> toyPlayer.also { it.addListener(playbackListener) }
-                        RendererType.DLNA -> testPlayer.also { it.addListener(playbackListener) }
+                        PlayerType.LOCAL -> toyPlayer
+                        PlayerType.DLNA -> testPlayer
                     }
                 }
             }

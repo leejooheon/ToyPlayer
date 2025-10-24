@@ -6,5 +6,6 @@ import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
 interface CastService {
     fun bindService()
     fun unbindService()
-    fun selectRenderer(renderer: DlnaRendererModel?)
+    fun discover()
+    fun selectRenderer(renderer: DlnaRendererModel)
 }

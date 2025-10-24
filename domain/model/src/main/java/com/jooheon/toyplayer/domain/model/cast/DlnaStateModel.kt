@@ -18,6 +18,10 @@ data class DlnaStateModel(
         )
     }
 
+    override fun toString(): String {
+        return "$state\nDuration: $duration\nPosition: $position"
+    }
+
     fun toPlaybackState(): Int {
         return when (state) {
             "PLAYING" -> 3 // STATE_PLAYING
@@ -27,8 +31,8 @@ data class DlnaStateModel(
             else -> 0 // STATE_NONE
         }
     }
-    fun toPlayerState(connected: Boolean): Int {
-        return if(!connected) 4 // Player.STATE_ENDED
+    fun toPlayerState(ready: Boolean): Int {
+        return if(!ready) 4 // Player.STATE_ENDED
         else when (state) {
             "PLAYING" -> 3 //Player.STATE_READY
             "PAUSED_PLAYBACK" -> 3 //Player.STATE_READY

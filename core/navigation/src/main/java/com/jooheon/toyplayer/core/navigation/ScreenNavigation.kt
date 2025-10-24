@@ -17,6 +17,9 @@ sealed interface ScreenNavigation: NavKey {
     data object Splash : ScreenNavigation
 
     @Serializable
+    data object Dlna : ScreenNavigation
+
+    @Serializable
     sealed interface Album : ScreenNavigation {
         @Serializable
         data object More : Album

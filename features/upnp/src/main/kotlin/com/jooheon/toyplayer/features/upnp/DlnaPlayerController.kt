@@ -6,6 +6,7 @@ import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import com.jooheon.toyplayer.domain.castapi.CastController
 import com.jooheon.toyplayer.domain.model.common.extension.defaultEmpty
+import com.jooheon.toyplayer.domain.model.dlna.DlnaConnectionState
 import com.jooheon.toyplayer.features.upnp.protocol.andThen
 import com.jooheon.toyplayer.features.upnp.protocol.getCurrentTransportActions
 import com.jooheon.toyplayer.features.upnp.protocol.getDeviceCapabilities
@@ -47,6 +48,7 @@ class DlnaPlayerController(
 
     suspend fun connect(renderer: RemoteDevice) {
         val service = dlnaStateHolder.service.value ?: return
+        dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Connecting)
 
         createSessionScope()
         getTransportInfo()
@@ -56,6 +58,10 @@ class DlnaPlayerController(
             .onSuccess {
                 Timber.i("supports: [Aac: ${it.supportsAac()}], [Mp3: ${it.supportsMp3()}], [Flac: ${it.supportsFlac()}], [Hls: ${it.supportsHls()}]")
                 dlnaStateHolder.onProtocolInfosChanged(it)
+                dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Connected)
+            }
+            .onFailure {
+                dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Failed)
             }
     }
 
@@ -225,7 +231,7 @@ class DlnaPlayerController(
         sessionScope = null
 
         val job = SupervisorJob(scope.coroutineContext[Job])
-        val dispatcher = Dispatchers.Main
+        val dispatcher = Dispatchers.Main.immediate
         sessionScope = CoroutineScope(job + dispatcher)
     }
 }

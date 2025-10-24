@@ -6,10 +6,10 @@ import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.jooheon.toyplayer.core.system.network.NetworkConnectivityObserver
 import com.jooheon.toyplayer.core.system.network.WifiConnectivity
 import com.jooheon.toyplayer.domain.castapi.CastService
 import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
+import com.jooheon.toyplayer.domain.model.dlna.DlnaConnectionState
 import com.jooheon.toyplayer.features.upnp.model.DlnaSpec
 import com.jooheon.toyplayer.features.upnp.model.GenaEvent
 import kotlinx.coroutines.CoroutineScope
@@ -22,9 +22,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.jupnp.android.AndroidUpnpService
@@ -33,7 +31,6 @@ import org.jupnp.model.meta.RemoteDevice
 import org.jupnp.registry.DefaultRegistryListener
 import org.jupnp.registry.Registry
 import timber.log.Timber
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 
 class DlnaServiceManager(
@@ -46,11 +43,6 @@ class DlnaServiceManager(
     private val proxyServer = HttpProxyServer()
     private val dlnaConnectionSupervisor = DlnaConnectionSupervisor()
 
-    /**
-     * 1. UPnP 서비스가 연결되면 dlnaStateHolder에 서비스를 등록하고 디바이스 검색을 시작, 렌더러 목록을 갱신
-     * 2. 사용자가 렌더러를 선택하면 연결 시도, 선택 해제 시 연결 해제
-     * 3. 연결이 잘되면 렌더러 상태와 Wi-Fi 연결 상태를 관찰 시작
-     */
     init {
         scope.launch {
             launch {
@@ -60,8 +52,10 @@ class DlnaServiceManager(
                         if(it == null) {
                             proxyServer.stop()
                             dlnaPlayerController.disConnect() // 서비스가 null 이면 연결 해제
+                            dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Idle)
                         } else {
                             proxyServer.start()
+                            dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.ServiceBound)
                         }
                     }
                 }
@@ -86,7 +80,8 @@ class DlnaServiceManager(
                 }.launchIn(this)
 
             dlnaStateHolder.connectionState.flatMapLatest {
-                if(it) merge(observeRendererState(), observeWifiConnectivity())
+                //merge(observeRendererState(), observeWifiConnectivity())
+                if(it == DlnaConnectionState.Connected) observeRendererState()
                 else emptyFlow<Unit>()
             }.launchIn(this)
         }
@@ -102,14 +97,21 @@ class DlnaServiceManager(
 
     override fun unbindService() {
         runCatching {
+            dlnaPlayerController.stop()
             context.applicationContext.unbindService(serviceConnection)
         }
     }
 
-    override fun selectRenderer(renderer: DlnaRendererModel?) {
+    override fun discover() {
+        val service = dlnaStateHolder.service.value ?: return
+        service.controlPoint.search()
+        dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Discovering)
+    }
+
+    override fun selectRenderer(renderer: DlnaRendererModel) {
         scope.launch {
             val list = dlnaStateHolder.rendererList.value
-            val renderer = list.firstOrNull { it.identity.udn.identifierString == renderer?.udn }
+            val renderer = list.firstOrNull { it.identity.udn.identifierString == renderer.udn }
             dlnaStateHolder.onRendererSelected(renderer)
         }
     }
@@ -124,7 +126,6 @@ class DlnaServiceManager(
             val service = (service as AndroidUpnpService)
                 .also { it.get().startup() }
                 .apply { registry.addListener(registryListener) }
-                .also { it.controlPoint.search() }
 
             dlnaStateHolder.onServiceChanged(service)
         }
@@ -162,49 +163,38 @@ class DlnaServiceManager(
     private fun observeRendererState(): Flow<GenaEvent> = flow {
         val service = dlnaStateHolder.service.value ?: return@flow
         val renderer = dlnaStateHolder.selectedRenderer.value ?: return@flow
-        Timber.d("observeRendererState")
 
-        dlnaConnectionSupervisor.observe(service, renderer)
-            .retryWhen { cause, attempt ->
-                if(cause is CancellationException) return@retryWhen false
-                if(attempt >= 3) { // 최대 3회 재시도
-                    dlnaPlayerController.disConnect() // 재시도 후에도 실패하면 연결 해제
-                    return@retryWhen false
-                }
-                Timber.w("retrySubscription after expire (attempt=$attempt)")
-                delay(2.seconds)
-                true
-            }
-            .collect {
-                Timber.d("GenaEvent: $it")
-                when(it) {
-                    is GenaEvent.OnStateChanged -> dlnaStateHolder.onStateChanged(it.state)
-                    is GenaEvent.OnStatusChanged -> dlnaStateHolder.onConnectionStateChanged(it.status)
-                    is GenaEvent.OnTrackDurationChanged -> dlnaStateHolder.onTrackDurationChanged(it.duration)
-                    is GenaEvent.OnPlayModeChanged -> dlnaStateHolder.onPlayModeChanged(it.playMode)
-                    is GenaEvent.OnEventMissed -> dlnaPlayerController.getTransportInfo()
-                    is GenaEvent.OnSubscriptionFailed,
-                    is GenaEvent.OnSubscriptionExpired -> {
-                        Timber.w("GENA subscription expired, will retry automatically")
-                        throw RuntimeException("Subscription expired")
-                    }
+        dlnaConnectionSupervisor.observe(service, renderer).collect {
+            Timber.d("GenaEvent: $it")
+            when(it) {
+                is GenaEvent.OnStateChanged -> dlnaStateHolder.onStateChanged(it.state)
+                is GenaEvent.OnStatusChanged -> dlnaStateHolder.onConnectionStateChanged(it.status)
+                is GenaEvent.OnTrackDurationChanged -> dlnaStateHolder.onTrackDurationChanged(it.duration)
+                is GenaEvent.OnPlayModeChanged -> dlnaStateHolder.onPlayModeChanged(it.playMode)
+                is GenaEvent.OnEventMissed -> dlnaPlayerController.getTransportInfo()
+                is GenaEvent.OnSubscriptionFailed,
+                is GenaEvent.OnSubscriptionExpired -> {
+                    dlnaStateHolder.onConnectionStateChanged(DlnaConnectionState.Idle)
+                    Timber.w("GENA subscription expired, will retry automatically")
+                    throw RuntimeException("Subscription expired")
                 }
             }
-    }
-
-    private fun observeWifiConnectivity(): Flow<NetworkConnectivityObserver.Status> = flow {
-        wifiConnectivity.observe().collect { status ->
-            Timber.d("Wi-Fi status: $status")
-
-            when (status) {
-                NetworkConnectivityObserver.Status.Lost,
-                NetworkConnectivityObserver.Status.Unavailable -> {
-                    dlnaPlayerController.disConnect() // Wi-Fi 끊기면 연결 해제
-                }
-                else -> Unit
-            }
-
-            emit(status)
         }
     }
+
+//    private fun observeWifiConnectivity(): Flow<NetworkConnectivityObserver.Status> = flow {
+//        wifiConnectivity.observe().collect { status ->
+//            Timber.d("Wi-Fi status: $status")
+//
+//            when (status) {
+//                NetworkConnectivityObserver.Status.Lost,
+//                NetworkConnectivityObserver.Status.Unavailable -> {
+//                    dlnaPlayerController.disConnect() // Wi-Fi 끊기면 연결 해제
+//                }
+//                else -> Unit
+//            }
+//
+//            emit(status)
+//        }
+//    }
 }

@@ -23,6 +23,7 @@ dependencies {
     implementation(projects.features.artist)
     implementation(projects.features.album)
     implementation(projects.features.upnp)
+    implementation(projects.features.dlna)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity)

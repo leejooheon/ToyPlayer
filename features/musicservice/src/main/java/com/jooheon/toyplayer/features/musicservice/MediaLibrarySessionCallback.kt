@@ -42,6 +42,7 @@ import com.jooheon.toyplayer.features.musicservice.ext.toSong
 import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotificationCommand
 import com.jooheon.toyplayer.features.musicservice.player.CustomCommand
 import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlayerTypeUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.guava.future
@@ -58,6 +59,7 @@ class MediaLibrarySessionCallback(
     private val playerSettingsUseCase: PlayerSettingsUseCase,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
     private val castUseCase: CastUseCase,
+    private val playerTypeUseCase: PlayerTypeUseCase,
 ): MediaLibrarySession.Callback {
     override fun onGetLibraryRoot(
         session: MediaLibrarySession,
@@ -232,11 +234,15 @@ class MediaLibrarySessionCallback(
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
 
-                is CustomCommand.DiscoverRenderers -> {
-                    castUseCase.bindService()
+                is CustomCommand.SelectPlayerType -> {
+                    playerTypeUseCase.setPlayerType(command.type)
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }
-                is CustomCommand.SwitchRenderer -> {
+                is CustomCommand.DlnaDiscover -> {
+                    castUseCase.discover()
+                    SessionResult(SessionResult.RESULT_SUCCESS)
+                }
+                is CustomCommand.OnDlnaSelected -> {
                     castUseCase.selectRenderer(command.model)
                     SessionResult(SessionResult.RESULT_SUCCESS)
                 }

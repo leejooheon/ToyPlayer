@@ -14,13 +14,12 @@ class TestPlayer(
     private val castStateHolder: CastStateHolder,
 ): ForwardingPlayer(player) {
     override fun play() {
-        addListener()
         val remoteUrl = "https://storage.googleapis.com/uamp/The_Kyoto_Connection_-_Wake_Up/02_-_Geisha.mp3"
-//        castController.play(
-//            uri = remoteUrl,
-//            seekTo = 0L
-//        )
-        castController.pause()
+        castController.play(
+            uri = remoteUrl,
+            seekTo = 0L
+        )
+//        castController.pause()
     }
 
     override fun isPlaying(): Boolean {

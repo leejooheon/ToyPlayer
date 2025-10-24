@@ -3,8 +3,11 @@ package com.jooheon.toyplayer.features.upnp
 import com.jooheon.toyplayer.domain.castapi.CastStateHolder
 import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
 import com.jooheon.toyplayer.domain.model.cast.DlnaStateModel
+import com.jooheon.toyplayer.domain.model.dlna.DlnaConnectionState
 import com.jooheon.toyplayer.features.upnp.model.toModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,9 +19,8 @@ import org.jupnp.android.AndroidUpnpService
 import org.jupnp.model.meta.RemoteDevice
 import org.jupnp.support.model.ProtocolInfos
 
-class DlnaStateHolder(
-    private val scope: CoroutineScope
-): CastStateHolder {
+class DlnaStateHolder(): CastStateHolder {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val _service = MutableStateFlow<AndroidUpnpService?>(null)
     internal val service = _service.asStateFlow()
 
@@ -28,7 +30,7 @@ class DlnaStateHolder(
     private val _state = MutableStateFlow(DlnaStateModel.default)
     override val state = _state.asStateFlow()
 
-    private val _connectionState = MutableSharedFlow<Boolean>()
+    private val _connectionState = MutableSharedFlow<DlnaConnectionState>()
     override val connectionState = _connectionState.asSharedFlow()
 
     private val _rendererList = MutableStateFlow<List<RemoteDevice>>(emptyList())
@@ -81,8 +83,13 @@ class DlnaStateHolder(
         }
     }
 
-    internal fun onConnectionStateChanged(status: String) {
-        _connectionState.tryEmit(status == "OK")
+    internal fun onConnectionStateChanged(raw: String) {
+        if(raw == "OK") {
+            _connectionState.tryEmit(DlnaConnectionState.Connected)
+        }
+    }
+    internal fun onConnectionStateChanged(state: DlnaConnectionState) {
+        _connectionState.tryEmit(state)
     }
 
     internal fun onTrackDurationChanged(duration: Long) {

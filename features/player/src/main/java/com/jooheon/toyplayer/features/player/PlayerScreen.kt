@@ -78,17 +78,6 @@ fun PlayerScreen(
     }
 
     ObserveAsEvents(
-        flow = viewModel.testChannel,
-        onEvent = {
-            val event = PlayerEvent.OnCastSelected(
-                context = context,
-                model = it
-            )
-            viewModel.dispatch(event)
-        }
-    )
-
-    ObserveAsEvents(
         flow = TouchEventController.debouncedEvent,
         key1 = infoSectionVisibleState,
     ) {
@@ -130,6 +119,9 @@ fun PlayerScreen(
                 }
                 is PlayerEvent.OnNavigatePlaylistDetailsClick -> {
                     navigateTo.invoke(ScreenNavigation.Playlist.Details(it.id))
+                }
+                is PlayerEvent.OnNavigateDlnaClick -> {
+                    navigateTo.invoke(ScreenNavigation.Dlna)
                 }
                 else -> viewModel.dispatch(it)
             }
@@ -186,7 +178,7 @@ private fun PlayerScreenInternal(
             playlists = uiState.playlists,
             isLoading = uiState.isLoading(),
             isShow = infoSectionVisibleState,
-            onCastClick = { onPlayerEvent.invoke(PlayerEvent.OnCastClick(context)) },
+            onCastClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateDlnaClick) },
             onLibraryClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateLibraryClick) },
             onPlaylistClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigatePlaylistClick) },
             onSettingClick = { onPlayerEvent.invoke(PlayerEvent.OnNavigateSettingClick) },

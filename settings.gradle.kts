@@ -31,7 +31,9 @@ include(
     ":features:playlist",
     ":features:library",
     ":features:artist",
-    ":features:album"
+    ":features:album",
+    ":features:dlna",
+    ":features:upnp",
 )
 
 include(
@@ -44,7 +46,8 @@ include(
 include(
     ":domain:repository-api",
     ":domain:model",
-    ":domain:usecase"
+    ":domain:usecase",
+    "domain:cast-api"
 )
 
 include(
@@ -58,5 +61,3 @@ include(
 
 include (":library:paramsen-noise")
 project(":library:paramsen-noise").projectDir = File(rootDir, "library/paramsen-noise/")
-include(":features:upnp")
-include(":domain:cast-api")

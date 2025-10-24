@@ -23,7 +23,7 @@ object TouchEventController {
         .map { }
         .flowOn(Dispatchers.IO)
 
-    suspend fun sendEvent(event: MotionEvent?) {
-        _event.send(event)
+    fun sendEvent(event: MotionEvent?) {
+        _event.trySend(event)
     }
 }

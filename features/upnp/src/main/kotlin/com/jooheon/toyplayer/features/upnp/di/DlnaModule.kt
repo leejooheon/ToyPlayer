@@ -20,16 +20,6 @@ import kotlinx.coroutines.CoroutineScope
 @Module
 @InstallIn(ServiceComponent::class)
 object DlnaModule {
-    @ServiceScoped
-    @Provides
-    fun provideDlnaStateHolder(
-        @MusicServiceCoroutineScope scope: CoroutineScope,
-    ): DlnaStateHolder = DlnaStateHolder(scope)
-
-    @Provides
-    fun provideCastStateHolder(
-        dlnaStateHolder: DlnaStateHolder
-    ): CastStateHolder = dlnaStateHolder
 
     @ServiceScoped
     @Provides

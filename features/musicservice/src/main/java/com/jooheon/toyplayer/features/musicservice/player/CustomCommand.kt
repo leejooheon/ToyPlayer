@@ -7,6 +7,7 @@ import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.ListenableFuture
 import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
+import com.jooheon.toyplayer.features.musicservice.data.PlayerType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -28,13 +29,17 @@ sealed interface CustomCommand {
     }
 
     @Serializable
-    data object DiscoverRenderers: CustomCommand
+    data class SelectPlayerType(val type: PlayerType): CustomCommand
 
     @Serializable
-    data class SwitchRenderer(val model: DlnaRendererModel?): CustomCommand
+    data object DlnaDiscover: CustomCommand
 
     @Serializable
-    data class Test(val models: List<DlnaRendererModel>): CustomCommand
+    data class OnDlnaDiscovered(val models: List<DlnaRendererModel>): CustomCommand
+
+    @Serializable
+    data class OnDlnaSelected(val model: DlnaRendererModel): CustomCommand
+
     companion object {
         const val CUSTOM_COMMAND_ACTION = "commandAction"
         internal const val CUSTOM_COMMAND_EXTRA = "commandExtra"

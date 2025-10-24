@@ -13,6 +13,7 @@ import com.jooheon.toyplayer.features.musicservice.usecase.CastUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
+import com.jooheon.toyplayer.features.musicservice.usecase.PlayerTypeUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,4 +72,8 @@ object PlaybackUseCaseModule {
         castStateHolder = castStateHolder,
         musicStateHolder = musicStateHolder,
     )
+
+    @Provides
+    @ServiceScoped
+    fun provideRendererTypeUseCase() = PlayerTypeUseCase()
 }

@@ -3,8 +3,8 @@ package com.jooheon.toyplayer.features.musicservice.usecase
 import com.jooheon.toyplayer.domain.castapi.CastService
 import com.jooheon.toyplayer.domain.castapi.CastStateHolder
 import com.jooheon.toyplayer.domain.model.cast.DlnaRendererModel
+import com.jooheon.toyplayer.domain.model.dlna.DlnaConnectionState
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
-import com.jooheon.toyplayer.features.musicservice.data.RendererType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,11 +17,12 @@ class CastUseCase(
     private val castStateHolder: CastStateHolder,
     private val musicStateHolder: MusicStateHolder,
 ) {
-    private val _rendererType = MutableStateFlow(RendererType.LOCAL)
-    internal val rendererType = _rendererType.asStateFlow()
-
     private val _rendererList = MutableStateFlow<List<DlnaRendererModel>>(emptyList())
     internal val rendererList = _rendererList.asStateFlow()
+
+    internal fun discover() {
+        castService.discover()
+    }
 
     internal fun bindService() {
         castService.bindService()
@@ -31,23 +32,19 @@ class CastUseCase(
         castService.unbindService()
     }
 
-    internal fun selectRenderer(model: DlnaRendererModel?) {
+    internal fun selectRenderer(model: DlnaRendererModel) {
         castService.selectRenderer(model)
     }
 
     internal fun observeState(scope: CoroutineScope) {
         scope.launch {
             launch {
-                castStateHolder.connectionState.collect {
-
-                }
-            }
-            launch {
                 combine(
                     castStateHolder.connectionState,
                     castStateHolder.state,
                 ) { connected, state -> connected to state }.collectLatest { (connected, state) ->
-                    musicStateHolder.onPlaybackStateChanged(state.toPlayerState(connected))
+                    val ready = connected == DlnaConnectionState.Connected
+                    musicStateHolder.onPlaybackStateChanged(state.toPlayerState(ready))
                 }
             }
             launch {
@@ -60,19 +57,6 @@ class CastUseCase(
             launch {
                 castStateHolder.rendererListModel.collect {
                     _rendererList.emit(it)
-                }
-            }
-            launch {
-                castStateHolder.selectedRendererModel.collect {
-                    if(it == null) unbindService()
-
-                    val type = if(it == null) {
-                        RendererType.LOCAL
-                    } else {
-                        RendererType.DLNA
-                    }
-
-                    _rendererType.emit(type)
                 }
             }
         }
