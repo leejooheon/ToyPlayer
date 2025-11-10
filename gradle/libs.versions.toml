@@ -4,7 +4,7 @@
 # hilt: https://github.com/google/dagger/releases
 
 # Project
-androidGradlePlugin = "8.11.1"
+androidGradlePlugin = "8.11.2"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
 
@@ -17,23 +17,23 @@ android_sdk_min = "26"
 
 # Hilt
 hilt = "2.57"
-hiltCompose = "1.2.0"
-hiltWorker = "1.2.0"
+hiltCompose = "1.3.0"
+hiltWorker = "1.3.0"
 
 # Compose
-composeBom = "2025.08.00"
+composeBom = "2025.11.00"
 
 # AndroidX
-corektx = "1.16.0"
+corektx = "1.17.0"
 appcompat = "1.7.1"
-activity = "1.10.1"
-material = "1.12.0"
+activity = "1.11.0"
+material = "1.13.0"
 datastore="1.1.7"
 constraintLayout = "1.1.1"
-androidxLifecycle = "2.9.2"
-composeNavigation = "2.9.3"
+androidxLifecycle = "2.9.4"
+composeNavigation = "2.9.6"
 
-activityCompose = "1.12.0-alpha06"
+activityCompose = "1.12.0-rc01"
 material3 = "1.4.0-beta01"
 navigation3 = "1.0.0-alpha07"
 navigation3Material = "1.0.0-SNAPSHOT"
@@ -54,10 +54,10 @@ kotlinxImmutable = "0.4.0"
 javaxInject = "1"
 
 # work
-work = "2.10.3"
+work = "2.11.0"
 
 # Room
-room = "2.7.2"
+room = "2.8.3"
 
 # Network
 retrofit = "3.0.0"
@@ -67,13 +67,13 @@ chucker = "4.2.0"
 retrofit-serialization-converter = "1.0.0"
 
 # Glide
-glide = "4.16.0"
+glide = "5.0.5"
 glideCompose = "1.0.0-beta01"
 
 ## license
 # https://developers.google.com/android/guides/opensource
-ossLicenses = "17.2.2"
-ossLicensesPlugin = "0.10.7"
+ossLicenses = "17.3.0"
+ossLicensesPlugin = "0.10.9"
 
 # Timber
 timber ="5.0.1"
@@ -83,7 +83,7 @@ processPhoenix = "3.0.0"
 tedpermission = "3.4.2"
 
 # Lottie
-lottie = "6.6.7"
+lottie = "6.7.1"
 
 # AudioFileIO
 jaudiotagger = "2.3.15"
@@ -94,9 +94,9 @@ detekt = "1.23.8" # https://github.com/detekt/detekt
 
 # Test
 testJunit = "4.13.2"
-junitVintageEngine = "5.13.4"
+junitVintageEngine = "6.0.1"
 kotest = "6.0.0"
-mockk = "1.14.5"
+mockk = "1.14.6"
 turbine = "1.2.1"
 
 # AndroidTest
