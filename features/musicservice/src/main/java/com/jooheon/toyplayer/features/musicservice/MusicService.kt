@@ -189,7 +189,10 @@ class MusicService: MediaLibraryService() {
             launch {
                 hlsResumeUseCase.resume.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
-                    if(!player.isPlaying) player.play()
+                    if(player.currentMediaItem?.isHls().defaultFalse()) {
+                        player.seekToDefaultPosition()
+                        player.prepare()
+                    }
                 }
             }
         }
