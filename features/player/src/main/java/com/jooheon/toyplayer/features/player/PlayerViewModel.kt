@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.C
+import androidx.media3.common.PlaybackException
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.audio.VisualizerData
@@ -107,6 +108,10 @@ class PlayerViewModel @Inject constructor(
     private fun collectStates() = viewModelScope.launch {
         launch {
             musicStateHolder.playbackError.collectLatest {
+                if(it.errorCode == PlaybackException.ERROR_CODE_FAILED_RUNTIME_CHECK) {
+                    return@collectLatest
+                }
+
                 val event = SnackbarEvent(UiText.StringResource(Strings.error_default))
                 SnackbarController.sendEvent(event)
             }

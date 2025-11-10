@@ -33,7 +33,6 @@ class PlaybackErrorUseCase(
                 }
                 else -> PlaybackError.UnKnown(exception.errorCode)
             }
-            Timber.d("error: $exception")
 //            _playbackError.send(error)
         }
     }
