@@ -1,6 +1,5 @@
 package com.jooheon.toyplayer.features.settings.presentation.main.model
 
-import android.content.Context
 import com.jooheon.toyplayer.domain.model.audio.AudioUsage
 import com.jooheon.toyplayer.features.settings.presentation.language.LanguageType
 
@@ -13,6 +12,7 @@ sealed interface SettingsUiEvent {
     data object OnNavigateOpenSourceLicense: SettingsUiEvent
 
     data class OnLanguageSelected(val type: LanguageType): SettingsUiEvent
-    data class OnVolumeChanged(val volume: Float): SettingsUiEvent
+    data class OnPlayerVolumeChanged(val volume: Float): SettingsUiEvent
+    data class OnSystemVolumeChanged(val volume: Float): SettingsUiEvent
     data class OnAudioUsageChanged(val audioUsage: AudioUsage): SettingsUiEvent
 }

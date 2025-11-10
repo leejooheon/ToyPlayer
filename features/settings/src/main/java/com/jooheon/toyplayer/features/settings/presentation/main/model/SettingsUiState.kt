@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.settings.presentation.main.model
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Accessible
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.outlined.Equalizer
@@ -17,14 +16,16 @@ import com.jooheon.toyplayer.features.settings.presentation.language.LanguageTyp
 data class SettingsUiState(
     val models: List<Model>,
     val currentLanguageType: LanguageType,
-    val volume: Float,
+    val playerVolume: Pair<Float, Float>,
+    val systemVolume: Pair<Float, Float>,
     val audioUsage: AudioUsage
 ) {
     companion object {
         val default = SettingsUiState(
             models = emptyList(),
             currentLanguageType = LanguageType.default,
-            volume = 0f,
+            playerVolume = 0f to 1f,
+            systemVolume = 0f to 15f,
             audioUsage = AudioUsage.MEDIA
         )
     }

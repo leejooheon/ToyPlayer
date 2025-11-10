@@ -7,6 +7,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jakewharton.processphoenix.ProcessPhoenix
+import com.jooheon.toyplayer.core.system.audio.AudioOutputObserver
 import com.jooheon.toyplayer.domain.model.audio.AudioUsage
 import com.jooheon.toyplayer.domain.model.music.MediaId
 import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -31,21 +31,22 @@ class SettingsViewModel @Inject constructor(
     private val playerController: PlayerController,
     private val playerSettingsUseCase: PlayerSettingsUseCase,
     private val defaultSettingsUseCase: DefaultSettingsUseCase,
+    private val audioOutputObserver: AudioOutputObserver
 ): ViewModel() {
     private val languageFlow = MutableStateFlow(LanguageType.current())
 
     val uiState: StateFlow<SettingsUiState> =
         combine(
+            audioOutputObserver.observeSystemVolume(),
             playerSettingsUseCase.flowVolume(),
             defaultSettingsUseCase.flowAudioUsage(),
             languageFlow,
-        ) { volume, audioUsage, language ->
-            Triple(volume, audioUsage, language)
-        }.map { (volume, audioUsage, language) ->
+        ) { systemVolume, playerVolume, audioUsage, language ->
             SettingsUiState(
                 models = SettingsUiState.Model.getSettingListItems(),
                 currentLanguageType = language,
-                volume = volume,
+                playerVolume = playerVolume to 1f,
+                systemVolume = systemVolume.first.toFloat() to systemVolume.second.toFloat(),
                 audioUsage = audioUsage,
             )
         }
@@ -65,8 +66,9 @@ class SettingsViewModel @Inject constructor(
     ) = viewModelScope.launch {
         when(event) {
             is SettingsUiEvent.OnLanguageSelected -> onLanguageSelected(context, event.type)
-            is SettingsUiEvent.OnVolumeChanged -> onVolumeChanged(event.volume)
             is SettingsUiEvent.OnAudioUsageChanged -> onAudioUsageChanged(context, event.audioUsage)
+            is SettingsUiEvent.OnPlayerVolumeChanged -> onPlayerVolumeChanged(event.volume)
+            is SettingsUiEvent.OnSystemVolumeChanged -> onSystemVolumeChanged(event.volume)
             SettingsUiEvent.OnNavigateEqualizer -> { /** nothing **/ }
             SettingsUiEvent.OnLanguageDialog -> { /** nothing **/ }
             SettingsUiEvent.OnNavigateTheme -> { /** nothing **/ }
@@ -101,7 +103,12 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    private suspend fun onVolumeChanged(volume: Float) {
+    private suspend fun onPlayerVolumeChanged(volume: Float) {
         playerSettingsUseCase.setVolume(volume)
+    }
+    private fun onSystemVolumeChanged(volume: Float) {
+        val state = uiState.value
+        if(state.systemVolume.first == volume) return
+        audioOutputObserver.setVolume(volume.toInt())
     }
 }

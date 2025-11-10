@@ -122,13 +122,11 @@ private fun SettingScreenInternal(
                     SettingsUiState.DialogState.VOLUME -> {
                         VolumeSeekbarDialog(
                             fraction = 0.7f,
-                            volume = uiState.volume,
+                            playerVolume = uiState.playerVolume,
+                            systemVolume = uiState.systemVolume,
+                            onPlayerVolumeChanged = { onEvent.invoke(SettingsUiEvent.OnPlayerVolumeChanged(it)) },
+                            onSystemVolumeChanged = { onEvent.invoke(SettingsUiEvent.OnSystemVolumeChanged(it)) },
                             onDismissRequest = { resetDialog() },
-                            onVolumeChanged = { onEvent.invoke(SettingsUiEvent.OnVolumeChanged(it)) },
-                            onApply = {
-                                onEvent.invoke(SettingsUiEvent.OnVolumeChanged(it))
-                                resetDialog()
-                            }
                         )
                     }
                     SettingsUiState.DialogState.AUDIO_USAGE -> {

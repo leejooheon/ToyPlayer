@@ -129,7 +129,8 @@
     <string name="dialog_language_selection_title">언어 선택</string>
     <string name="dialog_language_selection_description">사용하실 언어를 선택해 주세요.</string>
     <string name="dialog_volume_title">볼륨 조절</string>
-    <string name="dialog_volume_description">원하는 볼륨 수준으로 조절하세요.</string>
+    <string name="dialog_player_volume_description">플레이어 볼륨을 조절합니다.</string>
+    <string name="dialog_system_volume_description">시스템 볼륨을 조절합니다.</string>
     <string name="dialog_audio_usage_title">오디오 용도</string>
     <string name="dialog_audio_usage_description">확인 버튼을 누르시면 앱이 재시작됩니다.</string>
     <string name="dialog_audio_usage_media_description">다른 미디어 앱이 켜지면 정지됩니다.</string>
