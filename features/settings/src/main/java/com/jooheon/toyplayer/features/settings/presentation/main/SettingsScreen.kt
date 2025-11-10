@@ -28,11 +28,12 @@ import com.jooheon.toyplayer.core.navigation.ScreenNavigation
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.features.commonui.components.CustomTopAppBar
-import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
-import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiState
 import com.jooheon.toyplayer.features.settings.presentation.language.LanguageDialog
 import com.jooheon.toyplayer.features.settings.presentation.main.component.SettingItem
+import com.jooheon.toyplayer.features.settings.presentation.main.dialog.AudioUsageDialog
 import com.jooheon.toyplayer.features.settings.presentation.main.dialog.VolumeSeekbarDialog
+import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiEvent
+import com.jooheon.toyplayer.features.settings.presentation.main.model.SettingsUiState
 
 @Composable
 fun SettingScreen(
@@ -96,6 +97,7 @@ private fun SettingScreenInternal(
                                 when(it.event) {
                                     SettingsUiEvent.OnLanguageDialog -> { dialogState = SettingsUiState.DialogState.LANGUAGE }
                                     SettingsUiEvent.OnVolumeDialog -> { dialogState = SettingsUiState.DialogState.VOLUME }
+                                    SettingsUiEvent.OnAudioUsageDialog -> { dialogState = SettingsUiState.DialogState.AUDIO_USAGE }
                                     else -> onEvent.invoke(it.event)
                                 }
                             },
@@ -127,6 +129,17 @@ private fun SettingScreenInternal(
                                 onEvent.invoke(SettingsUiEvent.OnVolumeChanged(it))
                                 resetDialog()
                             }
+                        )
+                    }
+                    SettingsUiState.DialogState.AUDIO_USAGE -> {
+                        AudioUsageDialog(
+                            fraction = 0.7f,
+                            audioUsage = uiState.audioUsage,
+                            onDismissRequest = { resetDialog() },
+                            onSelected = {
+                                onEvent.invoke(SettingsUiEvent.OnAudioUsageChanged(it))
+                                resetDialog()
+                            },
                         )
                     }
                     SettingsUiState.DialogState.NONE -> { /** nothing **/ }
