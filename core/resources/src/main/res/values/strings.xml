@@ -112,6 +112,7 @@
     <string name="setting_theme">Theme</string>
     <string name="setting_equalizer">Equalizer</string>
     <string name="setting_volume">Volume</string>
+    <string name="setting_audio_usage">Audio Usage</string>
     <string name="setting_opensource_license">OpenSource License</string>
     <string name="setting_english">English</string>
     <string name="setting_korean">Korean</string>
@@ -128,7 +129,12 @@
     <string name="dialog_language_selection_title">Language Selection</string>
     <string name="dialog_language_selection_description">Please select the language you want to use.</string>
     <string name="dialog_volume_title">Volume Control</string>
-    <string name="dialog_volume_description">Adjust the volume to your preferred level.</string>
+    <string name="dialog_player_volume_description">Adjusts the player volume.</string>
+    <string name="dialog_system_volume_description">Adjusts the system volume.</string>
+    <string name="dialog_audio_usage_title">Audio Usage</string>
+    <string name="dialog_audio_usage_description">Tap “OK” to restart the app and apply the changes.</string>
+    <string name="dialog_audio_usage_media_description">Playback will stop when another media app starts.</string>
+    <string name="dialog_audio_usage_mix_description">Audio will be played alongside audio from other media apps.</string>
     <string name="korean" translatable="false">한국어</string>
     <string name="english" translatable="false">English</string>
 

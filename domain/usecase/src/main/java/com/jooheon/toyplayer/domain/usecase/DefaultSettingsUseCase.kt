@@ -1,6 +1,9 @@
 package com.jooheon.toyplayer.domain.usecase
 
+import com.jooheon.toyplayer.domain.model.audio.AudioUsage
 import com.jooheon.toyplayer.domain.repository.api.DefaultSettingsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DefaultSettingsUseCase @Inject constructor(
@@ -19,5 +22,11 @@ class DefaultSettingsUseCase @Inject constructor(
     fun flowIsDarkTheme() = defaultSettingsRepository.flowIsDarkTheme()
     suspend fun updateIsDarkTheme(isDarkTheme: Boolean) {
         defaultSettingsRepository.updateIsDarkTheme(isDarkTheme)
+    }
+
+    fun flowAudioUsage(): Flow<AudioUsage> = defaultSettingsRepository.flowAudioUsage()
+
+    suspend fun setAudioUsage(audioUsage: AudioUsage) {
+        defaultSettingsRepository.setAudioUsage(audioUsage)
     }
 }

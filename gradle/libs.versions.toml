@@ -77,6 +77,7 @@ ossLicensesPlugin = "0.10.7"
 
 # Timber
 timber ="5.0.1"
+processPhoenix = "3.0.0"
 
 # Ted-permission
 tedpermission = "3.4.2"
@@ -219,6 +220,7 @@ bumptech-glide-compose = { group = "com.github.bumptech.glide", name = "compose"
 
 # Timber
 jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+jakewharton-process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 
 # Leark canary
 squareup-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
