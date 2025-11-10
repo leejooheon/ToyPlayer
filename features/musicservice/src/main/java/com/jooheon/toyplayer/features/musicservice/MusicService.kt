@@ -11,6 +11,7 @@ import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import com.jooheon.toyplayer.domain.model.common.errors.PlaybackError
 import com.jooheon.toyplayer.domain.model.common.extension.defaultFalse
 import com.jooheon.toyplayer.features.musicservice.di.MusicServiceCoroutineScope
 import com.jooheon.toyplayer.features.musicservice.ext.isHls
@@ -18,6 +19,7 @@ import com.jooheon.toyplayer.features.musicservice.notification.CustomMediaNotif
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackCacheManager
 import com.jooheon.toyplayer.features.musicservice.playback.PlaybackListener
 import com.jooheon.toyplayer.features.musicservice.player.ToyPlayer
+import com.jooheon.toyplayer.features.musicservice.usecase.HlsResumeUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
@@ -66,6 +68,9 @@ class MusicService: MediaLibraryService() {
 
     @Inject
     lateinit var playbackErrorUseCase : PlaybackErrorUseCase
+
+    @Inject
+    lateinit var hlsResumeUseCase: HlsResumeUseCase
 
     private var mediaSession: MediaLibrarySession? = null
     private lateinit var customMediaNotificationProvider: CustomMediaNotificationProvider
@@ -165,6 +170,7 @@ class MusicService: MediaLibraryService() {
         playbackUseCase.collectStates(mediaSession?.player)
         playbackLogUseCase.initialize(serviceScope)
         playbackErrorUseCase.initialize(serviceScope)
+        hlsResumeUseCase.initialize(serviceScope)
     }
 
     private fun collectStates() {
@@ -181,19 +187,9 @@ class MusicService: MediaLibraryService() {
             }
 
             launch {
-                playbackErrorUseCase.autoPlayChannel.collectLatest {
+                hlsResumeUseCase.resume.collectLatest {
                     val player = mediaSession?.player ?: return@collectLatest
                     if(!player.isPlaying) player.play()
-                }
-            }
-
-            launch {
-                playbackErrorUseCase.seekToDefaultChannel.collectLatest {
-                    val player = mediaSession?.player ?: return@collectLatest
-                    if(player.currentMediaItem?.isHls().defaultFalse()) {
-                        player.seekToDefaultPosition()
-                        player.prepare()
-                    }
                 }
             }
         }
