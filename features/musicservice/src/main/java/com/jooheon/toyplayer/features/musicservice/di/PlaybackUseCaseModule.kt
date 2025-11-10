@@ -6,6 +6,7 @@ import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlaylistUseCase
 import com.jooheon.toyplayer.features.musicservice.MusicStateHolder
+import com.jooheon.toyplayer.features.musicservice.usecase.HlsResumeUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackErrorUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackLogUseCase
 import com.jooheon.toyplayer.features.musicservice.usecase.PlaybackUseCase
@@ -53,6 +54,13 @@ object PlaybackUseCaseModule {
     fun providePlaybackErrorUseCase(
         musicStateHolder: MusicStateHolder,
     ): PlaybackErrorUseCase = PlaybackErrorUseCase(
+        musicStateHolder = musicStateHolder,
+    )
+    @Provides
+    @ServiceScoped
+    fun provideHlsResumeUseCase(
+        musicStateHolder: MusicStateHolder,
+    ): HlsResumeUseCase = HlsResumeUseCase(
         musicStateHolder = musicStateHolder,
     )
 }

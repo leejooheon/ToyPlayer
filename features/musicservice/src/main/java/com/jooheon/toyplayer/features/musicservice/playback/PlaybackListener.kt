@@ -42,6 +42,9 @@ class PlaybackListener(
             }
         }
     }
+    override fun onPlaybackSuppressionReasonChanged(reason: Int) {
+        musicStateHolder.onSuppressionReasonChanged(reason)
+    }
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
