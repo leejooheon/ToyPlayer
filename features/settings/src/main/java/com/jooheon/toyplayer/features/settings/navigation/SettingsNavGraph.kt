@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.settings.navigation
 
-import androidx.navigation3.runtime.EntryProviderBuilder
-import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.EntryProviderScope
 import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
 import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
@@ -13,7 +12,7 @@ class SettingsEntryProviderInstaller(
     private val navigator: Navigator,
 ): EntryProviderInstaller {
     override operator fun invoke(
-        builder: EntryProviderBuilder<ScreenNavigation>
+        builder: EntryProviderScope<ScreenNavigation>
     ) = with(builder) {
         entry(ScreenNavigation.Settings.Main) {
             SettingScreen(

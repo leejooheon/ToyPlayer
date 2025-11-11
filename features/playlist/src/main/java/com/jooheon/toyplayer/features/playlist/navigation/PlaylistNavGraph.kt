@@ -1,7 +1,6 @@
 package com.jooheon.toyplayer.features.playlist.navigation
 
-import androidx.navigation3.runtime.EntryProviderBuilder
-import androidx.navigation3.runtime.entry
+import androidx.navigation3.runtime.EntryProviderScope
 import com.jooheon.toyplayer.core.navigation.EntryProviderInstaller
 import com.jooheon.toyplayer.core.navigation.Navigator
 import com.jooheon.toyplayer.core.navigation.ScreenNavigation
@@ -12,7 +11,7 @@ class PlaylistEntryProviderInstaller(
     private val navigator: Navigator,
 ): EntryProviderInstaller {
     override operator fun invoke(
-        builder: EntryProviderBuilder<ScreenNavigation>
+        builder: EntryProviderScope<ScreenNavigation>
     ) = with(builder) {
         entry<ScreenNavigation.Playlist.Main> {
             PlaylistScreen(

@@ -1,5 +1,5 @@
 package com.jooheon.toyplayer.core.navigation
 
-import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.navigation3.runtime.EntryProviderScope
 
-typealias EntryProviderInstaller = EntryProviderBuilder<ScreenNavigation>.() -> Unit
+typealias EntryProviderInstaller = EntryProviderScope<ScreenNavigation>.() -> Unit
