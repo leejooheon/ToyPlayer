@@ -18,6 +18,9 @@ import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecAdapter
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import com.jooheon.toyplayer.domain.model.audio.AudioUsage
+import com.jooheon.toyplayer.domain.model.common.extension.default
+import com.jooheon.toyplayer.domain.usecase.DefaultSettingsUseCase
 import com.jooheon.toyplayer.domain.usecase.PlayerSettingsUseCase
 import com.jooheon.toyplayer.features.musicservice.audio.BalanceAudioProcessor
 import com.jooheon.toyplayer.features.musicservice.audio.EqualizerAudioProcessor
@@ -33,6 +36,8 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 
 @OptIn(UnstableApi::class)
 @Module
@@ -47,10 +52,19 @@ object PlayerComponentModule {
         @MusicServiceContext context: Context,
         mediaSourceFactory: CustomMediaSourceFactory,
         renderersFactory: DefaultRenderersFactory,
+        defaultSettingsUseCase: DefaultSettingsUseCase,
     ): Player {
+        val usage = runBlocking {
+            val audioUsage = defaultSettingsUseCase.flowAudioUsage().firstOrNull().default(AudioUsage.MEDIA)
+            when(audioUsage) {
+                AudioUsage.MEDIA -> C.USAGE_MEDIA
+                AudioUsage.MIX -> C.USAGE_ASSISTANT
+            }
+        }
+
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
-            .setUsage(C.USAGE_MEDIA)
+            .setUsage(usage)
             .build()
 
         return ExoPlayer.Builder(context)

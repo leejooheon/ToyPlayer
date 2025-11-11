@@ -47,6 +47,9 @@ class MusicStateHolder @Inject constructor() {
     private val _musicState = MutableStateFlow(MusicState.default)
     val musicState = _musicState.asStateFlow()
 
+    private val _suppressionReason = MutableStateFlow(Player.PLAYBACK_SUPPRESSION_REASON_NONE)
+    val suppressionReason = _suppressionReason.asStateFlow()
+
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
 
@@ -130,5 +133,8 @@ class MusicStateHolder @Inject constructor() {
     }
     internal fun onPositionDiscontinuity(oldPosition: Long, newPosition: Long) {
         _disContinuation.tryEmit(Pair(oldPosition, newPosition))
+    }
+    internal fun onSuppressionReasonChanged(suppressionReason: Int) {
+        _suppressionReason.tryEmit(suppressionReason)
     }
 }
