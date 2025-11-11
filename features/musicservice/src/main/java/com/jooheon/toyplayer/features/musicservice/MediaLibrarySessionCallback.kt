@@ -19,6 +19,7 @@ import androidx.media3.session.SessionResult
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.SettableFuture
 import com.jooheon.toyplayer.core.resources.Strings
 import com.jooheon.toyplayer.core.resources.UiText
 import com.jooheon.toyplayer.domain.model.common.Result
@@ -251,9 +252,11 @@ class MediaLibrarySessionCallback(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo
     ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
-        return scope.future {
-            Timber.d("onPlaybackResumption")
+        Timber.i("onPlaybackResumption: from=${controller.packageName}/${controller.uid} trusted=${controller.isTrusted}")
+
+        val delegate = scope.future {
             val result = prepareRecentQueue()
+
             when(result) {
                 is Result.Success -> {
                     val (mediaItems, startIndex) = result.data
@@ -263,9 +266,14 @@ class MediaLibrarySessionCallback(
                         0
                     )
                 }
-                is Result.Error -> throw UnsupportedOperationException()
+                is Result.Error -> throw NoSuchElementException("no media item to resume")
             }
         }
+
+        val outer = SettableFuture.create<MediaSession.MediaItemsWithStartPosition>()
+            .apply { setFuture(delegate) }
+
+        return outer
     }
 
     override fun onConnect(
